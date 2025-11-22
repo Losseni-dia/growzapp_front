@@ -112,7 +112,7 @@ export default function ProjectForm() {
 
       const data = await response.json();
       toast.success(data.message || "Projet soumis avec succès ! 🚀");
-      navigate("/mon-espace");
+      navigate("/");
     } catch (err: any) {
       toast.error(err.message || "Erreur lors de la soumission du projet");
       console.error(err);
