@@ -47,7 +47,6 @@ useEffect(() => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Projets disponibles</h1>
       <div className={styles.grid}>
         {projects.map((projet) => (
           <ProjectCard key={projet.id} projet={projet} />

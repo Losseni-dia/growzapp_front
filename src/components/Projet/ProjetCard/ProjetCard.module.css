@@ -1,17 +1,18 @@
 /* src/components/Projet/ProjectCard/ProjectCard.module.css */
+
 .card {
   background: white;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  border: 3px solid #E8F5E9;
+  border: 3px solid #e8f5e9;
 }
 
 .card:hover {
   transform: translateY(-10px);
   box-shadow: 0 20px 40px rgba(27, 94, 32, 0.2);
-  border-color: #FFC107;
+  border-color: #ffc107;
 }
 
 .posterWrapper {
@@ -24,31 +25,55 @@
   object-fit: cover;
 }
 
+/* ==================== BADGES DYNAMIQUES ==================== */
 .statutBadge {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #1B5E20;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.78rem;
   font-weight: bold;
-  border: 2px solid #FFC107;
+  color: #1b5e20;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  min-width: 130px;
+  text-align: center;
+  border: 2px solid #ffc107;
 }
 
+/* Badge par défaut (autres statuts : SOUMIS, REJETE, etc.) */
+.badgeDefault {
+  background: #1b5e20;
+}
+
+/* Financement en cours → quand VALIDÉ */
+.badgeEnCours {
+  background:  #ffc107;
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+}
+
+/* Financement terminé → quand TERMINÉ ou objectif atteint */
+.badgeTermine {
+  background: #9c27b0;
+  box-shadow: 0 0 15px rgba(156, 39, 176, 0.5);
+}
+
+/* ==================== CONTENU ==================== */
 .content {
   padding: 1.5rem;
 }
 
 .title {
   margin: 0 0 0.5rem 0;
-  color: #1B5E20;
+  color: #1b5e20;
   font-size: 1.4rem;
+  font-weight: 700;
 }
 
 .location {
-  color: #1B5E20;
+  color: #1b5e20;
   font-weight: bold;
   margin: 0.5rem 0;
   display: flex;
@@ -72,12 +97,12 @@
 .infoItem {
   text-align: center;
   padding: 0.8rem;
-  background: #E8F5E9;
+  background: #e8f5e9;
   border-radius: 12px;
 }
 
 .highlight {
-  color: #1B5E20;
+  color: #1b5e20;
   font-size: 1.3rem;
   font-weight: bold;
   display: flex;
@@ -86,6 +111,7 @@
   gap: 0.5rem;
 }
 
+/* ==================== PROGRESSION ==================== */
 .progressContainer {
   margin: 1.5rem 0;
 }
@@ -95,22 +121,28 @@
   justify-content: space-between;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #1B5E20;
+  color: #1b5e20;
 }
 
 .progressBar {
   height: 12px;
-  background: #E0E0E0;
+  background: #e0e0e0;
   border-radius: 6px;
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #FFC107, #FFB300);
+  background: linear-gradient(90deg, #ffc107, #ffb300);
   transition: width 0.8s ease;
 }
 
+.progressFull {
+  background: #9c27b0 !important;
+  background: linear-gradient(90deg, #9c27b0, #7b1fa2) !important;
+}
+
+/* ==================== DATES ==================== */
 .dates {
   color: #666;
   font-size: 0.9rem;
@@ -120,13 +152,15 @@
   margin: 1rem 0;
 }
 
+/* ==================== BOUTONS ==================== */
 .actions {
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
 }
 
-.btnView, .btnInvest {
+.btnView,
+.btnInvest {
   flex: 1;
   padding: 1rem;
   border-radius: 12px;
@@ -141,19 +175,29 @@
 }
 
 .btnView {
-  background: #1B5E20;
+  background: #1b5e20;
   color: white;
 }
 
-.btnView:hover {
+.btnView:hover:not(.btnDisabled) {
   background: #173d17;
 }
 
 .btnInvest {
-  background: #FFC107;
-  color: #1B5E20;
+  background: #ffc107;
+  color: #1b5e20;
 }
 
-.btnInvest:hover {
-  background: #FFB300;
+.btnInvest:hover:not(.btnDisabled) {
+  background: #ffb300;
+}
+
+/* Boutons désactivés → quand financement terminé */
+.btnDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+  background: #999 !important;
+  color: #666 !important;
+  border: 2px dashed #ccc !important;
 }
