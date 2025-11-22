@@ -1,0 +1,269 @@
+/* src/components/Profile/ProfileUpdateForm.module.css */
+/* MÊME DESIGN QUE REGISTER – 100% COHÉRENT */
+
+.form {
+  max-width: 460px;
+  margin: 3rem auto;
+  padding: 3rem 2.8rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  border: 3px solid #E8F5E9;
+  position: relative;
+  overflow: hidden;
+}
+
+/* TITRE BLANC SUR FOND VERT */
+.form h2 {
+  text-align: center;
+  background: #1B5E20;
+  color: white !important;
+  padding: 1.2rem 2rem;
+  border-radius: 16px;
+  margin: -3rem -2.8rem 2.8rem -2.8rem;
+  font-size: 2.1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+/* PHOTO */
+.photoSection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.photoUpload {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 4px dashed #1B5E20;
+  cursor: pointer;
+  background: #f8f9fa;
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+.photoUpload:hover {
+  border-color: #27ae60;
+  background: #f0f8f0;
+}
+
+.preview { width: 100%; height: 100%; object-fit: cover; }
+
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1B5E20;
+  font-weight: 600;
+}
+
+.placeholder span { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.placeholder p { margin: 0; font-size: 1rem; }
+
+.removeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* CROPPER */
+.cropContainer {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #333;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.cropControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.cropBtn, .cancelBtn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cropBtn { background: #27ae60; color: white; }
+.cancelBtn { background: #e74c3c; color: white; }
+
+/* CHAMPS */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;
+  margin-bottom: 2.4rem;
+}
+
+input, select, .languesDropdown {
+  display: block;
+  width: 100%;
+  padding: 1.1rem 1.2rem;
+  border: 2.5px solid #1B5E20;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  background: white;
+  box-sizing: border-box;
+  margin-bottom: 2.4rem;
+  height: 58px;
+}
+
+input:focus, select:focus, .languesDropdown:hover {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
+}
+
+/* RADIO SEXE – PETITS RONDS */
+.radioGroup {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  margin: 2.8rem 0 3.2rem 0;
+  font-size: 1.15rem;
+  color: #1B5E20;
+  font-weight: 600;
+}
+
+.radioGroup label {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  cursor: pointer;
+}
+
+.radioGroup input[type="radio"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #1B5E20;
+  border-radius: 50%;
+  background: white;
+  position: relative;
+  cursor: pointer;
+}
+
+.radioGroup input[type="radio"]:checked {
+  background: #27ae60;
+  border-color: #27ae60;
+}
+
+.radioGroup input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* LANGUES */
+.languesDropdown {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  font-weight: 500;
+  position: relative;
+}
+
+.languesDropdown:hover { background: #f8fff8; }
+
+.languesPanel {
+  border: 2.5px solid #1B5E20;
+  border-radius: 14px;
+  padding: 1.2rem;
+  background: white;
+  margin-bottom: 2.4rem;
+  max-height: 280px;
+  overflow-y: auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.langueItem {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.2s;
+  font-size: 1.05rem;
+  color: black;
+}
+
+.langueItem:hover { background: #f0f8f0; }
+.langueItem input[type="checkbox"] { width: 20px; height: 20px; accent-color: #27ae60; }
+
+/* FLÈCHES */
+.select::after,
+.languesDropdown::after {
+  content: "Down";
+  position: absolute;
+  right: 1.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.8rem;
+  color: #1B5E20;
+  pointer-events: none;
+  font-weight: bold;
+}
+
+.languesDropdown.open::after,
+.languesDropdown:hover::after,
+.select:hover::after {
+  content: "Up";
+  color: #27ae60;
+}
+
+/* BOUTON */
+.submitBtn {
+  width: 100%;
+  padding: 1.3rem;
+  background: #FFC107;
+  color: #1B5E20;
+  font-weight: bold;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 1.5rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #FFB300;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(255,193,7,0.5);
+}

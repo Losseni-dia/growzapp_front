@@ -27,6 +27,7 @@ import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes"; // �
 import AdminRoute from "./components/ProtectedRoutes/ProtectedRoutes"; // ← NOUVEAU : Admin only
 import EditProjetPage from "./pages/Admin/Projets/EditProjet/EditProjetsPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import ProfileUpdateForm from "./components/ProfileUpdateForm/ProfileUpdateForm";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
           <Route element={<ProtectedRoute />}>
             <Route path="/mon-espace" element={<Dashboard />} />
+            <Route path="/profile/edit" element={<ProfileUpdateForm />} />
             <Route path="/dividendes" element={<DividendesPage />} />
             <Route path="/projet/creer" element={<ProjectForm />} />
             <Route path="/projet/edit/:id" element={<ProjectForm />} />

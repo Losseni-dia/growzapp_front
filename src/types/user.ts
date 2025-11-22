@@ -15,7 +15,7 @@ export interface UserDTO {
   email: string;
   contact?: string;
   localite?: LocaliteDTO | null;
-  langues?: string[];
+  langues: { id: number; nom: string }[];
   roles: RoleDTO[];
 
   // MAINTENANT BIEN PRÉSENT ET REQUIRED (car le back le renvoie toujours)

@@ -1,4 +1,4 @@
-// src/components/context/AuthContext.tsx → VERSION INDESTRUCTIBLE & PRO (19 novembre 2025)
+// src/components/context/AuthContext.tsx → VERSION ULTIME (22 novembre 2025)
 
 import {
   createContext,
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 interface AuthContextType {
   user: UserDTO | null;
   login: (token: string, user: UserDTO) => void;
+  updateUser: (user: UserDTO) => void; // ← NOUVELLE FONCTION
   logout: () => void;
   loading: boolean;
   isAuthenticated: boolean;
@@ -24,7 +25,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Chargement initial du user depuis localStorage
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (!stored) {
@@ -45,19 +45,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Dans AuthContext.tsx → fonction login
   const login = (token: string, userData: UserDTO) => {
     const safeUser = { ...userData, enabled: userData.enabled ?? true };
-
-    // STOCKAGE CORRECT
     localStorage.setItem("user", JSON.stringify({ token, user: safeUser }));
     localStorage.setItem("access_token", token);
-
     setUser(safeUser);
     toast.success(`Bienvenue ${safeUser.prenom} !`);
   };
 
-  // DÉCONNEXION PROPRE ET CENTRALE (seule fonction qui vide le storage)
+  // NOUVELLE FONCTION → MET À JOUR LE PROFIL SANS TOUCHER AU TOKEN
+  const updateUser = (userData: UserDTO) => {
+    const safeUser = { ...userData, enabled: userData.enabled ?? true };
+    const current = localStorage.getItem("user");
+    if (current) {
+      try {
+        const parsed = JSON.parse(current);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ ...parsed, user: safeUser })
+        );
+      } catch {}
+    }
+    setUser(safeUser);
+    toast.success("Profil mis à jour !");
+  };
+
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("access_token");
@@ -72,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         login,
+        updateUser, // ← EXPOSÉE
         logout,
         loading,
         isAuthenticated: !!user,
