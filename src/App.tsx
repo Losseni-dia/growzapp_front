@@ -26,6 +26,7 @@ import InvestissementsAdminPage from "./pages/Admin/Investissements/Investisseme
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes"; // ← Route connecté only
 import AdminRoute from "./components/ProtectedRoutes/ProtectedRoutes"; // ← NOUVEAU : Admin only
 import EditProjetPage from "./pages/Admin/Projets/EditProjet/EditProjetsPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/projets" element={<ProjetsPage />} />
           <Route path="/projet/:id" element={<ProjetDetailsPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
           <Route element={<ProtectedRoute />}>

@@ -1,0 +1,305 @@
+/* src/components/RegisterForm/RegisterForm.module.css */
+.form {
+  max-width: 460px;
+  margin: 3rem auto;
+  padding: 3rem 2.8rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  border: 3px solid #E8F5E9;
+}
+
+/* TITRE BLANC SUR FOND VERT #1B5E20 */
+.form h2 {
+  text-align: center;
+  background: #1B5E20;
+  color: white !important;
+  padding: 1.2rem 2rem;
+  border-radius: 16px;
+  margin: -3rem -2.8rem 2.8rem -2.8rem;   /* remonte le titre sur le bord du formulaire */
+  font-size: 2.1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+/* PHOTO */
+.photoSection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.photoUpload {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 4px dashed #1B5E20;
+  cursor: pointer;
+  background: #f8f9fa;
+  transition: 0.3s;
+}
+
+.photoUpload:hover {
+  border-color: #27ae60;
+  background: #f0f8f0;
+}
+
+.preview { width: 100%; height: 100%; object-fit: cover; }
+
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1B5E20;
+  font-weight: 600;
+}
+
+.placeholder p { margin: 0.6rem 0 0; }
+
+.removeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* LIGNE DE 2 CHAMPS (Prénom / Nom) */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6rem;           /* espace horizontal */
+  margin-bottom: 0 2.4rem 0;   /* espace vertical avant/après la ligne */
+}
+
+/* TOUS LES INPUTS & SELECTS – ESPACE VERTICAL GARANTI */
+input,
+select {
+  display: block;
+  width: 100%;
+  padding: 1.1rem 1.2rem;
+  border: 2.5px solid #1B5E20;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  background: white;
+  box-sizing: border-box;
+  margin-bottom: 2.4rem;   /* ESPACE ENTRE CHAQUE CHAMP – C’EST ÇA QUI MANQUAIT ! */
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
+}
+
+/* RADIO SEXE */
+.radioGroup {
+  display: flex;
+  justify-content: center;
+  gap: 3.5rem;
+  margin: 2.5rem 0 3rem 0;
+  font-size: 1.12rem;
+  color: #1B5E20;
+  font-weight: 500;
+}
+
+/* SELECTS – hauteur fixe */
+select {
+  height: 58px;
+  cursor: pointer;
+}
+
+/* BOUTON */
+.submitBtn {
+  width: 100%;
+  padding: 1.3rem;
+  background: #FFC107;
+  color: #1B5E20;
+  font-weight: bold;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 1.5rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #FFB300;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(255,193,7,0.5);
+}
+
+/* LIEN CONNEXION */
+.loginLink {
+  margin-top: 3rem;
+  text-align: center;
+  font-size: 1.12rem;
+  color: #2e7d32;
+}
+
+.loginLink a {
+  color: #1b5e20;
+  font-weight: 700;
+  text-decoration: underline;
+  font-size: 1.18rem;
+}
+
+.loginLink a:hover {
+  color: #FFC107;
+}
+
+/* LANGUES – STYLE 100% IDENTIQUE AUX AUTRES CHAMPS */
+.languesDropdown {
+  padding: 1.1rem 1.2rem;
+  border: 2.5px solid #1B5E20;
+  border-radius: 14px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.4rem;
+  font-size: 1.1rem;
+  color: black !important;           /* ÉCRITURE NOIRE */
+  font-weight: 500;
+  transition: all 0.3s;
+  height: 58px;                       /* même hauteur que les inputs */
+  box-sizing: border-box;
+}
+
+.languesDropdown:hover {
+  border-color: #27ae60;
+  background: #f8fff8;
+}
+
+.languesSelected {
+  color: black !important;
+  font-weight: 500;
+}
+
+.languesArrow {
+  color: #1B5E20;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+/* PANEL QUI S'OUVRE – STYLE PROPRE ET COHÉRENT */
+.languesPanel {
+  border: 2.5px solid #1B5E20;
+  border-radius: 14px;
+  padding: 1.2rem;
+  background: white;
+  margin-bottom: 2.4rem;
+  max-height: 280px;
+  overflow-y: auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.langueItem {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.2s;
+  font-size: 1.05rem;
+  color: black !important;           /* TOUT EN NOIR */
+}
+
+.langueItem:hover {
+  background: #f0f8f0;
+}
+
+.langueItem input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #27ae60;
+  cursor: pointer;
+}
+
+.langueItem span {
+  color: black !important;
+  font-weight: 500;
+}
+
+CSS/* FLÈCHE POUR TOUS LES CHAMPS DÉROULANTS (localité + langues) */
+.select,
+.languesDropdown {
+  position: relative;
+}
+
+/* Flèche de base (vers le bas) */
+.select::after,
+.languesDropdown::after {
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.6rem;
+  color: #1B5E20;
+  pointer-events: none;
+  font-weight: bold;
+}
+
+/* Flèche vers le haut quand le panel langues est ouvert */
+.languesDropdown.open::after,
+.languesDropdown:hover::after,
+.select:hover::after {
+  color: #27ae60;
+}
+
+/* pour ajuster image*/
+
+.cropContainer {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #333;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.cropControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.cropBtn, .cancelBtn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cropBtn {
+  background: #27ae60;
+  color: white;
+}
+
+.cancelBtn {
+  background: #e74c3c;
+  color: white;
+}
