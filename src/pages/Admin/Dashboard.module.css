@@ -1,0 +1,141 @@
+/* src/pages/admin/DashboardAdmin.module.css → VERSION PARFAITE (19 novembre 2025) */
+.container {
+  padding: 2.5rem 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%);
+  min-height: 100vh;
+}
+
+.mainTitle {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #1B5E20;
+  text-align: center;
+  margin: 0 0 3.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-shadow: 0 4px 15px rgba(27,94,32,0.15);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.statCard {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 12px 35px rgba(27,94,32,0.18);
+  border: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  transition: all 0.4s ease;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #1B5E20, #4CAF50);
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+
+.statCard:hover::before {
+  transform: scaleX(1);
+}
+
+.statCard:hover {
+  transform: translateY(-12px);
+  border-color: #1B5E20;
+  box-shadow: 0 25px 50px rgba(27,94,32,0.25);
+}
+
+.icon {
+  font-size: 3.2rem;
+  color: #1B5E20;
+}
+
+.statCard h3 {
+  font-size: 3.2rem;
+  font-weight: 900;
+  margin: 0;
+  color: #1B5E20;
+}
+
+.statCard p {
+  margin: 0.4rem 0 0;
+  color: #555;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.warning {
+  border-left: 6px solid #FF8F00 !important;
+}
+
+.success {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white;
+}
+
+.success .icon,
+.success h3,
+.success p { color: white; }
+
+.quickActions {
+  text-align: center;
+}
+
+.quickActions h2 {
+  font-size: 2.4rem;
+  color: #1B5E20;
+  margin-bottom: 2rem;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.actionsGrid a {
+  background: #FFC107;
+  color: #1B5E20;
+  padding: 1.8rem;
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 1.3rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 10px 25px rgba(255,193,7,0.3);
+}
+
+.actionsGrid a:hover {
+  background: #FFB300;
+  transform: translateY(-8px);
+  box-shadow: 0 18px 35px rgba(255,193,7,0.4);
+}
+
+.loading {
+  text-align: center;
+  font-size: 2rem;
+  color: #1B5E20;
+  padding: 6rem;
+  font-weight: 600;
+}

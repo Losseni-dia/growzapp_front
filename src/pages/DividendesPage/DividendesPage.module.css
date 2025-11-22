@@ -1,0 +1,134 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 3rem;
+  color: #1B5E20;
+  margin-bottom: 1rem;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.statCard {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  border: 3px solid #FFC107;
+  min-width: 180px;
+}
+
+.label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.percu { color: #1B5E20; font-size: 2rem; font-weight: bold; }
+.planifie { color: #FFA000; font-size: 2rem; font-weight: bold; }
+.total { color: #1B5E20; font-size: 2.5rem; font-weight: bold; }
+
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border: 3px solid #FFC107;
+}
+
+.table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #1B5E20;
+  color: white;
+  padding: 1.2rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.table td {
+  padding: 1.2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.row:hover {
+  background: #f8f8f8;
+}
+
+.montant {
+  font-weight: bold;
+  color: #1B5E20;
+}
+
+.statut {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.paye {
+  background: #C8E6C9;
+  color: #1B5E20;
+}
+
+.planifie {
+  background: #FFF3E0;
+  color: #EF6C00;
+}
+
+.downloadBtn {
+  background: #FFC107;
+  color: #1B5E20;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.downloadBtn:hover {
+  background: #FFB300;
+  transform: scale(1.05);
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #666;
+}
+
+.empty svg {
+  color: #FFC107;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: #1B5E20;
+}

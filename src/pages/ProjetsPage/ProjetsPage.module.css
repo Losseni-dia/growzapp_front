@@ -1,0 +1,24 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: #1B5E20;
+  grid-column: 1 / -1;
+}
+
+.noProjects {
+  text-align: center;
+  padding: 6rem 2rem;
+  font-size: 1.6rem;
+  color: #666;
+  grid-column: 1 / -1;
+}

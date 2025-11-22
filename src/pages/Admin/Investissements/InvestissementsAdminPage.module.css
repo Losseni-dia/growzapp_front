@@ -1,0 +1,27 @@
+.container { background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%); }
+.title { font-size: 2.8rem; font-weight: 800; color: #1B5E20; text-align: center; margin-bottom: 2.5rem; }
+
+.tableContainer { overflow-x: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(27,94,32,0.15); }
+.table { width: 100%; border-collapse: collapse; background: white; }
+.table th { background: #1B5E20; color: white; padding: 1.2rem; text-align: left; font-weight: 600; }
+.table td { padding: 1rem; border-bottom: 1px solid #E8F5E9; }
+
+.statut { font-weight: bold; }
+.statut.EN_ATTENTE { color: #FF8F00; }
+.statut.VALIDE { color: #388E3C; }
+.statut.ANNULE { color: #D32F2F; }
+
+.valider, .annuler { 
+  padding: 0.6rem 1.2rem; 
+  border: none; 
+  border-radius: 8px; 
+  margin: 0 0.4rem; 
+  font-weight: bold; 
+  cursor: pointer; 
+}
+.valider { background: #4CAF50; color: white; }
+.valider:hover { background: #388E3C; }
+.annuler { background: #F44336; color: white; }
+.annuler:hover { background: #D32F2F; }
+
+.loading { text-align: center; padding: 5rem; font-size: 2rem; color: #1B5E20; }

@@ -1,0 +1,22 @@
+/* Icônes React Icons – style global */
+svg {
+  vertical-align: middle;
+}
+
+/* Boutons avec icône */
+.btnWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btnWithIcon svg {
+  font-size: 1.2rem;
+}

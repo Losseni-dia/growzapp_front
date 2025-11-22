@@ -1,0 +1,129 @@
+/* src/components/Investissement/InvestForm/InvestForm.module.css */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.title {
+  
+  font-size: 1.8rem;
+  color: #1B5E20;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.info {
+  background: #f8fff8;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #155724;
+  border: 1px solid #d4edda;
+}
+
+.progressText {
+  color: #1B5E20;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1B5E20;
+}
+
+.input {
+  padding: 0.9rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  text-align: center;
+  transition: border 0.3s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #FFC107;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+
+.totalBox {
+  background: linear-gradient(135deg, #1B5E20, #2e7d32);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.totalPrice {
+  font-size: 2rem;
+  color: #FFC107;
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #FFC107, #FFB300);
+  color: #1B5E20;
+  padding: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(255, 193, 7, 0.4);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.errorText {
+  color: #d32f2f;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toastSuccess {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+}

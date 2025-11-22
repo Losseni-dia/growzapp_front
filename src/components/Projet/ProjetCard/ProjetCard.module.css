@@ -1,0 +1,159 @@
+/* src/components/Projet/ProjectCard/ProjectCard.module.css */
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 3px solid #E8F5E9;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.2);
+  border-color: #FFC107;
+}
+
+.posterWrapper {
+  position: relative;
+}
+
+.poster {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.statutBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #1B5E20;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border: 2px solid #FFC107;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.title {
+  margin: 0 0 0.5rem 0;
+  color: #1B5E20;
+  font-size: 1.4rem;
+}
+
+.location {
+  color: #1B5E20;
+  font-weight: bold;
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.description {
+  color: #555;
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.infoItem {
+  text-align: center;
+  padding: 0.8rem;
+  background: #E8F5E9;
+  border-radius: 12px;
+}
+
+.highlight {
+  color: #1B5E20;
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progressContainer {
+  margin: 1.5rem 0;
+}
+
+.progressText {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1B5E20;
+}
+
+.progressBar {
+  height: 12px;
+  background: #E0E0E0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #FFC107, #FFB300);
+  transition: width 0.8s ease;
+}
+
+.dates {
+  color: #666;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btnView, .btnInvest {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btnView {
+  background: #1B5E20;
+  color: white;
+}
+
+.btnView:hover {
+  background: #173d17;
+}
+
+.btnInvest {
+  background: #FFC107;
+  color: #1B5E20;
+}
+
+.btnInvest:hover {
+  background: #FFB300;
+}
