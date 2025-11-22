@@ -115,7 +115,7 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         </div>
 
         <div className={styles.totalBox}>
-          <span>Total à payer</span>
+          <span>Total à payer </span>
           <span className={styles.totalPrice}>
             {total.toLocaleString()} <small>€</small>
           </span>

@@ -1,4 +1,5 @@
 // src/components/Projet/ProjectCard/ProjectCard.tsx
+
 import {
   FiEye,
   FiDollarSign,
@@ -20,6 +21,24 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
       ? (projet.montantCollecte / projet.objectifFinancement) * 100
       : 0;
 
+  const objectifAtteint = progress >= 100;
+  const estTermine = projet.statutProjet === "TERMINE";
+  const estValide = projet.statutProjet === "VALIDE";
+  const financementTermine = estTermine || objectifAtteint;
+
+  // Badge intelligent selon le statut
+  const getBadgeText = () => {
+    if (financementTermine) return "Financement terminé";
+    if (estValide) return "Financement en cursus";
+    return projet.statutProjet.replace(/_/g, " ");
+  };
+
+  const getBadgeClass = () => {
+    if (financementTermine) return styles.badgeTermine;
+    if (estValide) return styles.badgeEnCours;
+    return styles.badgeDefault;
+  };
+
   const formatDate = (dateStr: string | undefined) => {
     if (!dateStr) return "Non définie";
     return new Date(dateStr).toLocaleDateString("fr-FR", {
@@ -31,15 +50,20 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
   return (
     <div className={styles.card}>
-      {/* Poster */}
+      {/* Poster + Badge */}
       <div className={styles.posterWrapper}>
         <img
-          src={projet.poster || "/placeholder-project.jpg"}
+          src={
+            projet.poster
+              ? `${projet.poster}?t=${Date.now()}` // FORCE LE RECHARGEMENT (anti-cache)
+              : "/placeholder-project.jpg"
+          }
           alt={projet.libelle}
           className={styles.poster}
+          key={projet.poster || "placeholder"} // Force React à re-render l'image
         />
-        <div className={styles.statutBadge}>
-          {projet.statutProjet.replace(/_/g, " ")}
+        <div className={`${styles.statutBadge} ${getBadgeClass()}`}>
+          {getBadgeText()}
         </div>
       </div>
 
@@ -67,7 +91,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             </span>
           </div>
           <div className={styles.infoItem}>
-            <strong>Prix/part</strong>
+            <strong>Prix/part </strong>
             <span>{projet.prixUnePart.toLocaleString()} €</span>
           </div>
           <div className={styles.infoItem}>
@@ -76,7 +100,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           </div>
         </div>
 
-        {/* Progress */}
+        {/* Barre de progression */}
         <div className={styles.progressContainer}>
           <div className={styles.progressText}>
             <strong>
@@ -87,8 +111,10 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           </div>
           <div className={styles.progressBar}>
             <div
-              className={styles.progressFill}
-              style={{ width: `${progress}%` }}
+              className={`${styles.progressFill} ${
+                objectifAtteint ? styles.progressFull : ""
+              }`}
+              style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
         </div>
@@ -99,12 +125,27 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           {formatDate(projet.dateFin)}
         </p>
 
-        {/* Actions */}
+        {/* Actions – désactivées si terminé */}
         <div className={styles.actions}>
-          <Link to={`/projet/${projet.id}`} className={styles.btnView}>
+          <Link
+            to={`/projet/${projet.id}`}
+            className={`${styles.btnView} ${
+              financementTermine ? styles.btnDisabled : ""
+            }`}
+            {...(financementTermine ? { "aria-disabled": true } : {})}
+            onClick={(e) => financementTermine && e.preventDefault()}
+          >
             <FiEye /> Voir le projet
           </Link>
-          <Link to={`/projet/${projet.id}`} className={styles.btnInvest}>
+
+          <Link
+            to={financementTermine ? "#" : `/projet/${projet.id}#investir`}
+            className={`${styles.btnInvest} ${
+              financementTermine ? styles.btnDisabled : ""
+            }`}
+            {...(financementTermine ? { "aria-disabled": true } : {})}
+            onClick={(e) => financementTermine && e.preventDefault()}
+          >
             <FiDollarSign /> Investir
           </Link>
         </div>

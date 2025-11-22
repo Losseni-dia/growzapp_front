@@ -1,19 +1,20 @@
-/* Ton style original intact + boutons intégrés proprement */
-.container { 
-  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%); 
+/* src/pages/admin/AdminProjetsPage.module.css */
+
+.container {
+  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%);
   min-height: 100vh;
   padding: 2rem;
 }
 
-.title { 
-  font-size: 2.8rem; 
-  font-weight: 800; 
-  color: #1B5E20; 
-  text-align: center; 
-  margin-bottom: 2.5rem; 
+.title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1B5E20;
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
 
-/* HEADER AVEC BOUTON CRÉER (comme tu l’avais avant) */
+/* Header avec bouton Créer */
 .header {
   display: flex;
   justify-content: space-between;
@@ -32,69 +33,75 @@
   font-weight: bold;
   font-size: 1.1rem;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(27,94,32,0.3);
-  transition: all 0.3s;
+  box-shadow: 0 8px 25px rgba(27, 94, 32, 0.3);
+  transition: all 0.3s ease;
 }
 
 .createBtn:hover {
   background: #2e7d32;
   transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(27, 94, 32, 0.4);
 }
 
-/* GRILLE & CARTES */
-.grid { 
-  display: grid; 
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
-  gap: 2rem; 
+/* Grille responsive */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
 }
 
-.card { 
-  background: white; 
-  border-radius: 16px; 
-  overflow: hidden; 
-  box-shadow: 0 10px 30px rgba(27,94,32,0.15); 
-  cursor: pointer; 
-  transition: all 0.3s; 
+/* Carte projet */
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(27, 94, 32, 0.15);
+  transition: all 0.3s ease;
   border: 3px solid transparent;
   display: flex;
   flex-direction: column;
+  position: relative; /* Important pour le badge */
 }
 
-.card:hover { 
-  transform: translateY(-10px); 
-  border-color: #1B5E20; 
+.card:hover {
+  transform: translateY(-10px);
+  border-color: #1B5E20;
+  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.2);
 }
 
-.poster { 
-  width: 100%; 
-  height: 200px; 
-  object-fit: cover; 
+.poster {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
 }
 
-.card h3 { 
-  padding: 1rem 1.5rem 0.5rem; 
-  color: #1B5E20; 
-  font-size: 1.4rem; 
-  margin: 0; 
+/* Contenu texte */
+.card h3 {
+  padding: 1rem 1.5rem 0.5rem;
+  color: #1B5E20;
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: 700;
 }
 
-.card p { 
-  padding: 0 1.5rem; 
-  color: #444; 
-  margin: 0.5rem 0; 
+.card p {
+  padding: 0 1.5rem;
+  color: #444;
+  margin: 0.5rem 0;
+  line-height: 1.5;
 }
 
-.card p:last-child { 
-  padding-bottom: 1.5rem; 
-  font-weight: bold; 
-  color: #1B5E20; 
+.card p:last-child {
+  padding-bottom: 1.5rem;
+  font-weight: bold;
+  color: #1B5E20;
 }
 
-/* ACTIONS SUR LA CARTE (tes couleurs exactes) */
+/* Boutons d'action */
 .actions {
   margin: 20px 1.5rem 1.5rem;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -103,66 +110,102 @@
   color: white;
   padding: 10px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
-.btnRejeter {
-  background: #dc3545;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btnSupprimer {
-  background: #6c757d;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+.btnValider:hover { background: #218838; }
 
 .btnModifier {
   background: #007bff;
   color: white;
   padding: 10px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
+
+.btnModifier:hover { background: #0069d9; }
+
+.btnSupprimer {
+  background: #dc3545;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btnSupprimer:hover { background: #c82333; }
 
 .btnVoir {
   background: #17a2b8;
   color: white;
   padding: 10px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s;
 }
 
-/* Badge statut */
+.btnVoir:hover { background: #138496; }
+
+/* BADGE STATUT - DYNAMIQUE ET MAGNIFIQUE */
 .statutBadge {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 10;
+  min-width: 80px;
+  text-align: center;
 }
 
-.loading { 
-  text-align: center; 
-  padding: 5rem; 
-  font-size: 2rem; 
-  color: #1B5E20; 
+/* Couleurs selon le statut */
+.statutBadge[data-status="SOUMIS"],
+.statutBadge[data-status="EN_PREPARATION"],
+.statutBadge[data-status="EN_ATTENTE"] {
+  background: #ff9800; /* Orange */
+}
+
+.statutBadge[data-status="VALIDE"] {
+  background: #4caf50; /* Vert */
+}
+
+.statutBadge[data-status="REJETE"] {
+  background: #f44336; /* Rouge */
+}
+
+.statutBadge[data-status="EN_COURS"] {
+  background: #2196f3; /* Bleu */
+}
+
+.statutBadge[data-status="TERMINE"] {
+  background: #9c27b0; /* Violet */
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 5rem;
+  font-size: 2rem;
+  color: #1B5E20;
+  font-weight: 600;
 }

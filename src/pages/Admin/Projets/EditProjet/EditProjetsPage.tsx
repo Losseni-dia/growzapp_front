@@ -10,8 +10,12 @@ import styles from "./EditProjetsPage.module.css";
 import { ProjetDTO } from "../../../../types/projet";
 import { ApiResponse } from "../../../../types/common";
 import { SecteurDTO } from "../../../../types/secteur";
-import { LocaliteDTO } from "../../../../types/localite";
-import { PaysDTO } from "../../../../types/pays"; // ← Assure-toi d'avoir ce type
+
+// DTO simple pour les sites (id + nom)
+type SiteDTO = {
+  id: number;
+  nom: string;
+};
 
 export default function EditProjetPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,30 +24,30 @@ export default function EditProjetPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [formData, setFormData] = useState<Partial<ProjetDTO>>({});
+  const [formData, setFormData] = useState<Partial<ProjetDTO>>({
+    id: Number(id),
+  });
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("/placeholder.jpg");
 
   const [secteurs, setSecteurs] = useState<SecteurDTO[]>([]);
-  const [localites, setLocalites] = useState<LocaliteDTO[]>([]);
-  const [paysList, setPaysList] = useState<PaysDTO[]>([]);
+  const [sites, setSites] = useState<SiteDTO[]>([]);
 
   useEffect(() => {
-    const fetchAll = async () => {
+    const fetchData = async () => {
       if (!id) return;
 
       try {
-        const [projetRes, secteursRes, localitesRes, paysRes] =
-          await Promise.all([
-            api.get<ApiResponse<ProjetDTO>>(`/admin/projets/${id}`),
-            api.get<ApiResponse<SecteurDTO[]>>("/api/secteurs"),
-            api.get<ApiResponse<LocaliteDTO[]>>("/api/localites"),
-            api.get<ApiResponse<PaysDTO[]>>("/api/pays"), // ← Endpoint pour les pays
-          ]);
+        const [projetRes, secteursRes, sitesRes] = await Promise.all([
+          api.get<ApiResponse<ProjetDTO>>(`/admin/projets/${id}`),
+          api.get<ApiResponse<SecteurDTO[]>>("/api/secteurs"),
+          api.get<ApiResponse<SiteDTO[]>>("/api/localisations"), // endpoint qui liste les sites
+        ]);
 
         const projet = projetRes.data;
 
         setFormData({
+          id: projet.id,
           libelle: projet.libelle || "",
           description: projet.description || "",
           reference: projet.reference || undefined,
@@ -57,15 +61,13 @@ export default function EditProjetPage() {
           dateFin: projet.dateFin || "",
           statutProjet: projet.statutProjet || "SOUMIS",
           secteurId: projet.secteurId || undefined,
-          localiteId: projet.localiteId || undefined,
-          paysId: projet.paysId || undefined, // ← PAYS ID
+          siteId: projet.siteId || undefined, // on garde l'ID du site actuel
           porteurId: projet.porteurId,
         });
 
         setPreview(projet.poster || "/placeholder.jpg");
         setSecteurs(secteursRes.data || []);
-        setLocalites(localitesRes.data || []);
-        setPaysList(paysRes.data || []);
+        setSites(sitesRes.data || []);
       } catch (err) {
         toast.error("Impossible de charger le projet");
         navigate("/admin/projets");
@@ -74,7 +76,7 @@ export default function EditProjetPage() {
       }
     };
 
-    fetchAll();
+    fetchData();
   }, [id, navigate]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,63 +88,87 @@ export default function EditProjetPage() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+ const handleSubmit = async (e: React.FormEvent) => {
+   e.preventDefault();
+   setSaving(true);
 
-    const payload = new FormData();
-    payload.append(
-      "projet",
-      new Blob([JSON.stringify(formData)], { type: "application/json" })
-    );
-    if (posterFile) payload.append("poster", posterFile);
+   const payload = new FormData();
+   payload.append(
+     "projet",
+     new Blob([JSON.stringify(formData)], { type: "application/json" })
+   );
+   if (posterFile) payload.append("poster", posterFile);
 
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/admin/projets/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${getFreshToken() || ""}`,
-          },
-          credentials: "include",
-          body: payload,
-        }
-      );
+   try {
+     const token = getFreshToken();
+     const response = await fetch(
+       `http://localhost:8080/api/admin/projets/${id}`,
+       {
+         method: "PUT",
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+         credentials: "include",
+         body: payload,
+       }
+     );
 
-      if (!response.ok) throw new Error(await response.text());
-      toast.success("Projet mis à jour avec succès !");
-      navigate("/admin/projets");
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la mise à jour");
-    } finally {
-      setSaving(false);
-    }
-  };
+     if (!response.ok) {
+       const errorText = await response.text();
+       throw new Error(errorText || "Erreur serveur");
+     }
+
+     toast.success("Projet mis à jour avec succès !");
+
+     // RECHARGE LE PROJET FRAIS DEPUIS LE BACKEND
+     const updated = await api.get<ApiResponse<ProjetDTO>>(
+       `/admin/projets/${id}`
+     );
+     const newPoster = updated.data.poster || "/placeholder.jpg";
+
+     setPreview(newPoster);
+     toast.success("Image mise à jour !");
+
+     // TU RESTES SUR LA PAGE → l'image s'affiche direct
+
+     // Option 1 : reste sur la page avec le nouveau poster
+     toast.success("Image mise à jour !");
+
+     // Option 2 : ou va à la liste (décommente si tu préfères)
+     // navigate("/admin/projets");
+   } catch (err: any) {
+     console.error("Erreur:", err);
+     toast.error(err.message || "Échec de la sauvegarde");
+   } finally {
+     setSaving(false);
+   }
+ };
 
   const getFreshToken = () => {
     const stored = localStorage.getItem("user");
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        return parsed?.token || parsed?.access_token || "";
+        return parsed?.token || "";
       } catch {}
     }
-    return localStorage.getItem("access_token") || "";
+    return "";
   };
 
-  if (loading)
+  if (loading) {
     return (
       <p style={{ textAlign: "center", padding: "5rem", fontSize: "1.8rem" }}>
         Chargement...
       </p>
     );
+  }
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Modifier le projet</h1>
 
       <form onSubmit={handleSubmit} className={styles.form}>
+        {/* Poster */}
         <div className={styles.imageSection}>
           <img src={preview} alt="Poster" className={styles.poster} />
           <button
@@ -264,25 +290,6 @@ export default function EditProjetPage() {
           />
         </div>
 
-        {/* PAYS */}
-        {/* PAYS */}
-        <select
-          value={formData.paysId || ""}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              paysId: Number(e.target.value) || undefined,
-            })
-          }
-        >
-          <option value="">Choisir un pays</option>
-          {paysList.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nom}
-            </option>
-          ))}
-        </select>
-
         {/* SECTEUR */}
         <select
           value={formData.secteurId || ""}
@@ -301,20 +308,20 @@ export default function EditProjetPage() {
           ))}
         </select>
 
-        {/* LOCALITÉ */}
+        {/* SITE (remplace Pays + Localité) */}
         <select
-          value={formData.localiteId || ""}
+          value={formData.siteId || ""}
           onChange={(e) =>
             setFormData({
               ...formData,
-              localiteId: Number(e.target.value) || undefined,
+              siteId: Number(e.target.value) || undefined,
             })
           }
         >
-          <option value="">Choisir une localité</option>
-          {localites.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.nom} {l.paysNom ? `(${l.paysNom})` : ""}
+          <option value="">Choisir un site</option>
+          {sites.map((site) => (
+            <option key={site.id} value={site.id}>
+              {site.nom}
             </option>
           ))}
         </select>
