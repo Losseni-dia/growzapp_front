@@ -56,16 +56,17 @@ export default function ProjetDetailsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        // src/pages/ProjetDetailsPage.tsx
         {projet.poster ? (
           <img
             src={projet.poster}
             alt={projet.libelle}
             className={styles.poster}
+            loading="lazy"
           />
         ) : (
-          <div className={styles.noPoster}>Pas de poster</div>
+          <div className={styles.noPoster}>Aucun poster disponible</div>
         )}
-
         <div className={styles.info}>
           <h1>{projet.libelle}</h1>
           <p>

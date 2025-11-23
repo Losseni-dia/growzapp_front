@@ -1,7 +1,7 @@
-/* src/pages/Admin/Projets/EditProjetPage.module.css */
+/* src/pages/Admin/Projets/EditProjetsPage.module.css */
 
 .container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 3rem auto;
   padding: 3rem 2.5rem;
   background: white;
@@ -22,121 +22,233 @@
   letter-spacing: 1px;
 }
 
-.form {
+/* ====================== PHOTO + CROP ====================== */
+.photoSection {
   display: flex;
-  flex-direction: column;
-  gap: 2.8rem; /* ← ESPACE GÉNÉREUX ENTRE LES CHAMPS */
+  justify-content: center;
+  margin-bottom: 4rem;
 }
 
-.imageSection {
+.photoUpload {
   position: relative;
-  text-align: center;
-  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 700px;
+  height: 380px;
+  border-radius: 20px;
+  border: 5px dashed #1B5E20;
+  cursor: pointer;
+  background: #f8f9fa;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.poster {
+.photoUpload:hover {
+  border-color: #27ae60;
+  background: #f0f8f0;
+  transform: translateY(-5px);
+}
+
+.preview {
   width: 100%;
-  max-height: 450px;
+  height: 100%;
   object-fit: cover;
   border-radius: 16px;
-  border: 5px solid #1B5E20;
-  box-shadow: 0 10px 30px rgba(27,94,32,0.25);
-  transition: transform 0.4s ease;
 }
 
-.poster:hover {
-  transform: scale(1.02);
-}
-
-.cameraBtn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: #FFC107;
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   color: #1B5E20;
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.placeholder p {
+  margin: 1rem 0 0;
+  font-size: 1.3rem;
+  font-weight: normal;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0,0,0,0.75);
+  color: white;
   border: none;
-  width: 70px;
-  height: 70px;
   border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 1.8rem;
+  z-index: 10;
+  transition: all 0.2s;
 }
 
-.cameraBtn:hover {
-  background: #FFB300;
-  transform: scale(1.15);
+.removeBtn:hover {
+  background: #e74c3c;
+  transform: scale(1.1);
 }
 
-input[type="text"],
-input[type="number"],
-input[type="date"],
-textarea,
-select {
-  padding: 1.2rem 1.5rem;
-  border: 3px solid #E8F5E9;
-  border-radius: 14px;
+/* Cropper */
+.cropContainer {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 500px;
+  background: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 0 auto 2rem auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.cropControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+
+.cropBtn, .cancelBtn {
+  padding: 1rem 3rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cropBtn {
+  background: #27ae60;
+  color: white;
+}
+
+.cropBtn:hover {
+  background: #219653;
+  transform: translateY(-3px);
+}
+
+.cancelBtn {
+  background: #e74c3c;
+  color: white;
+}
+
+.cancelBtn:hover {
+  background: #c0392b;
+}
+
+/* ====================== FORMULAIRE ====================== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Champ avec label au-dessus */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: #1B5E20;
   font-size: 1.15rem;
+  padding-left: 0.5rem;
+}
+
+/* Grille 2 colonnes */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Inputs, selects, textarea */
+input, textarea, select {
+  width: 100%;
+  padding: 1.3rem 1.6rem;
+  border: 3px solid #E8F5E9;
+  border-radius: 16px;
+  font-size: 1.1rem;
   background: #fafafa;
   transition: all 0.3s ease;
-  width: 100%;
   box-sizing: border-box;
+  font-family: inherit;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: #1B5E20;
   background: white;
-  box-shadow: 0 0 0 5px rgba(27,94,32,0.12);
-}
-
-textarea {
-  min-height: 200px;
-  resize: vertical;
+  box-shadow: 0 0 0 6px rgba(27,94,32,0.15);
+  transform: translateY(-2px);
 }
 
 select {
   cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231B5E20'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1.5rem center;
+  background-size: 12px;
 }
 
-/* Grille pour les champs numériques et dates */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+textarea {
+  min-height: 220px;
+  resize: vertical;
 }
 
-/* Bouton sauvegarde */
+/* ====================== BOUTONS ====================== */
 .actions {
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 4rem;
 }
 
 .saveBtn {
   background: linear-gradient(135deg, #1B5E20, #2E7D32);
   color: white;
   border: none;
-  padding: 1.3rem 4rem;
-  font-size: 1.5rem;
+  padding: 1.4rem 5rem;
+  font-size: 1.6rem;
   font-weight: bold;
   border-radius: 60px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 8px 25px rgba(27,94,32,0.4);
+  box-shadow: 0 10px 30px rgba(27,94,32,0.4);
   transition: all 0.4s ease;
 }
 
-.saveBtn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(27,94,32,0.5);
+.saveBtn:hover:not(:disabled) {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(27,94,32,0.5);
   background: linear-gradient(135deg, #2E7D32, #388E3C);
 }
 
@@ -146,21 +258,39 @@ select {
   transform: none;
 }
 
-/* Responsive */
+/* Loading */
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #1B5E20;
+  padding: 4rem;
+}
+
+/* Cache l'input file natif */
+input[type="file"] {
+  display: none !important;
+}
+
+/* Responsive mobile */
 @media (max-width: 768px) {
   .container {
     margin: 1rem;
     padding: 2rem 1.5rem;
+    border-radius: 16px;
   }
   .title {
     font-size: 2.2rem;
   }
-  .grid {
-    grid-template-columns: 1fr;
+  .photoUpload {
+    height: 280px;
+  }
+  .cropContainer {
+    height: 350px;
   }
   .saveBtn {
     width: 100%;
     justify-content: center;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    padding: 1.3rem;
   }
 }

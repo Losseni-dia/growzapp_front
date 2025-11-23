@@ -1,5 +1,4 @@
 // src/pages/admin/ProjetsAdminPage.tsx
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../service/api";
 import { ProjetDTO } from "../../../types/projet";
@@ -18,7 +17,6 @@ export default function ProjetsAdminPage() {
 
   const projets: ProjetDTO[] = data || [];
 
-  // Fonction propre pour afficher le bon libellé dans l'admin
   const getStatutLabel = (statut: string) => {
     switch (statut) {
       case "SOUMIS":
@@ -38,29 +36,22 @@ export default function ProjetsAdminPage() {
     }
   };
 
-  // Mutation pour valider un projet
   const valider = useMutation({
-    mutationFn: (id: number) => api.patch(`/api/admin/projets/${id}/valider`), // CORRIGÉ : / au début
+    mutationFn: (id: number) => api.patch(`/admin/projets/${id}/valider`),
     onSuccess: () => {
       toast.success("Projet validé et publié !");
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
     },
-    onError: (error: any) => {
-      console.error("Erreur validation:", error);
-      toast.error("Impossible de valider le projet");
-    },
+    onError: () => toast.error("Impossible de valider le projet"),
   });
 
-  // Mutation pour supprimer
   const supprimer = useMutation({
     mutationFn: (id: number) => api.delete(`/admin/projets/${id}`),
     onSuccess: () => {
       toast.success("Projet supprimé");
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
     },
-    onError: () => {
-      toast.error("Erreur lors de la suppression");
-    },
+    onError: () => toast.error("Erreur lors de la suppression"),
   });
 
   const handleValider = (id: number) => {
@@ -79,20 +70,8 @@ export default function ProjetsAdminPage() {
     navigate(`/admin/projets/edit/${id}`);
   };
 
-  const handleVoir = async (id: number) => {
-    try {
-      await api.get(`/projets/${id}`);
-      window.open(`/projet/${id}`, "_blank");
-    } catch (err: any) {
-      if (
-        err.message.includes("AccessDenied") ||
-        err.message.includes("publié")
-      ) {
-        toast.error("Ce projet n'est pas encore publié publiquement");
-      } else {
-        toast.error("Impossible d'ouvrir le détail");
-      }
-    }
+  const handleVoir = (id: number) => {
+    window.open(`/projet/${id}`, "_blank");
   };
 
   if (isLoading) {
@@ -117,58 +96,55 @@ export default function ProjetsAdminPage() {
 
       <div className={styles.grid}>
         {projets.length === 0 ? (
-          <p
-            style={{
-              gridColumn: "1 / -1",
-              textAlign: "center",
-              fontSize: "1.8rem",
-              color: "#1B5E20",
-              marginTop: "4rem",
-            }}
-          >
-            Aucun projet pour le moment
-          </p>
+          <p className={styles.empty}>Aucun projet pour le moment</p>
         ) : (
           projets.map((p) => (
             <div key={p.id} className={styles.card}>
-              {/* Image + Badge statut */}
-              {p.poster ? (
-                <>
+              {/* POSTER — CORRIGÉ ET PROPRE */}
+              <div className={styles.posterWrapper}>
+                {p.poster ? (
                   <img
                     src={p.poster}
                     alt={p.libelle}
                     className={styles.poster}
+                    loading="lazy"
+                    key={p.id}
+                    onError={(e) => {
+                      console.log("Image échouée :", p.poster);
+                      e.currentTarget.src =
+                        "https://via.placeholder.com/400x300?text=No+Image";
+                    }}
                   />
-                  <div
-                    className={styles.statutBadge}
-                    data-status={p.statutProjet}
-                  >
-                    {getStatutLabel(p.statutProjet)}
-                  </div>
-                </>
-              ) : (
-                <div
-                  style={{
-                    height: "200px",
-                    background: "#f0f0f0",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#999",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  Pas d'image
-                </div>
-              )}
+                ) : (
+                  <div className={styles.noPoster}>Aucun poster</div>
+                )}
 
-              {/* Contenu */}
-              <div style={{ padding: "1.5rem", flexGrow: 1 }}>
+                <div
+                  className={`${styles.statutBadge} ${
+                    p.statutProjet === "SOUMIS" ||
+                    p.statutProjet === "EN_ATTENTE" ||
+                    p.statutProjet === "EN_PREPARATION"
+                      ? styles.badgeAttente
+                      : p.statutProjet === "VALIDE"
+                      ? styles.badgeValide
+                      : p.statutProjet === "TERMINE"
+                      ? styles.badgeTermine
+                      : styles.badgeDefault
+                  }`}
+                >
+                  {getStatutLabel(p.statutProjet)}
+                </div>
+              </div>
+
+              <div className={styles.content}>
                 <h3>{p.libelle}</h3>
-                <p>Par {p.porteurNom || "Anonyme"}</p>
+                <p className={styles.porteur}>
+                  Par {p.porteurNom || "Anonyme"}
+                </p>
 
                 <div className={styles.actions}>
-                  {p.statutProjet === "SOUMIS" && (
+                  {(p.statutProjet === "SOUMIS" ||
+                    p.statutProjet === "EN_ATTENTE") && (
                     <button
                       onClick={() => handleValider(p.id)}
                       className={styles.btnValider}
@@ -177,12 +153,14 @@ export default function ProjetsAdminPage() {
                       {valider.isPending ? "Validation..." : "Valider"}
                     </button>
                   )}
+
                   <button
                     onClick={() => handleModifier(p.id)}
                     className={styles.btnModifier}
                   >
                     Modifier
                   </button>
+
                   <button
                     onClick={() => handleSupprimer(p.id)}
                     className={styles.btnSupprimer}
@@ -190,6 +168,7 @@ export default function ProjetsAdminPage() {
                   >
                     {supprimer.isPending ? "Suppression..." : "Supprimer"}
                   </button>
+
                   <button
                     onClick={() => handleVoir(p.id)}
                     className={styles.btnVoir}
