@@ -1,4 +1,4 @@
-// src/pages/ProjetDetailsPage.tsx
+// src/pages/ProjetDetailsPage.
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../service/api"; // ← On importe seulement "api"
@@ -22,7 +22,7 @@ export default function ProjetDetailsPage() {
 
        // ON RÉCUPÈRE LA RÉPONSE COMPLÈTE + ON EXTRAIT .data
        const response = await api.get<ApiResponse<ProjetDTO>>(
-         `/projets/${id}`
+         `api/projets/${id}`
        );
        setProjet(response.data); // ← maintenant c'est le vrai ProjetDTO
      } catch (err: any) {
@@ -56,7 +56,6 @@ export default function ProjetDetailsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        // src/pages/ProjetDetailsPage.tsx
         {projet.poster ? (
           <img
             src={projet.poster}
@@ -71,9 +70,6 @@ export default function ProjetDetailsPage() {
           <h1>{projet.libelle}</h1>
           <p>
             <strong>Secteur :</strong> {projet.secteurNom || "Non renseigné"}
-          </p>
-          <p>
-            <strong>Porteur :</strong> {projet.porteurNom || "Anonyme"}
           </p>
           <p>
             <strong>Localisation :</strong> {projet.siteNom},{" "}

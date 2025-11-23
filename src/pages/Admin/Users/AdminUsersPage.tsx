@@ -1,9 +1,10 @@
-// src/pages/admin/UsersAdminPage.tsx → VERSION FINALE SANS PAGINATION
+// src/pages/admin/UsersAdminPage.tsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../service/api";
 import { UserDTO } from "../../../types/user";
 import toast from "react-hot-toast";
+import RolesManagerModal from "../../Admin/Roles/RoleManagerModal"; // Assure-toi du bon chemin
 import styles from "./AdminUsersPage.module.css";
 
 interface ApiResponse<T> {
@@ -135,13 +136,20 @@ export default function UsersAdminPage() {
         </table>
       </div>
 
-      {/* MODALE DÉTAIL */}
+      {/* MODALE DÉTAIL + GESTION DES RÔLES */}
       {selectedUser && (
         <div
           className={styles.modalOverlay}
           onClick={() => setSelectedUser(null)}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <button
+              className={styles.closeBtn}
+              onClick={() => setSelectedUser(null)}
+            >
+              ×
+            </button>
+
             <h2>
               {selectedUser.prenom} {selectedUser.nom}
             </h2>
@@ -176,6 +184,27 @@ export default function UsersAdminPage() {
             ) : (
               <p>Aucun investissement</p>
             )}
+
+            {/* === NOUVELLE SECTION : GESTION DES RÔLES === */}
+            <div
+              style={{
+                marginTop: "2rem",
+                paddingTop: "1.5rem",
+                borderTop: "2px solid #eee",
+              }}
+            >
+              <h3 style={{ marginBottom: "1rem", color: "#1976d2" }}>
+                Gérer les rôles
+              </h3>
+              <RolesManagerModal
+                userId={selectedUser.id}
+                currentRoles={selectedUser.roles}
+                onClose={() => {
+                  setSelectedUser(null);
+                  queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
