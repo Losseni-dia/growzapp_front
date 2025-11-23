@@ -5,7 +5,7 @@ export default function LoginPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1>GrowzApp</h1>
+        <h1>growzapp</h1>
         <p>Connectez-vous pour gérer vos investissements</p>
         <LoginForm />
       </div>

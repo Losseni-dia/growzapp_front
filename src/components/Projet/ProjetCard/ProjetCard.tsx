@@ -53,15 +53,13 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             src={projet.poster}
             alt={projet.libelle}
             className={styles.poster}
-            loading="lazy"
-            // Optionnel : anti-cache si tu veux forcer le refresh
-            // key={projet.poster}
           />
         ) : (
           <div className={styles.noPoster}>
             <span>Aucun poster</span>
           </div>
         )}
+
         <div className={`${styles.statutBadge} ${getBadgeClass()}`}>
           {getBadgeText()}
         </div>
@@ -79,17 +77,16 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
-            <strong>ROI</strong>
             <span className={styles.highlight}>
-              <FiTrendingUp /> {projet.roiProjete}%
+              <strong>ROI</strong> <FiTrendingUp /> {projet.roiProjete}%
             </span>
           </div>
           <div className={styles.infoItem}>
-            <strong>Prix/part</strong>
+            <strong>Prix/part </strong>
             <span>{projet.prixUnePart.toLocaleString()} €</span>
           </div>
           <div className={styles.infoItem}>
-            <strong>Objectif</strong>
+            <strong>Objectif  </strong>
             <span>{projet.objectifFinancement.toLocaleString()} €</span>
           </div>
         </div>

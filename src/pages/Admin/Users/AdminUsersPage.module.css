@@ -1,39 +1,226 @@
-.container { background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%); }
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%);
+  padding: 2rem;
+}
 
-.title { font-size: 2.8rem; font-weight: 800; color: #1B5E20; text-align: center; margin-bottom: 2.5rem; }
+.title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1B5E20;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
 
-.tableContainer { overflow-x: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(27,94,32,0.15); }
-.table { width: 100%; border-collapse: collapse; background: white; }
-.table th { background: #1B5E20; color: white; padding: 1.2rem; text-align: left; font-weight: 600; font-size: 1rem; }
-.table td { padding: 1rem; border-bottom: 1px solid #E8F5E9; vertical-align: middle; }
-.rowHover { cursor: pointer; transition: background 0.2s; }
-.rowHover:hover { background: #F1F8E9; }
+.tableContainer {
+  overflow-x: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(27, 94, 32, 0.15);
+  background: white;
+}
 
-.avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 3px solid #1B5E20; }
-.fullName { font-weight: 700; font-size: 1.1rem; color: #1B5E20; }
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
 
-.roles { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.roleChip { padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: white; }
+.table th {
+  background: #1B5E20;
+  color: white;
+  padding: 1.2rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e8f5e9;
+  vertical-align: middle;
+}
+
+.rowHover {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rowHover:hover {
+  background: #f1f8e9;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #1B5E20;
+}
+
+.fullName {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1B5E20;
+}
+
+.roles {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.roleChip {
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
 .roleChip.admin { background: #D32F2F; }
 .roleChip.porteur { background: #1976D2; }
 .roleChip.investisseur { background: #388E3C; }
 .roleChip.agent { background: #7B1FA2; }
 .roleChip.user { background: #FFC107; color: #1B5E20; }
 
-.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; transition: .4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background: #1B5E20; }
-input:checked + .slider:before { transform: translateX(26px); }
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
 
-.adminBtn { background: #FFC107; color: #1B5E20; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.adminBtn:hover { background: #FFB300; }
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 
-/* MODALE */
-.modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modal { background: white; padding: 2.5rem; border-radius: 20px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(27,94,32,0.3); }
-.modal h2 { color: #1B5E20; margin-bottom: 1rem; }
-.itemCard { background: #E8F5E9; padding: 1rem; border-radius: 12px; margin: 0.8rem 0; border-left: 5px solid #1B5E20; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ccc;
+  transition: 0. glossy;
+  border-radius: 34px;
+}
 
-.loading { text-align: center; font-size: 1.8rem; color: #1B5E20; padding: 4rem; }
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background: #1B5E20;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.adminBtn {
+  background: #FFC107;
+  color: #1B5E20;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.adminBtn:hover {
+  background: #FFB300;
+}
+
+/* MODALE PRINCIPALE */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(27, 94, 32, 0.3);
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: #1B5E20;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.closeBtn:hover {
+  background: #e8f5e9;
+}
+
+.modal h2 {
+  color: #1B5E20;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.itemCard {
+  background: #e8f5e9;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 0.8rem 0;
+  border-left: 5px solid #1B5E20;
+}
+
+/* SECTION GESTION DES RÔLES */
+.rolesSectionTitle {
+  color: #1B5E20;
+  font-size: 1.6rem;
+  margin: 2rem 0 1rem;
+  font-weight: 700;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #1B5E20;
+  padding: 4rem;
+}
+
+.error {
+  text-align: center;
+  color: #D32F2F;
+  font-size: 1.5rem;
+  padding: 4rem;
+}
