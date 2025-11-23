@@ -1,5 +1,4 @@
-/* src/pages/ProjectForm/ProjetForm.module.css */
-/* MÊME STYLE QUE LOGIN/REGISTER/INVEST */
+/* src/pages/Projets/ProjetForm.module.css */
 
 .container {
   max-width: 720px;
@@ -7,7 +6,7 @@
   padding: 0 1.5rem;
 }
 
-.container h1 {
+.title {
   text-align: center;
   background: #1B5E20;
   color: white !important;
@@ -35,7 +34,9 @@
   border: 2px solid #c3e6cb;
 }
 
-.userInfo strong { color: #27ae60; }
+.userInfo strong {
+  color: #27ae60;
+}
 
 .form {
   background: white;
@@ -45,23 +46,74 @@
   border: 3px solid #E8F5E9;
 }
 
-.imageSection {
-  text-align: center;
-  margin-bottom: 2.8rem;
+/* PHOTO + CROP — PARFAIT, COMME L’INSCRIPTION */
+.photoSection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
 }
 
-.poster {
-  width: 100%;
-  max-height: 340px;
-  object-fit: cover;
+.photoUpload {
+  position: relative;
+  width: 300px;
+  height: 170px;
   border-radius: 16px;
-  border: 3px dashed #1B5E20;
+  border: 4px dashed #1B5E20;
+  cursor: pointer;
+  background: #f8f9fa;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.photoUpload:hover {
+  border-color: #27ae60;
+  background: #f0f8f0;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1B5E20;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.placeholder p {
+  margin: 0.6rem 0 0;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
 .cameraBtn {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
+  bottom: 12px;
+  right: 12px;
   background: #FFC107;
   color: #1B5E20;
   border: none;
@@ -71,18 +123,62 @@
   font-size: 1.8rem;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
-.cameraBtn:hover { background: #FFB300; }
-
-.hint {
-  margin-top: 1rem;
-  color: #1B5E20;
-  font-size: 1rem;
-  font-weight: 500;
+.cameraBtn:hover {
+  background: #FFB300;
 }
 
-input, textarea, select {
+/* CROP CONTAINER */
+.cropContainer {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #333;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.cropControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.cropBtn,
+.cancelBtn {
+  padding: 0.9rem 2.2rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.cropBtn {
+  background: #27ae60;
+  color: white;
+}
+
+.cancelBtn {
+  background: #e74c3c;
+  color: white;
+}
+
+/* INPUTS & TEXTAREA */
+input,
+textarea {
   width: 100%;
   padding: 1.1rem 1.2rem;
   border: 2.5px solid #1B5E20;
@@ -90,36 +186,41 @@ input, textarea, select {
   font-size: 1.1rem;
   background: white;
   margin-bottom: 2.4rem;
+  box-sizing: border-box;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus {
   outline: none;
   border-color: #27ae60;
   box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
 }
 
-textarea { min-height: 140px; resize: vertical; }
+textarea {
+  min-height: 160px;
+  resize: vertical;
+}
 
+/* BOUTON SOUMETTRE */
 .actions {
   display: flex;
-  gap: 1.5rem;
+  justify-content: center;
   margin-top: 2rem;
 }
 
-.saveBtn, .cancelBtn {
-  flex: 1;
-  padding: 1.3rem;
-  border: none;
-  border-radius: 14px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
 .saveBtn {
+  padding: 1.3rem 3rem;
   background: #FFC107;
   color: #1B5E20;
+  font-weight: bold;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .saveBtn:hover:not(:disabled) {
@@ -128,21 +229,11 @@ textarea { min-height: 140px; resize: vertical; }
   box-shadow: 0 12px 30px rgba(255,193,7,0.5);
 }
 
-.cancelBtn {
-  background: #e74c3c;
-  color: white;
+.saveBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-.cancelBtn:hover { background: #c0392b; }
-
-.success, .error {
-  padding: 1.5rem;
-  border-radius: 14px;
-  margin: 2rem 0;
-  text-align: center;
-  font-weight: 600;
-  font-size: 1.1rem;
+input[type="file"] {
+  display: none !important;
 }
-
-.success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
-.error   { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }

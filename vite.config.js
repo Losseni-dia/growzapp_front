@@ -1,4 +1,4 @@
-// vite.config.ts → VERSION FINALE PARFAITE (18 NOV 2025)
+// vite.config.ts — VERSION ULTIME QUI RÉSOUT TOUT
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -11,7 +11,12 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
-       
+      },
+      // LIGNE MAGIQUE QUI RÉSOUT TOUT
+      "/uploads": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
       },
     },
   },

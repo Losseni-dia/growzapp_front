@@ -1,14 +1,21 @@
-import { useState, useEffect } from "react";
+// src/pages/Projets/ProjectForm.tsx
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../../service/api";
 import { useAuth } from "../../../components/context/AuthContext";
 import toast from "react-hot-toast";
+import Cropper from "react-easy-crop";
 import { FiCamera, FiSend } from "react-icons/fi";
 import styles from "./ProjetForm.module.css";
+import { getCroppedImg, dataURLtoFile } from "../../../utils/CropImage";
 
-import { SecteurDTO } from "../../../types/secteur";
-import { LocaliteDTO } from "../../../types/localite";
-import { ApiResponse } from "../../../types/common";
+interface Secteur {
+  id: number;
+  nom: string;
+}
+interface Localite {
+  id: number;
+  nom: string;
+}
 
 export default function ProjectForm() {
   const { user } = useAuth();
@@ -19,52 +26,98 @@ export default function ProjectForm() {
   const [secteurNom, setSecteurNom] = useState("");
   const [localiteNom, setLocaliteNom] = useState("");
   const [paysNom, setPaysNom] = useState("Côte d'Ivoire");
+
+  // POSTER + CROPPER
+  const [preview, setPreview] = useState<string | null>(null);
   const [posterFile, setPosterFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string>("/placeholder.jpg");
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [loading, setLoading] = useState(false);
+  const [secteurs, setSecteurs] = useState<Secteur[]>([]);
+  const [localites, setLocalites] = useState<Localite[]>([]);
 
-  const [secteurs, setSecteurs] = useState<SecteurDTO[]>([]);
-  const [localites, setLocalites] = useState<LocaliteDTO[]>([]);
-
-  // Chargement des listes pour les suggestions
+  // CHARGEMENT DES RÉFÉRENCES
   useEffect(() => {
     const loadReferences = async () => {
       try {
-        const [secteursRes, localitesRes] = await Promise.all([
-          api.get<ApiResponse<SecteurDTO[]>>("/secteurs"),
-          api.get<ApiResponse<LocaliteDTO[]>>("/localites"),
+        const token = localStorage.getItem("access_token") || "";
+        const headers: HeadersInit = token
+          ? { Authorization: `Bearer ${token}` }
+          : {};
+
+        const [sectRes, locRes] = await Promise.all([
+          fetch("http://localhost:8080/api/secteurs", { headers }),
+          fetch("http://localhost:8080/api/localites", { headers }),
         ]);
 
-        setSecteurs(secteursRes.data || []);
-        setLocalites(localitesRes.data || []);
-      } catch (err) {
-        console.error("Erreur chargement références", err);
+        if (!sectRes.ok || !locRes.ok) throw new Error();
+
+        const sectData = await sectRes.json();
+        const locData = await locRes.json();
+
+        setSecteurs(sectData.data || []);
+        setLocalites(locData.data || []);
+      } catch {
+        toast.error("Impossible de charger les données");
       }
     };
-
     loadReferences();
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // GESTION PHOTO
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Image uniquement");
+    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 Mo");
 
-    setPosterFile(file);
     const reader = new FileReader();
-    reader.onloadend = () => setPreview(reader.result as string);
+    reader.onload = () => {
+      setPreview(reader.result as string);
+      setShowCropper(true);
+    };
     reader.readAsDataURL(file);
   };
 
+  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const createCroppedImage = async () => {
+    if (!preview || !croppedAreaPixels) return;
+    try {
+      const cropped = await getCroppedImg(preview, croppedAreaPixels);
+      setPreview(cropped);
+      setPosterFile(dataURLtoFile(cropped, "poster.jpg"));
+      setShowCropper(false);
+      toast.success("Poster recadré !");
+    } catch {
+      toast.error("Erreur recadrage");
+    }
+  };
+
+  const removePhoto = () => {
+    setPreview(null);
+    setPosterFile(null);
+    setShowCropper(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // SOUMISSION — LA LIGNE MAGIQUE QUI RÉSOUT TOUT
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!secteurNom.trim() || !localiteNom.trim()) {
-      toast.error("Veuillez remplir le secteur et la localité");
-      return;
-    }
+    if (!libelle.trim()) return toast.error("Le nom du projet est obligatoire");
+    if (!description.trim())
+      return toast.error("La description est obligatoire");
+    if (!secteurNom.trim()) return toast.error("Le secteur est obligatoire");
+    if (!localiteNom.trim()) return toast.error("La localité est obligatoire");
 
     setLoading(true);
-
     const formData = new FormData();
 
     const projetJson = {
@@ -79,43 +132,27 @@ export default function ProjectForm() {
       "projet",
       new Blob([JSON.stringify(projetJson)], { type: "application/json" })
     );
+    if (posterFile) formData.append("poster", posterFile);
 
-    if (posterFile) {
-      formData.append("poster", posterFile);
-    }
+    const token = localStorage.getItem("access_token") || "";
 
     try {
-      // Récupération fiable du token
-      let token = "";
-      const stored = localStorage.getItem("user");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          token = parsed?.token || "";
-        } catch {}
-      }
-      if (!token) token = localStorage.getItem("access_token") || "";
-
       const response = await fetch("http://localhost:8080/api/projets", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
         body: formData,
+        credentials: "include",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Erreur serveur");
+        const err = await response.text();
+        throw new Error(err || "Erreur serveur");
       }
 
-      const data = await response.json();
-      toast.success(data.message || "Projet soumis avec succès ! 🚀");
-      navigate("/");
+      toast.success("Projet soumis avec succès !");
+      navigate("/mes-projets");
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la soumission du projet");
-      console.error(err);
+      toast.error(err.message || "Erreur lors de l'envoi");
     } finally {
       setLoading(false);
     }
@@ -130,30 +167,79 @@ export default function ProjectForm() {
           {user?.prenom} {user?.nom}
         </strong>
         <br />
-        {user?.email}
+        <span>{user?.email}</span>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        {/* Poster */}
-        <div className={styles.imageSection}>
-          <img src={preview} alt="Aperçu" className={styles.poster} />
-          <button
-            type="button"
-            onClick={() => document.getElementById("posterInput")?.click()}
-            className={styles.cameraBtn}
-          >
-            <FiCamera size={28} />
-          </button>
+        {/* POSTER + CROPPER */}
+        <div className={styles.photoSection}>
+          {!showCropper ? (
+            <div
+              className={styles.photoUpload}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {preview ? (
+                <img src={preview} alt="Aperçu" className={styles.preview} />
+              ) : (
+                <div className={styles.placeholder}>
+                  <FiCamera size={48} />
+                  <p>Ajouter un poster (16:9 recommandé)</p>
+                </div>
+              )}
+              {preview && (
+                <button
+                  type="button"
+                  className={styles.removeBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removePhoto();
+                  }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className={styles.cropContainer}>
+              {preview && (
+                <Cropper
+                  image={preview}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={16 / 9}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+              )}
+              <div className={styles.cropControls}>
+                <button
+                  type="button"
+                  onClick={createCroppedImage}
+                  className={styles.cropBtn}
+                >
+                  Valider
+                </button>
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className={styles.cancelBtn}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
           <input
-            id="posterInput"
+            ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handleImageChange}
+            onChange={handlePhotoChange}
             hidden
           />
-          <small>Poster (facultatif)</small>
         </div>
 
+        {/* CHAMPS */}
         <input
           type="text"
           placeholder="Nom du projet *"
@@ -161,7 +247,6 @@ export default function ProjectForm() {
           onChange={(e) => setLibelle(e.target.value)}
           required
         />
-
         <textarea
           placeholder="Description détaillée *"
           value={description}
@@ -169,11 +254,9 @@ export default function ProjectForm() {
           rows={8}
           required
         />
-
-        {/* Secteur */}
         <input
           type="text"
-          placeholder="Secteur d'activité * (ex: Agroalimentaire)"
+          placeholder="Secteur d'activité *"
           value={secteurNom}
           onChange={(e) => setSecteurNom(e.target.value)}
           list="secteurs-list"
@@ -184,11 +267,9 @@ export default function ProjectForm() {
             <option key={s.id} value={s.nom} />
           ))}
         </datalist>
-
-        {/* Localité */}
         <input
           type="text"
-          placeholder="Ville / Localité * (ex: Abidjan)"
+          placeholder="Ville / Localité *"
           value={localiteNom}
           onChange={(e) => setLocaliteNom(e.target.value)}
           list="localites-list"
@@ -199,18 +280,17 @@ export default function ProjectForm() {
             <option key={l.id} value={l.nom} />
           ))}
         </datalist>
-
-        {/* Pays (facultatif) */}
         <input
           type="text"
-          placeholder="Pays (facultatif)"
+          placeholder="Pays (Côte d'Ivoire par défaut)"
           value={paysNom}
           onChange={(e) => setPaysNom(e.target.value)}
         />
 
         <div className={styles.actions}>
           <button type="submit" disabled={loading} className={styles.saveBtn}>
-            <FiSend /> {loading ? "Envoi en cours..." : "Soumettre le projet"}
+            <FiSend style={{ marginRight: 8 }} />
+            {loading ? "Envoi..." : "Soumettre le projet"}
           </button>
         </div>
       </form>
