@@ -1,0 +1,311 @@
+/* src/pages/wallet/WalletPage.module.css → VERSION FINALE ULTIME (25 NOV 2025) */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* =================== HEADER SOLDE =================== */
+.header {
+  background: linear-gradient(135deg, #1B5E20 0%, #27ae60 100%);
+  color: white;
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.25);
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.balanceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.balanceCard {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 1.2rem;
+  padding: 1.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.balanceLabel {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.balanceAmount {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.total {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 2rem;
+  opacity: 0.95;
+}
+
+/* =================== ACTIONS =================== */
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.actionCard {
+  background: white;
+  border-radius: 1.2rem;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.actionCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  border-color: #27ae60;
+}
+
+.actionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #1B5E20;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 0.8rem;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+  margin-bottom: 1rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.15);
+}
+
+.btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 0.5rem;
+}
+
+.btnDepot {
+  background: #27ae60;
+  color: white;
+}
+
+.btnDepot:hover {
+  background: #219653;
+  transform: translateY(-2px);
+}
+
+.btnRetrait {
+  background: #f2994a;
+  color: white;
+}
+
+.btnRetrait:hover {
+  background: #e67e22;
+}
+
+.btnTransfer {
+  background: #8e44ad;
+  color: white;
+}
+
+.btnTransfer:hover {
+  background: #7d3c98;
+}
+
+.btnTransfer:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.searchResults {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.8rem;
+  margin-bottom: 1rem;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.searchItem {
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.searchItem:hover {
+  background: #f8fff9;
+}
+
+.searchItem:last-child {
+  border-bottom: none;
+}
+
+/* =================== TABLEAU HISTORIQUE =================== */
+.historyCard {
+  background: white;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 2px solid #f0f0f0;
+}
+
+.historyTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding: 1.8rem 2rem;
+  background: #f8fff9;
+  border-bottom: 3px solid #27ae60;
+  color: #1B5E20;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  background: #f8fff9;
+  color: #1B5E20;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.td {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.table tr:hover {
+  background: #f8fff9;
+}
+
+.status {
+  padding: 0.4rem 0.9rem;
+  border-radius: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.statusSuccess {
+  background: #d4edda;
+  color: #155724;
+}
+
+.statusPending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.statusFailed {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.amountPositive {
+  color: #27ae60;
+  font-weight: 700;
+}
+
+.amountNegative {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: #27ae60;
+}
+
+/* =================== NOUVEAU : Messages spéciaux dans le détail =================== */
+/* (utilisés dans le JSX pour les retraits) */
+/* Messages spéciaux dans le détail */
+.detailPending {
+  color: #f39c12;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.detailSuccess {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.detailRejected {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+.detailTransfer {
+  color: #8e44ad;
+  font-weight: 600;
+}
+
+/* Compteur retraits en attente */
+.pendingWithdrawalsAlert {
+  margin-bottom: 1rem;
+  text-align: right;
+  font-weight: 600;
+  color: #e67e22;
+  font-size: 1.1rem;
+  background: #fff8e1;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.8rem;
+  border-left: 4px solid #f39c12;
+}
+
+/* Destinataire sélectionné */
+.destinataireSelectionne {
+  color: #27ae60;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+/* Ligne vide */
+.empty {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.2rem;
+}

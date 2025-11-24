@@ -342,3 +342,8 @@
   transition: transform 0.3s ease;
 }
 }
+
+/* Wallet dans le header — propre et élégant */
+.navLink svg {
+  margin-right: 0.5rem;
+}

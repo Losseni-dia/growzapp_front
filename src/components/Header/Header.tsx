@@ -1,10 +1,12 @@
-// src/components/Header/Header.tsx → VERSION FINALE ULTIME (19 novembre 2025)
+// src/components/Header/Header.tsx → VERSION FINALE AVEC PORTEFEUILLE (25 NOV 2025)
+
 import {
   FiLogIn,
   FiLogOut,
   FiPlusCircle,
   FiUser,
   FiShield,
+  FiDollarSign, // ← ICÔNE OFFICIELLE DE L’ARGENT (utilisée par Revolut, N26, etc.)
   FiChevronDown,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,6 +19,7 @@ export default function Header() {
   const navigate = useNavigate();
   const [showAdminMenu, setShowAdminMenu] = useState(false);
 
+  // Dans Header.tsx
   const isAdmin = user?.roles?.includes("ADMIN") ?? false;
 
   const handleLogout = () => {
@@ -40,14 +43,19 @@ export default function Header() {
       <nav className={styles.nav}>
         {user ? (
           <>
+            {/* PORTEFEUILLE DANS LE HEADER — TU ES UNE BANQUE */}
+            <Link to="/wallet" className={styles.navLink}>
+              <FiDollarSign size={24} />
+              <span>Mon Portefeuille</span>
+            </Link>
+
             <Link to="/projet/creer" className={styles.navLink}>
               <FiPlusCircle /> Créer un projet
             </Link>
 
-            {/* ESPACE ADMIN – VERSION INCASSABLE & ULTRA CONFORTABLE */}
+            {/* ESPACE ADMIN */}
             {isAdmin && (
               <div className={styles.adminDropdown}>
-                {/* Le bouton qui ouvre/ferme au clic (plus jamais de problème de souris) */}
                 <button
                   onClick={() => setShowAdminMenu((prev) => !prev)}
                   className={styles.adminBtn}
@@ -58,16 +66,12 @@ export default function Header() {
                   />
                 </button>
 
-                {/* Le menu – apparaît au clic, reste tant que tu veux */}
                 {showAdminMenu && (
                   <>
-                    {/* Overlay sombre qui ferme au clic dehors */}
                     <div
                       className={styles.dropdownOverlay}
                       onClick={() => setShowAdminMenu(false)}
                     />
-
-                    {/* Le vrai menu */}
                     <div className={styles.dropdownMenu}>
                       <Link to="/admin" onClick={() => setShowAdminMenu(false)}>
                         Tableau de bord
@@ -90,12 +94,19 @@ export default function Header() {
                       >
                         Investissements à valider
                       </Link>
+                      <Link
+                        to="/admin/retraits"
+                        onClick={() => setShowAdminMenu(false)}
+                      >
+                        Validation des retraits
+                      </Link>
                     </div>
                   </>
                 )}
               </div>
             )}
 
+            {/* MON COMPTE */}
             <Link to="/mon-espace" className={styles.monEspaceLink}>
               {user.image ? (
                 <img

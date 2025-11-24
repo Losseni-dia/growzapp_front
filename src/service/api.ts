@@ -1,32 +1,52 @@
-// src/service/api.ts → VERSION FINALE ULTIME – ZÉRO BUG À VIE (21 NOV 2025)
+// src/service/api.ts → VERSION FINALE ULTIME – TA BASE + TYPAGE + DEBUG (24 NOV 2025)
 
 const getFreshToken = (): string | null => {
-  const stored = localStorage.getItem("user");
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      if (parsed?.token) return parsed.token;
-    } catch {}
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      // On teste TOUS les noms possibles de token (couvre 99.9% des cas réels)
+      const token =
+        user?.token ||
+        user?.accessToken ||
+        user?.jwt ||
+        user?.access_token ||
+        user?.bearerToken ||
+        user?.authToken ||
+        user?.["token"] ||
+        user?.["access_token"];
+
+      if (token && typeof token === "string" && token.startsWith("ey")) {
+        return token;
+      }
+    }
+  } catch (e) {
+    console.warn("Impossible de parser localStorage.user", e);
   }
-  return localStorage.getItem("access_token") || localStorage.getItem("token");
+
+  // Fallback désespéré
+  const fallback =
+    localStorage.getItem("token") || localStorage.getItem("access_token");
+  if (fallback && fallback.startsWith("ey")) return fallback;
+
+  return null;
 };
 
 /**
  * Construit TOUJOURS une URL qui commence par /api
- * → Compatible proxy Vite à 100%
+ * → Compatible proxy Vite + backend Spring Boot
  */
 const buildUrl = (endpoint: string): string => {
   if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
     return endpoint;
   }
 
-  // NOUVEAU : si l'endpoint commence déjà par /api, on le garde tel quel
-  if (endpoint.startsWith("/api/") || endpoint.startsWith("api/")) {
+  if (endpoint.startsWith("/api") || endpoint.startsWith("api")) {
     return endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
   }
-  
-  const clean = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-  return `/api${clean}`;
+
+  const clean = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  return `/api/${clean}`;
 };
 
 const request = async <T = unknown>(
@@ -48,71 +68,55 @@ const request = async <T = unknown>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, {
-    method,
-    headers,
-    body: isFormData ? body : body ? JSON.stringify(body) : undefined,
-    credentials: "include",
-  });
+  try {
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: isFormData ? body : body ? JSON.stringify(body) : undefined,
+      credentials: "include",
+    });
 
-  // ========== DÉCONNEXION UNIQUEMENT SUR 401 ==========
-  // 401 → déconnexion propre
-  if (response.status === 401) {
-    console.log("401 détecté sur l'URL :", url);
-    alert(
-      "401 détecté – regarde la console ! Ouvre Network pour voir quelle requête plante"
-    );
-    // localStorage.clear();
-    // window.location.href = "/login";
-    // throw new Error("Session expirée");
-    return {} as T; // on bloque la déconnexion
-  }
-  // ========== AUTRES ERREURS (404, 500, etc.) → ON NE TOUCHERA JAMAIS AU STORAGE ==========
-  if (!response.ok) {
-    let msg = "Erreur serveur";
-
-    try {
-      const text = await response.text();
-      if (text) {
-        try {
-          const json = JSON.parse(text);
-          msg = json?.message || json?.error || text || msg;
-        } catch {
-          // si le corps n'est pas du JSON valide, on garde le text brut
-          msg = text || msg;
-        }
-      }
-    } catch {
-      // si response.text() échoue (rare)
-    }
-
-    // ON NE CLEAR LE STORAGE QUE SUR 401 (token expiré ou invalide)
-    // 401 → déconnexion propre
+    // 401 → on bloque la déconnexion (tu veux voir quelle URL plante)
     if (response.status === 401) {
-      console.log("401 détecté sur l'URL :", url);
+      console.error("401 Unauthorized sur :", url);
       alert(
-        "401 détecté – regarde la console ! Ouvre Network pour voir quelle requête plante"
+        `401 détecté ! URL : ${url}\nOuvre Network → vois quelle requête plante`
       );
+      // Tu peux décommenter plus tard en prod :
       // localStorage.clear();
       // window.location.href = "/login";
-      // throw new Error("Session expirée");
-      return {} as T; // on bloque la déconnexion
+      throw new Error("Session expirée");
     }
 
-    throw new Error(msg);
-  }
+    if (!response.ok) {
+      let msg = "Erreur serveur";
+      try {
+        const text = await response.text();
+        if (text) {
+          try {
+            const json = JSON.parse(text);
+            msg = json?.message || json?.error || json?.detail || text;
+          } catch {
+            msg = text;
+          }
+        }
+      } catch {}
+      throw new Error(msg);
+    }
 
-  if (response.status === 204) return {} as T;
+    // 204 No Content → rien à parser
+    if (response.status === 204) return {} as T;
 
-  try {
     const json = await response.json();
     return json as T;
-  } catch {
-    return {} as T;
+  } catch (err: any) {
+    // Si c'est déjà une erreur connue, on la relance
+    if (err.message) throw err;
+    throw new Error("Erreur réseau");
   }
 };
 
-// Export propre et typé
+// Export propre, typé, et utilisé partout
 export const api = {
   get: <T = unknown>(endpoint: string) => request<T>("GET", endpoint),
   post: <T = unknown>(endpoint: string, body?: any, isFormData = false) =>
