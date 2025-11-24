@@ -4,7 +4,7 @@ import { useAuth } from "../../components/context/AuthContext";
 import { api } from "../../service/api";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import styles from "./Dashboard.module.css";
+import styles from "./AdminDashboard.module.css";
 import {
   FiUsers,
   FiFolder,

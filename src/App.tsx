@@ -17,7 +17,7 @@ import ProjectForm from "./components/Projet/ProjetForm/ProjetForm";
 import DividendesPage from "./pages/DividendesPage/DividendesPage";
 
 // Pages ADMIN
-import DashboardAdmin from "./pages/Admin/Dashboard"; // ← Corrige le typo "Dashbord"
+import DashboardAdmin from "./pages/Admin/AdminDashboard"; // ← Corrige le typo "Dashbord"
 import UsersAdminPage from "./pages/Admin/Users/AdminUsersPage";
 import ProjetsAdminPage from "./pages/Admin/Projets/AdminProjetsPage";
 import InvestissementsAdminPage from "./pages/Admin/Investissements/InvestissementsAdminPage";

@@ -25,6 +25,7 @@ export interface InvestissementDTO {
 
 export interface InvestissementSummary {
   id: number;
+  projetId: number;
   nombrePartsPris: number;
   prixUnePart: number;
   projetLibelle: string;
