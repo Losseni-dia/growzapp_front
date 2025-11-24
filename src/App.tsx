@@ -29,6 +29,7 @@ import EditProjetPage from "./pages/Admin/Projets/EditProjet/EditProjetsPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProfileUpdateForm from "./components/ProfileUpdateForm/ProfileUpdateForm";
 import WalletPage from "./pages/Wallet/WalletPage";
+import AdminWithdrawalsPage from "./pages/Admin/AdminRetraitWalletPage/AdminRetraitWalletPage";
 
 function App() {
   return (
@@ -61,7 +62,10 @@ function App() {
               <Route path="/admin" element={<DashboardAdmin />} />
               <Route path="/admin/users" element={<UsersAdminPage />} />
               <Route path="/admin/projets" element={<ProjetsAdminPage />} />
-             
+              <Route
+                path="/admin/retraits"
+                element={<AdminWithdrawalsPage />}
+              />
               // Dans la section admin
               <Route
                 path="/admin/projets/edit/:id"

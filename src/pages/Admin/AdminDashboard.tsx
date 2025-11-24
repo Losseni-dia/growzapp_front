@@ -1,4 +1,5 @@
-// src/pages/admin/DashboardAdmin.tsx → VERSION FIN booALE PARFAITE SANS PAGINATION
+// src/pages/admin/DashboardAdmin.tsx → VERSION FINALE PARFAITE + RETRAITS (25 NOV 2025)
+
 import { useEffect, useState } from "react";
 import { useAuth } from "../../components/context/AuthContext";
 import { api } from "../../service/api";
@@ -12,6 +13,7 @@ import {
   FiShield,
   FiTrendingUp,
   FiAlertCircle,
+  FiCreditCard, // Icône parfaite pour les retraits
 } from "react-icons/fi";
 
 interface ApiResponse<T> {
@@ -25,6 +27,7 @@ interface Stats {
   totalProjets: number;
   totalInvestissements: number;
   investissementsEnAttente: number;
+  retraitsEnAttente: number;
   montantTotalCollecte: number;
 }
 
@@ -36,6 +39,7 @@ export default function DashboardAdmin() {
     totalProjets: 0,
     totalInvestissements: 0,
     investissementsEnAttente: 0,
+    retraitsEnAttente: 0,
     montantTotalCollecte: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -55,17 +59,20 @@ export default function DashboardAdmin() {
     try {
       setLoading(true);
 
-      const [usersRes, projetsRes, investissementsRes] = await Promise.all([
-        api.get<ApiResponse<any[]>>("/admin/users"),
-        api.get<ApiResponse<any[]>>("/admin/projets"),
-        api.get<ApiResponse<any[]>>("/admin/investissements"),
-      ]);
+      const [usersRes, projetsRes, investissementsRes, retraitsRes] =
+        await Promise.all([
+          api.get<ApiResponse<any[]>>("/admin/users"),
+          api.get<ApiResponse<any[]>>("/admin/projets"),
+          api.get<ApiResponse<any[]>>("/admin/investissements"),
+          api.get<any[]>("/api/transactions/retraits-en-attente"), // On récupère directement les retraits
+        ]);
 
       const users = usersRes.data || [];
       const projets = projetsRes.data || [];
       const investissements = investissementsRes.data || [];
+      const retraits = retraitsRes || [];
 
-      const enAttente = investissements.filter(
+      const enAttenteInvest = investissements.filter(
         (i: any) => i.statutPartInvestissement === "EN_ATTENTE"
       ).length;
 
@@ -78,7 +85,8 @@ export default function DashboardAdmin() {
         totalUsers: users.length,
         totalProjets: projets.length,
         totalInvestissements: investissements.length,
-        investissementsEnAttente: enAttente,
+        investissementsEnAttente: enAttenteInvest,
+        retraitsEnAttente: retraits.length,
         montantTotalCollecte: totalCollecte,
       });
     } catch (err) {
@@ -101,6 +109,7 @@ export default function DashboardAdmin() {
       ) : (
         <>
           <div className={styles.statsGrid}>
+            {/* Utilisateurs */}
             <Link to="/admin/users" className={styles.statCard}>
               <FiUsers className={styles.icon} />
               <div>
@@ -109,6 +118,7 @@ export default function DashboardAdmin() {
               </div>
             </Link>
 
+            {/* Projets */}
             <Link to="/admin/projets" className={styles.statCard}>
               <FiFolder className={styles.icon} />
               <div>
@@ -117,6 +127,7 @@ export default function DashboardAdmin() {
               </div>
             </Link>
 
+            {/* Investissements à valider */}
             <Link
               to="/admin/investissements"
               className={`${styles.statCard} ${styles.warning}`}
@@ -125,11 +136,29 @@ export default function DashboardAdmin() {
               <div>
                 <h3>{stats.investissementsEnAttente}</h3>
                 <p>
-                  À valider <FiAlertCircle />
+                  Investissements en attente <FiAlertCircle />
                 </p>
               </div>
             </Link>
 
+            {/* RETRAITS À VALIDER – NOUVEAU BLOC */}
+            <Link
+              to="/admin/retraits"
+              className={`${styles.statCard} ${
+                stats.retraitsEnAttente > 0 ? styles.danger : styles.success
+              }`}
+            >
+              <FiCreditCard className={styles.icon} />
+              <div>
+                <h3>{stats.retraitsEnAttente}</h3>
+                <p>
+                  Retraits en attente{" "}
+                  {stats.retraitsEnAttente > 0 && <FiAlertCircle />}
+                </p>
+              </div>
+            </Link>
+
+            {/* Montant total collecté */}
             <div className={`${styles.statCard} ${styles.success}`}>
               <FiTrendingUp className={styles.icon} />
               <div>
@@ -146,6 +175,9 @@ export default function DashboardAdmin() {
               <Link to="/admin/projets">Voir tous les projets</Link>
               <Link to="/admin/investissements">
                 Valider les investissements
+              </Link>
+              <Link to="/admin/retraits" className={styles.highlightLink}>
+                Valider les retraits ({stats.retraitsEnAttente})
               </Link>
             </div>
           </div>
