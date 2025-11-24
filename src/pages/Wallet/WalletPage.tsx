@@ -79,57 +79,134 @@ export default function WalletPage() {
     return () => clearTimeout(timer);
   }, [searchUser, user?.id]);
 
-  // Dépôt
-  const handleDepot = async () => {
-    const montant = parseFloat(montantDepot);
-    if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+  
+
+
+  // token recup
+const getToken = (): string => {
+  const userStr = localStorage.getItem("user");
+  if (userStr) {
     try {
-      const updatedWallet = await api.post<WalletDTO>("/api/wallets/depot", {
-        montant,
-      });
-      setWallet(updatedWallet);
-      setMontantDepot("");
-      toast.success("Dépôt effectué !");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Échec du dépôt");
+      const user = JSON.parse(userStr);
+      if (user?.token) return user.token;
+    } catch (e) {
+      console.warn("Erreur parsing user", e);
     }
-  };
+  }
+  return "";
+};
 
-  // Retrait
-  const handleRetrait = async () => {
-    const montant = parseFloat(montantRetrait);
-    if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+// DÉPÔT
+const handleDepot = async () => {
+  const montant = parseFloat(montantDepot);
+  if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+
+  const token = getToken();
+  if (!token) return toast.error("Reconnecte-toi");
+
+  try {
+    const res = await fetch("http://localhost:8080/api/wallets/depot", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ montant }),
+    });
+    if (!res.ok) throw new Error("Échec du dépôt");
+    const wallet = await res.json();
+    setWallet(wallet);
+    setMontantDepot("");
+    toast.success("Dépôt effectué !");
+  } catch {
+    toast.error("Échec du dépôt");
+  }
+};
+
+// RETRAIT
+const handleRetrait = async () => {
+  const montant = parseFloat(montantRetrait);
+  if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+
+  const token = getToken();
+  if (!token) return toast.error("Reconnecte-toi");
+
+  try {
+    const res = await fetch("http://localhost:8080/api/wallets/retrait", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ montant }),
+    });
+    if (!res.ok) throw new Error("Échec du retrait");
+    setMontantRetrait("");
+    toast.success("Demande de retrait envoyée");
+  } catch {
+    toast.error("Échec du retrait");
+  }
+};
+
+// TRANSFERT
+const handleTransfer = async () => {
+  if (!selectedUser) return toast.error("Sélectionne un destinataire");
+  const montant = parseFloat(montantTransfer);
+  if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+
+  // RÉCUPÉRATION DU TOKEN – VERSION QUI MARCHE À 1000%
+  let token = "";
+  const userStr = localStorage.getItem("user");
+  if (userStr) {
     try {
-      await api.post("/api/wallets/retrait", { montant });
-      setMontantRetrait("");
-      toast.success("Demande de retrait envoyée");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Échec du retrait");
-    }
-  };
+      const user = JSON.parse(userStr);
+      token = user.token || "";
+    } catch (e) {}
+  }
 
-  // Transfert
-  const handleTransfer = async () => {
-    if (!selectedUser) return toast.error("Sélectionne un destinataire");
-    const montant = parseFloat(montantTransfer);
-    if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+  if (!token) {
+    toast.error("Token manquant, reconnecte-toi");
+    return;
+  }
 
-    try {
-      await api.post("/api/wallets/transfer", {
+  try {
+    const response = await fetch("http://localhost:8080/api/wallets/transfer", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // ← C’EST ÇA QUI MANQUAIT
+      },
+      body: JSON.stringify({
         destinataireUserId: selectedUser.id,
         montant,
-      });
-      toast.success(`Transfert envoyé à ${selectedUser.nomComplet} !`);
-      setMontantTransfer("");
-      setSearchUser("");
-      setSelectedUser(null);
-      setSearchResults([]);
-      const updatedWallet = await api.get<WalletDTO>("/api/wallets/solde");
-      setWallet(updatedWallet);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Transfert échoué");
+      }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || "Transfert échoué");
     }
-  };
+
+    toast.success(
+      `Transfert de ${montant.toFixed(2)} € envoyé à ${
+        selectedUser.nomComplet
+      } !`
+    );
+    setMontantTransfer("");
+    setSearchUser("");
+    setSelectedUser(null);
+    setSearchResults([]);
+
+    // Recharge le solde
+    const walletRes = await fetch("http://localhost:8080/api/wallets/solde", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const updatedWallet = await walletRes.json();
+    setWallet(updatedWallet);
+  } catch (err: any) {
+    toast.error(err.message || "Transfert échoué");
+  }
+};
 
   if (loading)
     return <div className={styles.loading}>Chargement du portefeuille...</div>;
