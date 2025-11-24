@@ -28,6 +28,7 @@ import AdminRoute from "./components/ProtectedRoutes/ProtectedRoutes"; // ← NO
 import EditProjetPage from "./pages/Admin/Projets/EditProjet/EditProjetsPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProfileUpdateForm from "./components/ProfileUpdateForm/ProfileUpdateForm";
+import WalletPage from "./pages/Wallet/WalletPage";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
             <Route path="/dividendes" element={<DividendesPage />} />
             <Route path="/projet/creer" element={<ProjectForm />} />
             <Route path="/projet/edit/:id" element={<ProjectForm />} />
+            <Route path="/wallet" element={<WalletPage />} />
           </Route>
 
           {/* ==================== ESPACE ADMIN (double protection) ==================== */}
@@ -59,6 +61,7 @@ function App() {
               <Route path="/admin" element={<DashboardAdmin />} />
               <Route path="/admin/users" element={<UsersAdminPage />} />
               <Route path="/admin/projets" element={<ProjetsAdminPage />} />
+             
               // Dans la section admin
               <Route
                 path="/admin/projets/edit/:id"

@@ -1,5 +1,4 @@
-// src/components/context/AuthContext.tsx → VERSION ULTIME (22 novembre 2025)
-
+// src/components/context/AuthContext.tsx
 import {
   createContext,
   useContext,
@@ -10,10 +9,11 @@ import {
 import { UserDTO } from "../../types/user";
 import toast from "react-hot-toast";
 
-interface AuthContextType {
+// Type du contexte — on utilise directement UserDTO
+export interface AuthContextType {
   user: UserDTO | null;
   login: (token: string, user: UserDTO) => void;
-  updateUser: (user: UserDTO) => void; // ← NOUVELLE FONCTION
+  updateUser: (user: UserDTO) => void;
   logout: () => void;
   loading: boolean;
   isAuthenticated: boolean;
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const data = JSON.parse(stored);
       if (data?.token && data?.user) {
-        setUser(data.user);
+        setUser(data.user as UserDTO);
       }
     } catch (err) {
       console.error("Erreur parsing user storage", err);
@@ -53,7 +53,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     toast.success(`Bienvenue ${safeUser.prenom} !`);
   };
 
-  // NOUVELLE FONCTION → MET À JOUR LE PROFIL SANS TOUCHER AU TOKEN
   const updateUser = (userData: UserDTO) => {
     const safeUser = { ...userData, enabled: userData.enabled ?? true };
     const current = localStorage.getItem("user");
@@ -84,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         login,
-        updateUser, // ← EXPOSÉE
+        updateUser,
         logout,
         loading,
         isAuthenticated: !!user,
@@ -95,8 +94,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Hook dédié (à importer partout)
 export const useAuth = (): AuthContextType => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth doit être utilisé dans AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth doit être utilisé dans un AuthProvider");
+  }
+  return context;
 };

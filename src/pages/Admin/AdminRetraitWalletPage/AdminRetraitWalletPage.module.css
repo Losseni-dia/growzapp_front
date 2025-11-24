@@ -1,0 +1,192 @@
+/* src/pages/admin/withdrawals/AdminWithdrawalsPage.module.css */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1B5E20;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.3rem;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.tableContainer {
+  background: white;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.1);
+  border: 2px solid #e8f5e9;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: #1B5E20;
+  color: white;
+  padding: 1.2rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.table td {
+  padding: 1.2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table tr:hover {
+  background: #f8fff9;
+}
+
+.disabled {
+  opacity: 0.6;
+  background: #f9f9f9;
+}
+
+.login {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.amount {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1B5E20;
+}
+
+.status {
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pending { background: #fff3cd; color: #856404; }
+.success { background: #d4edda; color: #155724; }
+.rejected { background: #f8d7da; color: #721c24; }
+
+.actions {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.btnValidate, .btnReject {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btnValidate {
+  background: #27ae60;
+  color: white;
+}
+
+.btnValidate:hover {
+  background: #219653;
+  transform: translateY(-2px);
+}
+
+.btnReject {
+  background: #e74c3c;
+  color: white;
+}
+
+.btnReject:hover {
+  background: #c0392b;
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem;
+  color: #666;
+  font-size: 1.3rem;
+}
+
+/* MODAL */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.modal h2 {
+  color: #1B5E20;
+  margin-bottom: 1rem;
+}
+
+.textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 0.8rem;
+  margin: 1rem 0;
+  font-family: inherit;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.btnCancel {
+  background: #95a5a6;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+}
+
+.btnConfirmReject {
+  background: #c0392b;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+}
+
+.btnConfirmReject:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: #27ae60;
+}
