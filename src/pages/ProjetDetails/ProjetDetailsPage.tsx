@@ -47,11 +47,11 @@ export default function ProjetDetailsPage() {
       ? (projet.montantCollecte / projet.objectifFinancement) * 100
       : 0;
 
-  const handleInvestSuccess = () => {
-    toast.success("Investissement enregistré avec succès ! 🎉");
-    // Recharger les données sans refresh complet (optionnel plus tard avec query invalidation)
-    window.location.reload();
-  };
+const handleInvestSuccess = () => {
+  toast.success("Investissement pris en compte ! Mise à jour...");
+  // Recharge proprement le projet (ou utilise React Query plus tard)
+  window.location.reload();
+};
 
   return (
     <div className={styles.container}>
