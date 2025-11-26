@@ -1,11 +1,10 @@
-// src/service/api.ts → VERSION FINALE ULTIME – TA BASE + TYPAGE + DEBUG (24 NOV 2025)
+// src/service/api.ts → VERSION FINALE ULTIME 2025 (getFreshToken EXPORTÉ)
 
 const getFreshToken = (): string | null => {
   try {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       const user = JSON.parse(userStr);
-      // On teste TOUS les noms possibles de token (couvre 99.9% des cas réels)
       const token =
         user?.token ||
         user?.accessToken ||
@@ -24,7 +23,6 @@ const getFreshToken = (): string | null => {
     console.warn("Impossible de parser localStorage.user", e);
   }
 
-  // Fallback désespéré
   const fallback =
     localStorage.getItem("token") || localStorage.getItem("access_token");
   if (fallback && fallback.startsWith("ey")) return fallback;
@@ -32,10 +30,9 @@ const getFreshToken = (): string | null => {
   return null;
 };
 
-/**
- * Construit TOUJOURS une URL qui commence par /api
- * → Compatible proxy Vite + backend Spring Boot
- */
+// EXPORT OBLIGATOIRE → C’EST LA SEULE LIGNE QUI MANQUAIT
+export { getFreshToken };
+
 const buildUrl = (endpoint: string): string => {
   if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
     return endpoint;
@@ -76,15 +73,8 @@ const request = async <T = unknown>(
       credentials: "include",
     });
 
-    // 401 → on bloque la déconnexion (tu veux voir quelle URL plante)
     if (response.status === 401) {
       console.error("401 Unauthorized sur :", url);
-      alert(
-        `401 détecté ! URL : ${url}\nOuvre Network → vois quelle requête plante`
-      );
-      // Tu peux décommenter plus tard en prod :
-      // localStorage.clear();
-      // window.location.href = "/login";
       throw new Error("Session expirée");
     }
 
@@ -104,19 +94,16 @@ const request = async <T = unknown>(
       throw new Error(msg);
     }
 
-    // 204 No Content → rien à parser
     if (response.status === 204) return {} as T;
 
     const json = await response.json();
     return json as T;
   } catch (err: any) {
-    // Si c'est déjà une erreur connue, on la relance
     if (err.message) throw err;
     throw new Error("Erreur réseau");
   }
 };
 
-// Export propre, typé, et utilisé partout
 export const api = {
   get: <T = unknown>(endpoint: string) => request<T>("GET", endpoint),
   post: <T = unknown>(endpoint: string, body?: any, isFormData = false) =>

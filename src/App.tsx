@@ -30,6 +30,12 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProfileUpdateForm from "./components/ProfileUpdateForm/ProfileUpdateForm";
 import WalletPage from "./pages/Wallet/WalletPage";
 import AdminWithdrawalsPage from "./pages/Admin/AdminRetraitWalletPage/AdminRetraitWalletPage";
+import RetraitPage from "./pages/Retrait/RetraitPage";
+import DepotPage from "./pages/Depot/DepotPage";
+import DepositCancel from "./pages/Depot/Cancel/CancelPage";
+import DepositSuccess from "./pages/Depot/Success/SuccessPage";
+import WithdrawCancelPage from "./pages/Retrait/Cancel/CancelPage";
+import WithdrawSuccessPage from "./pages/Retrait/Success/SuccessPage";
 
 function App() {
   return (
@@ -54,6 +60,12 @@ function App() {
             <Route path="/projet/creer" element={<ProjectForm />} />
             <Route path="/projet/edit/:id" element={<ProjectForm />} />
             <Route path="/wallet" element={<WalletPage />} />
+            <Route path="/depot" element={<DepotPage />} />
+            <Route path="/retrait" element={<RetraitPage />} />
+            <Route path="/depot/success" element={<DepositSuccess />} />
+            <Route path="/depot/cancel" element={<DepositCancel />} />
+            <Route path="/retrait/success" element={<WithdrawSuccessPage />} />
+            <Route path="/retrait/cancel" element={<WithdrawCancelPage />} />
           </Route>
 
           {/* ==================== ESPACE ADMIN (double protection) ==================== */}

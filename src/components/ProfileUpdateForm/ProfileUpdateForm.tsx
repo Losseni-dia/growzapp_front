@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Cropper from "react-easy-crop";
-import { getCroppedImg, dataURLtoFile } from "../../utils/CropImage";
+import { getCroppedImg, dataURLtoFile } from "../../types/utils/CropImage";
 import styles from "../RegisterForm/RegisterForm.module.css";
 
 interface Localite {

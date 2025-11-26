@@ -63,7 +63,9 @@ export type TypeTransaction =
   | "INVESTISSEMENT"
   | "REMBOURSEMENT"
   | "TRANSFER_OUT"
-  | "TRANSFER_IN";
+  | "TRANSFER_IN"
+  | "PAYOUT_STRIPE"
+  | "RETRAIT_EXTERNE";
 
 /** Statut d'une transaction */
 export type StatutTransaction =
@@ -89,5 +91,7 @@ export const TypeTransactionLabel: Record<TypeTransaction, string> = {
   REMBOURSEMENT: "Remboursement",
   TRANSFER_OUT: "Transfert envoyé",
   TRANSFER_IN: "Transfert reçu",
+  RETRAIT_EXTERNE: "Retrait_externe",
+  PAYOUT_STRIPE:"Stripe"
 };
 

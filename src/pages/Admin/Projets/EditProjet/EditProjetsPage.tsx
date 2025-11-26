@@ -5,7 +5,10 @@ import toast from "react-hot-toast";
 import Cropper from "react-easy-crop";
 import { FiSave } from "react-icons/fi";
 import styles from "./EditProjetsPage.module.css";
-import { getCroppedImg, dataURLtoFile } from "../../../../utils/CropImage";
+import {
+  getCroppedImg,
+  dataURLtoFile,
+} from "../../../../types/utils/CropImage";
 
 export default function EditProjetPage() {
   const { id } = useParams<{ id: string }>();
@@ -93,64 +96,64 @@ export default function EditProjetPage() {
   };
 
   // SAUVEGARDE — IDENTIQUE AU CREATE QUI MARCHE
- const handleSubmit = async (e: React.FormEvent) => {
-   e.preventDefault();
-   if (!projet) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!projet) return;
 
-   setSaving(true);
+    setSaving(true);
 
-   const token = localStorage.getItem("access_token") || "";
-   if (!token) {
-     toast.error("Session expirée");
-     navigate("/login");
-     return;
-   }
+    const token = localStorage.getItem("access_token") || "";
+    if (!token) {
+      toast.error("Session expirée");
+      navigate("/login");
+      return;
+    }
 
-   const formData = new FormData();
+    const formData = new FormData();
 
-   // ENVOIE UN OBJET SIMPLE → COMME À LA CRÉATION
-   const updateData = {
-     libelle: projet.libelle?.trim(),
-     description: projet.description?.trim(),
-     secteurNom: projet.secteurNom?.trim(),
-     localiteNom: projet.localiteNom?.trim(),
-     paysNom: projet.paysNom?.trim() || null,
-     objectifFinancement: projet.objectifFinancement || 0,
-     prixUnePart: projet.prixUnePart || 0,
-     partsDisponible: projet.partsDisponible || 0,
-     roiProjete: projet.roiProjete || 0,
-     statutProjet: projet.statutProjet,
-     dateDebut: projet.dateDebut || null,
-     dateFin: projet.dateFin || null,
-   };
+    // ENVOIE UN OBJET SIMPLE → COMME À LA CRÉATION
+    const updateData = {
+      libelle: projet.libelle?.trim(),
+      description: projet.description?.trim(),
+      secteurNom: projet.secteurNom?.trim(),
+      localiteNom: projet.localiteNom?.trim(),
+      paysNom: projet.paysNom?.trim() || null,
+      objectifFinancement: projet.objectifFinancement || 0,
+      prixUnePart: projet.prixUnePart || 0,
+      partsDisponible: projet.partsDisponible || 0,
+      roiProjete: projet.roiProjete || 0,
+      statutProjet: projet.statutProjet,
+      dateDebut: projet.dateDebut || null,
+      dateFin: projet.dateFin || null,
+    };
 
-   formData.append(
-     "projet",
-     new Blob([JSON.stringify(updateData)], { type: "application/json" })
-   );
-   if (posterFile) formData.append("poster", posterFile);
+    formData.append(
+      "projet",
+      new Blob([JSON.stringify(updateData)], { type: "application/json" })
+    );
+    if (posterFile) formData.append("poster", posterFile);
 
-   try {
-     const response = await fetch(
-       `http://localhost:8080/api/admin/projets/${id}`,
-       {
-         method: "PUT",
-         headers: { Authorization: `Bearer ${token}` },
-         credentials: "include",
-         body: formData,
-       }
-     );
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/admin/projets/${id}`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: "include",
+          body: formData,
+        }
+      );
 
-     if (!response.ok) throw new Error(await response.text());
+      if (!response.ok) throw new Error(await response.text());
 
-     toast.success("Projet mis à jour avec succès !");
-     navigate("/admin/projets");
-   } catch (err: any) {
-     toast.error(err.message || "Échec de la sauvegarde");
-   } finally {
-     setSaving(false);
-   }
- };
+      toast.success("Projet mis à jour avec succès !");
+      navigate("/admin/projets");
+    } catch (err: any) {
+      toast.error(err.message || "Échec de la sauvegarde");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading)
     return <div className={styles.loading}>Chargement du projet...</div>;

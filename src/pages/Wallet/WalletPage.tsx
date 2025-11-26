@@ -1,6 +1,6 @@
-// src/pages/wallet/WalletPage.tsx → VERSION FINALE ULTIME (25 NOV 2025) – CORRIGÉE
-
+// src/pages/wallet/WalletPage.tsx → VERSION FINALE ULTIME — 26 NOV 2025
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/context/AuthContext";
 import { api } from "../../service/api";
 import toast from "react-hot-toast";
@@ -11,7 +11,6 @@ import styles from "./WalletPage.module.css";
 import type { WalletDTO } from "../../types/wallet";
 import type { TransactionDTO } from "../../types/transaction";
 
-// DTO pour la recherche utilisateur (correspond exactement à ce que renvoie le backend)
 interface UserSearchResult {
   id: number;
   nomComplet: string;
@@ -21,20 +20,26 @@ interface UserSearchResult {
 
 export default function WalletPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [wallet, setWallet] = useState<WalletDTO | null>(null);
   const [transactions, setTransactions] = useState<TransactionDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Formulaires
-  const [montantDepot, setMontantDepot] = useState("");
-  const [montantRetrait, setMontantRetrait] = useState("");
+  // === TRANSFERT INTERNE ===
   const [searchUser, setSearchUser] = useState("");
   const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
     null
   );
   const [montantTransfer, setMontantTransfer] = useState("");
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
+  const [transferSource, setTransferSource] = useState<
+    "DISPONIBLE" | "RETIRABLE"
+  >("DISPONIBLE");
+
+  // === DEMANDE DE RETRAIT (validation admin) ===
+  const [montantDemande, setMontantDemande] = useState("");
+  const [loadingDemande, setLoadingDemande] = useState(false);
 
   // Chargement initial
   useEffect(() => {
@@ -47,9 +52,7 @@ export default function WalletPage() {
         setWallet(walletData);
         setTransactions(txData);
       } catch (err: any) {
-        toast.error(
-          err.response?.data?.message || "Erreur de chargement du portefeuille"
-        );
+        toast.error(err.response?.data?.message || "Erreur de chargement");
       } finally {
         setLoading(false);
       }
@@ -57,173 +60,136 @@ export default function WalletPage() {
     fetchData();
   }, []);
 
-  // RECHERCHE UTILISATEUR – CORRIGÉE
+  // Recherche utilisateur (intacte — ne touche pas)
   useEffect(() => {
     if (searchUser.length < 2) {
       setSearchResults([]);
       return;
     }
-
     const timer = setTimeout(async () => {
       try {
         const res = await api.get<UserSearchResult[]>(
           `/api/auth/search?term=${encodeURIComponent(searchUser)}`
         );
-        // Exclure soi-même
         setSearchResults(res.filter((u) => u.id !== user?.id));
       } catch (err) {
-        console.error("Erreur recherche utilisateur", err);
+        console.error("Erreur recherche", err);
       }
     }, 400);
-
     return () => clearTimeout(timer);
   }, [searchUser, user?.id]);
 
-  
-
-
-  // token recup
-const getToken = (): string => {
-  const userStr = localStorage.getItem("user");
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr);
-      if (user?.token) return user.token;
-    } catch (e) {
-      console.warn("Erreur parsing user", e);
+  const getToken = (): string => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        return user?.token || user?.accessToken || user?.jwt || "";
+      } catch {}
     }
-  }
-  return "";
-};
+    return "";
+  };
 
-// DÉPÔT
-const handleDepot = async () => {
-  const montant = parseFloat(montantDepot);
-  if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+  // === TRANSFERT INTERNE — AVEC CHOIX DE SOURCE ===
+  const handleTransfer = async () => {
+    if (!selectedUser) return toast.error("Sélectionne un destinataire");
+    const montant = parseFloat(montantTransfer);
+    if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
 
-  const token = getToken();
-  if (!token) return toast.error("Reconnecte-toi");
+    const token = getToken();
+    if (!token) return toast.error("Reconnecte-toi");
 
-  try {
-    const res = await fetch("http://localhost:8080/api/wallets/depot", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ montant }),
-    });
-    if (!res.ok) throw new Error("Échec du dépôt");
-    const wallet = await res.json();
-    setWallet(wallet);
-    setMontantDepot("");
-    toast.success("Dépôt effectué !");
-  } catch {
-    toast.error("Échec du dépôt");
-  }
-};
-
-// RETRAIT
-const handleRetrait = async () => {
-  const montant = parseFloat(montantRetrait);
-  if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
-
-  const token = getToken();
-  if (!token) return toast.error("Reconnecte-toi");
-
-  try {
-    const res = await fetch("http://localhost:8080/api/wallets/retrait", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ montant }),
-    });
-    if (!res.ok) throw new Error("Échec du retrait");
-    setMontantRetrait("");
-    toast.success("Demande de retrait envoyée");
-  } catch {
-    toast.error("Échec du retrait");
-  }
-};
-
-// TRANSFERT
-const handleTransfer = async () => {
-  if (!selectedUser) return toast.error("Sélectionne un destinataire");
-  const montant = parseFloat(montantTransfer);
-  if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
-
-  // RÉCUPÉRATION DU TOKEN – VERSION QUI MARCHE À 1000%
-  let token = "";
-  const userStr = localStorage.getItem("user");
-  if (userStr) {
     try {
-      const user = JSON.parse(userStr);
-      token = user.token || "";
-    } catch (e) {}
-  }
+      const res = await fetch("http://localhost:8080/api/wallets/transfer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          destinataireUserId: selectedUser.id,
+          montant,
+          source: transferSource,
+        }),
+      });
 
-  if (!token) {
-    toast.error("Token manquant, reconnecte-toi");
-    return;
-  }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Transfert échoué");
 
-  try {
-    const response = await fetch("http://localhost:8080/api/wallets/transfer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ← C’EST ÇA QUI MANQUAIT
-      },
-      body: JSON.stringify({
-        destinataireUserId: selectedUser.id,
-        montant,
-      }),
-    });
+      toast.success(
+        transferSource === "RETIRABLE"
+          ? "Transfert de gains validés envoyé instantanément !"
+          : "Transfert envoyé avec succès !"
+      );
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.message || "Transfert échoué");
+      setMontantTransfer("");
+      setSearchUser("");
+      setSelectedUser(null);
+      setSearchResults([]);
+      setTransferSource("DISPONIBLE");
+
+      const walletRes = await api.get<WalletDTO>("/api/wallets/solde");
+      setWallet(walletRes);
+    } catch (err: any) {
+      toast.error(err.message || "Transfert échoué");
     }
+  };
 
-    toast.success(
-      `Transfert de ${montant.toFixed(2)} € envoyé à ${
-        selectedUser.nomComplet
-      } !`
-    );
-    setMontantTransfer("");
-    setSearchUser("");
-    setSelectedUser(null);
-    setSearchResults([]);
+  // === DEMANDE DE RETRAIT (validation admin) ===
+ const handleDemandeRetrait = async () => {
+   const montant = parseFloat(montantDemande);
+   if (montant < 5 || montant > wallet!.soldeDisponible) {
+     toast.error("Montant invalide ou solde insuffisant");
+     return;
+   }
 
-    // Recharge le solde
-    const walletRes = await fetch("http://localhost:8080/api/wallets/solde", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const updatedWallet = await walletRes.json();
-    setWallet(updatedWallet);
-  } catch (err: any) {
-    toast.error(err.message || "Transfert échoué");
-  }
-};
+   setLoadingDemande(true);
+   try {
+     const token = getToken();
+     const res = await fetch(
+       "http://localhost:8080/api/wallets/demande-retrait",
+       {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`,
+         },
+         body: JSON.stringify({ montant }),
+       }
+     );
 
-  if (loading)
-    return <div className={styles.loading}>Chargement du portefeuille...</div>;
-  if (!wallet)
-    return (
-      <div className={styles.loading}>
-        Impossible de charger le portefeuille
-      </div>
-    );
+     const data = await res.json();
+     if (!res.ok) throw new Error(data.message || "Échec");
 
+     toast.success("Demande envoyée ! Visible dans l'historique");
+
+     // Rafraîchir TOUT (solde + historique)
+     const [newWallet, newTransactions] = await Promise.all([
+       api.get<WalletDTO>("/api/wallets/solde"),
+       api.get<TransactionDTO[]>("/api/transactions/mes-transactions"),
+     ]);
+
+     setWallet(newWallet);
+     setTransactions(newTransactions);
+     setMontantDemande("");
+   } catch (err: any) {
+     toast.error(err.message || "Erreur lors de la demande");
+   } finally {
+     setLoadingDemande(false);
+   }
+ };
   const pendingWithdrawals = transactions.filter(
     (t) => t.type === "RETRAIT" && t.statut === "EN_ATTENTE_VALIDATION"
   ).length;
 
+  if (loading)
+    return <div className={styles.loading}>Chargement du portefeuille...</div>;
+  if (!wallet)
+    return <div className={styles.loading}>Portefeuille introuvable</div>;
+
   return (
     <div className={styles.container}>
-      {/* Header Solde */}
+      {/* HEADER SOLDE */}
       <div className={styles.header}>
         <h1 className={styles.title}>Mon Portefeuille</h1>
         <div className={styles.balanceGrid}>
@@ -239,66 +205,126 @@ const handleTransfer = async () => {
               {wallet.soldeBloque.toFixed(2)} €
             </div>
           </div>
+          <div className={styles.balanceCard}>
+            <div className={styles.balanceLabel}>Retirable (validé admin)</div>
+            <div className={styles.balanceAmount}>
+              {wallet.soldeRetirable.toFixed(2)} €
+            </div>
+          </div>
         </div>
         <div className={styles.total}>
-          Total : {(wallet.soldeDisponible + wallet.soldeBloque).toFixed(2)} €
+          Total :{" "}
+          {(
+            wallet.soldeDisponible +
+            wallet.soldeBloque +
+            wallet.soldeRetirable
+          ).toFixed(2)}{" "}
+          €
         </div>
       </div>
 
-      {/* Actions */}
+      {/* ACTIONS */}
       <div className={styles.actionsGrid}>
-        {/* Dépôt */}
+        {/* DÉPÔT EXTERNE */}
         <div className={styles.actionCard}>
-          <h3 className={styles.actionTitle}>Déposer des fonds</h3>
-          <input
-            type="number"
-            placeholder="Montant en €"
-            value={montantDepot}
-            onChange={(e) => setMontantDepot(e.target.value)}
-            className={styles.input}
-          />
-          <button
-            onClick={handleDepot}
-            className={`${styles.btn} ${styles.btnDepot}`}
-          >
-            Déposer
-          </button>
+          <h3 className={styles.actionTitle}>Déposer de l'argent</h3>
+          <p className={styles.actionDesc}>
+            Carte bancaire, Orange Money, Wave, MTN...
+          </p>
+          <Link to="/depot">
+            <button className={`${styles.btn} ${styles.btnDepot}`}>
+              Ajouter des fonds
+            </button>
+          </Link>
         </div>
 
-        {/* Retrait */}
+        {/* DEMANDE DE RETRAIT (validation admin) */}
         <div className={styles.actionCard}>
-          <h3 className={styles.actionTitle}>Retirer des fonds</h3>
-          <input
-            type="number"
-            placeholder="Montant en €"
-            value={montantRetrait}
-            onChange={(e) => setMontantRetrait(e.target.value)}
-            className={styles.input}
-          />
-          <button
-            onClick={handleRetrait}
-            className={`${styles.btn} ${styles.btnRetrait}`}
-          >
-            Demander un retrait
-          </button>
+          <h3 className={styles.actionTitle}>Demander un retrait</h3>
+          <p className={styles.actionDesc}>
+            Envoie une demande à l'admin · Fonds bloqués jusqu'à validation
+          </p>
+          <div style={{ margin: "1rem 0" }}>
+            <input
+              type="number"
+              min="5"
+              step="0.01"
+              placeholder="Montant (min 5 €)"
+              value={montantDemande}
+              onChange={(e) => setMontantDemande(e.target.value)}
+              className={styles.input}
+              style={{ width: "100%", marginBottom: "0.5rem" }}
+            />
+            <button
+              onClick={handleDemandeRetrait}
+              disabled={
+                loadingDemande ||
+                !montantDemande ||
+                parseFloat(montantDemande) > wallet.soldeDisponible ||
+                parseFloat(montantDemande) < 5
+              }
+              className={`${styles.btn} ${styles.btnRetraitAdmin}`}
+            >
+              {loadingDemande ? "Envoi..." : "Envoyer la demande"}
+            </button>
+          </div>
+          {pendingWithdrawals > 0 && (
+            <p
+              style={{
+                color: "#e67e22",
+                fontSize: "0.9rem",
+                marginTop: "0.5rem",
+              }}
+            >
+              Tu as {pendingWithdrawals} demande(s) en attente
+            </p>
+          )}
         </div>
 
-        {/* Transfert – CORRIGÉ */}
+        {/* RETRAIT DIRECT (seulement si solde retirable > 0) */}
+        {wallet.soldeRetirable > 0 && (
+          <div className={styles.actionCard}>
+            <h3 className={styles.actionTitle}>Retirer mes gains validés</h3>
+            <p className={styles.actionDesc}>
+              Vers Orange Money, Wave, MTN ou compte bancaire
+            </p>
+            <div style={{ textAlign: "center", margin: "1rem 0" }}>
+              <p
+                style={{
+                  fontSize: "1.8rem",
+                  fontWeight: "bold",
+                  color: "#27ae60",
+                }}
+              >
+                {wallet.soldeRetirable.toFixed(2)} € disponibles
+              </p>
+            </div>
+            <Link to="/retrait">
+              <button className={`${styles.btn} ${styles.btnDepot}`}>
+                Retirer maintenant
+              </button>
+            </Link>
+          </div>
+        )}
+
+        {/* TRANSFERT INTERNE — AVEC CHOIX DE SOURCE */}
         <div className={styles.actionCard}>
           <h3 className={styles.actionTitle}>Transférer à un ami</h3>
+          <p className={styles.actionDesc}>
+            Envoie de l’argent à un autre utilisateur GrowzApp
+          </p>
+
           <div className="relative">
             <input
               type="text"
-              placeholder="Rechercher par nom, prénom ou login..."
+              placeholder="Rechercher par nom ou login..."
               value={searchUser}
               onChange={(e) => {
                 setSearchUser(e.target.value);
-                setSelectedUser(null); // Réinitialise la sélection
+                setSelectedUser(null);
               }}
               className={styles.input}
             />
-
-            {/* Résultats de recherche */}
             {searchResults.length > 0 && (
               <div className={styles.searchResults}>
                 {searchResults.map((u) => (
@@ -311,21 +337,46 @@ const handleTransfer = async () => {
                       setSearchResults([]);
                     }}
                   >
-                    <div className="flex items-center gap-3">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                      }}
+                    >
                       {u.image ? (
                         <img
                           src={u.image}
-                          alt={u.login}
-                          className="w-10 h-10 rounded-full object-cover"
+                          alt=""
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
                         />
                       ) : (
-                        <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold">
+                        <div
+                          style={{
+                            width: 40,
+                            height: 40,
+                            background: "#ddd",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#666",
+                            fontWeight: "bold",
+                          }}
+                        >
                           {u.nomComplet[0]}
                         </div>
                       )}
                       <div>
-                        <div className="font-medium">{u.nomComplet}</div>
-                        <div className="text-sm text-gray-500">@{u.login}</div>
+                        <div style={{ fontWeight: 600 }}>{u.nomComplet}</div>
+                        <div style={{ fontSize: "0.9rem", color: "#666" }}>
+                          @{u.login}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -334,52 +385,112 @@ const handleTransfer = async () => {
             )}
           </div>
 
-          {/* Affichage du destinataire sélectionné */}
           {selectedUser && (
-            <div className="mt-3 p-3 bg-blue-50 rounded-lg flex items-center gap-3">
-              <span className="text-sm font-medium">Destinataire :</span>
-              {selectedUser.image && (
-                <img
-                  src={selectedUser.image}
-                  className="w-8 h-8 rounded-full"
-                />
-              )}
-              <span>
-                <strong>{selectedUser.nomComplet}</strong> (@
-                {selectedUser.login})
-              </span>
-            </div>
-          )}
+            <>
+              <div
+                style={{
+                  margin: "1rem 0",
+                  padding: "1rem",
+                  background: "#f0fff4",
+                  borderRadius: "0.8rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                }}
+              >
+                <span style={{ fontWeight: 600 }}>Destinataire :</span>
+                {selectedUser.image && (
+                  <img
+                    src={selectedUser.image}
+                    style={{ width: 32, height: 32, borderRadius: "50%" }}
+                  />
+                )}
+                <strong>
+                  {selectedUser.nomComplet} (@{selectedUser.login})
+                </strong>
+              </div>
 
-          <input
-            type="number"
-            placeholder="Montant à envoyer"
-            value={montantTransfer}
-            onChange={(e) => setMontantTransfer(e.target.value)}
-            className={styles.input}
-            disabled={!selectedUser}
-          />
-          <button
-            onClick={handleTransfer}
-            disabled={!selectedUser || !montantTransfer}
-            className={`${styles.btn} ${styles.btnTransfer} ${
-              !selectedUser || !montantTransfer
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-          >
-            Envoyer le transfert
-          </button>
+              <input
+                type="number"
+                placeholder="Montant à envoyer"
+                value={montantTransfer}
+                onChange={(e) => setMontantTransfer(e.target.value)}
+                className={styles.input}
+              />
+
+              {/* CHOIX DE LA SOURCE */}
+              <div style={{ margin: "1rem 0" }}>
+                <p style={{ fontWeight: 600, marginBottom: "0.5rem" }}>
+                  Payer depuis :
+                </p>
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="source"
+                      value="DISPONIBLE"
+                      checked={transferSource === "DISPONIBLE"}
+                      onChange={() => setTransferSource("DISPONIBLE")}
+                    />
+                    <span>
+                      Solde disponible ({wallet.soldeDisponible.toFixed(2)} €)
+                    </span>
+                  </label>
+                  <label
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="source"
+                      value="RETIRABLE"
+                      checked={transferSource === "RETIRABLE"}
+                      onChange={() => setTransferSource("RETIRABLE")}
+                    />
+                    <span>
+                      Gains validés ({wallet.soldeRetirable.toFixed(2)} €)
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <button
+                onClick={handleTransfer}
+                disabled={
+                  !selectedUser ||
+                  !montantTransfer ||
+                  parseFloat(montantTransfer) <= 0 ||
+                  (transferSource === "DISPONIBLE" &&
+                    parseFloat(montantTransfer) > wallet.soldeDisponible) ||
+                  (transferSource === "RETIRABLE" &&
+                    parseFloat(montantTransfer) > wallet.soldeRetirable)
+                }
+                className={`${styles.btn} ${styles.btnTransfer}`}
+              >
+                Envoyer le transfert
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Historique */}
+      {/* HISTORIQUE */}
       <div className={styles.historyCard}>
         <h2 className={styles.historyTitle}>Historique des transactions</h2>
         {pendingWithdrawals > 0 && (
           <div className={styles.pendingWithdrawalsAlert}>
-            {pendingWithdrawals} retrait{pendingWithdrawals > 1 ? "s" : ""} en
-            attente de validation admin
+            {pendingWithdrawals} demande(s) de retrait en attente de validation
           </div>
         )}
 
@@ -410,10 +521,10 @@ const handleTransfer = async () => {
                   </td>
                   <td className={styles.td}>
                     {tx.type === "DEPOT" && "Dépôt"}
-                    {tx.type === "RETRAIT" && "Retrait"}
+                    {tx.type === "RETRAIT" && "Demande de retrait"}
                     {tx.type === "TRANSFER_OUT" && "Transfert envoyé"}
                     {tx.type === "TRANSFER_IN" && "Transfert reçu"}
-                    {tx.type === "INVESTISSEMENT" && "Investissement"}
+                    {tx.type === "PAYOUT_STRIPE" && "Retrait bancaire"}
                   </td>
                   <td
                     className={`${styles.td} ${
@@ -432,45 +543,21 @@ const handleTransfer = async () => {
                           ? styles.statusSuccess
                           : tx.statut === "EN_ATTENTE_VALIDATION"
                           ? styles.statusPending
-                          : styles.statusFailed
+                          : tx.statut === "REJETEE"
+                          ? styles.statusFailed
+                          : ""
                       }`}
                     >
                       {tx.statut === "SUCCESS"
-                        ? "Succès"
+                        ? "Validé"
                         : tx.statut === "EN_ATTENTE_VALIDATION"
-                        ? "En attente"
+                        ? "En attente admin"
                         : tx.statut === "REJETEE"
                         ? "Rejeté"
                         : tx.statut}
                     </span>
                   </td>
-                  <td className={styles.td}>
-                    {tx.description ? (
-                      <span className={styles.detailRejected}>
-                        Rejeté : {tx.description}
-                      </span>
-                    ) : tx.type === "RETRAIT" &&
-                      tx.statut === "EN_ATTENTE_VALIDATION" ? (
-                      <span className={styles.detailPending}>
-                        En attente de validation admin
-                      </span>
-                    ) : tx.type === "RETRAIT" && tx.statut === "SUCCESS" ? (
-                      <span className={styles.detailSuccess}>
-                        Retrait validé
-                      </span>
-                    ) : tx.type === "TRANSFER_OUT" &&
-                      tx.destinataireNomComplet ? (
-                      <span className={styles.detailTransfer}>
-                        → {tx.destinataireNomComplet} (@{tx.destinataireLogin})
-                      </span>
-                    ) : tx.type === "TRANSFER_IN" && tx.expediteurNomComplet ? (
-                      <span className={styles.detailTransfer}>
-                        ← {tx.expediteurNomComplet} (@{tx.expediteurLogin})
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
+                  <td className={styles.td}>{tx.description || "-"}</td>
                 </tr>
               ))
             )}
