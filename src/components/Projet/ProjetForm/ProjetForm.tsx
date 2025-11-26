@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import Cropper from "react-easy-crop";
 import { FiCamera, FiSend } from "react-icons/fi";
 import styles from "./ProjetForm.module.css";
-import { getCroppedImg, dataURLtoFile } from "../../../utils/CropImage";
+import { getCroppedImg, dataURLtoFile } from "../../../types/utils/CropImage";
 
 interface Secteur {
   id: number;

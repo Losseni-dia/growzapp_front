@@ -1,5 +1,5 @@
-// src/pages/Dashboard/Dashboard.tsx → VERSION QUI MARCHE À VIE (DÉFINITIVE)
-import { useEffect, useCallback } from "react";
+// src/pages/Dashboard/Dashboard.tsx → VERSION FINALE ULTIME — 26 NOV 2025
+import React, { useEffect, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../components/context/AuthContext";
 import { api } from "../../service/api";
@@ -9,41 +9,55 @@ import {
   FiMail,
   FiPhone,
   FiMapPin,
-  FiGlobe,
   FiEye,
+  FiDollarSign,
 } from "react-icons/fi";
 
-export default function Dashboard() {
-  const { user, updateUser, loading } = useAuth();
+import type { WalletDTO } from "../../types/wallet";
 
-  // useCallback pour éviter le warning React + boucle infinie
+export default function Dashboard() {
+  const { user, updateUser, loading: authLoading } = useAuth();
+  const [wallet, setWallet] = useState<WalletDTO | null>(null);
+  const [walletLoading, setWalletLoading] = useState(true);
+
   const loadFullProfile = useCallback(async () => {
     try {
-     const response = await api.get<any>("users/me");
-      console.log("Profil complet reçu :", response);
-
+      const response = await api.get<any>("users/me");
       if (response.success && response.data) {
         updateUser(response.data);
       }
     } catch (err: any) {
       if (err.message.includes("401")) {
-        console.error("Token expiré ou invalide → déconnexion");
-        // Optionnel : rediriger vers login
-        // window.location.href = "/login";
+        console.error("Token expiré → déconnexion");
       } else {
         console.error("Erreur chargement profil :", err);
       }
     }
   }, [updateUser]);
 
-// dépendance stable grâce à useCallback
+  // Chargement du wallet séparé — PROPRE ET EFFICACE
+  const loadWallet = useCallback(async () => {
+    try {
+      const walletData = await api.get<WalletDTO>("/api/wallets/solde");
+      setWallet(walletData);
+    } catch (err) {
+      console.error("Erreur chargement du portefeuille");
+    } finally {
+      setWalletLoading(false);
+    }
+  }, []);
 
-  if (loading) {
-    return <div className={styles.center}>Chargement du profil...</div>;
+  useEffect(() => {
+    loadFullProfile();
+    loadWallet();
+  }, [loadFullProfile, loadWallet]);
+
+  if (authLoading || walletLoading) {
+    return <div className={styles.loading}>Chargement du profil...</div>;
   }
 
   if (!user) {
-    return <div className={styles.center}>Connexion requise</div>;
+    return <div className={styles.loading}>Connexion requise</div>;
   }
 
   const investments = user.investissements ?? [];
@@ -51,14 +65,17 @@ export default function Dashboard() {
 
   return (
     <div className={styles.container}>
-      {/* Ton affichage habituel */}
+      {/* SECTION PROFIL + PORTEFEUILLE EN HAUT À DROITE */}
       <section className={styles.profileSection}>
         <div className={styles.profileCard}>
+          {/* Avatar */}
           <img
             src={user.image || "/default-avatar.png"}
             alt="Profil"
             className={styles.avatar}
           />
+
+          {/* Infos personnelles */}
           <div className={styles.info}>
             <h1>
               {user.prenom} {user.nom}
@@ -73,7 +90,6 @@ export default function Dashboard() {
               <FiMapPin /> {user.localite?.nom || "Non renseigné"}
               {user.localite?.paysNom && `, ${user.localite.paysNom}`}
             </p>
-           
 
             <div className={styles.roles}>
               {user.roles?.map((role) => (
@@ -83,10 +99,24 @@ export default function Dashboard() {
               ))}
             </div>
 
+            {/* BOUTON MODIFIER PROFIL — JAUNE #e2b607, MAGNIFIQUE */}
             <Link to="/profile/edit" className={styles.editBtn}>
-              <FiEdit /> Modifier mon profil
+              <FiEdit size={20} />
+              Modifier mon profil
             </Link>
           </div>
+
+          {/* BADGE PORTEFEUILLE — ORANGE DOUX, TEXTE BLANC, SOLDE DISPONIBLE */}
+          <Link to="/wallet" className={styles.walletBadge}>
+            <div className={styles.walletIcon}>
+              <FiDollarSign size={32} />
+            </div>
+            <div className={styles.walletLabel}>Mon Portefeuille</div>
+            <div className={styles.walletAmount}>
+              {wallet?.soldeDisponible?.toFixed(2) || "0.00"} €
+            </div>
+            <span className={styles.walletLink}>Voir le détail</span>
+          </Link>
         </div>
       </section>
 
@@ -108,7 +138,7 @@ export default function Dashboard() {
                   {(inv.nombrePartsPris * inv.prixUnePart).toLocaleString()} €
                 </p>
                 <Link to={`/projet/${inv.projetId}`} className={styles.btn}>
-                  <FiEye /> Voir
+                  <FiEye size={18} /> Voir
                 </Link>
               </div>
             ))}
@@ -149,7 +179,7 @@ export default function Dashboard() {
                   />
                 </p>
                 <Link to={`/projet/${p.id}`} className={styles.btn}>
-                  <FiEye /> Voir
+                  <FiEye size={18} /> Voir
                 </Link>
               </div>
             ))}

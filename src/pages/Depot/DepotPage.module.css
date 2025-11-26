@@ -1,0 +1,302 @@
+/* src/pages/withdraw/RetraitPage.module.css  →  ET  src/pages/deposit/DepotPage.module.css */
+/* IDENTIQUE POUR LES DEUX PAGES – STYLE 100% COHÉRENT */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: white;
+  max-width: 540px;
+  width: 100%;
+  border-radius: 1.8rem;
+  box-shadow: 0 20px 50px rgba(27, 94, 32, 0.15);
+  padding: 3rem 2.5rem;
+  position: relative;
+  border: 3px solid #e8f5e9;
+}
+
+.backBtn {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #27ae60;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.backBtn:hover {
+  background: #e8f5e9;
+  transform: scale(1.1);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-align: center;
+  color: #1B5E20;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #27ae60;
+  margin-bottom: 2.5rem;
+  font-weight: 500;
+}
+
+.form {
+  display: grid;
+  gap: 2rem;
+}
+
+.inputGroup label {
+  display: block;
+  font-weight: 600;
+  color: #1B5E20;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+}
+
+.input {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 1rem;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 5px rgba(39, 174, 96, 0.15);
+}
+
+.methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.method {
+  cursor: pointer;
+}
+
+.method input {
+  position: absolute;
+  opacity: 0;
+}
+
+.methodLabel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 1.3rem 1.4rem;
+  background: #f8fff9;
+  border: 2px solid #e0e0e0;
+  border-radius: 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 1.05rem;
+  text-align: left;
+}
+
+.methodLabel img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.method input:checked + .methodLabel {
+  background: #e8f5e9;
+  border-color: #27ae60;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(39, 174, 96, 0.18);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #27ae60, #219653);
+  color: white;
+  border: none;
+  padding: 1.4rem;
+  border-radius: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 35px rgba(39, 174, 96, 0.35);
+}
+
+.submitBtn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.info {
+  text-align: center;
+  font-size: 0.98rem;
+  color: #555;
+  margin-top: 1.5rem;
+  line-height: 1.6;
+}
+
+/* MODAL COMMUN (téléphone & carte) */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.modal {
+  background: white;
+  border-radius: 1.8rem;
+  padding: 2.8rem 2.5rem;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+  animation: modalAppear 0.4s ease-out;
+}
+
+@keyframes modalAppear {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.modal h2 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1B5E20;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.modal p {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #27ae60;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+/* Boutons du modal */
+.modalButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.cancelBtn {
+  background: #f1f1f1;
+  color: #666;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancelBtn:hover {
+  background: #ddd;
+}
+
+.confirmBtn {
+  background: linear-gradient(135deg, #27ae60, #219653);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(39, 174, 96, 0.4);
+}
+
+.confirmBtn:disabled {
+  background: #95d6b2;
+  cursor: not-allowed;
+}
+
+/* LOADER PENDANT LA REDIRECTION VERS STRIPE / PAYDUNYA */
+.redirectLoaderOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.4s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+.redirectLoader {
+  width: 80px;
+  height: 80px;
+  border: 6px solid #e8f5e9;
+  border-top: 6px solid #27ae60;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 2rem;
+}
+
+.redirectText {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  text-align: center;
+  margin: 0 2rem;
+}
+
+.redirectSubtext {
+  font-size: 1.2rem;
+  color: #a0f7c0;
+  margin-top: 1rem;
+  opacity: 0.9;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

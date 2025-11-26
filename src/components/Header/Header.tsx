@@ -6,7 +6,6 @@ import {
   FiPlusCircle,
   FiUser,
   FiShield,
-  FiDollarSign, // ← ICÔNE OFFICIELLE DE L’ARGENT (utilisée par Revolut, N26, etc.)
   FiChevronDown,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -43,11 +42,7 @@ export default function Header() {
       <nav className={styles.nav}>
         {user ? (
           <>
-            {/* PORTEFEUILLE DANS LE HEADER — TU ES UNE BANQUE */}
-            <Link to="/wallet" className={styles.navLink}>
-              <FiDollarSign size={24} />
-              <span>Mon Portefeuille</span>
-            </Link>
+           
 
             <Link to="/projet/creer" className={styles.navLink}>
               <FiPlusCircle /> Créer un projet

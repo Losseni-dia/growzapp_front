@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import Cropper from "react-easy-crop";
 import styles from "./RegisterForm.module.css";
-import { getCroppedImg, dataURLtoFile } from "../../utils/CropImage";
+import { getCroppedImg, dataURLtoFile } from "../../types/utils/CropImage";
 
 interface Localite {
   id: number;
@@ -167,7 +167,6 @@ export default function RegisterForm() {
         throw new Error(errorText || "Erreur inscription");
       }
 
-    
       toast.success("Inscription réussie ! Bienvenue !");
       navigate("/login");
     } catch (err: any) {

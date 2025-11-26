@@ -1,9 +1,10 @@
-/* src/pages/wallet/WalletPage.module.css → VERSION FINALE ULTIME (25 NOV 2025) */
+/* src/pages/wallet/WalletPage.module.css → CHARTE FINALE ULTIME 2025 — JAUNE #e2b607 + VERT #27ae60 */
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+ font-family: 'Segoe UI', sans-serif;
 }
 
 /* =================== HEADER SOLDE =================== */
@@ -14,13 +15,14 @@
   padding: 2.5rem;
   box-shadow: 0 20px 40px rgba(27, 94, 32, 0.25);
   margin-bottom: 3rem;
+  text-align: center;
 }
 
 .title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 900;
+  margin-bottom: 1.8rem;
+  letter-spacing: -0.5px;
 }
 
 .balanceGrid {
@@ -30,167 +32,205 @@
 }
 
 .balanceCard {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  border-radius: 1.2rem;
-  padding: 1.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  border-radius: 1.3rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.balanceCard:hover {
+  transform: translateY(-5px);
 }
 
 .balanceLabel {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  opacity: 0.95;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
 }
 
 .balanceAmount {
-  font-size: 2.8rem;
+  font-size: 3rem;
   font-weight: 900;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .total {
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-align: center;
-  margin-top: 2rem;
-  opacity: 0.95;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: 2.2rem;
+  opacity: 0.98;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
-/* =================== ACTIONS =================== */
+/* =================== BOUTONS JAUNE #e2b607 — TOUS UNIFORMES =================== */
+.btn {
+  width: 100%;
+  padding: 1.2rem;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 20px rgba(226, 182, 7, 0.35);
+  background: #e2b607;
+  color: #1a1a1a;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+}
+
+.btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.btn:hover:not(:disabled) {
+  background: #d4a505;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 30px rgba(226, 182, 7, 0.5);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  background: #a89f6e !important;
+  color: #777 !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Bouton spécial "Envoyer la demande" — encore plus premium */
+.btnRetraitAdmin {
+  background: linear-gradient(135deg, #e2b607 0%, #f1c40f 100%);
+  color: #1a1a1a;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  border: 3px solid #c9a005;
+  box-shadow: 0 10px 25px rgba(226, 182, 7, 0.4);
+}
+
+.btnRetraitAdmin:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d4a505 0%, #e1b307 100%);
+  border-color: #b38b04;
+  transform: translateY(-5px);
+  box-shadow: 0 18px 35px rgba(226, 182, 7, 0.6);
+}
+
+/* Tous les autres boutons (dépôt, transfert, etc.) */
+.btnDepot,
+.btnTransfer {
+  background: #e2b607;
+  color: #1a1a1a;
+}
+
+/* =================== CARTES — HOVER VERT #27ae60 =================== */
 .actionsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.2rem;
+  margin-bottom: 3.5rem;
 }
 
 .actionCard {
   background: white;
-  border-radius: 1.2rem;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 1.4rem;
+  padding: 2.2rem;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.09);
   border: 2px solid #f0f0f0;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .actionCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(39, 174, 96, 0.28);
   border-color: #27ae60;
 }
 
 .actionTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 1.6rem;
   text-align: center;
   color: #1B5E20;
+  letter-spacing: 0.5px;
 }
 
+.actionDesc {
+  color: #555;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* Inputs */
 .input {
   width: 100%;
-  padding: 1rem 1.2rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 0.8rem;
+  padding: 1.1rem 1.3rem;
+  border: 2.5px solid #e0e0e0;
+  border-radius: 1rem;
   font-size: 1.1rem;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   margin-bottom: 1rem;
+  background: #fdfdfd;
 }
 
 .input:focus {
   outline: none;
-  border-color: #27ae60;
-  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.15);
-}
-
-.btn {
-  width: 100%;
-  padding: 1rem;
-  border: none;
-  border-radius: 0.8rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 0.5rem;
-}
-
-.btnDepot {
-  background: #27ae60;
-  color: white;
-}
-
-.btnDepot:hover {
-  background: #219653;
-  transform: translateY(-2px);
-}
-
-.btnRetrait {
-  background: #f2994a;
-  color: white;
-}
-
-.btnRetrait:hover {
-  background: #e67e22;
-}
-
-.btnTransfer {
-  background: #8e44ad;
-  color: white;
-}
-
-.btnTransfer:hover {
-  background: #7d3c98;
-}
-
-.btnTransfer:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.searchResults {
-  max-height: 180px;
-  overflow-y: auto;
-  border: 1px solid #e0e0e0;
-  border-radius: 0.8rem;
-  margin-bottom: 1rem;
+  border-color: #e2b607;
   background: white;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.searchItem {
-  padding: 0.8rem 1rem;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background 0.2s;
-}
-
-.searchItem:hover {
-  background: #f8fff9;
-}
-
-.searchItem:last-child {
-  border-bottom: none;
+  box-shadow: 0 0 0 5px rgba(226, 182, 7, 0.22);
 }
 
 /* =================== TABLEAU HISTORIQUE =================== */
 .historyCard {
   background: white;
-  border-radius: 1.2rem;
+  border-radius: 1.4rem;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
   border: 2px solid #f0f0f0;
 }
 
 .historyTitle {
-  font-size: 1.8rem;
-  font-weight: 700;
-  padding: 1.8rem 2rem;
-  background: #f8fff9;
-  border-bottom: 3px solid #27ae60;
+  font-size: 1.9rem;
+  font-weight: 800;
+  padding: 2rem;
+  background: #fffde6;
+  border-bottom: 5px solid #e2b607;
   color: #1B5E20;
+  text-align: center;
+}
+
+.pendingWithdrawalsAlert {
+  margin: 1.2rem 2rem;
+  text-align: right;
+  font-weight: 700;
+  color: #d35400;
+  font-size: 1.15rem;
+  background: #fef5e7;
+  padding: 1rem 1.4rem;
+  border-radius: 1rem;
+  border-left: 6px solid #e67e22;
 }
 
 .table {
@@ -200,18 +240,19 @@
 
 .th {
   text-align: left;
-  padding: 1rem 1.5rem;
-  background: #f8fff9;
+  padding: 1.3rem 1.6rem;
+  background: #fffde6;
   color: #1B5E20;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .td {
-  padding: 1.2rem 1.5rem;
+  padding: 1.4rem 1.6rem;
   border-bottom: 1px solid #f0f0f0;
+  font-size: 1.02rem;
 }
 
 .table tr:hover {
@@ -219,93 +260,33 @@
 }
 
 .status {
-  padding: 0.4rem 0.9rem;
+  padding: 0.5rem 1rem;
   border-radius: 2rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.statusSuccess {
-  background: #d4edda;
-  color: #155724;
-}
-
-.statusPending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.statusFailed {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.amountPositive {
-  color: #27ae60;
-  font-weight: 700;
-}
-
-.amountNegative {
-  color: #c0392b;
-  font-weight: 700;
-}
-
-.loading {
-  text-align: center;
-  padding: 4rem;
-  font-size: 1.5rem;
-  color: #27ae60;
-}
-
-/* =================== NOUVEAU : Messages spéciaux dans le détail =================== */
-/* (utilisés dans le JSX pour les retraits) */
-/* Messages spéciaux dans le détail */
-.detailPending {
-  color: #f39c12;
-  font-style: italic;
-  font-weight: 500;
-}
-
-.detailSuccess {
-  color: #27ae60;
-  font-weight: 600;
-}
-
-.detailRejected {
-  color: #c0392b;
-  font-weight: 600;
-}
-
-.detailTransfer {
-  color: #8e44ad;
-  font-weight: 600;
-}
-
-/* Compteur retraits en attente */
-.pendingWithdrawalsAlert {
-  margin-bottom: 1rem;
-  text-align: right;
-  font-weight: 600;
-  color: #e67e22;
-  font-size: 1.1rem;
-  background: #fff8e1;
-  padding: 0.8rem 1.2rem;
-  border-radius: 0.8rem;
-  border-left: 4px solid #f39c12;
-}
-
-/* Destinataire sélectionné */
-.destinataireSelectionne {
-  color: #27ae60;
   font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Ligne vide */
-.empty {
-  text-align: center;
-  padding: 3rem;
-  color: #666;
-  font-size: 1.2rem;
+.statusSuccess { background: #d4edda; color: #155724; }
+.statusPending { background: #fff3cd; color: #856404; }
+.statusFailed { background: #f8d7da; color: #721c24; }
+
+.amountPositive { color: #27ae60; font-weight: 800; }
+.amountNegative { color: #c0392b; font-weight: 800; }
+
+.loading { 
+  text-align: center; 
+  padding: 5rem; 
+  font-size: 1.8rem; 
+  color: #e2b607; 
+  font-weight: 700;
+}
+
+.empty { 
+  text-align: center; 
+  padding: 4rem; 
+  color: #888; 
+  font-size: 1.3rem; 
+  font-style: italic;
 }
