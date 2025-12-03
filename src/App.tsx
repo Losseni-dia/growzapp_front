@@ -29,9 +29,7 @@ import ProfileUpdateForm from "./components/ProfileUpdateForm/ProfileUpdateForm"
 
 // Pages Admin
 
-
 // Composants
-
 
 // Guards
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
@@ -46,6 +44,8 @@ import ProjectWalletsAdminPage from "./pages/Admin/WalletsProjets/WalletsProjets
 import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
 import ContratPage from "./pages/Contrat/ContratPage";
 import VerifierContrat from "./pages/VerifierContrat/VerifierContrat";
+import ProjetAdminDetail from "./pages/Admin/Projets/ProjetDetails/ProjetAdminDetail";
+import AdminProjetsList from "./pages/Admin/Projets/AdminProjetsList";
 
 function App() {
   return (
@@ -116,6 +116,15 @@ function App() {
                 path="/admin/projets/edit/:id"
                 element={<EditProjetPage />}
               />
+              <Route
+                path="/admin/projets/:id"
+                element={<ProjetAdminDetail />}
+              />
+              <Route
+                path="/admin/projets/detail/:id"
+                element={<ProjetAdminDetail />}
+              />
+              <Route path="/admin/projetsList" element={<AdminProjetsList />} />
             </Route>
           </Route>
 

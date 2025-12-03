@@ -1,12 +1,19 @@
 // src/pages/admin/AdminProjetsPage.tsx
-// VERSION FINALE — SOLDE RÉEL VIA TON ENDPOINT EXISTANT
+// VERSION ULTIME — AVEC TOUS LES BOUTONS (Voir Admin Detail, Modifier, Supprimer)
 
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../../../service/api";
+import toast from "react-hot-toast";
 import styles from "./AdminProjetsPage.module.css";
-import { FiDollarSign, FiEdit, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import {
+  FiDollarSign,
+  FiEdit,
+  FiCheckCircle,
+  FiXCircle,
+  FiEye,
+  FiTrash2,
+} from "react-icons/fi";
 
 interface ProjetAdmin {
   id: number;
@@ -20,30 +27,52 @@ interface ProjetAdmin {
 }
 
 export default function AdminProjetsPage() {
-  const { data: projetsData, isLoading } = useQuery({
+  const {
+    data: projetsData,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["admin-projets"],
     queryFn: () => api.get<{ data: ProjetAdmin[] }>("/api/admin/projets"),
   });
 
   const projets = projetsData?.data || [];
 
-  // Récupération du solde réel pour chaque projet
- const { data: soldesData = {} } = useQuery({
-   queryKey: ["project-soldes"],
-   queryFn: async () => {
-     const soldes: Record<number, number> = {};
-     for (const p of projets) {
-       try {
-         const res = await api.get(`/api/admin/projet-wallet/${p.id}/solde`);
-         soldes[p.id] = Number(res) || 0;
-       } catch {
-         soldes[p.id] = 0;
-       }
-     }
-     return soldes;
-   },
-   enabled: projets.length > 0,
- });
+  const { data: soldesData = {} } = useQuery({
+    queryKey: ["project-soldes"],
+    queryFn: async () => {
+      const soldes: Record<number, number> = {};
+      for (const p of projets) {
+        try {
+          const res = await api.get(`/api/admin/projet-wallet/${p.id}/solde`);
+          soldes[p.id] = Number(res) || 0;
+        } catch {
+          soldes[p.id] = 0;
+        }
+      }
+      return soldes;
+    },
+    enabled: projets.length > 0,
+  });
+
+  // === SUPPRESSION D'UN PROJET ===
+  const handleDelete = async (projetId: number, libelle: string) => {
+    if (
+      !window.confirm(
+        `Supprimer définitivement le projet "${libelle}" ? Cette action est irréversible.`
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await api.delete(`/api/admin/projets/${projetId}`);
+      toast.success("Projet supprimé avec succès");
+      refetch(); // Recharge la liste
+    } catch (err: any) {
+      toast.error(err.message || "Impossible de supprimer le projet");
+    }
+  };
 
   if (isLoading) {
     return <div className={styles.loading}>Chargement des projets...</div>;
@@ -103,7 +132,34 @@ export default function AdminProjetsPage() {
                   </div>
                 </div>
 
-                {/* BOUTONS ADMIN */}
+                {/* BOUTONS ADMIN — TOUS ALIGNÉS */}
+                <div className={styles.adminActions}>
+                  {/* VOIR LES DOCUMENTS (nouvelle page) */}
+                  <Link
+                    to={`/admin/projets/detail/${p.id}`}
+                    className={styles.btnVoirDetail}
+                  >
+                    <FiEye /> Documents
+                  </Link>
+
+                  {/* MODIFIER */}
+                  <Link
+                    to={`/admin/projets/edit/${p.id}`}
+                    className={styles.btnModifier}
+                  >
+                    <FiEdit /> Modifier
+                  </Link>
+
+                  {/* SUPPRIMER */}
+                  <button
+                    onClick={() => handleDelete(p.id, p.libelle)}
+                    className={styles.btnSupprimer}
+                  >
+                    <FiTrash2 /> Supprimer
+                  </button>
+                </div>
+
+                {/* Autres actions */}
                 <div className={styles.adminActions}>
                   {p.statutProjet === "SOUMIS" ||
                   p.statutProjet === "EN_ATTENTE" ? (
@@ -115,11 +171,7 @@ export default function AdminProjetsPage() {
                         <FiXCircle /> Rejeter
                       </button>
                     </>
-                  ) : (
-                    <button className={styles.btnModifier}>
-                      <FiEdit /> Modifier
-                    </button>
-                  )}
+                  ) : null}
 
                   <Link
                     to={`/admin/project-wallets/${p.id}`}
@@ -132,9 +184,9 @@ export default function AdminProjetsPage() {
                 <Link
                   to={`/projet/${p.id}`}
                   target="_blank"
-                  className={styles.btnVoir}
+                  className={styles.btnVoirPublic}
                 >
-                  Voir le projet
+                  Voir le projet (public)
                 </Link>
               </div>
             </div>

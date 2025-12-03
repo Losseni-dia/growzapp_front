@@ -1,0 +1,152 @@
+/* src/pages/Admin/ProjetAdminDetail.module.css */
+
+.container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.title {
+  color: #1B5E20;
+  font-size: 2.5rem;
+  margin: 0 0 2rem 0;
+  text-align: center;
+  border-bottom: 4px solid #FFC107;
+  padding-bottom: 0.8rem;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+  position: relative;
+}
+
+.documentsSection {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  border: 3px solid #E8F5E9;
+  margin-top: 2rem;
+}
+
+.documentsSection h2 {
+  color: #1B5E20;
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem 0;
+  border-bottom: 3px solid #FFC107;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.noDocs {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 3rem;
+  background: #f9fff9;
+  border-radius: 12px;
+  border: 2px dashed #1B5E20;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.docCard {
+  background: #f9fff9;
+  border: 2px solid #E8F5E9;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.docCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(27, 94, 32, 0.15);
+  border-color: #FFC107;
+}
+
+.docCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(to bottom, #1B5E20, #FFC107);
+}
+
+.docIcon {
+  flex-shrink: 0;
+}
+
+.docInfo {
+  flex: 1;
+}
+
+.docInfo strong {
+  display: block;
+  color: #1B5E20;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.docInfo small {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.downloadBtn {
+  background: #1B5E20;
+  color: white;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+}
+
+.downloadBtn:hover {
+  background: #FFC107;
+  color: #1B5E20;
+  transform: scale(1.1);
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.5rem;
+  color: #1B5E20;
+}
+
+.error {
+  color: #d32f2f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .docCard {
+    padding: 1.2rem;
+  }
+}
