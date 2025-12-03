@@ -1,24 +1,141 @@
+/* src/pages/ProjetsPage/ProjetsPage.module.css */
+/* SIDEBAR RÉTRACTABLE + DESIGN PROPRE */
+
+.pageContainer {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fcf8 0%, #f0f8f0 100%);
+  overflow-x: hidden;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 360px;
+  height: 100vh;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 8px 0 30px rgba(0,0,0,0.08);
+  z-index: 1000;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(0);
+  padding: 2.5rem 0;
+}
+
+.sidebar:not(.open) {
+  transform: translateX(-100%);
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.sidebarTitle {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #1B5E20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  color: #1B5E20;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.toggleBtn:hover {
+  background: #e8f5e9;
+}
+
+.sidebarContent {
+  padding: 0 2.5rem;
+}
+
+/* Le reste du CSS reste identique à la version précédente */
+.filterGroup { margin-bottom: 2.4rem; }
+.filterGroup label { display: block; margin-bottom: 0.9rem; font-weight: 700; color: #2d6a2f; font-size: 1.1rem; }
+
+.searchWrapper { position: relative; margin-bottom: 2rem; }
+.searchIcon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #4CAF50; font-size: 1.6rem; pointer-events: none; }
+.searchInput { width: 100%; padding: 1.2rem 1.4rem 1.2rem 4.2rem; border: 2px solid #ddd; border-radius: 18px; font-size: 1.1rem; background: #f9f9f9; transition: all 0.3s; }
+.searchInput:focus { outline: none; border-color: #1B5E20; background: white; box-shadow: 0 0 0 5px rgba(27,94,32,0.15); }
+
+.select, .priceInput { width: 100%; padding: 1.1rem 1.4rem; border: 2px solid #ddd; border-radius: 16px; background: white; font-size: 1.05rem; }
+.priceRange { display: flex; align-items: center; gap: 12px; }
+
+.resultsCount {
+  margin-top: 3rem;
+  padding: 1.4rem;
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  border-radius: 16px;
+  text-align: center;
+  font-weight: bold;
+  color: #1B5E20;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(27,94,32,0.1);
+}
+
+.main {
+  margin-left: 360px;
+  padding: 3rem 4rem;
+  min-height: 100vh;
+  transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar:not(.open) ~ .main {
+  margin-left: 0;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem;
-  padding: 2rem 1rem;
-  max-width: 1400px;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 2.8rem;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
-.loading {
-  text-align: center;
-  padding: 4rem;
-  font-size: 1.5rem;
-  color: #1B5E20;
-  grid-column: 1 / -1;
+.empty, .loading { text-align: center; padding: 10rem 2rem; color: #666; }
+.empty h3 { font-size: 2.5rem; color: #1B5E20; margin-bottom: 1rem; }
+.loading { font-size: 2.5rem; color: #1B5E20; }
+
+/* BOUTON MOBILE */
+.mobileToggle {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 2000;
+  background: #1B5E20;
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.noProjects {
-  text-align: center;
-  padding: 6rem 2rem;
-  font-size: 1.6rem;
-  color: #666;
-  grid-column: 1 / -1;
+@media (max-width: 992px) {
+  .mobileToggle {
+    display: flex;
+  }
+  
+  .main {
+    margin-left: 0 !important;
+  }
 }

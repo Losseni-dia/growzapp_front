@@ -1,0 +1,194 @@
+/* src/pages/porteur/MesProjetsPage.module.css */
+.container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.header h1 {
+  color: #1b5e20;
+  font-size: 3rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.header p {
+  color: #555;
+  font-size: 1.4rem;
+  margin-top: 0.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+  border: 3px solid #e8f5e9;
+  transition: all 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 30px 60px rgba(27, 94, 32, 0.25);
+  border-color: #ffc107;
+}
+
+.poster {
+  position: relative;
+  height: 220px;
+}
+
+.posterImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.statutBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  z-index: 10;
+  border: 2px solid currentColor;
+}
+
+.statutEnCours { background: #e8f5e9; color: #1b5e20; }
+.statutTermine { background: #f3e8ff; color: #6d28d9; }
+.statutSoumis { background: #fff3e0; color: #e67e22; }
+.statutRejete { background: #ffebee; color: #c62828; }
+.statutDefault { background: #f5f5f5; color: #666; }
+
+.content {
+  padding: 2rem;
+}
+
+.title {
+  margin: 0 0 1.2rem 0;
+  font-size: 1.6rem;
+  color: #1b5e20;
+  font-weight: 700;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.icon {
+  color: #ffc107;
+}
+
+.progressContainer {
+  margin: 1.5rem 0;
+}
+
+.progressText {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.progressBar {
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffc107, #ffb300);
+  transition: width 0.8s ease;
+}
+
+.objectif {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #333;
+  margin: 1rem 0;
+}
+
+.btnVoir {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 1rem 2rem;
+  background: #1b5e20;
+  color: white;
+  text-align: center;
+  border-radius: 50px;
+  font-weight: bold;
+  text-decoration: none;
+  width: fit-content;
+  transition: 0.3s;
+}
+
+.btnVoir:hover {
+  background: #173d17;
+  transform: translateY(-3px);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 6rem 2rem;
+  color: #666;
+}
+
+.emptyIcon {
+  font-size: 7rem;
+  color: #ddd;
+  margin-bottom: 1rem;
+}
+
+.btnCreer {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 1.4rem 3.5rem;
+  background: #ffc107;
+  color: #1b5e20;
+  font-weight: 900;
+  font-size: 1.3rem;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 12px 35px rgba(255,193,7,0.4);
+}
+
+.btnCreer:hover {
+  background: #ffb300;
+  transform: translateY(-5px);
+}
+
+.loading {
+  text-align: center;
+  padding: 5rem;
+  font-size: 1.4rem;
+  color: #666;
+}

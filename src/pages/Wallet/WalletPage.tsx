@@ -1,4 +1,5 @@
 // src/pages/wallet/WalletPage.tsx → VERSION FINALE ULTIME — 26 NOV 2025
+// src/pages/wallet/WalletPage.tsx → VERSION FINALE ULTIME — 100% FONCTIONNELLE
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/context/AuthContext";
@@ -26,16 +27,16 @@ export default function WalletPage() {
   const [transactions, setTransactions] = useState<TransactionDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // === DÉPÔT STRIPE ===
+  const [depositMontant, setDepositMontant] = useState("");
+  const [loadingDeposit, setLoadingDeposit] = useState(false);
+
   // === TRANSFERT INTERNE ===
   const [searchUser, setSearchUser] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
-    null
-  );
+  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(null);
   const [montantTransfer, setMontantTransfer] = useState("");
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
-  const [transferSource, setTransferSource] = useState<
-    "DISPONIBLE" | "RETIRABLE"
-  >("DISPONIBLE");
+  const [transferSource, setTransferSource] = useState<"DISPONIBLE" | "RETIRABLE">("DISPONIBLE");
 
   // === DEMANDE DE RETRAIT (validation admin) ===
   const [montantDemande, setMontantDemande] = useState("");
@@ -60,7 +61,7 @@ export default function WalletPage() {
     fetchData();
   }, []);
 
-  // Recherche utilisateur (intacte — ne touche pas)
+  // Recherche utilisateur
   useEffect(() => {
     if (searchUser.length < 2) {
       setSearchResults([]);
@@ -90,7 +91,40 @@ export default function WalletPage() {
     return "";
   };
 
-  // === TRANSFERT INTERNE — AVEC CHOIX DE SOURCE ===
+  // === DÉPÔT STRIPE ===
+  const handleDeposit = async () => {
+    const montant = parseFloat(depositMontant);
+    if (isNaN(montant) || montant < 5) {
+      toast.error("Montant minimum : 5 €");
+      return;
+    }
+
+    setLoadingDeposit(true);
+    try {
+      const token = getToken();
+      const res = await fetch("http://localhost:8080/api/wallets/deposit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ montant }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Échec du dépôt");
+
+      // REDIRECTION VERS STRIPE CHECKOUT
+      window.location.href = data.redirectUrl;
+
+    } catch (err: any) {
+      toast.error(err.message || "Impossible de lancer le paiement");
+    } finally {
+      setLoadingDeposit(false);
+    }
+  };
+
+  // === TRANSFERT INTERNE ===
   const handleTransfer = async () => {
     if (!selectedUser) return toast.error("Sélectionne un destinataire");
     const montant = parseFloat(montantTransfer);
@@ -135,57 +169,52 @@ export default function WalletPage() {
     }
   };
 
-  // === DEMANDE DE RETRAIT (validation admin) ===
- const handleDemandeRetrait = async () => {
-   const montant = parseFloat(montantDemande);
-   if (montant < 5 || montant > wallet!.soldeDisponible) {
-     toast.error("Montant invalide ou solde insuffisant");
-     return;
-   }
+  // === DEMANDE DE RETRAIT ADMIN ===
+  const handleDemandeRetrait = async () => {
+    const montant = parseFloat(montantDemande);
+    if (montant < 5 || montant > wallet!.soldeDisponible) {
+      toast.error("Montant invalide ou solde insuffisant");
+      return;
+    }
 
-   setLoadingDemande(true);
-   try {
-     const token = getToken();
-     const res = await fetch(
-       "http://localhost:8080/api/wallets/demande-retrait",
-       {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-           Authorization: `Bearer ${token}`,
-         },
-         body: JSON.stringify({ montant }),
-       }
-     );
+    setLoadingDemande(true);
+    try {
+      const token = getToken();
+      const res = await fetch("http://localhost:8080/api/wallets/demande-retrait", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ montant }),
+      });
 
-     const data = await res.json();
-     if (!res.ok) throw new Error(data.message || "Échec");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Échec");
 
-     toast.success("Demande envoyée ! Visible dans l'historique");
+      toast.success("Demande envoyée ! Visible dans l'historique");
 
-     // Rafraîchir TOUT (solde + historique)
-     const [newWallet, newTransactions] = await Promise.all([
-       api.get<WalletDTO>("/api/wallets/solde"),
-       api.get<TransactionDTO[]>("/api/transactions/mes-transactions"),
-     ]);
+      const [newWallet, newTransactions] = await Promise.all([
+        api.get<WalletDTO>("/api/wallets/solde"),
+        api.get<TransactionDTO[]>("/api/transactions/mes-transactions"),
+      ]);
 
-     setWallet(newWallet);
-     setTransactions(newTransactions);
-     setMontantDemande("");
-   } catch (err: any) {
-     toast.error(err.message || "Erreur lors de la demande");
-   } finally {
-     setLoadingDemande(false);
-   }
- };
+      setWallet(newWallet);
+      setTransactions(newTransactions);
+      setMontantDemande("");
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de la demande");
+    } finally {
+      setLoadingDemande(false);
+    }
+  };
+
   const pendingWithdrawals = transactions.filter(
     (t) => t.type === "RETRAIT" && t.statut === "EN_ATTENTE_VALIDATION"
   ).length;
 
-  if (loading)
-    return <div className={styles.loading}>Chargement du portefeuille...</div>;
-  if (!wallet)
-    return <div className={styles.loading}>Portefeuille introuvable</div>;
+  if (loading) return <div className={styles.loading}>Chargement...</div>;
+  if (!wallet) return <div className={styles.loading}>Portefeuille introuvable</div>;
 
   return (
     <div className={styles.container}>
@@ -214,88 +243,76 @@ export default function WalletPage() {
         </div>
         <div className={styles.total}>
           Total :{" "}
-          {(
-            wallet.soldeDisponible +
-            wallet.soldeBloque +
-            wallet.soldeRetirable
-          ).toFixed(2)}{" "}
-          €
+          {(wallet.soldeDisponible + wallet.soldeBloque + wallet.soldeRetirable).toFixed(2)} €
         </div>
       </div>
 
       {/* ACTIONS */}
       <div className={styles.actionsGrid}>
-        {/* DÉPÔT EXTERNE */}
+        {/* DÉPÔT STRIPE */}
         <div className={styles.actionCard}>
           <h3 className={styles.actionTitle}>Déposer de l'argent</h3>
           <p className={styles.actionDesc}>
-            Carte bancaire, Orange Money, Wave, MTN...
+            Carte bancaire, SEPA – paiement sécurisé via Stripe
           </p>
-          <Link to="/depot">
-            <button className={`${styles.btn} ${styles.btnDepot}`}>
-              Ajouter des fonds
-            </button>
-          </Link>
+          <input
+            type="number"
+            min="5"
+            step="0.01"
+            placeholder="Montant (min 5 €)"
+            value={depositMontant}
+            onChange={(e) => setDepositMontant(e.target.value)}
+            className={styles.input}
+            style={{ marginBottom: "0.5rem" }}
+          />
+          <button
+            onClick={handleDeposit}
+            disabled={loadingDeposit || !depositMontant || parseFloat(depositMontant) < 5}
+            className={`${styles.btn} ${styles.btnDepot}`}
+          >
+            {loadingDeposit ? "Redirection..." : "Déposer avec carte"}
+          </button>
         </div>
 
-        {/* DEMANDE DE RETRAIT (validation admin) */}
+        {/* DEMANDE RETRAIT ADMIN */}
         <div className={styles.actionCard}>
           <h3 className={styles.actionTitle}>Demander un retrait</h3>
           <p className={styles.actionDesc}>
-            Envoie une demande à l'admin · Fonds bloqués jusqu'à validation
+            Envoie une demande à l'admin
           </p>
-          <div style={{ margin: "1rem 0" }}>
-            <input
-              type="number"
-              min="5"
-              step="0.01"
-              placeholder="Montant (min 5 €)"
-              value={montantDemande}
-              onChange={(e) => setMontantDemande(e.target.value)}
-              className={styles.input}
-              style={{ width: "100%", marginBottom: "0.5rem" }}
-            />
-            <button
-              onClick={handleDemandeRetrait}
-              disabled={
-                loadingDemande ||
-                !montantDemande ||
-                parseFloat(montantDemande) > wallet.soldeDisponible ||
-                parseFloat(montantDemande) < 5
-              }
-              className={`${styles.btn} ${styles.btnRetraitAdmin}`}
-            >
-              {loadingDemande ? "Envoi..." : "Envoyer la demande"}
-            </button>
-          </div>
+          <input
+            type="number"
+            min="5"
+            step="0.01"
+            placeholder="Montant (min 5 €)"
+            value={montantDemande}
+            onChange={(e) => setMontantDemande(e.target.value)}
+            className={styles.input}
+            style={{ marginBottom: "0.5rem" }}
+          />
+          <button
+            onClick={handleDemandeRetrait}
+            disabled={loadingDemande || !montantDemande || parseFloat(montantDemande) < 5}
+            className={`${styles.btn} ${styles.btnRetraitAdmin}`}
+          >
+            {loadingDemande ? "Envoi..." : "Envoyer la demande"}
+          </button>
           {pendingWithdrawals > 0 && (
-            <p
-              style={{
-                color: "#e67e22",
-                fontSize: "0.9rem",
-                marginTop: "0.5rem",
-              }}
-            >
-              Tu as {pendingWithdrawals} demande(s) en attente
+            <p style={{ color: "#e67e22", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+              {pendingWithdrawals} demande(s) en attente
             </p>
           )}
         </div>
 
-        {/* RETRAIT DIRECT (seulement si solde retirable > 0) */}
+        {/* RETRAIT DIRECT */}
         {wallet.soldeRetirable > 0 && (
           <div className={styles.actionCard}>
             <h3 className={styles.actionTitle}>Retirer mes gains validés</h3>
             <p className={styles.actionDesc}>
-              Vers Orange Money, Wave, MTN ou compte bancaire
+              Orange Money, Wave, MTN ou virement bancaire
             </p>
             <div style={{ textAlign: "center", margin: "1rem 0" }}>
-              <p
-                style={{
-                  fontSize: "1.8rem",
-                  fontWeight: "bold",
-                  color: "#27ae60",
-                }}
-              >
+              <p style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#27ae60" }}>
                 {wallet.soldeRetirable.toFixed(2)} € disponibles
               </p>
             </div>

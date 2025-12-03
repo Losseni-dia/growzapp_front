@@ -1,4 +1,4 @@
-// src/service/api.ts → VERSION FINALE ULTIME 2025 (getFreshToken EXPORTÉ)
+// src/service/api.ts → VERSION FINALE 100% COMPATIBLE AVEC TON CODE EXISTANT
 
 const getFreshToken = (): string | null => {
   try {
@@ -30,18 +30,15 @@ const getFreshToken = (): string | null => {
   return null;
 };
 
-// EXPORT OBLIGATOIRE → C’EST LA SEULE LIGNE QUI MANQUAIT
 export { getFreshToken };
 
 const buildUrl = (endpoint: string): string => {
   if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
     return endpoint;
   }
-
   if (endpoint.startsWith("/api") || endpoint.startsWith("api")) {
     return endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
   }
-
   const clean = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
   return `/api/${clean}`;
 };
@@ -55,12 +52,15 @@ const request = async <T = unknown>(
   const token = getFreshToken();
   const url = buildUrl(endpoint);
 
-  const headers: Record<string, string> = {};
+  console.log(
+    `API → ${method} ${url}`,
+    token ? "Token présent" : "Pas de token"
+  );
 
+  const headers: Record<string, string> = {};
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
-
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -73,8 +73,13 @@ const request = async <T = unknown>(
       credentials: "include",
     });
 
+    console.log(`API ← ${response.status} ${response.statusText}`, url);
+
     if (response.status === 401) {
-      console.error("401 Unauthorized sur :", url);
+      console.error("401 Unauthorized – Session expirée sur :", url);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
       throw new Error("Session expirée");
     }
 
@@ -95,14 +100,14 @@ const request = async <T = unknown>(
     }
 
     if (response.status === 204) return {} as T;
-
-    const json = await response.json();
-    return json as T;
+    return response.json();
   } catch (err: any) {
-    if (err.message) throw err;
-    throw new Error("Erreur réseau");
+    console.error("Erreur réseau ou fetch :", err.message);
+    throw err;
   }
 };
+
+
 
 export const api = {
   get: <T = unknown>(endpoint: string) => request<T>("GET", endpoint),
@@ -113,4 +118,5 @@ export const api = {
   patch: <T = unknown>(endpoint: string, body?: any) =>
     request<T>("PATCH", endpoint, body),
   delete: <T = unknown>(endpoint: string) => request<T>("DELETE", endpoint),
+  
 };

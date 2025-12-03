@@ -1,6 +1,5 @@
-// src/types/investissement.ts
-import type { StatutPartInvestissement } from "./enum";
-import type { DividendeDTO } from "./dividende";
+import { DividendeDTO } from "./dividende";
+import { StatutPartInvestissement } from "./enum";
 
 export interface InvestissementDTO {
   id: number;
@@ -9,11 +8,21 @@ export interface InvestissementDTO {
   valeurPartsPrisEnPourcent: number;
   frais: number;
   statutPartInvestissement: StatutPartInvestissement;
+
   investisseurId?: number;
   investisseurNom?: string;
   projetId?: number;
   projetLibelle?: string;
   prixUnePart: number;
+
+  montantInvesti: number;
+  projetPoster?: string;
+  numeroContrat?: string;
+
+  // AJOUTÉ – L’URL DU VRAI PDF
+  contratUrl?: string;
+
+  // Dividendes
   dividendes: DividendeDTO[];
   montantTotalPercu: number;
   montantTotalPlanifie: number;
@@ -21,20 +30,4 @@ export interface InvestissementDTO {
   dividendesPayes: number;
   dividendesPlanifies: number;
   statutGlobalDividendes: string;
-}
-
-export interface InvestissementSummary {
-  id: number;
-  projetId: number;
-  nombrePartsPris: number;
-  prixUnePart: number;
-  projetLibelle: string;
-  montantInvesti: number;
-  montantPercu: number;
-  statutPartInvestissement: StatutPartInvestissement;
-}
-
-export interface InvestirRequest {
-  projetId: number;
-  nombreParts: number;
 }

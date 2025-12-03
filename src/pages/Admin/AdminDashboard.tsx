@@ -1,6 +1,7 @@
-// src/pages/admin/DashboardAdmin.tsx → VERSION FINALE PARFAITE + RETRAITS (25 NOV 2025)
+// src/pages/admin/DashboardAdmin.tsx
+// VERSION FINALE 100% FONCTIONNELLE – 27 NOV 2025
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../components/context/AuthContext";
 import { api } from "../../service/api";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,25 +11,18 @@ import {
   FiUsers,
   FiFolder,
   FiDollarSign,
-  FiShield,
+  FiCreditCard,
   FiTrendingUp,
-  FiAlertCircle,
-  FiCreditCard, // Icône parfaite pour les retraits
+  FiPackage,
 } from "react-icons/fi";
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
 
 interface Stats {
   totalUsers: number;
   totalProjets: number;
-  totalInvestissements: number;
   investissementsEnAttente: number;
   retraitsEnAttente: number;
-  montantTotalCollecte: number;
+  montantCollecteSequestre: number;
+  montantCollecteAffiche: number;
 }
 
 export default function DashboardAdmin() {
@@ -37,10 +31,10 @@ export default function DashboardAdmin() {
   const [stats, setStats] = useState<Stats>({
     totalUsers: 0,
     totalProjets: 0,
-    totalInvestissements: 0,
     investissementsEnAttente: 0,
     retraitsEnAttente: 0,
-    montantTotalCollecte: 0,
+    montantCollecteSequestre: 0,
+    montantCollecteAffiche: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -59,38 +53,40 @@ export default function DashboardAdmin() {
     try {
       setLoading(true);
 
-      const [usersRes, projetsRes, investissementsRes, retraitsRes] =
-        await Promise.all([
-          api.get<ApiResponse<any[]>>("/admin/users"),
-          api.get<ApiResponse<any[]>>("/admin/projets"),
-          api.get<ApiResponse<any[]>>("/admin/investissements"),
-          api.get<any[]>("/api/transactions/retraits-en-attente"), // On récupère directement les retraits
-        ]);
+      const [
+        usersRes,
+        projetsRes,
+        investissementsRes,
+        retraitsRes,
+        soldeSequestreRes,
+        montantAfficheRes,
+      ] = await Promise.all([
+        api.get<any>("/api/admin/users"),
+        api.get<any>("/api/admin/projets"),
+        api.get<any>("/api/admin/investissements"),
+        api.get<any>("/api/transactions/retraits-en-attente"), // ← tableau direct
+        api.get<any>("/api/admin/projet-wallet/solde-total"), // ← BigDecimal brut
+        api.get<any>("/api/admin/projet-wallet/montant-total-collecte"),
+      ]);
 
-      const users = usersRes.data || [];
-      const projets = projetsRes.data || [];
-      const investissements = investissementsRes.data || [];
-      const retraits = retraitsRes || [];
-
-      const enAttenteInvest = investissements.filter(
-        (i: any) => i.statutPartInvestissement === "EN_ATTENTE"
-      ).length;
-
-      const totalCollecte = projets.reduce(
-        (acc: number, p: any) => acc + (p.montantCollecte || 0),
-        0
-      );
+      const enAttenteInvest =
+        investissementsRes?.data?.filter(
+          (i: any) => i.statutPartInvestissement === "EN_ATTENTE"
+        )?.length || 0;
 
       setStats({
-        totalUsers: users.length,
-        totalProjets: projets.length,
-        totalInvestissements: investissements.length,
+        totalUsers: usersRes?.data?.length || 0,
+        totalProjets: projetsRes?.data?.length || 0,
         investissementsEnAttente: enAttenteInvest,
-        retraitsEnAttente: retraits.length,
-        montantTotalCollecte: totalCollecte,
+        retraitsEnAttente: Array.isArray(retraitsRes)
+          ? retraitsRes.length
+          : retraitsRes?.data?.length || 0,
+        montantCollecteSequestre: Number(soldeSequestreRes) || 0,
+        montantCollecteAffiche: Number(montantAfficheRes) || 0,
       });
-    } catch (err) {
-      toast.error("Erreur lors du chargement des statistiques");
+    } catch (err: any) {
+      console.error("Erreur chargement stats admin", err);
+      toast.error("Impossible de charger les statistiques");
     } finally {
       setLoading(false);
     }
@@ -100,25 +96,21 @@ export default function DashboardAdmin() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.mainTitle}>
-        <FiShield /> Espace Administrateur
-      </h1>
+      <h1 className={styles.mainTitle}>Espace Administrateur</h1>
 
       {loading ? (
         <p className={styles.loading}>Chargement des statistiques...</p>
       ) : (
         <>
           <div className={styles.statsGrid}>
-            {/* Utilisateurs */}
             <Link to="/admin/users" className={styles.statCard}>
               <FiUsers className={styles.icon} />
               <div>
-                <h3>{stats.totalUsers}</h3>
-                <p>Utilisateurs</p>
+                <h3>{stats.totalUsers.toLocaleString()}</h3>
+                <p>Utilisateurs inscrits</p>
               </div>
             </Link>
 
-            {/* Projets */}
             <Link to="/admin/projets" className={styles.statCard}>
               <FiFolder className={styles.icon} />
               <div>
@@ -127,7 +119,6 @@ export default function DashboardAdmin() {
               </div>
             </Link>
 
-            {/* Investissements à valider */}
             <Link
               to="/admin/investissements"
               className={`${styles.statCard} ${styles.warning}`}
@@ -135,13 +126,10 @@ export default function DashboardAdmin() {
               <FiDollarSign className={styles.icon} />
               <div>
                 <h3>{stats.investissementsEnAttente}</h3>
-                <p>
-                  Investissements en attente <FiAlertCircle />
-                </p>
+                <p>Investissements en attente</p>
               </div>
             </Link>
 
-            {/* RETRAITS À VALIDER – NOUVEAU BLOC */}
             <Link
               to="/admin/retraits"
               className={`${styles.statCard} ${
@@ -151,19 +139,38 @@ export default function DashboardAdmin() {
               <FiCreditCard className={styles.icon} />
               <div>
                 <h3>{stats.retraitsEnAttente}</h3>
-                <p>
-                  Retraits en attente{" "}
-                  {stats.retraitsEnAttente > 0 && <FiAlertCircle />}
-                </p>
+                <p>Retraits en attente</p>
               </div>
             </Link>
 
-            {/* Montant total collecté */}
+            <Link
+              to="/admin/project-wallets"
+              className={`${styles.statCard} ${styles.tresorerie}`}
+            >
+              <FiPackage className={styles.icon} />
+              <div>
+                <h3>
+                  {stats.montantCollecteSequestre.toLocaleString("fr-FR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}{" "}
+                  €
+                </h3>
+                <p>Trésorerie séquestrée (réelle)</p>
+              </div>
+            </Link>
+
             <div className={`${styles.statCard} ${styles.success}`}>
               <FiTrendingUp className={styles.icon} />
               <div>
-                <h3>{stats.montantTotalCollecte.toLocaleString()} FCFA</h3>
-                <p>Collecté total</p>
+                <h3>
+                  {stats.montantCollecteAffiche.toLocaleString("fr-FR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}{" "}
+                  €
+                </h3>
+                <p>Montant affiché aux investisseurs</p>
               </div>
             </div>
           </div>
@@ -178,6 +185,12 @@ export default function DashboardAdmin() {
               </Link>
               <Link to="/admin/retraits" className={styles.highlightLink}>
                 Valider les retraits ({stats.retraitsEnAttente})
+              </Link>
+              <Link
+                to="/admin/project-wallets"
+                className={styles.highlightLink}
+              >
+                Gérer la trésorerie séquestrée
               </Link>
             </div>
           </div>

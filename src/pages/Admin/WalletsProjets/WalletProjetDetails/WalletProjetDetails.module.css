@@ -1,0 +1,594 @@
+/* src/pages/admin/WalletProjetDetails.module.css */
+/* VERSION ULTIME 2025 – DESIGN DE LUXE – 100% CHARTE GROWZAPP */
+
+.container {
+  max-width: 1500px;
+  margin: 3rem auto;
+  padding: 0 2.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8fff9;
+  min-height: 100vh;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  color: #1B5E20;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 16px;
+  background: #E8F5E9;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(27,94,32,0.15);
+}
+
+.backLink:hover {
+  background: #C8E6C9;
+  transform: translateX(-8px);
+  box-shadow: 0 8px 20px rgba(27,94,32,0.25);
+}
+
+.title {
+  text-align: center;
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white;
+  padding: 3rem 2rem;
+  border-radius: 32px;
+  font-size: 3.4rem;
+  font-weight: 900;
+  margin-bottom: 4rem;
+  box-shadow: 0 20px 50px rgba(27,94,32,0.4);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 6px;
+  background: #FFC107;
+  border-radius: 3px;
+}
+
+/* CARTES RÉSUMÉ */
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 3rem;
+  margin-bottom: 5rem;
+}
+
+.summaryCard {
+  background: white;
+  border-radius: 32px;
+  padding: 3rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+  border: 5px solid #E8F5E9;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.summaryCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(90deg, #1B5E20, #4CAF50, #1B5E20);
+}
+
+.summaryCard:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 35px 80px rgba(27,94,32,0.3);
+  border-color: #1B5E20;
+}
+
+.summaryCard h3 {
+  color: #1B5E20;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.bigAmount {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #1B5E20;
+  margin: 1.8rem 0;
+  line-height: 1;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.bloqueInfo {
+  color: #E67E22;
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: #FFF3E0;
+  border-radius: 20px;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(230,126,34,0.2);
+}
+
+.porteurName {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1B5E20;
+  margin: 1.5rem 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.porteurContact {
+  color: #2E7D32;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  background: #E8F5E9;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* SECTIONS D'ACTION */
+.actionSection {
+  background: white;
+  border-radius: 28px;
+  padding: 2.5rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+  border: 4px solid #E8F5E9;
+}
+
+.actionSection h2 {
+  color: #1B5E20;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.actionSection h2::after {
+  content: '';
+  display: block;
+  width: 100px;
+  height: 5px;
+  background: #FFC107;
+  margin: 1rem auto;
+  border-radius: 3px;
+}
+
+/* RECHERCHE INVESTISSEUR */
+.searchBox {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.searchBox input {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border: 3px solid #1B5E20;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  background: white;
+  transition: all 0.3s;
+}
+
+.searchBox input:focus {
+  outline: none;
+  border-color: #FFC107;
+  box-shadow: 0 0 0 4px rgba(255,193,7,0.2);
+}
+
+.searchResults {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #E8F5E9;
+  border-radius: 16px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  margin-top: 0.5rem;
+}
+
+.searchItem {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #eee;
+}
+
+.searchItem:hover {
+  background: #F1F8E9;
+}
+
+.selectedUser {
+  background: #E8F5E9;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  font-weight: 700;
+  color: #1B5E20;
+  margin: 1.5rem 0;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* INPUTS & BOUTONS */
+.input {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border: 3px solid #1B5E20;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  background: white;
+  transition: all 0.3s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #FFC107;
+  box-shadow: 0 0 0 4px rgba(255,193,7,0.2);
+}
+
+.retraitMethod {
+  display: flex;
+  gap: 2rem;
+  margin: 1.5rem 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.retraitMethod label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.8rem 1.5rem;
+  background: #f8f9fa;
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+
+.retraitMethod input[type="radio"]:checked + span {
+  color: #1B5E20;
+  font-weight: 800;
+}
+
+.btnDividende,
+.btnRetrait {
+  width: 100%;
+  padding: 1.4rem;
+  border: none;
+  border-radius: 18px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+}
+
+.btnDividende {
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  color: white;
+  box-shadow: 0 8px 25px rgba(76,175,80,0.4);
+}
+
+.btnDividende:hover:not(:disabled) {
+  background: linear-gradient(135deg, #388E3C, #4CAF50);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(76,175,80,0.6);
+}
+
+.btnRetrait {
+  background: linear-gradient(135deg, #FFC107, #FFB300);
+  color: #1B5E20;
+  box-shadow: 0 8px 25px rgba(255,193,7,0.4);
+}
+
+.btnRetrait:hover:not(:disabled) {
+  background: linear-gradient(135deg, #FFB300, #FF8F00);
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(255,193,7,0.6);
+}
+
+.btnDividende:disabled,
+.btnRetrait:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* TABLEAU */
+.subtitle {
+  text-align: center;
+  color: #1B5E20;
+  font-size: 2.8rem;
+  font-weight: 900;
+  margin: 5rem 0 2.5rem;
+  position: relative;
+}
+
+.subtitle::after {
+  content: '';
+  display: block;
+  width: 180px;
+  height: 8px;
+  background: linear-gradient(90deg, transparent, #FFC107, transparent);
+  margin: 1.5rem auto;
+  border-radius: 4px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 32px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+  border: 5px solid #E8F5E9;
+  background: white;
+  margin-bottom: 3rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 1.1rem;
+}
+
+.table th {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+}
+
+.table td {
+  padding: 1.8rem 1.5rem;
+  border-bottom: 2px solid #E8F5E9;
+  transition: background 0.3s;
+}
+
+.table tr:hover {
+  background: #E8F5E9 !important;
+  transform: scale(1.01);
+}
+
+.table tr:nth-child(even) {
+  background: #f8fff9;
+}
+
+.center { text-align: center; }
+.amount { 
+  text-align: right; 
+  font-weight: 800; 
+  color: #1B5E20;
+  font-size: 1.3rem;
+}
+
+/* STATUTS */
+.statut {
+  padding: 0.7rem 1.6rem;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.statut.valide { 
+  background: linear-gradient(135deg, #C8E6C9, #A5D6A7); 
+  color: #1B5E20; 
+}
+.statut.en_attente { 
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2); 
+  color: #E67E22; 
+}
+.statut.annule { 
+  background: linear-gradient(135deg, #FFEBEE, #EF9A9A); 
+  color: #C62828; 
+}
+.statut.default { 
+  background: #EEEEEE; 
+  color: #666; 
+}
+
+/* BOUTON CONTRAT */
+.contractBtn {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFC107, #FFB300);
+  color: #1B5E20;
+  padding: 0.9rem 1.8rem;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 1.1rem;
+  transition: all 0.4s;
+  box-shadow: 0 6px 20px rgba(255,193,7,0.4);
+}
+
+.contractBtn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(255,193,7,0.6);
+  background: linear-gradient(135deg, #FFB300, #FF8F00);
+}
+
+.noContract {
+  color: #999;
+  font-style: italic;
+  font-size: 1rem;
+}
+
+
+/* ACCORDÉONS */
+.accordion {
+  background: white;
+  border-radius: 24px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border: 3px solid #E8F5E9;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accordion:hover {
+  box-shadow: 0 15px 40px rgba(27,94,32,0.2);
+}
+
+.accordionHeader {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white;
+  padding: 1.8rem 2rem;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s;
+}
+
+.accordionHeader:hover {
+  background: linear-gradient(135deg, #2E7D32, #388E3C);
+}
+
+.accordionIcon {
+  font-size: 2.2rem;
+  font-weight: 300;
+  transition: transform 0.3s;
+}
+
+.accordionContent {
+  padding: 2.5rem;
+  background: #f8fff9;
+  border-top: 3px solid #E8F5E9;
+}
+
+
+/* AJOUTE ÇA À LA FIN DE TON FICHIER CSS EXISTANT */
+
+/* SOLDE DIVISÉ – LA STAR */
+.soldeDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+  margin: 3rem 0;
+  padding: 2.5rem;
+  background: white;
+  border-radius: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  border: 5px solid #E8F5E9;
+}
+
+.soldeCard {
+  text-align: center;
+  padding: 2rem;
+  background: #f8fff9;
+  border-radius: 24px;
+  border: 3px solid #1B5E20;
+  transition: all 0.4s ease;
+}
+
+.soldeCard:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(27,94,32,0.3);
+}
+
+.soldeCard h3 {
+  color: #1B5E20;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.soldeAmount {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #1B5E20;
+  margin: 1.5rem 0;
+}
+
+.soldeAmountBloque {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #E67E22;
+  margin: 1.5rem 0;
+}
+
+.soldeAmountRetirable {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #4CAF50;
+  margin: 1.5rem 0;
+}
+
+.soldeCard small {
+  color: #666;
+  font-size: 1rem;
+  display: block;
+  margin-top: 1rem;
+}
+
+/* LIGNE VIDE */
+.emptyRow {
+  text-align: center;
+  padding: 6rem 2rem !important;
+  color: #666;
+  font-size: 1.8rem;
+  font-style: italic;
+  background: #f8fff9;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 10rem 2rem;
+  font-size: 2.4rem;
+  color: #1B5E20;
+  font-weight: 800;
+}
+
+/* RESPONSIVE */
+@media (max-width: 968px) {
+  .title {
+    font-size: 2.6rem;
+    padding: 2rem 1rem;
+  }
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+  .bigAmount {
+    font-size: 3rem;
+  }
+  .actionSection {
+    padding: 2rem;
+  }
+}

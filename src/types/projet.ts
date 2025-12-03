@@ -1,4 +1,5 @@
-// src/types/projet.ts   → VERSION CORRIGÉE & AMÉLIORÉE
+// src/types/projet.ts → VERSION 100% PROPRE & COHÉRENTE – 27 NOV 2025
+
 import type { StatutProjet } from "./enum";
 import type { DocumentDTO } from "./document";
 import type { InvestissementDTO } from "./investissement";
@@ -21,8 +22,10 @@ export interface ProjetDTO {
   valeurTotalePartsEnPourcent: number;
   statutProjet: StatutProjet;
   createdAt: string;
+
   porteurId?: number;
   porteurNom?: string;
+
   siteId?: number;
   siteNom?: string;
   secteurId?: number;
@@ -30,12 +33,14 @@ export interface ProjetDTO {
   localiteId?: number;
   localiteNom?: string;
   paysId?: number;
-  paysNom?: string; // ← AJOUTÉ pour affichage rapide
+  paysNom?: string;
+
   documents: DocumentDTO[];
   investissements: InvestissementDTO[];
+
 }
 
-// NOUVEAU ProjetSummary → optimisé pour cartes et listes publiques
+// Résumé pour les cartes publiques (optionnel, tu peux garder)
 export interface ProjetSummary {
   id: number;
   poster?: string;
@@ -48,22 +53,20 @@ export interface ProjetSummary {
   prixUnePart: number;
   statutProjet: StatutProjet;
   createdAt: string;
-
-  // Lieu du projet (beaucoup plus pertinent qu’un nom de porteur anonyme)
   localiteNom: string;
   paysNom: string;
-
-  // Optionnel : si tu veux garder le secteur ou le site
   secteurNom?: string;
   siteNom?: string;
+
+ 
 }
 
-// src/types/projet.ts → AJOUTE LES CHAMPS MANQUANTS
+// Pour créer/éditer un projet
 export interface ProjetCreateRequest {
   libelle: string;
   description: string;
-  valuation: number; // ← OBLIGATOIRE
-  roiProjete: number; // ← OBLIGATOIRE
+  valuation: number;
+  roiProjete: number;
   partsDisponible: number;
   prixUnePart: number;
   objectifFinancement: number;
