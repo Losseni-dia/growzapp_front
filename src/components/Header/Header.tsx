@@ -101,6 +101,12 @@ export default function Header() {
                       Projets
                     </Link>
                     <Link
+                      to="/admin/projetsList"
+                      onClick={() => setShowAdminMenu(false)}
+                    >
+                      Liste des projets
+                    </Link>
+                    <Link
                       to="/admin/investissements"
                       onClick={() => setShowAdminMenu(false)}
                     >

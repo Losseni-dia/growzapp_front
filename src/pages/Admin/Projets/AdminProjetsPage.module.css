@@ -111,7 +111,7 @@
   padding: 1.2rem;
   margin: 1.5rem 0;
   display: flex;
-  align_UIitems: center;
+  align-items: center;
   gap: 16px;
 }
 
@@ -184,4 +184,63 @@
   padding: 8rem;
   font-size: 2.5rem;
   color: #1B5E20;
+}
+
+
+/* NOUVEAUX BOUTONS */
+.btnVoirDetail {
+  background: #1B5E20;
+  color: white;
+  padding: 0.9rem 1.4rem;
+  border-radius: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btnVoirDetail:hover {
+  background: #2e7d32;
+  transform: translateY(-3px);
+}
+
+.btnSupprimer {
+  background: #D32F2F;
+  color: white;
+  padding: 0.9rem 1.4rem;
+  border: none;
+  border-radius: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btnSupprimer:hover {
+  background: #B71C1C;
+  transform: translateY(-3px);
+}
+
+.btnVoirPublic {
+  background: #17a2b8;
+  color: white;
+  padding: 0.9rem 1.4rem;
+  border-radius: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btnVoirPublic:hover {
+  background: #138496;
+  transform: translateY(-3px);
 }

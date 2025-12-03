@@ -115,6 +115,92 @@
   margin-bottom: 1rem;
 }
 
+/* === SECTION DOCUMENTS PUBLIQUE === */
+.documentsSection {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 3px solid #E8F5E9;
+}
+
+.documentsSection h2 {
+  color: #1B5E20;
+  border-bottom: 3px solid #FFC107;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.docGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.docCard {
+  background: #f9fff9;
+  border: 2px solid #E8F5E9;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.docCard:hover {
+  border-color: #FFC107;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(27,94,32,0.1);
+}
+
+.docIcon {
+  flex-shrink: 0;
+}
+
+.docInfo strong {
+  display: block;
+  color: #1B5E20;
+  font-size: 1rem;
+}
+
+.docInfo small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.downloadBtn {
+  background: #1B5E20;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.downloadBtn:hover {
+  background: #FFC107;
+  color: #1B5E20;
+}
+
+.noDocs {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+  background: #f9fff9;
+  border-radius: 10px;
+  border: 2px dashed #1B5E20;
+}
+
 @media (max-width: 768px) {
   .header {
     grid-template-columns: 1fr;

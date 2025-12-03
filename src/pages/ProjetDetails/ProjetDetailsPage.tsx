@@ -1,60 +1,128 @@
-// src/pages/ProjetDetailsPage.
+// src/pages/ProjetDetailsPage.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "../../service/api"; // ← On importe seulement "api"
+import { api } from "../../service/api";
 import { ProjetDTO } from "../../types/projet";
+import { DocumentDTO } from "../../types/document";
 import InvestForm from "../../components/Investissement/InvestForm/InvestForm";
 import toast from "react-hot-toast";
 import styles from "./ProjetDetailsPage.module.css";
 import { ApiResponse } from "../../types/common";
+import { useAuth } from "../../components/context/AuthContext";
+import {
+  FiDownload,
+  FiFileText,
+  FiImage,
+  FiFile,
+  FiLock,
+} from "react-icons/fi";
 
 export default function ProjetDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const [projet, setProjet] = useState<ProjetDTO | null>(null);
+  const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
- useEffect(() => {
-   const loadProjet = async () => {
-     if (!id) return;
+  const loadProjetAndDocuments = async () => {
+    if (!id) return;
 
-     try {
-       setLoading(true);
+    try {
+      setLoading(true);
 
-       // ON RÉCUPÈRE LA RÉPONSE COMPLÈTE + ON EXTRAIT .data
-       const response = await api.get<ApiResponse<ProjetDTO>>(
-         `api/projets/${id}`
-       );
-       setProjet(response.data); // ← maintenant c'est le vrai ProjetDTO
-     } catch (err: any) {
-       toast.error(err.message || "Projet non trouvé");
-     } finally {
-       setLoading(false);
-     }
-   };
+      const [projetRes, docsRes] = await Promise.all([
+        api.get<ApiResponse<ProjetDTO>>(`api/projets/${id}`),
+        api.get<ApiResponse<DocumentDTO[]>>(`api/documents/projet/${id}`),
+      ]);
 
-   loadProjet();
- }, [id]);
+      setProjet(projetRes.data);
+      setDocuments(docsRes.data || []);
+    } catch (err: any) {
+      // Si 403 → pas d'accès aux documents → on garde juste le projet
+      if (err.message.includes("403") || err.message.includes("refusé")) {
+        const projetRes = await api.get<ApiResponse<ProjetDTO>>(
+          `api/projets/${id}`
+        );
+        setProjet(projetRes.data);
+        setDocuments([]);
+      } else {
+        toast.error(err.message || "Projet non trouvé");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  if (loading) return <p className={styles.loading}>Chargement du projet...</p>;
-  if (!projet) return <p className={styles.error}>Projet introuvable</p>;
+  useEffect(() => {
+    loadProjetAndDocuments();
+  }, [id]);
 
   const formatNumber = (value?: number | null): string => {
     return (value ?? 0).toLocaleString("fr-FR");
   };
 
   const progress =
-    projet.objectifFinancement > 0
+    projet?.objectifFinancement && projet.objectifFinancement > 0
       ? (projet.montantCollecte / projet.objectifFinancement) * 100
       : 0;
 
-const handleInvestSuccess = () => {
-  toast.success("Investissement pris en compte ! Mise à jour...");
-  // Recharge proprement le projet (ou utilise React Query plus tard)
-  window.location.reload();
-};
+  const handleInvestSuccess = () => {
+    toast.success("Investissement pris en compte ! Mise à jour...");
+    loadProjetAndDocuments(); // Recharge proprement
+  };
+
+  const handleDownload = async (docId: number, nom: string, type: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/documents/${docId}/download`,
+        {
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("access_token") || ""
+            }`,
+          },
+        }
+      );
+      if (!response.ok) throw new Error("Téléchargement impossible");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = type === "PDF" ? `${nom}.pdf` : nom;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Impossible de télécharger le document");
+    }
+  };
+
+  const getIcon = (type: string) => {
+    switch (type.toUpperCase()) {
+      case "PDF":
+        return <FiFileText color="#d32f2f" size={26} />;
+      case "EXCEL":
+      case "CSV":
+        return <FiFile color="#1B5E20" size={26} />;
+      default:
+        return <FiImage color="#1B5E20" size={26} />;
+    }
+  };
+
+  const hasAccessToDocuments = () => {
+    if (!user || !projet) return false;
+    if (user.roles?.includes("ADMIN")) return true;
+    if (projet.porteurId === user.id) return true;
+    return projet.investissements?.some(
+      (inv) => inv.investisseurId === user.id
+    );
+  };
+
+  if (loading) return <p className={styles.loading}>Chargement du projet...</p>;
+  if (!projet) return <p className={styles.error}>Projet introuvable</p>;
 
   return (
     <div className={styles.container}>
+      {/* === HEADER EXISTANT === */}
       <div className={styles.header}>
         {projet.poster ? (
           <img
@@ -84,6 +152,7 @@ const handleInvestSuccess = () => {
         </div>
       </div>
 
+      {/* === STATS + PROGRESS === */}
       <div className={styles.stats}>
         <div>
           <strong>{formatNumber(projet.montantCollecte)} €</strong> collectés
@@ -108,6 +177,43 @@ const handleInvestSuccess = () => {
         <p>{projet.description}</p>
       </div>
 
+      {/* === NOUVELLE SECTION : DOCUMENTS === */}
+      {hasAccessToDocuments() ? (
+        <div className={styles.documentsSection}>
+          <h2>
+            <FiLock style={{ marginRight: 8 }} />
+            Documents du projet ({documents.length})
+          </h2>
+          {documents.length === 0 ? (
+            <p className={styles.noDocs}>
+              Aucun document disponible pour le moment
+            </p>
+          ) : (
+            <div className={styles.docGrid}>
+              {documents.map((doc) => (
+                <div key={doc.id} className={styles.docCard}>
+                  <div className={styles.docIcon}>{getIcon(doc.type)}</div>
+                  <div className={styles.docInfo}>
+                    <strong>{doc.nom}</strong>
+                    <small>
+                      {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
+                    </small>
+                  </div>
+                  <button
+                    onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
+                    className={styles.downloadBtn}
+                    title="Télécharger"
+                  >
+                    <FiDownload />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : null}
+
+      {/* === INVESTISSEMENT === */}
       <div className={styles.investSection}>
         <h2>Investir dans ce projet</h2>
         <InvestForm projet={projet} onSuccess={handleInvestSuccess} />
