@@ -1,0 +1,65 @@
+/* src/pages/Contrat/ContratPage.module.css → SOBRE, ÉLÉGANT & PROPRE */
+
+.message {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+  font-family: inherit;
+}
+
+.message h2 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #1B5E20;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 4px 15px rgba(27,94,32,0.1);
+}
+
+.message p {
+  font-size: 1.4rem;
+  color: #555;
+  max-width: 600px;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+.loader {
+  width: 80px;
+  height: 80px;
+  border: 8px solid #e8f5e9;
+  border-top: 8px solid #1B5E20;
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+  margin-bottom: 2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.2rem 2.8rem;
+  background: #1B5E20;
+  color: white;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.2rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(27,94,32,0.3);
+}
+
+.backLink:hover {
+  background: #2E7D32;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(27,94,32,0.4);
+}

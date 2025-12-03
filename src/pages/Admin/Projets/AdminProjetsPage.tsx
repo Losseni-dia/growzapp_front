@@ -1,78 +1,49 @@
-// src/pages/admin/ProjetsAdminPage.tsx
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// src/pages/admin/AdminProjetsPage.tsx
+// VERSION FINALE — SOLDE RÉEL VIA TON ENDPOINT EXISTANT
+
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { api } from "../../../service/api";
-import { ProjetDTO } from "../../../types/projet";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 import styles from "./AdminProjetsPage.module.css";
+import { FiDollarSign, FiEdit, FiCheckCircle, FiXCircle } from "react-icons/fi";
 
-export default function ProjetsAdminPage() {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+interface ProjetAdmin {
+  id: number;
+  libelle: string;
+  description?: string;
+  statutProjet: string;
+  porteurNom: string;
+  porteurPrenom?: string;
+  poster?: string;
+  montantCollecte: number;
+}
 
-  const { data, isLoading } = useQuery({
+export default function AdminProjetsPage() {
+  const { data: projetsData, isLoading } = useQuery({
     queryKey: ["admin-projets"],
-    queryFn: async () => (await api.get<any>("/admin/projets")).data || [],
+    queryFn: () => api.get<{ data: ProjetAdmin[] }>("/api/admin/projets"),
   });
 
-  const projets: ProjetDTO[] = data || [];
+  const projets = projetsData?.data || [];
 
-  const getStatutLabel = (statut: string) => {
-    switch (statut) {
-      case "SOUMIS":
-      case "EN_ATTENTE":
-      case "EN_PREPARATION":
-        return "En attente";
-      case "VALIDE":
-        return "Financement en cours";
-      case "REJETE":
-        return "Rejeté";
-      case "EN_COURS":
-        return "En cours";
-      case "TERMINE":
-        return "Financement terminé";
-      default:
-        return statut;
-    }
-  };
-
-  const valider = useMutation({
-    mutationFn: (id: number) => api.patch(`/admin/projets/${id}/valider`),
-    onSuccess: () => {
-      toast.success("Projet validé et publié !");
-      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
-    },
-    onError: () => toast.error("Impossible de valider le projet"),
-  });
-
-  const supprimer = useMutation({
-    mutationFn: (id: number) => api.delete(`/admin/projets/${id}`),
-    onSuccess: () => {
-      toast.success("Projet supprimé");
-      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
-    },
-    onError: () => toast.error("Erreur lors de la suppression"),
-  });
-
-  const handleValider = (id: number) => {
-    if (confirm("Valider ce projet ? Il sera visible publiquement.")) {
-      valider.mutate(id);
-    }
-  };
-
-  const handleSupprimer = (id: number) => {
-    if (confirm("Supprimer définitivement ce projet ?")) {
-      supprimer.mutate(id);
-    }
-  };
-
-  const handleModifier = (id: number) => {
-    navigate(`/admin/projets/edit/${id}`);
-  };
-
-  const handleVoir = (id: number) => {
-    window.open(`/projet/${id}`, "_blank");
-  };
+  // Récupération du solde réel pour chaque projet
+ const { data: soldesData = {} } = useQuery({
+   queryKey: ["project-soldes"],
+   queryFn: async () => {
+     const soldes: Record<number, number> = {};
+     for (const p of projets) {
+       try {
+         const res = await api.get(`/api/admin/projet-wallet/${p.id}/solde`);
+         soldes[p.id] = Number(res) || 0;
+       } catch {
+         soldes[p.id] = 0;
+       }
+     }
+     return soldes;
+   },
+   enabled: projets.length > 0,
+ });
 
   if (isLoading) {
     return <div className={styles.loading}>Chargement des projets...</div>;
@@ -81,105 +52,94 @@ export default function ProjetsAdminPage() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
-        Administration des projets ({projets.length})
+        Administration des Projets ({projets.length})
       </h1>
 
-      <div className={styles.header}>
-        <div />
-        <button
-          onClick={() => navigate("/admin/projets/create")}
-          className={styles.createBtn}
-        >
-          + Créer un projet
-        </button>
-      </div>
-
       <div className={styles.grid}>
-        {projets.length === 0 ? (
-          <p className={styles.empty}>Aucun projet pour le moment</p>
-        ) : (
-          projets.map((p) => (
+        {projets.map((p) => {
+          const soldeReel = soldesData[p.id] ?? 0;
+
+          return (
             <div key={p.id} className={styles.card}>
-              {/* POSTER — CORRIGÉ ET PROPRE */}
               <div className={styles.posterWrapper}>
                 {p.poster ? (
                   <img
                     src={p.poster}
                     alt={p.libelle}
                     className={styles.poster}
-                    loading="lazy"
-                    key={p.id}
-                    onError={(e) => {
-                      console.log("Image échouée :", p.poster);
-                      e.currentTarget.src =
-                        "https://via.placeholder.com/400x300?text=No+Image";
-                    }}
                   />
                 ) : (
                   <div className={styles.noPoster}>Aucun poster</div>
                 )}
-
                 <div
                   className={`${styles.statutBadge} ${
-                    p.statutProjet === "SOUMIS" ||
-                    p.statutProjet === "EN_ATTENTE" ||
-                    p.statutProjet === "EN_PREPARATION"
-                      ? styles.badgeAttente
-                      : p.statutProjet === "VALIDE"
-                      ? styles.badgeValide
-                      : p.statutProjet === "TERMINE"
-                      ? styles.badgeTermine
-                      : styles.badgeDefault
+                    styles[p.statutProjet?.toLowerCase()] || styles.badgeDefault
                   }`}
                 >
-                  {getStatutLabel(p.statutProjet)}
+                  {p.statutProjet}
                 </div>
               </div>
 
               <div className={styles.content}>
-                <h3>{p.libelle}</h3>
+                <h3 className={styles.projectTitle}>{p.libelle}</h3>
                 <p className={styles.porteur}>
-                  Par {p.porteurNom || "Anonyme"}
+                  Par {p.porteurPrenom || ""} {p.porteurNom}
                 </p>
 
-                <div className={styles.actions}>
-                  {(p.statutProjet === "SOUMIS" ||
-                    p.statutProjet === "EN_ATTENTE") && (
-                    <button
-                      onClick={() => handleValider(p.id)}
-                      className={styles.btnValider}
-                      disabled={valider.isPending}
+                <div className={styles.tresorerie}>
+                  <FiDollarSign className={styles.tresorerieIcon} />
+                  <div>
+                    <strong
+                      className={
+                        soldeReel > 0 ? styles.soldePositif : styles.soldeZero
+                      }
                     >
-                      {valider.isPending ? "Validation..." : "Valider"}
+                      {soldeReel.toLocaleString("fr-FR", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      €
+                    </strong>
+                    <small>séquestré réel</small>
+                  </div>
+                </div>
+
+                {/* BOUTONS ADMIN */}
+                <div className={styles.adminActions}>
+                  {p.statutProjet === "SOUMIS" ||
+                  p.statutProjet === "EN_ATTENTE" ? (
+                    <>
+                      <button className={styles.btnValider}>
+                        <FiCheckCircle /> Valider
+                      </button>
+                      <button className={styles.btnRejeter}>
+                        <FiXCircle /> Rejeter
+                      </button>
+                    </>
+                  ) : (
+                    <button className={styles.btnModifier}>
+                      <FiEdit /> Modifier
                     </button>
                   )}
 
-                  <button
-                    onClick={() => handleModifier(p.id)}
-                    className={styles.btnModifier}
+                  <Link
+                    to={`/admin/project-wallets/${p.id}`}
+                    className={styles.btnPortefeuille}
                   >
-                    Modifier
-                  </button>
-
-                  <button
-                    onClick={() => handleSupprimer(p.id)}
-                    className={styles.btnSupprimer}
-                    disabled={supprimer.isPending}
-                  >
-                    {supprimer.isPending ? "Suppression..." : "Supprimer"}
-                  </button>
-
-                  <button
-                    onClick={() => handleVoir(p.id)}
-                    className={styles.btnVoir}
-                  >
-                    Voir détail
-                  </button>
+                    Portefeuille projet
+                  </Link>
                 </div>
+
+                <Link
+                  to={`/projet/${p.id}`}
+                  target="_blank"
+                  className={styles.btnVoir}
+                >
+                  Voir le projet
+                </Link>
               </div>
             </div>
-          ))
-        )}
+          );
+        })}
       </div>
     </div>
   );

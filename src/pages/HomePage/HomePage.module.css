@@ -1,72 +1,9 @@
 /* src/pages/HomePage/HomePage.module.css */
+/* AUCUN STYLE — JUSTE UN CONTENEUR TRANSPARENT */
+
 .home {
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
-}
-
-.hero {
-  background: linear-gradient(rgba(27, 94, 32, 0.95), rgba(27, 94, 32, 0.98)),
-              url('/images/hero.jpg') center/cover no-repeat;
-  color: white;
-  text-align: center;
-  padding: 8rem 2rem;
-  border-bottom: 10px solid #FFC107;
-}
-
-.hero h1 {
-  font-size: 5rem;
-  font-weight: 900;
-  margin: 0 0 1rem 0;
-  text-shadow: 0 6px 20px rgba(0,0,0,0.6);
-  letter-spacing: 3px;
-}
-
-.hero p {
-  font-size: 1.8rem;
-  max-width: 900px;
-  margin: 0 auto;
-  font-weight: 600;
-  line-height: 1.6;
-}
-
-.list {
-  padding: 4rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.list h2 {
-  text-align: center;
-  color: #1B5E20;
-  font-size: 3rem;
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-.list h2::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 150px;
-  height: 8px;
-  background: #FFC107;
-  border-radius: 4px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .hero {
-    padding: 5rem 1.5rem;
-  }
-  .hero h1 {
-    font-size: 3.5rem;
-  }
-  .hero p {
-    font-size: 1.4rem;
-  }
-  .list h2 {
-    font-size: 2.5rem;
-  }
+  background: #f8f9fa;
 }

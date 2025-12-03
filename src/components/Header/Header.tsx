@@ -1,5 +1,8 @@
-// src/components/Header/Header.tsx → VERSION FINALE AVEC PORTEFEUILLE (25 NOV 2025)
+// src/components/Header/Header.tsx
 
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import styles from "./Header.module.css";
 import {
   FiLogIn,
   FiLogOut,
@@ -7,34 +10,41 @@ import {
   FiUser,
   FiShield,
   FiChevronDown,
+  FiSearch,
 } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import styles from "./Header.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const { user, logout, loading } = useAuth();
-  const navigate = useNavigate();
+  const location = useLocation();
   const [showAdminMenu, setShowAdminMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // Dans Header.tsx
   const isAdmin = user?.roles?.includes("ADMIN") ?? false;
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  // Gestion du scroll pour un effet encore plus premium (optionnel mais magnifique)
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  if (loading)
-    return (
-      <header className={styles.header}>
-        <div className={styles.logo}>growzapp</div>
-      </header>
-    );
+  // Fermer le menu admin au clic ailleurs
+  useEffect(() => {
+    const closeMenu = () => setShowAdminMenu(false);
+    if (showAdminMenu) {
+      document.addEventListener("click", closeMenu);
+      return () => document.removeEventListener("click", closeMenu);
+    }
+  }, [showAdminMenu]);
+
+  // ON AFFICHE LE HEADER SUR TOUTES LES PAGES (sauf si tu veux l'exclure quelque part)
+  if (loading) return null;
 
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <Link to="/" className={styles.logo}>
         <h1>growzapp</h1>
       </Link>
@@ -42,17 +52,29 @@ export default function Header() {
       <nav className={styles.nav}>
         {user ? (
           <>
-           
-
             <Link to="/projet/creer" className={styles.navLink}>
-              <FiPlusCircle /> Créer un projet
+              <FiPlusCircle /> <span>Créer un projet</span>
+            </Link>
+            {/* VÉRIFICATION DE CONTRAT — À AJOUTER ICI */}
+            <Link
+              to="/verifier-contrat"
+              className={`${styles.navLink} ${
+                location.pathname.startsWith("/verifier-contrat")
+                  ? styles.active
+                  : ""
+              }`}
+            >
+              <FiSearch />
+              <span>Vérifier un contrat</span>
             </Link>
 
-            {/* ESPACE ADMIN */}
             {isAdmin && (
               <div className={styles.adminDropdown}>
                 <button
-                  onClick={() => setShowAdminMenu((prev) => !prev)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAdminMenu(!showAdminMenu);
+                  }}
                   className={styles.adminBtn}
                 >
                   <FiShield /> Espace Admin
@@ -62,46 +84,51 @@ export default function Header() {
                 </button>
 
                 {showAdminMenu && (
-                  <>
-                    <div
-                      className={styles.dropdownOverlay}
+                  <div className={styles.dropdownMenu}>
+                    <Link to="/admin" onClick={() => setShowAdminMenu(false)}>
+                      Tableau de bord
+                    </Link>
+                    <Link
+                      to="/admin/users"
                       onClick={() => setShowAdminMenu(false)}
-                    />
-                    <div className={styles.dropdownMenu}>
-                      <Link to="/admin" onClick={() => setShowAdminMenu(false)}>
-                        Tableau de bord
-                      </Link>
-                      <Link
-                        to="/admin/users"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        Gestion utilisateurs
-                      </Link>
-                      <Link
-                        to="/admin/projets"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        Tous les projets
-                      </Link>
-                      <Link
-                        to="/admin/investissements"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        Investissements à valider
-                      </Link>
-                      <Link
-                        to="/admin/retraits"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        Validation des retraits
-                      </Link>
-                    </div>
-                  </>
+                    >
+                      Utilisateurs
+                    </Link>
+                    <Link
+                      to="/admin/projets"
+                      onClick={() => setShowAdminMenu(false)}
+                    >
+                      Projets
+                    </Link>
+                    <Link
+                      to="/admin/investissements"
+                      onClick={() => setShowAdminMenu(false)}
+                    >
+                      Investissements
+                    </Link>
+                    <Link
+                      to="/admin/project-wallets"
+                      onClick={() => setShowAdminMenu(false)}
+                    >
+                      Trésorerie
+                    </Link>
+                    <Link
+                      to="/admin/retraits"
+                      onClick={() => setShowAdminMenu(false)}
+                    >
+                      Retraits
+                    </Link>
+                    <Link
+                      to="/admin/contrats"
+                      onClick={() => setShowAdminMenu(false)}
+                    >
+                      Contrats
+                    </Link>
+                  </div>
                 )}
               </div>
             )}
 
-            {/* MON COMPTE */}
             <Link to="/mon-espace" className={styles.monEspaceLink}>
               {user.image ? (
                 <img
@@ -117,8 +144,8 @@ export default function Header() {
               <span>{user.prenom}</span>
             </Link>
 
-            <button onClick={handleLogout} className={styles.logoutBtn}>
-              <FiLogOut /> Déconnexion
+            <button onClick={logout} className={styles.logoutBtn}>
+              <FiLogOut /> <span>Déconnexion</span>
             </button>
           </>
         ) : (

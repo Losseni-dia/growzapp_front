@@ -1,27 +1,116 @@
-.container { background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%); }
-.title { font-size: 2.8rem; font-weight: 800; color: #1B5E20; text-align: center; margin-bottom: 2.5rem; }
-
-.tableContainer { overflow-x: auto; border-radius: 16px; box-shadow: 0 10px 30px rgba(27,94,32,0.15); }
-.table { width: 100%; border-collapse: collapse; background: white; }
-.table th { background: #1B5E20; color: white; padding: 1.2rem; text-align: left; font-weight: 600; }
-.table td { padding: 1rem; border-bottom: 1px solid #E8F5E9; }
-
-.statut { font-weight: bold; }
-.statut.EN_ATTENTE { color: #FF8F00; }
-.statut.VALIDE { color: #388E3C; }
-.statut.ANNULE { color: #D32F2F; }
-
-.valider, .annuler { 
-  padding: 0.6rem 1.2rem; 
-  border: none; 
-  border-radius: 8px; 
-  margin: 0 0.4rem; 
-  font-weight: bold; 
-  cursor: pointer; 
+.container {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+  min-height: 100vh;
 }
-.valider { background: #4CAF50; color: white; }
-.valider:hover { background: #388E3C; }
-.annuler { background: #F44336; color: white; }
-.annuler:hover { background: #D32F2F; }
 
-.loading { text-align: center; padding: 5rem; font-size: 2rem; color: #1B5E20; }
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.header h1 {
+  font-size: 3.2rem;
+  font-weight: 900;
+  color: #1B5E20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(27,94,32,0.15);
+  border: 3px solid #E8F5E9;
+  transition: all 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 30px 70px rgba(27,94,32,0.25);
+  border-color: #FFC107;
+}
+
+.statut {
+  padding: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.pending { background: #FFF3E0; color: #E67E22; }
+.valide { background: #E8F5E9; color: #1B5E20; }
+
+.investisseur {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #f8fff9;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  background: #E8F5E9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1B5E20;
+}
+
+.projet {
+  padding: 1.5rem;
+  border-bottom: 1px solid #E8F5E9;
+}
+
+.montant {
+  padding: 1.5rem;
+  text-align: center;
+  background: #E8F5E9;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #1B5E20;
+}
+
+.actions {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.btnValider {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  transition: all 0.4s;
+}
+
+.btnValider:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(27,94,32,0.4);
+}
+
+.dejaValide {
+  color: #4CAF50;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
