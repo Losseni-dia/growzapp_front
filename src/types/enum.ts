@@ -37,6 +37,7 @@ export enum StatutPartInvestissement {
 export enum StatutDividende {
   PLANIFIE = "PLANIFIE",
   PAYE = "PAYE",
+
 }
 
 // === PAIEMENT ===
@@ -65,6 +66,7 @@ export type TypeTransaction =
   | "TRANSFER_OUT"
   | "TRANSFER_IN"
   | "PAYOUT_STRIPE"
+  | "DIVIDENDE"
   | "RETRAIT_EXTERNE";
 
 /** Statut d'une transaction */
@@ -92,6 +94,7 @@ export const TypeTransactionLabel: Record<TypeTransaction, string> = {
   TRANSFER_OUT: "Transfert envoyé",
   TRANSFER_IN: "Transfert reçu",
   RETRAIT_EXTERNE: "Retrait_externe",
-  PAYOUT_STRIPE:"Stripe"
+  PAYOUT_STRIPE: "Stripe",
+  DIVIDENDE: "Dividende"
 };
 

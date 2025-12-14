@@ -1,11 +1,11 @@
-// src/pages/admin/ProjectWalletsAdminPage.tsx
-// VERSION FINALE 2025 – PORTEUR AFFICHÉ UNIQUEMENT AVEC porteurNom – RIEN D'AUTRE
-
+// src/pages/Admin/WalletsProjets/WalletsProjetsAdminPage.tsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { api } from "../../../service/api";
 import styles from "./WalletsProjetsAdminPage.module.css";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../../components/context/CurrencyContext"; // <--- IMPORT
 
 interface WalletProjet {
   id: number;
@@ -20,10 +20,12 @@ interface Projet {
   id: number;
   libelle: string;
   statutProjet: string;
-  porteurNom: string; // ← SEUL CHAMP EXISTANT DANS TON JSON
+  porteurNom: string;
 }
 
 export default function ProjectWalletsAdminPage() {
+  const { t } = useTranslation();
+  const { format } = useCurrency(); // <--- HOOK
   const [data, setData] = useState<(WalletProjet & { projet?: Projet })[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<
@@ -33,47 +35,41 @@ export default function ProjectWalletsAdminPage() {
   const [motif, setMotif] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       setLoading(true);
-
       const [walletsRes, projetsWrapped] = await Promise.all([
         api.get<WalletProjet[]>("/api/admin/projet-wallet/list"),
         api.get<any>("/api/projets"),
       ]);
-
       const projetsRes: Projet[] = projetsWrapped.data || [];
       const projetsMap = new Map(projetsRes.map((p) => [p.id, p]));
-
       const enriched = walletsRes
         .filter((w) => w.projetId !== null)
         .map((w) => ({
           ...w,
           projet: projetsMap.get(w.projetId!) || undefined,
         }));
-
       setData(enriched);
     } catch (err: any) {
-      toast.error("Impossible de charger les données");
-      console.error(err);
+      toast.error(t("admin.withdrawals.toast.error"));
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleVerser = async () => {
     if (!selected || !montant || parseFloat(montant) <= 0) {
-      toast.error("Montant invalide");
+      toast.error(t("admin.wallets.toast.invalid_amount"));
       return;
     }
-
     const montantNum = parseFloat(montant);
     if (montantNum > selected.soldeDisponible) {
-      toast.error("Montant supérieur au solde disponible");
+      toast.error(t("admin.wallets.toast.insufficient_funds"));
       return;
     }
 
@@ -85,144 +81,116 @@ export default function ProjectWalletsAdminPage() {
           motif: motif || "Versement administrateur",
         }
       );
-
       toast.success(
-        `${montantNum.toLocaleString("fr-FR")} FCFA versés avec succès !`
+        t("admin.wallets.toast.success", {
+          amount: format(montantNum, "XOF"), // <--- Formaté
+        })
       );
       setShowModal(false);
       setMontant("");
       setMotif("");
       fetchData();
     } catch (err: any) {
-      toast.error("Échec du virement");
+      toast.error(t("admin.wallets.toast.error"));
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.loading}>Chargement des comptes séquestrés...</div>
-    );
-  }
+  if (loading)
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Trésorerie Séquestrée – Tous les Projets</h1>
-
+      <h1 className={styles.title}>{t("admin.wallets.title")}</h1>
       <div className={styles.grid}>
-        {data.length === 0 ? (
-          <p className={styles.empty}>Aucun fonds collecté pour le moment</p>
-        ) : (
-          data.map((w) => (
-            <div key={w.id} className={styles.card}>
-              <div className={styles.header}>
-                <h3>{w.projet?.libelle || `Projet #${w.projetId}`}</h3>
-                <span
-                  className={`${styles.statut} ${
-                    styles[(w.projet?.statutProjet || "inconnu").toLowerCase()]
-                  }`}
-                >
-                  {w.projet?.statutProjet || "Inconnu"}
-                </span>
-              </div>
-
-              <div className={styles.info}>
-                <p>
-                  <strong>Porteur :</strong>{" "}
-                  {w.projet?.porteurNom || "Non défini"}
-                </p>
-                {/* TÉLÉPHONE ET EMAIL RETIRÉS – ILS N'EXISTENT PAS DANS LE JSON */}
-              </div>
-
-              <div className={styles.solde}>
-                <strong>
-                  {w.soldeDisponible.toLocaleString("fr-FR")} FCFA
-                </strong>{" "}
-                disponibles
-                {w.soldeBloque > 0 && (
-                  <small className={styles.bloqueText}>
-                    Bloqué : {w.soldeBloque.toLocaleString("fr-FR")} FCFA
-                  </small>
-                )}
-              </div>
-
-              <div className={styles.actions}>
-                <Link
-                  to={`/admin/project-wallets/${w.projetId}`}
-                  className={styles.btnDetail}
-                >
-                  Voir détail trésorerie
-                </Link>
-
-                <button
-                  onClick={() => {
-                    setSelected(w);
-                    setMontant(w.soldeDisponible.toString());
-                    setShowModal(true);
-                  }}
-                  className={styles.btnVerser}
-                  disabled={w.soldeDisponible <= 0}
-                >
-                  Verser au porteur
-                </button>
-              </div>
+        {data.map((w) => (
+          <div key={w.id} className={styles.card}>
+            <div className={styles.header}>
+              <h3>{w.projet?.libelle || `Projet #${w.projetId}`}</h3>
+              <span
+                className={`${styles.statut} ${
+                  styles[(w.projet?.statutProjet || "inconnu").toLowerCase()]
+                }`}
+              >
+                {w.projet?.statutProjet || "Inconnu"}
+              </span>
             </div>
-          ))
-        )}
+            <div className={styles.info}>
+              <p>
+                <strong>{t("admin.wallets.modal.owner")} :</strong>{" "}
+                {w.projet?.porteurNom || "Non défini"}
+              </p>
+            </div>
+            <div className={styles.solde}>
+              {/* MONTANT DYNAMIQUE */}
+              <strong>{format(w.soldeDisponible, "XOF")}</strong>{" "}
+              {t("admin.wallets.available")}
+              {w.soldeBloque > 0 && (
+                <small className={styles.bloqueText}>
+                  {t("admin.wallets.blocked")} : {format(w.soldeBloque, "XOF")}
+                </small>
+              )}
+            </div>
+            <div className={styles.actions}>
+              <Link
+                to={`/admin/project-wallets/${w.projetId}`}
+                className={styles.btnDetail}
+              >
+                {t("admin.wallets.detail_btn")}
+              </Link>
+              <button
+                onClick={() => {
+                  setSelected(w);
+                  setMontant(w.soldeDisponible.toString());
+                  setShowModal(true);
+                }}
+                className={styles.btnVerser}
+                disabled={w.soldeDisponible <= 0}
+              >
+                {t("admin.wallets.pay_owner_btn")}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* MODAL VERSEMENT – SIMPLIFIÉ */}
       {showModal && selected && (
         <div
           className={styles.modalOverlay}
           onClick={() => setShowModal(false)}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>Versement au porteur</h2>
+            <h2>{t("admin.wallets.modal.title")}</h2>
             <p>
-              <strong>Projet :</strong> {selected.projet?.libelle || "Inconnu"}
+              <strong>{t("admin.wallets.modal.available")} :</strong>{" "}
+              {format(selected.soldeDisponible, "XOF")}
             </p>
-            <p>
-              <strong>Porteur :</strong>{" "}
-              {selected.projet?.porteurNom || "Non défini"}
-            </p>
-            <p>
-              <strong>Solde disponible :</strong>{" "}
-              {selected.soldeDisponible.toLocaleString("fr-FR")} FCFA
-            </p>
-
             <div className={styles.formGroup}>
-              <label>Montant à verser (FCFA)</label>
+              <label>{t("admin.wallets.modal.amount_label")}</label>
               <input
                 type="number"
-                step="1000"
-                min="1000"
-                max={selected.soldeDisponible}
                 value={montant}
                 onChange={(e) => setMontant(e.target.value)}
                 className={styles.input}
               />
             </div>
-
             <div className={styles.formGroup}>
-              <label>Motif (facultatif)</label>
+              <label>{t("admin.wallets.modal.reason_label")}</label>
               <input
                 type="text"
                 value={motif}
                 onChange={(e) => setMotif(e.target.value)}
                 className={styles.input}
-                placeholder="Ex: Clôture du projet"
               />
             </div>
-
             <div className={styles.modalActions}>
               <button onClick={handleVerser} className={styles.btnConfirm}>
-                Confirmer le virement
+                {t("admin.wallets.modal.confirm")}
               </button>
               <button
                 onClick={() => setShowModal(false)}
                 className={styles.btnCancel}
               >
-                Annuler
+                {t("admin.wallets.modal.cancel")}
               </button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 /* src/pages/ProjetsPage/ProjetsPage.module.css */
-/* SIDEBAR RÉTRACTABLE + DESIGN PROPRE */
 
+/* --- CONTENEUR PRINCIPAL --- */
 .pageContainer {
   position: relative;
   min-height: 100vh;
@@ -8,21 +8,32 @@
   overflow-x: hidden;
 }
 
+/* --- SIDEBAR (Barre latérale) --- */
 .sidebar {
   position: fixed;
   left: 0;
-  top: 0;
+  
+  /* Se place sous le header fixe (100px approx) */
+  top: 100px; 
+  
   width: 360px;
-  height: 100vh;
+  /* Hauteur calculée pour ne pas dépasser de l'écran */
+  height: calc(100vh - 100px);
+  
   background: white;
   border-right: 1px solid #e0e0e0;
   box-shadow: 8px 0 30px rgba(0,0,0,0.08);
-  z-index: 1000;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateX(0);
-  padding: 2.5rem 0;
+  
+  /* Z-INDEX : 900 (Sous le Header qui est à 1000) */
+  z-index: 900; 
+  
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(0); /* Visible par défaut sur PC */
+  padding: 2rem 0;
+  overflow-y: auto; /* Scroll si trop de filtres */
 }
 
+/* État fermé (caché à gauche) */
 .sidebar:not(.open) {
   transform: translateX(-100%);
 }
@@ -44,6 +55,7 @@
   gap: 14px;
 }
 
+/* Bouton Toggle (Desktop - flèche dans la sidebar) */
 .toggleBtn {
   background: none;
   border: none;
@@ -63,7 +75,7 @@
   padding: 0 2.5rem;
 }
 
-/* Le reste du CSS reste identique à la version précédente */
+/* --- FILTRES & INPUTS --- */
 .filterGroup { margin-bottom: 2.4rem; }
 .filterGroup label { display: block; margin-bottom: 0.9rem; font-weight: 700; color: #2d6a2f; font-size: 1.1rem; }
 
@@ -87,13 +99,15 @@
   box-shadow: 0 4px 15px rgba(27,94,32,0.1);
 }
 
+/* --- ZONE PRINCIPALE (PROJETS) --- */
 .main {
-  margin-left: 360px;
-  padding: 3rem 4rem;
+  margin-left: 360px; /* Espace pour la sidebar */
+  padding: 3rem 4rem; /* Padding standard */
   min-height: 100vh;
   transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Quand la sidebar est fermée, le contenu prend toute la largeur */
 .sidebar:not(.open) ~ .main {
   margin-left: 0;
 }
@@ -110,32 +124,77 @@
 .empty h3 { font-size: 2.5rem; color: #1B5E20; margin-bottom: 1rem; }
 .loading { font-size: 2.5rem; color: #1B5E20; }
 
-/* BOUTON MOBILE */
+/* --- LE BOUTON ROND (FAB) --- */
 .mobileToggle {
-  display: none;
+  /* CORRECTION : On l'affiche par défaut en Flex (plus de display: none) */
+  display: flex; 
   position: fixed;
-  top: 20px;
+  
+  /* On le descend un peu plus pour être sûr qu'il ne touche pas le header */
+  top: 130px; 
   left: 20px;
-  z-index: 2000;
+  
+  /* CORRECTION : Z-Index SUPÉRIEUR à tout (Header = 1000, Sidebar = 900) */
+  z-index: 9999; 
+  
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
   background: #1B5E20;
   color: white;
-  border: none;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  font-weight: bold;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  cursor: pointer;
-  display: flex;
+  border: 2px solid white; /* Petite bordure blanche pour bien le voir */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.mobileToggle:hover {
+  transform: scale(1.1);
+  background: #144418;
+}
+
+.mobileToggle:active {
+  transform: scale(0.9);
+}
+
+/* --- LOGIQUE D'AFFICHAGE --- */
+
+/* Sur PC (> 992px), on cache le bouton SI la sidebar est déjà ouverte */
+/* (C'est géré côté React, voir étape 2) */
+
+
+/* --- RESPONSIVE --- */
 @media (max-width: 992px) {
-  .mobileToggle {
-    display: flex;
-  }
-  
+  /* Sur mobile, le contenu prend toute la largeur */
   .main {
     margin-left: 0 !important;
+    padding: 130px 1.5rem 3rem 1.5rem;
+  }
+
+  .sidebar {
+    width: 300px;
+    transform: translateX(-100%); /* Cachée par défaut */
+  }
+  
+  .sidebar.open {
+    transform: translateX(0); /* Visible si open */
+    box-shadow: 10px 0 100px rgba(0,0,0,0.5); /* Grosse ombre */
+    z-index: 10000; /* Au-dessus de tout sur mobile */
+  }
+  
+  /* L'overlay (fond noir) */
+  .overlay {
+    display: block;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9998; /* Juste sous la sidebar */
+    animation: fadeIn 0.3s;
   }
 }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

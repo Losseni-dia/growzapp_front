@@ -1,6 +1,6 @@
 // src/pages/DividendesPage/DividendesPage.tsx
 import { useState, useEffect } from "react";
-import { api } from "../../service/api";
+import { api, getFreshToken } from "../../service/api";
 import { useAuth } from "../../components/context/AuthContext";
 import toast from "react-hot-toast";
 import {
@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import styles from "./DividendesPage.module.css";
 
+// Interface mise à jour pour inclure factureId
 interface Dividende {
   id: number;
   montantParPart: number;
@@ -18,6 +19,7 @@ interface Dividende {
   datePaiement?: string;
   montantTotal: number;
   projetLibelle: string;
+  factureId?: number; // <--- AJOUTÉ ICI POUR CORRIGER L'ERREUR TS
 }
 
 export default function DividendesPage() {
@@ -29,7 +31,9 @@ export default function DividendesPage() {
     const loadDividendes = async () => {
       try {
         setLoading(true);
-        const data = await api.get<Dividende[]>("/dividendes/mes-dividendes");
+        const data = await api.get<Dividende[]>(
+          "/api/dividendes/mes-dividendes"
+        ); // Vérifie le chemin API
         setDividendes(data);
       } catch (err: any) {
         toast.error(err.message || "Impossible de charger vos dividendes");
@@ -41,23 +45,34 @@ export default function DividendesPage() {
     if (user) loadDividendes();
   }, [user]);
 
-  // FONCTION DE TÉLÉCHARGEMENT PDF – PARFAITE
-  const downloadFacture = async (dividendeId: number) => {
+  // FONCTION DE TÉLÉCHARGEMENT PDF
+  const downloadFacture = async (factureId: number) => {
     try {
-      const blob = await api.getBlob(`/dividendes/${dividendeId}/facture`);
+      const response = await fetch(
+        `http://localhost:8080/api/factures/${factureId}/download`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${getFreshToken() || ""}`,
+          },
+        }
+      );
 
+      if (!response.ok) throw new Error("Facture non disponible");
+
+      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `facture-dividende-${dividendeId}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `facture-dividende-${factureId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      toast.success("Facture téléchargée avec succès ! 🎉");
+      toast.success("Facture téléchargée !");
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors du téléchargement de la facture");
+      toast.error("Facture non disponible ou erreur de téléchargement");
     }
   };
 
@@ -157,13 +172,20 @@ export default function DividendesPage() {
                       : "-"}
                   </td>
                   <td>
-                    <button
-                      onClick={() => downloadFacture(dividende.id)}
-                      className={styles.downloadBtn}
-                      title="Télécharger la facture PDF"
-                    >
-                      <FiDownload /> PDF
-                    </button>
+                    {/* Utilisation conditionnelle de factureId */}
+                    {dividende.factureId ? (
+                      <button
+                        onClick={() => downloadFacture(dividende.factureId!)}
+                        className={styles.downloadBtn}
+                        title="Télécharger la facture PDF"
+                      >
+                        <FiDownload /> PDF
+                      </button>
+                    ) : (
+                      <span style={{ color: "#999", fontStyle: "italic" }}>
+                        —
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

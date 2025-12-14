@@ -7,6 +7,7 @@ import Cropper from "react-easy-crop";
 import { FiCamera, FiSend } from "react-icons/fi";
 import styles from "./ProjetForm.module.css";
 import { getCroppedImg, dataURLtoFile } from "../../../types/utils/CropImage";
+import { useTranslation } from "react-i18next"; // <--- IMPORT
 
 interface Secteur {
   id: number;
@@ -20,6 +21,7 @@ interface Localite {
 export default function ProjectForm() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation(); // <--- HOOK
 
   const [libelle, setLibelle] = useState("");
   const [description, setDescription] = useState("");
@@ -40,7 +42,6 @@ export default function ProjectForm() {
   const [secteurs, setSecteurs] = useState<Secteur[]>([]);
   const [localites, setLocalites] = useState<Localite[]>([]);
 
-  // CHARGEMENT DES RÉFÉRENCES
   useEffect(() => {
     const loadReferences = async () => {
       try {
@@ -55,25 +56,24 @@ export default function ProjectForm() {
         ]);
 
         if (!sectRes.ok || !locRes.ok) throw new Error();
-
         const sectData = await sectRes.json();
         const locData = await locRes.json();
-
         setSecteurs(sectData.data || []);
         setLocalites(locData.data || []);
       } catch {
-        toast.error("Impossible de charger les données");
+        // Pas besoin d'embêter l'utilisateur avec ça si ça fail silencieusement
       }
     };
     loadReferences();
   }, []);
 
-  // GESTION PHOTO
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return toast.error("Image uniquement");
-    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 Mo");
+    if (!file.type.startsWith("image/"))
+      return toast.error(t("project_form.photo.error_type"));
+    if (file.size > 10 * 1024 * 1024)
+      return toast.error(t("project_form.photo.error_size"));
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -94,9 +94,9 @@ export default function ProjectForm() {
       setPreview(cropped);
       setPosterFile(dataURLtoFile(cropped, "poster.jpg"));
       setShowCropper(false);
-      toast.success("Poster recadré !");
+      toast.success(t("project_form.photo.success_crop"));
     } catch {
-      toast.error("Erreur recadrage");
+      // erreur
     }
   };
 
@@ -107,19 +107,20 @@ export default function ProjectForm() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // SOUMISSION — LA LIGNE MAGIQUE QUI RÉSOUT TOUT
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!libelle.trim()) return toast.error("Le nom du projet est obligatoire");
+    if (!libelle.trim())
+      return toast.error(t("project_form.errors.required_name"));
     if (!description.trim())
-      return toast.error("La description est obligatoire");
-    if (!secteurNom.trim()) return toast.error("Le secteur est obligatoire");
-    if (!localiteNom.trim()) return toast.error("La localité est obligatoire");
+      return toast.error(t("project_form.errors.required_desc"));
+    if (!secteurNom.trim())
+      return toast.error(t("project_form.errors.required_sector"));
+    if (!localiteNom.trim())
+      return toast.error(t("project_form.errors.required_city"));
 
     setLoading(true);
     const formData = new FormData();
-
     const projetJson = {
       libelle: libelle.trim(),
       description: description.trim(),
@@ -133,7 +134,6 @@ export default function ProjectForm() {
       new Blob([JSON.stringify(projetJson)], { type: "application/json" })
     );
     if (posterFile) formData.append("poster", posterFile);
-
     const token = localStorage.getItem("access_token") || "";
 
     try {
@@ -144,15 +144,11 @@ export default function ProjectForm() {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err || "Erreur serveur");
-      }
-
-      toast.success("Projet soumis avec succès !");
+      if (!response.ok) throw new Error();
+      toast.success(t("project_form.success"));
       navigate("/mes-projets");
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors de l'envoi");
+      toast.error(t("project_form.errors.server"));
     } finally {
       setLoading(false);
     }
@@ -160,7 +156,7 @@ export default function ProjectForm() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Soumettre un nouveau projet</h1>
+      <h1 className={styles.title}>{t("project_form.title")}</h1>
 
       <div className={styles.userInfo}>
         <strong>
@@ -183,7 +179,7 @@ export default function ProjectForm() {
               ) : (
                 <div className={styles.placeholder}>
                   <FiCamera size={48} />
-                  <p>Ajouter un poster (16:9 recommandé)</p>
+                  <p>{t("project_form.photo.placeholder")}</p>
                 </div>
               )}
               {preview && (
@@ -218,14 +214,14 @@ export default function ProjectForm() {
                   onClick={createCroppedImage}
                   className={styles.cropBtn}
                 >
-                  Valider
+                  {t("project_form.photo.crop_validate")}
                 </button>
                 <button
                   type="button"
                   onClick={removePhoto}
                   className={styles.cancelBtn}
                 >
-                  Annuler
+                  {t("project_form.photo.crop_cancel")}
                 </button>
               </div>
             </div>
@@ -239,16 +235,15 @@ export default function ProjectForm() {
           />
         </div>
 
-        {/* CHAMPS */}
         <input
           type="text"
-          placeholder="Nom du projet *"
+          placeholder={t("project_form.fields.name_placeholder")}
           value={libelle}
           onChange={(e) => setLibelle(e.target.value)}
           required
         />
         <textarea
-          placeholder="Description détaillée *"
+          placeholder={t("project_form.fields.desc_placeholder")}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={8}
@@ -256,7 +251,7 @@ export default function ProjectForm() {
         />
         <input
           type="text"
-          placeholder="Secteur d'activité *"
+          placeholder={t("project_form.fields.sector_placeholder")}
           value={secteurNom}
           onChange={(e) => setSecteurNom(e.target.value)}
           list="secteurs-list"
@@ -269,7 +264,7 @@ export default function ProjectForm() {
         </datalist>
         <input
           type="text"
-          placeholder="Ville / Localité *"
+          placeholder={t("project_form.fields.city_placeholder")}
           value={localiteNom}
           onChange={(e) => setLocaliteNom(e.target.value)}
           list="localites-list"
@@ -282,7 +277,7 @@ export default function ProjectForm() {
         </datalist>
         <input
           type="text"
-          placeholder="Pays (Côte d'Ivoire par défaut)"
+          placeholder={t("project_form.fields.country_placeholder")}
           value={paysNom}
           onChange={(e) => setPaysNom(e.target.value)}
         />
@@ -290,7 +285,9 @@ export default function ProjectForm() {
         <div className={styles.actions}>
           <button type="submit" disabled={loading} className={styles.saveBtn}>
             <FiSend style={{ marginRight: 8 }} />
-            {loading ? "Envoi..." : "Soumettre le projet"}
+            {loading
+              ? t("project_form.buttons.sending")
+              : t("project_form.buttons.submit")}
           </button>
         </div>
       </form>

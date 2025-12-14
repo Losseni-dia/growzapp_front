@@ -1,5 +1,4 @@
 // src/pages/ProjetsPage/ProjetsPage.tsx
-// VERSION FINALE 2025 – SIDEBAR RÉTRACTABLE + TRIS INTELLIGENTS
 
 import { useState, useMemo, useEffect } from "react";
 import ProjectCard from "../../components/Projet/ProjetCard/ProjetCard";
@@ -7,11 +6,14 @@ import styles from "./ProjetsPage.module.css";
 import { api } from "../../service/api";
 import { ProjetDTO } from "../../types/projet";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   FiSearch,
   FiFilter,
   FiChevronLeft,
   FiChevronRight,
+  FiSliders, // <--- NOUVELLE ICÔNE POUR LE BOUTON ROND
+  FiX, // <--- POUR FERMER
 } from "react-icons/fi";
 
 interface ApiResponse<T> {
@@ -21,9 +23,13 @@ interface ApiResponse<T> {
 }
 
 export default function ProjetsPage() {
+  const { t } = useTranslation();
+
   const [projects, setProjects] = useState<ProjetDTO[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // ← Sidebar visible par défaut
+
+  // Par défaut true sur Desktop, mais le CSS gère le masquage sur mobile initialement
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [search, setSearch] = useState("");
   const [secteurFilter, setSecteurFilter] = useState<string>("");
@@ -42,14 +48,14 @@ export default function ProjetsPage() {
         );
         setProjects(response.data || []);
       } catch (err: any) {
-        toast.error("Impossible de charger les projets");
+        toast.error(t("projects_page.toast_error"));
         setProjects([]);
       } finally {
         setLoading(false);
       }
     };
     fetchProjects();
-  }, []);
+  }, [t]);
 
   const filtresUniques = useMemo(() => {
     const secteurs = new Set<string>();
@@ -104,118 +110,129 @@ export default function ProjetsPage() {
   }, [projects, search, secteurFilter, prixMin, prixMax, sortBy]);
 
   if (loading)
-    return <div className={styles.loading}>Chargement des projets...</div>;
+    return <div className={styles.loading}>{t("projects_page.loading")}</div>;
 
   return (
     <div className={styles.pageContainer}>
-      {/* SIDEBAR FIXE + BOUTON CACHÉ/MONTRÉ */}
+      {/* 1. NOUVEAU BOUTON MOBILE (FAB) */}
+      {/* Il est toujours dans le DOM, le CSS gère l'affichage (display: none sur PC) */}
+      <button
+        className={styles.mobileToggle}
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="Toggle Filters"
+      >
+        {sidebarOpen ? <FiX size={24} /> : <FiSliders size={24} />}
+      </button>
+
+      {/* 2. OVERLAY (Fond noir) pour fermer sur mobile */}
+      {sidebarOpen && (
+        <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* 3. SIDEBAR */}
+      {/* On applique la classe .open si le state est true */}
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ""}`}>
         <div className={styles.sidebarHeader}>
           <h2 className={styles.sidebarTitle}>
-            <FiFilter /> Filtres
+            <FiFilter /> {t("projects_page.filters.title")}
           </h2>
+
+          {/* Bouton de collapse pour Desktop (Optionnel, tu peux le garder ou l'enlever) */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className={styles.toggleBtn}
-            aria-label={
-              sidebarOpen ? "Cacher les filtres" : "Afficher les filtres"
-            }
           >
-            {sidebarOpen ? <FiChevronLeft /> : <FiChevronRight />}
+            <FiChevronLeft />
           </button>
         </div>
 
-        {sidebarOpen && (
-          <div className={styles.sidebarContent}>
-            <div className={styles.filterGroup}>
-              <label>Recherche</label>
-              <div className={styles.searchWrapper}>
-                <FiSearch className={styles.searchIcon} />
-                <input
-                  type="text"
-                  placeholder="Nom, ville, pays, secteur..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className={styles.searchInput}
-                />
-              </div>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <label>Secteur</label>
-              <select
-                value={secteurFilter}
-                onChange={(e) => setSecteurFilter(e.target.value)}
-                className={styles.select}
-              >
-                <option value="">Tous</option>
-                {filtresUniques.secteurs.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <label>Prix par part</label>
-              <div className={styles.priceRange}>
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={prixMin}
-                  onChange={(e) => setPrixMin(e.target.value)}
-                  className={styles.priceInput}
-                />
-                <span>à</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={prixMax}
-                  onChange={(e) => setPrixMax(e.target.value)}
-                  className={styles.priceInput}
-                />
-              </div>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <label>Trier par</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className={styles.select}
-              >
-                <option value="recent">Plus récent</option>
-                <option value="financement">Meilleur financement</option>
-                <option value="prixAsc">Prix croissant</option>
-                <option value="prixDesc">Prix décroissant</option>
-              </select>
-            </div>
-
-            <div className={styles.resultsCount}>
-              {filteredProjects.length} projet
-              {filteredProjects.length > 1 ? "s" : ""}
+        {/* Contenu de la sidebar */}
+        <div className={styles.sidebarContent}>
+          <div className={styles.filterGroup}>
+            <label>{t("projects_page.filters.search_label")}</label>
+            <div className={styles.searchWrapper}>
+              <FiSearch className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder={t("projects_page.filters.search_placeholder")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={styles.searchInput}
+              />
             </div>
           </div>
-        )}
+
+          <div className={styles.filterGroup}>
+            <label>{t("projects_page.filters.sector_label")}</label>
+            <select
+              value={secteurFilter}
+              onChange={(e) => setSecteurFilter(e.target.value)}
+              className={styles.select}
+            >
+              <option value="">{t("projects_page.filters.all_sectors")}</option>
+              {filtresUniques.secteurs.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>{t("projects_page.filters.price_label")}</label>
+            <div className={styles.priceRange}>
+              <input
+                type="number"
+                placeholder={t("projects_page.filters.price_min")}
+                value={prixMin}
+                onChange={(e) => setPrixMin(e.target.value)}
+                className={styles.priceInput}
+              />
+              <span>{t("projects_page.filters.to")}</span>
+              <input
+                type="number"
+                placeholder={t("projects_page.filters.price_max")}
+                value={prixMax}
+                onChange={(e) => setPrixMax(e.target.value)}
+                className={styles.priceInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.filterGroup}>
+            <label>{t("projects_page.filters.sort_label")}</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className={styles.select}
+            >
+              <option value="recent">
+                {t("projects_page.filters.sort_recent")}
+              </option>
+              <option value="financement">
+                {t("projects_page.filters.sort_funding")}
+              </option>
+              <option value="prixAsc">
+                {t("projects_page.filters.sort_price_asc")}
+              </option>
+              <option value="prixDesc">
+                {t("projects_page.filters.sort_price_desc")}
+              </option>
+            </select>
+          </div>
+
+          <div className={styles.resultsCount}>
+            {filteredProjects.length} {t("projects_page.filters.results")}
+          </div>
+        </div>
       </aside>
 
-      {/* BOUTON MOBILE SI SIDEBAR CACHÉE */}
-      {!sidebarOpen && (
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className={styles.mobileToggle}
-        >
-          <FiFilter /> Filtres
-        </button>
-      )}
-
-      {/* CONTENU PRINCIPAL */}
+      {/* 4. MAIN CONTENT */}
       <main className={styles.main}>
         {filteredProjects.length === 0 ? (
           <div className={styles.empty}>
-            <h3>Aucun projet trouvé</h3>
-            <p>Modifiez vos filtres</p>
+            <h3>{t("projects_page.empty.title")}</h3>
+            <p>{t("projects_page.empty.subtitle")}</p>
           </div>
         ) : (
           <div className={styles.grid}>

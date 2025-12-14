@@ -8,6 +8,9 @@ import toast from "react-hot-toast";
 import { UserDTO } from "../../types/user";
 import { api } from "../../service/api";
 
+// 1. IMPORT DE LA TRADUCTION
+import { useTranslation } from "react-i18next";
+
 export default function LoginForm() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +19,9 @@ export default function LoginForm() {
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
+  // 2. RECUPERATION DES OUTILS DE TRADUCTION
+  const { t, i18n } = useTranslation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
@@ -23,7 +29,7 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const response = await api.post<any>("/auth/login", {
+      const response = await api.post<any>("/api/auth/login", {
         login: login.trim(),
         password,
       });
@@ -32,15 +38,22 @@ export default function LoginForm() {
       const user = response.user;
 
       if (!token || !user) {
-        toast.error("Réponse invalide du serveur");
+        toast.error(t("login_page.toast_error_server"));
         return;
       }
 
+      // === APPLICATION DE LA LANGUE SAUVEGARDÉE ===
+      if (user.interfaceLanguage) {
+        i18n.changeLanguage(user.interfaceLanguage);
+      }
+      // ============================================
+
       authLogin(token, user as UserDTO);
-      toast.success("Connecté avec succès !");
+      toast.success(t("login_page.toast_success"));
       navigate("/");
     } catch (err: any) {
-      toast.error(err.message || "Identifiants incorrects");
+      // Si le backend envoie un message spécifique, on l'affiche, sinon message traduit par défaut
+      toast.error(err.message || t("login_page.toast_error_credentials"));
     } finally {
       setLoading(false);
     }
@@ -48,11 +61,12 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2>Connexion à growzapp</h2>
+      {/* TITRE TRADUIT */}
+      <h2>{t("login_page.title")}</h2>
 
       <input
         type="text"
-        placeholder="Login ou email"
+        placeholder={t("login_page.placeholder_login")}
         value={login}
         onChange={(e) => setLogin(e.target.value)}
         required
@@ -61,32 +75,20 @@ export default function LoginForm() {
 
       <input
         type="password"
-        placeholder="Mot de passe"
+        placeholder={t("login_page.placeholder_password")}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
 
       <button type="submit" disabled={loading} className={styles.submitBtn}>
-        {loading ? "Connexion..." : "Se connecter"}
+        {loading ? t("login_page.btn_loading") : t("login_page.btn_submit")}
       </button>
 
-      {/* LIEN SIMPLE, VISIBLE, IMPOSSIBLE À MANQUER */}
-      <div style={{ textAlign: "center", marginTop: "28px" }}>
-        <span style={{ color: "#1B5E20", fontSize: "15px" }}>
-          Pas encore de compte ?{" "}
-        </span>
-        <Link
-          to="/register"
-          style={{
-            color: "#27ae60",
-            fontWeight: "bold",
-            fontSize: "17px",
-            textDecoration: "underline",
-          }}
-        >
-          S’inscrire gratuitement
-        </Link>
+      {/* LIEN D'INSCRIPTION (Utilise maintenant la classe CSS .registerLink) */}
+      <div className={styles.registerLink}>
+        <span>{t("login_page.no_account")} </span>
+        <Link to="/register">{t("login_page.register_link")}</Link>
       </div>
     </form>
   );

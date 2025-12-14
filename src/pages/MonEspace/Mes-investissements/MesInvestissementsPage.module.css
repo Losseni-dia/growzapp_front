@@ -1,4 +1,6 @@
 /* src/pages/investisseur/MesInvestissementsPage.module.css */
+/* VERSION ULTIME — 3 BOUTONS PARFAITS, JAMAIS DÉBORDANTS, TOUJOURS VISIBLES */
+
 .container {
   max-width: 1400px;
   margin: 2rem auto;
@@ -39,6 +41,8 @@
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
   border: 3px solid #e8f5e9;
   transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
@@ -80,6 +84,9 @@
 
 .content {
   padding: 2rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .projetTitle {
@@ -94,27 +101,22 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-bottom: 1rem;
+  font-size: 0.95rem;
 }
 
 .infoItem {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 0.95rem;
 }
 
 .icon {
   color: #ffc107;
 }
 
-.partsIcon {
-  font-size: 1.6rem;
-  font-weight: bold;
-}
-
 .montantInvesti {
   background: #e8f5e9;
-  padding: 1rem;
+  padding: 1.2rem;
   border-radius: 14px;
   text-align: center;
   font-size: 1.7rem;
@@ -123,119 +125,88 @@
   margin: 1.5rem 0;
 }
 
-.dividendes {
-  background: #f8fff8;
-  padding: 1rem;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  color: #1b5e20;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 1rem 0;
-}
-
+/* 3 BOUTONS — PARFAITS, ALIGNÉS, JAMAIS DÉBORDANTS */
 .actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin: 1.5rem 0 0.5rem 0;
+  padding: 0 4px;
 }
 
-.btnVoir,
-.btnContrat {
-  padding: 1rem;
+.btnVoirContrat,
+.btnDownloadContrat,
+.btnVoirProjet,
+.btnDisabled {
+  padding: 12px 8px;
   border-radius: 14px;
   font-weight: bold;
-  text-align: center;
-  text-decoration: none;
-  transition: 0.3s;
+  font-size: 0.92rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 6px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-height: 56px;
+  text-align: center;
+  word-break: break-word;
 }
 
-.btnVoir {
+/* VOIR LE CONTRAT */
+.btnVoirContrat {
   background: #1b5e20;
   color: white;
 }
 
-.btnVoir:hover {
-  background: #173d17;
+.btnVoirContrat:hover {
+  background: #2e7d32;
+  transform: translateY(-3px);
 }
 
-.btnContrat {
+/* TÉLÉCHARGER LE CONTRAT */
+.btnDownloadContrat {
   background: #ffc107;
   color: #1b5e20;
 }
 
-.btnContrat:hover {
-  background: #ffb300;
-}
-
-/* src/pages/investisseur/MesInvestissementsPage.module.css */
-.btnContrat {
-  background: #ffc107;
-  color: #1b5e20;
-  padding: 1rem 1.5rem;
-  border-radius: 14px;
-  font-weight: bold;
-  text-align: center;
-  text-decoration: none;
-  transition: 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px; /* espace entre icône et texte */
-  font-size: 1.05rem;
-}
-
-.btnContrat:hover {
+.btnDownloadContrat:hover {
   background: #ffb300;
   transform: translateY(-3px);
 }
 
-/* BOUTON TÉLÉCHARGEMENT PDF – MAGNIFIQUE & PARFAIT */
-.btnDownload {
-  background: linear-gradient(135deg, #ffb300, #ffb300);
+/* VOIR LE PROJET */
+.btnVoirProjet {
+  background: #17a2b8;
   color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 14px;
-  font-weight: bold;
-  font-size: 1.05rem;
+}
+
+.btnVoirProjet:hover {
+  background: #138496;
+  transform: translateY(-3px);
+}
+
+/* BOUTON DÉSACTIVÉ (quand pas de contrat) */
+.btnDisabled {
+  background: #f5f5f5 !important;
+  color: #aaa !important;
+  cursor: not-allowed;
+  border: 2px dashed #ddd;
+}
+
+.pending {
   text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
-}
-
-.btnDownload:hover {
-  background: linear-gradient(135deg, #ffb300, #ffb300);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(40, 167, 69, 0.45);
-}
-
-.btnDownload:active {
-  transform: translateY(-1px);
-}
-
-.pendingText {
-  font-size: 0.9rem;
+  padding: 12px;
+  background: #fff3e0;
   color: #e67e22;
-  font-style: italic;
-  text-align: center;
-  padding: 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  margin: 1rem 0;
 }
 
-/* ÉTAT VIDE */
-.emptyState {
+/* ÉTAT VIDE & LOADING */
+.emptyState, .loading {
   text-align: center;
   padding: 6rem 2rem;
   color: #666;
@@ -259,9 +230,32 @@
   text-decoration: none;
 }
 
-.loading {
-  text-align: center;
-  padding: 5rem;
-  font-size: 1.4rem;
-  color: #666;
+.btnGroup {
+  display: flex;
+  gap: 8px;
+  margin-right: auto; /* Pousse le bouton "Voir projet" à droite */
+}
+
+.btnAction {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #c8e6c9;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btnAction:hover {
+  background-color: #1b5e20;
+  color: white;
+  border-color: #1b5e20;
+}
+
+.btnAction:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

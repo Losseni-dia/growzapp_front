@@ -1,4 +1,8 @@
-// src/service/api.ts → VERSION FINALE 100% COMPATIBLE AVEC TON CODE EXISTANT
+// src/service/api.ts
+
+// === AJOUT 1 : On importe juste i18n pour lire la langue actuelle ===
+import i18n from "../i18n";
+// ===================================================================
 
 const getFreshToken = (): string | null => {
   try {
@@ -65,6 +69,13 @@ const request = async <T = unknown>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
+  // === AJOUT 2 : C'est la seule modification dans la logique ===
+  // Si i18n est chargé, on ajoute la langue dans l'en-tête
+  if (i18n && i18n.language) {
+    headers["Accept-Language"] = i18n.language;
+  }
+  // ===========================================================
+
   try {
     const response = await fetch(url, {
       method,
@@ -107,8 +118,6 @@ const request = async <T = unknown>(
   }
 };
 
-
-
 export const api = {
   get: <T = unknown>(endpoint: string) => request<T>("GET", endpoint),
   post: <T = unknown>(endpoint: string, body?: any, isFormData = false) =>
@@ -118,5 +127,4 @@ export const api = {
   patch: <T = unknown>(endpoint: string, body?: any) =>
     request<T>("PATCH", endpoint, body),
   delete: <T = unknown>(endpoint: string) => request<T>("DELETE", endpoint),
-  
 };

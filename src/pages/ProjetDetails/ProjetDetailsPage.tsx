@@ -1,4 +1,4 @@
-// src/pages/ProjetDetailsPage.tsx
+// src/pages/ProjetDetails/ProjetDetailsPage.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../service/api";
@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import styles from "./ProjetDetailsPage.module.css";
 import { ApiResponse } from "../../types/common";
 import { useAuth } from "../../components/context/AuthContext";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../components/context/CurrencyContext"; // IMPORT CONTEXT
 import {
   FiDownload,
   FiFileText,
@@ -19,35 +21,35 @@ import {
 
 export default function ProjetDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  const { t, i18n } = useTranslation();
+  const { format } = useCurrency(); // HOOK MONNAIE
+
   const [projet, setProjet] = useState<ProjetDTO | null>(null);
   const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
+  const translateData = (
+    category: "sectors" | "countries" | "cities",
+    value?: string
+  ) => {
+    if (!value) return "---";
+    const searchKey = value.trim().toUpperCase();
+    return t(`data.${category}.${searchKey}`, { defaultValue: value });
+  };
+
   const loadProjetAndDocuments = async () => {
     if (!id) return;
-
     try {
       setLoading(true);
-
       const [projetRes, docsRes] = await Promise.all([
         api.get<ApiResponse<ProjetDTO>>(`api/projets/${id}`),
         api.get<ApiResponse<DocumentDTO[]>>(`api/documents/projet/${id}`),
       ]);
-
       setProjet(projetRes.data);
       setDocuments(docsRes.data || []);
     } catch (err: any) {
-      // Si 403 → pas d'accès aux documents → on garde juste le projet
-      if (err.message.includes("403") || err.message.includes("refusé")) {
-        const projetRes = await api.get<ApiResponse<ProjetDTO>>(
-          `api/projets/${id}`
-        );
-        setProjet(projetRes.data);
-        setDocuments([]);
-      } else {
-        toast.error(err.message || "Projet non trouvé");
-      }
+      toast.error(t("project_details.error_not_found"));
     } finally {
       setLoading(false);
     }
@@ -55,113 +57,63 @@ export default function ProjetDetailsPage() {
 
   useEffect(() => {
     loadProjetAndDocuments();
-  }, [id]);
+  }, [id, t]);
 
-  const formatNumber = (value?: number | null): string => {
-    return (value ?? 0).toLocaleString("fr-FR");
-  };
+  if (loading)
+    return <p className={styles.loading}>{t("project_details.loading")}</p>;
+  if (!projet)
+    return (
+      <p className={styles.error}>{t("project_details.error_not_found")}</p>
+    );
 
   const progress =
-    projet?.objectifFinancement && projet.objectifFinancement > 0
+    projet.objectifFinancement > 0
       ? (projet.montantCollecte / projet.objectifFinancement) * 100
       : 0;
 
-  const handleInvestSuccess = () => {
-    toast.success("Investissement pris en compte ! Mise à jour...");
-    loadProjetAndDocuments(); // Recharge proprement
-  };
-
-  const handleDownload = async (docId: number, nom: string, type: string) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/documents/${docId}/download`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              localStorage.getItem("access_token") || ""
-            }`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Téléchargement impossible");
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = type === "PDF" ? `${nom}.pdf` : nom;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch {
-      toast.error("Impossible de télécharger le document");
-    }
-  };
-
-  const getIcon = (type: string) => {
-    switch (type.toUpperCase()) {
-      case "PDF":
-        return <FiFileText color="#d32f2f" size={26} />;
-      case "EXCEL":
-      case "CSV":
-        return <FiFile color="#1B5E20" size={26} />;
-      default:
-        return <FiImage color="#1B5E20" size={26} />;
-    }
-  };
-
-  const hasAccessToDocuments = () => {
-    if (!user || !projet) return false;
-    if (user.roles?.includes("ADMIN")) return true;
-    if (projet.porteurId === user.id) return true;
-    return projet.investissements?.some(
-      (inv) => inv.investisseurId === user.id
-    );
-  };
-
-  if (loading) return <p className={styles.loading}>Chargement du projet...</p>;
-  if (!projet) return <p className={styles.error}>Projet introuvable</p>;
-
   return (
     <div className={styles.container}>
-      {/* === HEADER EXISTANT === */}
       <div className={styles.header}>
-        {projet.poster ? (
+        {projet.poster && (
           <img
             src={projet.poster}
             alt={projet.libelle}
             className={styles.poster}
-            loading="lazy"
           />
-        ) : (
-          <div className={styles.noPoster}>Aucun poster disponible</div>
         )}
         <div className={styles.info}>
           <h1>{projet.libelle}</h1>
           <p>
-            <strong>Secteur :</strong> {projet.secteurNom || "Non renseigné"}
+            <strong>{t("project_details.sector")} :</strong>{" "}
+            {translateData("sectors", projet.secteurNom)}
           </p>
           <p>
-            <strong>Localisation :</strong> {projet.siteNom},{" "}
-            {projet.localiteNom}
-          </p>
-          <p>
-            <strong>Pays :</strong> {projet.paysNom || "Non renseigné"}
+            <strong>{t("project_details.location")} :</strong> {projet.siteNom},{" "}
+            {translateData("cities", projet.localiteNom)}
           </p>
           <div className={styles.roiBadge}>
-            ROI Projeté : {projet.roiProjete}%
+            {t("project_details.roi_projected")} : {projet.roiProjete}%
           </div>
         </div>
       </div>
 
-      {/* === STATS + PROGRESS === */}
       <div className={styles.stats}>
         <div>
-          <strong>{formatNumber(projet.montantCollecte)} €</strong> collectés
+          {/* CONVERSION ICI */}
+          <strong>
+            {format(projet.montantCollecte, projet.currencyCode)}
+          </strong>{" "}
+          {t("project_details.collected")}
         </div>
         <div>
-          <strong>{formatNumber(projet.objectifFinancement)} €</strong> objectif
+          {/* CONVERSION ICI */}
+          <strong>
+            {format(projet.objectifFinancement, projet.currencyCode)}
+          </strong>{" "}
+          {t("project_details.goal")}
         </div>
         <div>
-          <strong>{progress.toFixed(0)}%</strong> atteint
+          <strong>{progress.toFixed(0)}%</strong> {t("project_details.reached")}
         </div>
       </div>
 
@@ -173,50 +125,16 @@ export default function ProjetDetailsPage() {
       </div>
 
       <div className={styles.description}>
-        <h2>Description du projet</h2>
+        <h2>{t("project_details.description_title")}</h2>
         <p>{projet.description}</p>
       </div>
 
-      {/* === NOUVELLE SECTION : DOCUMENTS === */}
-      {hasAccessToDocuments() ? (
-        <div className={styles.documentsSection}>
-          <h2>
-            <FiLock style={{ marginRight: 8 }} />
-            Documents du projet ({documents.length})
-          </h2>
-          {documents.length === 0 ? (
-            <p className={styles.noDocs}>
-              Aucun document disponible pour le moment
-            </p>
-          ) : (
-            <div className={styles.docGrid}>
-              {documents.map((doc) => (
-                <div key={doc.id} className={styles.docCard}>
-                  <div className={styles.docIcon}>{getIcon(doc.type)}</div>
-                  <div className={styles.docInfo}>
-                    <strong>{doc.nom}</strong>
-                    <small>
-                      {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
-                    </small>
-                  </div>
-                  <button
-                    onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
-                    className={styles.downloadBtn}
-                    title="Télécharger"
-                  >
-                    <FiDownload />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : null}
-
-      {/* === INVESTISSEMENT === */}
       <div className={styles.investSection}>
-        <h2>Investir dans ce projet</h2>
-        <InvestForm projet={projet} onSuccess={handleInvestSuccess} />
+        <h2>{t("project_details.invest_title")}</h2>
+        <InvestForm
+          projet={projet}
+          onSuccess={() => loadProjetAndDocuments()}
+        />
       </div>
     </div>
   );

@@ -1,9 +1,43 @@
-/* Icônes React Icons – style global */
+/* --- 1. RESET DE BASE --- */
+html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  /* height: 100%;  <-- Optionnel mais aide souvent */
+}
+
+/* --- 2. CORRECTION POUR LE HEADER FIXE --- */
+body {
+  margin: 0;
+  width: 100%;
+  overflow-x: hidden;
+  
+  /* --- CORRECTION MAJEURE --- */
+  /* 1. Padding-top : Pour que le contenu ne passe pas sous le Header fixe */
+  padding-top: 130px; 
+  
+  /* 2. Padding côtés : ON MET 0 ICI. */
+  /* C'est crucial pour que ta Sidebar puisse toucher le bord gauche */
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  
+  background-color: #f8fafc;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased; /* Rend la police plus nette sur Mac */
+}
+
+/* --- 3. RESTES DE TON CSS --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 svg {
   vertical-align: middle;
 }
 
-/* Boutons avec icône */
 .btnWithIcon {
   display: inline-flex;
   align-items: center;
@@ -19,19 +53,4 @@ svg {
 
 .btnWithIcon svg {
   font-size: 1.2rem;
-}
-
-
-/* index.css ou App.css */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  overflow-x: hidden;
 }

@@ -1,10 +1,10 @@
-// src/pages/admin/InvestissementsAdminPage.tsx
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../service/api";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, es } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 import {
   FiCheckCircle,
   FiClock,
@@ -16,9 +16,6 @@ import {
 } from "react-icons/fi";
 import styles from "./InvestissementsAdminPage.module.css";
 
-// ──────────────────────────────────────────────
-// Interfaces
-// ──────────────────────────────────────────────
 interface InvestissementAdmin {
   id: number;
   date: string;
@@ -40,33 +37,31 @@ interface MutationResponse {
   lienVerification: string;
 }
 
-// ──────────────────────────────────────────────
-// Composant principal
-// ──────────────────────────────────────────────
 export default function InvestissementsAdminPage() {
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [investissements, setInvestissements] = useState<InvestissementAdmin[]>(
     []
   );
   const [loading, setLoading] = useState(true);
 
-  // Chargement des investissements (utilise ton proxy normal)
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
+
   useEffect(() => {
     api
       .get<{ data: InvestissementAdmin[] }>("/api/admin/investissements")
       .then((res) => setInvestissements(res.data || []))
-      .catch(() => toast.error("Erreur de chargement"))
+      .catch(() => toast.error(t("admin.withdrawals.toast.error")))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
-  // Mutation : on force 8080 UNIQUEMENT ici
   const validerEtEnvoyer = useMutation<
     MutationResponse,
     Error,
     InvestissementAdmin
   >({
     mutationFn: async (inv) => {
-      // ON FORCE 8080 DIRECTEMENT → VA SUR LE BACKEND RÉEL
       return api.post<MutationResponse>(
         `http://localhost:8080/api/admin/investissements/${inv.id}/valider-et-envoyer`
       );
@@ -74,54 +69,52 @@ export default function InvestissementsAdminPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["admin-investissements"] });
       toast.success(
-        `Contrat ${data.numeroContrat} validé et envoyé avec succès !`,
+        t("admin.investments.sent", { number: data.numeroContrat }),
         { duration: 6000 }
       );
     },
     onError: (err) => {
-      toast.error(err.message || "Erreur lors de la validation du contrat");
+      toast.error(err.message || t("admin.withdrawals.toast.error"));
     },
   });
 
-  if (loading) {
-    return (
-      <div className={styles.loading}>Chargement des investissements...</div>
-    );
-  }
+  if (loading)
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>
-          <FiTrendingUp size={40} /> Gestion des Investissements
+          <FiTrendingUp size={40} /> {t("admin.investments.title")}
         </h1>
-        <p>{investissements.length} demande(s) en attente de validation</p>
+        <p>
+          {t("admin.investments.subtitle", { count: investissements.length })}
+        </p>
       </div>
 
       <div className={styles.grid}>
         {investissements.map((inv) => {
           const montant = inv.nombrePartsPris * inv.prixUnePart;
-
           return (
             <div key={inv.id} className={styles.card}>
-              {/* Statut */}
               <div className={styles.statut}>
                 {inv.statutPartInvestissement === "EN_ATTENTE" && (
                   <span className={styles.pending}>
-                    <FiClock /> En attente
+                    <FiClock /> {t("admin.investments.status.pending")}
                   </span>
                 )}
                 {inv.statutPartInvestissement === "VALIDE" && (
                   <span className={styles.valide}>
-                    <FiCheckCircle /> Validé
+                    <FiCheckCircle /> {t("admin.investments.status.validated")}
                   </span>
                 )}
                 {inv.statutPartInvestissement === "ANNULE" && (
-                  <span className={styles.annule}>Annulé</span>
+                  <span className={styles.annule}>
+                    {t("admin.investments.status.cancelled")}
+                  </span>
                 )}
               </div>
 
-              {/* Investisseur */}
               <div className={styles.investisseur}>
                 <div className={styles.avatar}>
                   <FiUser size={40} />
@@ -143,25 +136,24 @@ export default function InvestissementsAdminPage() {
                 </div>
               </div>
 
-              {/* Projet */}
               <div className={styles.projet}>
                 <h4>{inv.projetLibelle}</h4>
                 <p>
-                  {format(new Date(inv.date), "dd MMM yyyy", { locale: fr })}
+                  {format(new Date(inv.date), "dd MMM yyyy", {
+                    locale: currentLocale,
+                  })}
                 </p>
               </div>
 
-              {/* Montant */}
               <div className={styles.montant}>
                 <div>
                   <strong>{inv.nombrePartsPris}</strong> parts
                 </div>
                 <div className={styles.prixTotal}>
-                  {montant.toLocaleString()} FCFA
+                  {montant.toLocaleString(i18n.language)} FCFA
                 </div>
               </div>
 
-              {/* Actions */}
               <div className={styles.actions}>
                 {inv.statutPartInvestissement === "EN_ATTENTE" && (
                   <button
@@ -170,19 +162,21 @@ export default function InvestissementsAdminPage() {
                     className={styles.btnValider}
                   >
                     {validerEtEnvoyer.isPending ? (
-                      "Validation en cours..."
+                      t("dashboard.loading")
                     ) : (
                       <>
-                        Valider & Envoyer le contrat <FiSend />
+                        {t("admin.investments.btn_validate")} <FiSend />
                       </>
                     )}
                   </button>
                 )}
-
                 {inv.statutPartInvestissement === "VALIDE" &&
                   inv.numeroContrat && (
                     <div className={styles.dejaValide}>
-                      <FiCheckCircle /> Contrat {inv.numeroContrat} envoyé
+                      <FiCheckCircle />{" "}
+                      {t("admin.investments.sent", {
+                        number: inv.numeroContrat,
+                      })}
                     </div>
                   )}
               </div>

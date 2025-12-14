@@ -1,6 +1,7 @@
 /* src/components/RegisterForm/RegisterForm.module.css */
+
 .form {
-  max-width: 460px;
+  max-width: 650px; 
   margin: 3rem auto;
   padding: 3rem 2.8rem;
   background: white;
@@ -9,14 +10,14 @@
   border: 3px solid #E8F5E9;
 }
 
-/* TITRE BLANC SUR FOND VERT #1B5E20 */
+/* TITRE BLANC SUR FOND VERT */
 .form h2 {
   text-align: center;
   background: #1B5E20;
   color: white !important;
   padding: 1.2rem 2rem;
   border-radius: 16px;
-  margin: -3rem -2.8rem 2.8rem -2.8rem;   /* remonte le titre sur le bord du formulaire */
+  margin: -3rem -2.8rem 2.8rem -2.8rem;   
   font-size: 2.1rem;
   font-weight: 700;
   box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
@@ -47,7 +48,7 @@
   background: #f0f8f0;
 }
 
-.preview { width: 100%; height: 100%; object-fit: cover; }
+.preview { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
 .placeholder {
   height: 100%;
@@ -63,29 +64,32 @@
 
 .removeBtn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0,0,0,0.7);
+  top: 0;
+  right: -10px;
+  background: #FF5252;
   color: white;
   border: none;
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  font-size: 1.5rem;
+  width: 30px;
+  height: 30px;
+  font-size: 1.2rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* LIGNE DE 2 CHAMPS (Prénom / Nom) */
+/* LIGNE DE 2 CHAMPS */
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.6rem;           /* espace horizontal */
-  margin-bottom: 0 2.4rem 0;   /* espace vertical avant/après la ligne */
+  gap: 1.6rem;           
+  margin-bottom: 0; 
 }
 
-/* TOUS LES INPUTS & SELECTS – ESPACE VERTICAL GARANTI */
-input,
-select {
+/* INPUTS (Sauf Select qui a sa propre classe) */
+input {
   display: block;
   width: 100%;
   padding: 1.1rem 1.2rem;
@@ -94,11 +98,15 @@ select {
   font-size: 1.1rem;
   background: white;
   box-sizing: border-box;
-  margin-bottom: 2.4rem;   /* ESPACE ENTRE CHAQUE CHAMP – C’EST ÇA QUI MANQUAIT ! */
+  margin-bottom: 2.4rem;  
+  text-overflow: ellipsis; 
 }
 
-input:focus,
-select:focus {
+.row input {
+    margin-bottom: 2.4rem;
+}
+
+input:focus {
   outline: none;
   border-color: #27ae60;
   box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
@@ -109,16 +117,72 @@ select:focus {
   display: flex;
   justify-content: center;
   gap: 3.5rem;
-  margin: 2.5rem 0 3rem 0;
+  margin: 0 0 2.4rem 0; 
   font-size: 1.12rem;
   color: #1B5E20;
   font-weight: 500;
 }
 
-/* SELECTS – hauteur fixe */
-select {
+.radioGroup input[type="radio"] {
+    width: auto;
+    margin-bottom: 0;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* === SELECT (La partie corrigée) === */
+.select {
+  display: block;
+  width: 100%;
   height: 58px;
+  padding: 1.1rem 3rem 1.1rem 1.2rem;
+  border: 2.5px solid #1B5E20;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  background-color: white;
+  box-sizing: border-box;
+  margin-bottom: 2.4rem;
   cursor: pointer;
+  
+  /* Supprime le style par défaut */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  /* Flèche custom en SVG */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231B5E20%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.2rem top 50%;
+  background-size: 0.8rem auto;
+
+  /* Texte Vert (quand une option est choisie) */
+  color: #1B5E20; 
+  font-weight: 500;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
+}
+
+/* LE PLACEHOLDER (Gris si vide) */
+.select:required:invalid {
+  color: #757575; 
+  font-weight: normal;
+}
+
+/* Cache l'option "Choisir..." dans la liste déroulante pour faire pro */
+.select option[value=""] {
+    display: none;
+}
+
+/* Style des options normales */
+.select option {
+  color: #1B5E20;
+  background: white;
+  padding: 10px;
 }
 
 /* BOUTON */
@@ -133,13 +197,18 @@ select {
   border-radius: 14px;
   cursor: pointer;
   transition: 0.3s;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .submitBtn:hover:not(:disabled) {
   background: #FFB300;
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(255,193,7,0.5);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 /* LIEN CONNEXION */
@@ -161,7 +230,7 @@ select {
   color: #FFC107;
 }
 
-/* LANGUES – STYLE 100% IDENTIQUE AUX AUTRES CHAMPS */
+/* LANGUES */
 .languesDropdown {
   padding: 1.1rem 1.2rem;
   border: 2.5px solid #1B5E20;
@@ -173,11 +242,23 @@ select {
   align-items: center;
   margin-bottom: 2.4rem;
   font-size: 1.1rem;
-  color: black !important;           /* ÉCRITURE NOIRE */
+  color: black !important;
   font-weight: 500;
   transition: all 0.3s;
-  height: 58px;                       /* même hauteur que les inputs */
+  height: 58px;
   box-sizing: border-box;
+  position: relative;
+}
+
+.languesDropdown::after {
+  content: "▼";
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #1B5E20;
+  pointer-events: none;
 }
 
 .languesDropdown:hover {
@@ -190,13 +271,7 @@ select {
   font-weight: 500;
 }
 
-.languesArrow {
-  color: #1B5E20;
-  font-weight: bold;
-  font-size: 1.5rem;
-}
-
-/* PANEL QUI S'OUVRE – STYLE PROPRE ET COHÉRENT */
+/* PANEL LANGUES */
 .languesPanel {
   border: 2.5px solid #1B5E20;
   border-radius: 14px;
@@ -217,7 +292,7 @@ select {
   border-radius: 10px;
   transition: background 0.2s;
   font-size: 1.05rem;
-  color: black !important;           /* TOUT EN NOIR */
+  color: black !important; 
 }
 
 .langueItem:hover {
@@ -229,6 +304,7 @@ select {
   height: 20px;
   accent-color: #27ae60;
   cursor: pointer;
+  margin-bottom: 0; 
 }
 
 .langueItem span {
@@ -236,34 +312,7 @@ select {
   font-weight: 500;
 }
 
-CSS/* FLÈCHE POUR TOUS LES CHAMPS DÉROULANTS (localité + langues) */
-.select,
-.languesDropdown {
-  position: relative;
-}
-
-/* Flèche de base (vers le bas) */
-.select::after,
-.languesDropdown::after {
-  position: absolute;
-  right: 1.2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.6rem;
-  color: #1B5E20;
-  pointer-events: none;
-  font-weight: bold;
-}
-
-/* Flèche vers le haut quand le panel langues est ouvert */
-.languesDropdown.open::after,
-.languesDropdown:hover::after,
-.select:hover::after {
-  color: #27ae60;
-}
-
-/* pour ajuster image*/
-
+/* CROPPER */
 .cropContainer {
   position: relative;
   width: 100%;
@@ -292,14 +341,8 @@ CSS/* FLÈCHE POUR TOUS LES CHAMPS DÉROULANTS (localité + langues) */
   border-radius: 50px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 1rem;
 }
 
-.cropBtn {
-  background: #27ae60;
-  color: white;
-}
-
-.cancelBtn {
-  background: #e74c3c;
-  color: white;
-}
+.cropBtn { background: #27ae60; color: white; }
+.cancelBtn { background: #e74c3c; color: white; }

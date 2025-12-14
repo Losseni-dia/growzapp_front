@@ -1,21 +1,21 @@
-// src/pages/investisseur/MesInvestissementsPage.tsx → VERSION FINALE PARFAITE 2025
-
+// src/pages/MonEspace/Mes-investissements/MesInvestissementsPage.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../service/api";
 import { InvestissementDTO } from "../../../types/investissement";
 import toast from "react-hot-toast";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { format as formatDate } from "date-fns";
+import { fr, enUS, es } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../../components/context/CurrencyContext"; // <--- IMPORT
 import {
   FiClock,
   FiCheckCircle,
   FiXCircle,
-  FiFileText,
-  FiTrendingUp,
   FiCalendar,
   FiDollarSign,
   FiDownload,
+  FiEye,
 } from "react-icons/fi";
 import styles from "./MesInvestissementsPage.module.css";
 
@@ -24,50 +24,73 @@ export default function MesInvestissementsPage() {
     []
   );
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState<string | null>(null);
+  const { t, i18n } = useTranslation();
+  const { format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
+
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
+
+  const getToken = () => localStorage.getItem("access_token");
+  const BASE_URL = "http://localhost:8080";
 
   useEffect(() => {
     api
       .get<{ data: InvestissementDTO[] }>(
         "/api/investissements/mes-investissements"
       )
-      .then((response) => {
-        setInvestissements(response.data || []);
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Impossible de charger vos investissements");
-      })
+      .then((res) => setInvestissements(res.data || []))
+      .catch(() => toast.error(t("user_investments.toast_error")))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
-  // FONCTION MAGIQUE : TÉLÉCHARGE UN VRAI PDF
-  const downloadContract = async (
-    fichierUrl: string,
-    numeroContrat: string
-  ) => {
-    if (!fichierUrl) {
-      toast.error("Le contrat n'est pas encore disponible");
-      return;
-    }
-
+  const handleVoir = async (numeroContrat: string) => {
     try {
-      const response = await fetch(fichierUrl);
-      if (!response.ok) throw new Error("PDF non trouvé");
-
+      setDownloading(numeroContrat);
+      const token = getToken();
+      const lang = i18n.language || "fr";
+      const response = await fetch(
+        `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!response.ok) throw new Error();
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      window.open(URL.createObjectURL(blob), "_blank");
+    } catch (err) {
+      toast.error(t("contract_view.error_generic"));
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  const handleDownload = async (numeroContrat: string) => {
+    try {
+      setDownloading(numeroContrat);
+      const token = getToken();
+      const lang = i18n.language || "fr";
+      const response = await fetch(
+        `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!response.ok) throw new Error();
+      const blob = await response.blob();
       const link = document.createElement("a");
-      link.href = url;
-      link.download = `Contrat_${numeroContrat}.pdf`; // VRAI NOM DE FICHIER
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", `Contrat_${numeroContrat}_${lang}.pdf`);
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      toast.success("Contrat téléchargé avec succès !");
+      link.parentNode?.removeChild(link);
+      toast.success(t("admin.project_detail.download_start"));
     } catch (err) {
-      toast.error("Erreur lors du téléchargement");
-      console.error(err);
+      toast.error(t("admin.project_detail.download_error"));
+    } finally {
+      setDownloading(null);
     }
   };
 
@@ -78,16 +101,14 @@ export default function MesInvestissementsPage() {
           icon: FiClock,
           color: "#e67e22",
           bg: "#fff3e0",
-          border: "#ffb74d",
-          label: "En attente de validation",
+          label: t("user_investments.status.pending"),
         };
       case "VALIDE":
         return {
           icon: FiCheckCircle,
           color: "#1b5e20",
           bg: "#e8f5e9",
-          border: "#4caf50",
-          label: "Validé",
+          label: t("user_investments.status.validated"),
         };
       case "REJETE":
       case "ANNULE":
@@ -95,174 +116,107 @@ export default function MesInvestissementsPage() {
           icon: FiXCircle,
           color: "#c62828",
           bg: "#ffebee",
-          border: "#e57373",
-          label: "Refusé",
+          label: t("user_investments.status.rejected"),
         };
       default:
-        return {
-          icon: FiClock,
-          color: "#666",
-          bg: "#f5f5f5",
-          border: "#ccc",
-          label: statut,
-        };
+        return { icon: FiClock, color: "#666", bg: "#f5f5f5", label: statut };
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          Chargement de vos investissements...
-        </div>
-      </div>
-    );
-  }
+  if (loading)
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
   return (
     <div className={styles.container}>
-      {/* HEADER */}
       <div className={styles.header}>
-        <h1>Mes Investissements</h1>
+        <h1>{t("user_investments.title")}</h1>
         <p>
-          Vous avez investi dans <strong>{investissements.length}</strong>{" "}
-          projet(s)
+          <strong>{investissements.length}</strong>{" "}
+          {t("user_investments.count")}
         </p>
       </div>
 
-      {/* ÉTAT VIDE */}
       {investissements.length === 0 ? (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>
-            <FiDollarSign size={80} />
-          </div>
-          <h2>Aucun investissement pour le moment</h2>
-          <p>
-            Découvrez les projets en cours et commencez à investir dès
-            aujourd'hui !
-          </p>
+          <FiDollarSign size={80} />
+          <h2>{t("user_investments.empty")}</h2>
           <Link to="/projets" className={styles.btnInvestir}>
-            Voir les projets disponibles
+            {t("user_investments.btn_discover")}
           </Link>
         </div>
       ) : (
-        /* LISTE DES INVESTISSEMENTS */
         <div className={styles.grid}>
           {investissements.map((inv) => {
             const config = getStatutConfig(inv.statutPartInvestissement);
             const Icon = config.icon;
-
             return (
               <div key={inv.id} className={styles.card}>
-                {/* POSTER + BADGE STATUT */}
                 <div className={styles.poster}>
                   <img
-                    src={inv.projetPoster || "/default-projet.jpg"}
+                    src={inv.projetPoster || "/default.jpg"}
                     alt={inv.projetLibelle}
-                    className={styles.posterImg}
                   />
                   <div
                     className={styles.statutBadge}
-                    style={{
-                      background: config.bg,
-                      color: config.color,
-                      border: `2px solid ${config.border}`,
-                    }}
+                    style={{ background: config.bg, color: config.color }}
                   >
-                    <Icon size={20} />
-                    <span>{config.label}</span>
+                    <Icon size={18} /> <span>{config.label}</span>
                   </div>
                 </div>
-
-                {/* CONTENU */}
                 <div className={styles.content}>
-                  <h3 className={styles.projetTitle}>{inv.projetLibelle}</h3>
-
+                  <h3>{inv.projetLibelle}</h3>
                   <div className={styles.infoRow}>
-                    <div className={styles.infoItem}>
-                      <FiCalendar className={styles.icon} />
-                      <div>
-                        <small>Date d'investissement</small>
-                        <div>
-                          {format(new Date(inv.date), "dd MMMM yyyy", {
-                            locale: fr,
-                          })}
-                        </div>
-                      </div>
+                    <div>
+                      <FiCalendar />{" "}
+                      {formatDate(new Date(inv.date), "dd MMM yyyy", {
+                        locale: currentLocale,
+                      })}
                     </div>
-                    <div className={styles.infoItem}>
-                      <span className={styles.partsIcon}>Parts</span>
-                      <div>
-                        <small>Parts acquises</small>
-                        <div>
-                          <strong>{inv.nombrePartsPris}</strong>
-                        </div>
-                      </div>
+                    <div>
+                      <strong>{inv.nombrePartsPris}</strong>{" "}
+                      {t("user_investments.card.parts")}
                     </div>
                   </div>
-
-                  {/* MONTANT INVESTI */}
                   <div className={styles.montantInvesti}>
-                    <strong>{inv.montantInvesti.toLocaleString()} €</strong>{" "}
-                    investis
+                    {/* CONVERSION ICI */}
+                    <strong>
+                      {formatCurrency(inv.montantInvesti, "XOF")}
+                    </strong>{" "}
+                    {t("user_investments.card.invested")}
                   </div>
-
-                  {/* DIVIDENDES */}
-                  {inv.dividendes && inv.dividendes.length > 0 && (
-                    <div className={styles.dividendes}>
-                      <FiTrendingUp size={18} />
-                      <span>
-                        {inv.dividendesPayes} payé(s) •{" "}
-                        {inv.dividendesPlanifies} prévu(s)
-                        {" • "}
-                        <strong>
-                          {inv.montantTotalPercu.toLocaleString()} €
-                        </strong>{" "}
-                        perçus
-                      </span>
-                    </div>
-                  )}
-
-                  {/* ACTIONS – TÉLÉCHARGEMENT PDF + VOIR CONTRAT */}
                   <div className={styles.actions}>
-                    {/* TÉLÉCHARGEMENT DU VRAI PDF */}
-                    {inv.statutPartInvestissement === "VALIDE" && inv.contratUrl && (
-                  <button
-                    onClick={() => downloadContract(inv.contratUrl!, inv.numeroContrat!)}
-                    className={styles.btnDownload}
-                  >
-                    <FiDownload size={20} />
-                    Télécharger le contrat (PDF)
-                  </button>
-                )}
-
-                    {/* VOIR LE CONTRAT DANS LE NAVIGATEUR */}
                     {inv.statutPartInvestissement === "VALIDE" &&
-                      inv.numeroContrat && (
-                        <Link
-                          to={`/contrat/${inv.numeroContrat}`}
-                          className={styles.btnContrat}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                    inv.numeroContrat ? (
+                      <div className={styles.btnGroup}>
+                        <button
+                          onClick={() => handleVoir(inv.numeroContrat!)}
+                          className={styles.btnAction}
+                          disabled={!!downloading}
                         >
-                          <FiFileText size={20} />
-                          Voir le contrat
-                        </Link>
-                      )}
-
-                    {/* MESSAGE EN ATTENTE */}
-                    {inv.statutPartInvestissement === "EN_ATTENTE" && (
-                      <div className={styles.pendingText}>
-                        Validation sous 48h maximum
+                          <FiEye size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDownload(inv.numeroContrat!)}
+                          className={styles.btnAction}
+                          disabled={!!downloading}
+                        >
+                          {downloading === inv.numeroContrat ? (
+                            "..."
+                          ) : (
+                            <FiDownload size={18} />
+                          )}
+                        </button>
                       </div>
+                    ) : (
+                      <button disabled className={styles.btnDisabled}>
+                        {t("user_investments.card.btn_unavailable")}
+                      </button>
                     )}
-
-                    {/* VOIR LE PROJET */}
                     <Link
                       to={`/projet/${inv.projetId}`}
-                      className={styles.btnVoir}
+                      className={styles.btnVoirProjet}
                     >
-                      Voir le projet
+                      {t("user_investments.card.btn_view_project")}
                     </Link>
                   </div>
                 </div>

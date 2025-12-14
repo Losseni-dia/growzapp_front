@@ -1,9 +1,8 @@
 // src/components/Investissement/InvestForm/InvestForm.tsx
-// VERSION FINALE 2025 – TOUT EST PARFAIT – AUCUNE ERREUR
-
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   FiDollarSign,
   FiSmartphone,
@@ -13,6 +12,7 @@ import {
 } from "react-icons/fi";
 import styles from "./InvestForm.module.css";
 import { api } from "../../../service/api";
+import { useCurrency } from "../../context/CurrencyContext"; // IMPORT CONTEXT
 
 const BACKEND_URL = "http://localhost:8080";
 
@@ -23,12 +23,15 @@ interface InvestFormProps {
     prixUnePart: number;
     partsDisponible: number;
     partsPrises: number;
+    currencyCode?: string; // Optionnel selon ton DTO
   };
   onSuccess?: () => void;
 }
 
 export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
   const { user } = useAuth();
+  const { t } = useTranslation();
+  const { format } = useCurrency(); // HOOK MONNAIE
 
   const [parts, setParts] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -59,20 +62,20 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         setSoldeDisponible(Number(solde));
       })
       .catch(() => {
-        toast.error("Impossible de charger votre solde");
+        toast.error(t("invest_form.messages.error_balance"));
         setSoldeDisponible(0);
       })
       .finally(() => setLoadingSolde(false));
-  }, [user]);
+  }, [user, t]);
 
   const handleSubmit = async () => {
     if (parts < 1 || parts > maxParts) {
-      toast.error("Nombre de parts invalide");
+      toast.error(t("invest_form.messages.invalid_shares"));
       return;
     }
 
     if (selectedMethod === "wallet" && total > soldeDisponible) {
-      toast.error("Solde insuffisant dans votre portefeuille");
+      toast.error(t("invest_form.messages.insufficient_balance"));
       return;
     }
 
@@ -83,29 +86,26 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         await api.post(`${BACKEND_URL}/api/projets/${projet.id}/investir`, {
           nombrePartsPris: parts,
         });
-        toast.success("Investissement confirmé avec votre portefeuille !");
+        toast.success(t("invest_form.messages.success_wallet"));
         onSuccess?.();
       } else if (selectedMethod === "mobile") {
-        toast.error("Paiement Mobile Money en développement");
-        // À implémenter plus tard
+        toast.error(t("invest_form.messages.mobile_dev"));
       } else if (selectedMethod === "card") {
-        toast.loading("Redirection vers Stripe en cours...");
+        toast.loading(t("invest_form.messages.stripe_redirect"));
 
-        // CORRECTION TYPESCRIPT : on type la réponse
         const response = await api.post<{ redirectUrl: string }>(
           `${BACKEND_URL}/api/projets/${projet.id}/investir-carte`,
-          { nombreParts: parts } // ← CORRIGÉ : propriété complète
+          { nombreParts: parts }
         );
 
-        const redirectUrl = response.redirectUrl;
-        if (redirectUrl) {
-          window.location.href = redirectUrl;
+        if (response.redirectUrl) {
+          window.location.href = response.redirectUrl;
         } else {
-          toast.error("URL de paiement manquante");
+          toast.error(t("invest_form.messages.error_url"));
         }
       }
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors de l'investissement");
+      toast.error(err.message || t("invest_form.errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -113,20 +113,24 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
 
   return (
     <div className={styles.card}>
-      <h3 className={styles.title}>Investir dans "{projet.libelle}"</h3>
+      <h3 className={styles.title}>
+        {t("invest_form.invest_in", { name: projet.libelle })}
+      </h3>
 
       <div className={styles.info}>
         <p>
-          Prix par part :{" "}
-          <strong>{projet.prixUnePart.toLocaleString()} FCFA</strong>
+          {t("invest_form.price_per_share")} :{" "}
+          <strong>
+            {format(projet.prixUnePart, projet.currencyCode || "XOF")}
+          </strong>
         </p>
         <p>
-          Parts disponibles : <strong>{maxParts.toLocaleString()}</strong>
+          {t("invest_form.available_shares")} : <strong>{maxParts}</strong>
         </p>
       </div>
 
       <div className={styles.inputGroup}>
-        <label>Nombre de parts</label>
+        <label>{t("invest_form.number_of_shares")}</label>
         <input
           type="number"
           min="1"
@@ -145,9 +149,11 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
       <div className={styles.totalBox}>
         <FiLock className={styles.lockIcon} />
         <div>
-          <div className={styles.totalLabel}>Montant bloqué</div>
+          <div className={styles.totalLabel}>
+            {t("invest_form.locked_amount")}
+          </div>
           <div className={styles.totalAmount}>
-            {total.toLocaleString()} FCFA
+            {format(total, projet.currencyCode || "XOF")}
           </div>
         </div>
       </div>
@@ -162,11 +168,13 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         >
           <FiDollarSign />
           <div className={styles.methodText}>
-            <strong>Portefeuille GrowzApp</strong>
+            <strong>{t("invest_form.methods.wallet_title")}</strong>
             <small>
               {loadingSolde
-                ? "Chargement..."
-                : `${soldeDisponible.toLocaleString()} FCFA disponible`}
+                ? t("invest_form.messages.loading_balance")
+                : t("invest_form.methods.wallet_available", {
+                    amount: format(soldeDisponible, "XOF"),
+                  })}
             </small>
           </div>
           {selectedMethod === "wallet" && (
@@ -183,8 +191,8 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         >
           <FiSmartphone />
           <div className={styles.methodText}>
-            <strong>Mobile Money</strong>
-            <small>Orange, MTN, Wave, Moov</small>
+            <strong>{t("invest_form.methods.mobile_title")}</strong>
+            <small>{t("invest_form.methods.mobile_subtitle")}</small>
           </div>
           {selectedMethod === "mobile" && (
             <FiCheckCircle className={styles.check} />
@@ -200,8 +208,8 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         >
           <FiCreditCard />
           <div className={styles.methodText}>
-            <strong>Carte bancaire</strong>
-            <small>Visa, Mastercard</small>
+            <strong>{t("invest_form.methods.card_title")}</strong>
+            <small>{t("invest_form.methods.card_subtitle")}</small>
           </div>
           {selectedMethod === "card" && (
             <FiCheckCircle className={styles.check} />
@@ -211,26 +219,15 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
 
       <button
         onClick={handleSubmit}
-        disabled={
-          loading ||
-          maxParts <= 0 ||
-          (selectedMethod === "wallet" && total > soldeDisponible)
-        }
+        disabled={loading || maxParts <= 0}
         className={styles.submitBtn}
       >
         {loading
-          ? "Traitement..."
-          : selectedMethod === "wallet"
-          ? "Payer avec le portefeuille"
-          : selectedMethod === "mobile"
-          ? "Payer avec Mobile Money"
-          : "Payer par carte bancaire"}
+          ? t("invest_form.buttons.processing")
+          : t(`invest_form.buttons.pay_${selectedMethod}`)}
       </button>
 
-      <p className={styles.hint}>
-        Votre argent sera bloqué immédiatement • Validation sous 48h • Contrat
-        envoyé par email
-      </p>
+      <p className={styles.hint}>{t("invest_form.hint")}</p>
     </div>
   );
 }

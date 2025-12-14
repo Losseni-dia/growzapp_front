@@ -1,21 +1,22 @@
-// src/pages/admin/withdrawals/AdminWithdrawalsPage.tsx → VERSION FINALE PRO
-
 import React, { useState, useEffect } from "react";
 import { api } from "../../../service/api";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, es } from "date-fns/locale";
 import styles from "./AdminRetraitWalletPage.module.css";
-
-// ON UTILISE LE VRAI DTO DU BACKEND
+import { useTranslation } from "react-i18next"; // <--- IMPORT
 import type { TransactionDTO } from "../../../types/transaction";
 
 export default function AdminWithdrawalsPage() {
+  const { t, i18n } = useTranslation();
   const [withdrawals, setWithdrawals] = useState<TransactionDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTx, setSelectedTx] = useState<TransactionDTO | null>(null);
   const [motifRejet, setMotifRejet] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
 
   useEffect(() => {
     fetchWithdrawals();
@@ -28,7 +29,7 @@ export default function AdminWithdrawalsPage() {
       );
       setWithdrawals(data);
     } catch (err: any) {
-      toast.error("Impossible de charger les retraits");
+      toast.error(t("admin.withdrawals.toast.error"));
     } finally {
       setLoading(false);
     }
@@ -46,10 +47,10 @@ export default function AdminWithdrawalsPage() {
 
     try {
       await api.patch(`/api/transactions/${tx.id}/valider-retrait`);
-      toast.success("Retrait validé !");
+      toast.success(t("admin.withdrawals.toast.validate_success"));
       fetchWithdrawals();
     } catch (err: any) {
-      toast.error(err.message || "Échec de la validation");
+      toast.error(err.message || t("admin.withdrawals.toast.error"));
     }
   };
 
@@ -61,7 +62,7 @@ export default function AdminWithdrawalsPage() {
 
   const confirmReject = async () => {
     if (!selectedTx || !motifRejet.trim()) {
-      toast.error("Le motif est obligatoire");
+      toast.error(t("admin.withdrawals.modal.reason_placeholder"));
       return;
     }
 
@@ -69,17 +70,16 @@ export default function AdminWithdrawalsPage() {
       await api.patch(`/api/transactions/${selectedTx.id}/rejeter-retrait`, {
         motif: motifRejet.trim(),
       });
-      toast.success("Retrait rejeté");
+      toast.success(t("admin.withdrawals.toast.reject_success"));
       setShowModal(false);
       fetchWithdrawals();
     } catch (err: any) {
-      toast.error(err.message || "Échec du rejet");
+      toast.error(err.message || t("admin.withdrawals.toast.error"));
     }
   };
 
-  if (loading) {
-    return <div className={styles.loading}>Chargement des retraits...</div>;
-  }
+  if (loading)
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
   const pendingCount = withdrawals.filter(
     (t) => t.statut === "EN_ATTENTE_VALIDATION"
@@ -88,9 +88,9 @@ export default function AdminWithdrawalsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Validation des retraits</h1>
+        <h1 className={styles.title}>{t("admin.withdrawals.title")}</h1>
         <p className={styles.subtitle}>
-          {pendingCount} demande{pendingCount > 1 ? "s" : ""} en attente
+          {t("admin.withdrawals.subtitle", { count: pendingCount })}
         </p>
       </div>
 
@@ -98,18 +98,18 @@ export default function AdminWithdrawalsPage() {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Utilisateur</th>
-              <th>Montant</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th>{t("admin.withdrawals.table.date")}</th>
+              <th>{t("admin.withdrawals.table.user")}</th>
+              <th>{t("admin.withdrawals.table.amount")}</th>
+              <th>{t("admin.withdrawals.table.status")}</th>
+              <th>{t("admin.withdrawals.table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {withdrawals.length === 0 ? (
               <tr>
                 <td colSpan={5} className={styles.empty}>
-                  Aucun retrait en attente
+                  {t("admin.withdrawals.subtitle", { count: 0 })}
                 </td>
               </tr>
             ) : (
@@ -122,11 +122,13 @@ export default function AdminWithdrawalsPage() {
                 >
                   <td>
                     {format(new Date(tx.createdAt), "dd MMM yyyy", {
-                      locale: fr,
+                      locale: currentLocale,
                     })}
                     <br />
                     <small>
-                      {format(new Date(tx.createdAt), "HH:mm", { locale: fr })}
+                      {format(new Date(tx.createdAt), "HH:mm", {
+                        locale: currentLocale,
+                      })}
                     </small>
                   </td>
                   <td>
@@ -150,10 +152,10 @@ export default function AdminWithdrawalsPage() {
                       }`}
                     >
                       {tx.statut === "EN_ATTENTE_VALIDATION"
-                        ? "En attente"
+                        ? t("admin.withdrawals.status.pending")
                         : tx.statut === "SUCCESS"
-                        ? "Validé"
-                        : "Rejeté"}
+                        ? t("admin.withdrawals.status.validated")
+                        : t("admin.withdrawals.status.rejected")}
                     </span>
                   </td>
                   <td>
@@ -163,13 +165,13 @@ export default function AdminWithdrawalsPage() {
                           onClick={() => handleValidate(tx)}
                           className={styles.btnValidate}
                         >
-                          Valider
+                          {t("admin.withdrawals.actions.validate")}
                         </button>
                         <button
                           onClick={() => handleReject(tx)}
                           className={styles.btnReject}
                         >
-                          Rejeter
+                          {t("admin.withdrawals.actions.reject")}
                         </button>
                       </div>
                     )}
@@ -181,14 +183,13 @@ export default function AdminWithdrawalsPage() {
         </table>
       </div>
 
-      {/* MODAL REJET */}
       {showModal && selectedTx && (
         <div
           className={styles.modalOverlay}
           onClick={() => setShowModal(false)}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>Rejeter le retrait</h2>
+            <h2>{t("admin.withdrawals.modal.title")}</h2>
             <p>
               <strong>
                 {selectedTx.userPrenom} {selectedTx.userNom}
@@ -197,7 +198,7 @@ export default function AdminWithdrawalsPage() {
               Montant : <strong>{selectedTx.montant.toFixed(2)} €</strong>
             </p>
             <textarea
-              placeholder="Motif du rejet (obligatoire)"
+              placeholder={t("admin.withdrawals.modal.reason_placeholder")}
               value={motifRejet}
               onChange={(e) => setMotifRejet(e.target.value)}
               className={styles.textarea}
@@ -209,14 +210,14 @@ export default function AdminWithdrawalsPage() {
                 onClick={() => setShowModal(false)}
                 className={styles.btnCancel}
               >
-                Annuler
+                {t("admin.withdrawals.modal.cancel")}
               </button>
               <button
                 onClick={confirmReject}
                 disabled={!motifRejet.trim()}
                 className={styles.btnConfirmReject}
               >
-                Confirmer le rejet
+                {t("admin.withdrawals.modal.confirm")}
               </button>
             </div>
           </div>

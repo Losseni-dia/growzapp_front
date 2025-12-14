@@ -1,9 +1,10 @@
-// src/pages/admin/ContratsAdmin.tsx → VERSION FINALE 2025
-
-import React, { useState, useEffect } from "react";
-import { format } from "date-fns" ;
-import { fr } from "date-fns/locale";
+// src/pages/admin/ContratsAdmin.tsx
+import React, { useState, useEffect, useCallback } from "react";
+import { format } from "date-fns";
+import { fr, enUS, es } from "date-fns/locale";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../../components/context/CurrencyContext";
 import {
   FiSearch,
   FiDownload,
@@ -13,9 +14,8 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import styles from "./ContratAdmin.module.css";
-import { api } from "../../../service/api";
+import { api, getFreshToken } from "../../../service/api"; // Import getFreshToken
 
-// Interface exacte de ce que renvoie ton backend
 interface ContratAdmin {
   id: number;
   numeroContrat: string;
@@ -26,231 +26,208 @@ interface ContratAdmin {
   telephone: string;
   montantInvesti: number;
   nombreParts: number;
-  pourcentage: number;
   statutInvestissement: string;
-  fichierUrl: string;
-  lienVerification: string;
-  lienPdf: string;
+  currencyCode?: string;
 }
 
-const statuts = ["EN_ATTENTE", "VALIDE", "REJETE", "REMBOURSE"] as const;
-
 const ContratsAdmin: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const { format: formatCurrency } = useCurrency();
+
   const [contrats, setContrats] = useState<ContratAdmin[]>([]);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState<string | null>(null);
+
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-
-  // Filtres
   const [search, setSearch] = useState("");
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
   const [statut, setStatut] = useState("");
-  const [montantMin, setMontantMin] = useState("");
-  const [montantMax, setMontantMax] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  const fetchContrats = async () => {
-    setLoading(true);
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
 
+  // L'URL de base doit correspondre à ton backend
+  const BASE_URL = "http://localhost:8080";
+
+  const fetchContrats = useCallback(async () => {
+    setLoading(true);
     const params = new URLSearchParams({
       page: page.toString(),
       size: "20",
       ...(search && { search }),
-      ...(dateDebut && { dateDebut: dateDebut }),
+      ...(dateDebut && { dateDebut }),
       ...(dateFin && { dateFin }),
       ...(statut && { statut }),
-      ...(montantMin && { montantMin }),
-      ...(montantMax && { montantMax }),
     });
 
     try {
-      // Solution magique : on force le type sans toucher à api.ts
       const res = await api.get<any>(`/api/contrats/admin/liste?${params}`);
-
-      // On sait exactement ce que le backend renvoie → on caste proprement
-      setContrats(res.contrats as ContratAdmin[]);
+      setContrats(res.contrats || []);
       setTotalPages(res.totalPages || 1);
     } catch (err: any) {
-      console.error("Erreur lors du chargement des contrats :", err);
-      toast.error(err.message || "Impossible de charger les contrats");
+      toast.error(t("admin.withdrawals.toast.error"));
     } finally {
       setLoading(false);
     }
+  }, [page, search, dateDebut, dateFin, statut, t]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => fetchContrats(), 300);
+    return () => clearTimeout(timer);
+  }, [fetchContrats]);
+
+  // --- 1. FONCTION VOIR (CORRIGÉE) ---
+  const handleVoir = async (numero: string) => {
+    try {
+      setDownloading(numero);
+      const token = getFreshToken(); // Utilise la fonction de ton api.ts
+      const lang = i18n.language || "fr";
+
+      const response = await fetch(
+        `${BASE_URL}/api/contrats/${numero}?lang=${lang}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Fichier introuvable");
+
+      const blob = await response.blob();
+      const fileURL = URL.createObjectURL(blob);
+      window.open(fileURL, "_blank");
+    } catch (err) {
+      console.error("Erreur Voir PDF:", err);
+      toast.error(t("contract_view.error_generic"));
+    } finally {
+      setDownloading(null);
+    }
   };
 
-  // Déclenche le fetch avec debounce
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchContrats();
-    }, 300);
+  // --- 2. FONCTION TÉLÉCHARGER (CORRIGÉE) ---
+  const handleDownload = async (numero: string) => {
+    try {
+      setDownloading(numero);
+      const token = getFreshToken();
+      const lang = i18n.language || "fr";
 
-    return () => clearTimeout(timer);
-  }, [page, search, dateDebut, dateFin, statut, montantMin, montantMax]);
+      const response = await fetch(
+        `${BASE_URL}/api/contrats/${numero}/download?lang=${lang}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  const resetFilters = () => {
-    setSearch("");
-    setDateDebut("");
-    setDateFin("");
-    setStatut("");
-    setMontantMin("");
-    setMontantMax("");
-    setPage(0);
+      if (!response.ok) throw new Error("Erreur de téléchargement");
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Contrat_${numero}_${lang}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success(t("admin.project_detail.download_start"));
+    } catch (err) {
+      console.error("Erreur Download PDF:", err);
+      toast.error(t("admin.project_detail.download_error"));
+    } finally {
+      setDownloading(null);
+    }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        {/* Header */}
         <div className={styles.header}>
-          <h1>GESTION DES CONTRATS</h1>
-          <p>Tous les contrats d'investissement GrowzApp</p>
+          <h1>{t("admin.contracts.title")}</h1>
+          <p>{t("admin.contracts.subtitle")}</p>
         </div>
 
-        {/* Barre d'outils */}
+        {/* TOOLBAR */}
         <div className={styles.toolbar}>
           <div className={styles.searchBox}>
             <FiSearch className={styles.searchIcon} />
             <input
               type="text"
-              placeholder="Rechercher par nom, projet, n° contrat..."
+              placeholder={t("admin.contracts.search_placeholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-
           <div className={styles.actions}>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={styles.btnFilter}
             >
-              <FiFilter size={18} />
-              Filtres {showFilters ? "▲" : "▼"}
+              <FiFilter size={18} /> {t("admin.contracts.filter_btn")}
             </button>
-
             <button onClick={fetchContrats} className={styles.btnRefresh}>
               <FiRefreshCw className={loading ? styles.spin : ""} />
-              Actualiser
-            </button>
-
-            <button
-              onClick={() => window.open("/api/contrats/admin/export-excel", "_blank")}
-              className={styles.btnExcel}
-            >
-              <FiDownload size={18} />
-              Export Excel
             </button>
           </div>
         </div>
 
-        {/* Filtres avancés */}
-        {showFilters && (
-          <div className={styles.filtersPanel}>
-            <div className={styles.filterGrid}>
-              <div>
-                <label>Date début</label>
-                <input
-                  type="date"
-                  value={dateDebut}
-                  onChange={(e) => setDateDebut(e.target.value)}
-                />
-              </div>
-              <div>
-                <label>Date fin</label>
-                <input
-                  type="date"
-                  value={dateFin}
-                  onChange={(e) => setDateFin(e.target.value)}
-                />
-              </div>
-              <div>
-                <label>Statut</label>
-                <select value={statut} onChange={(e) => setStatut(e.target.value)}>
-                  <option value="">Tous les statuts</option>
-                  {statuts.map((s) => (
-                    <option key={s} value={s}>
-                      {s.replace("_", " ")}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label>Montant min (FCFA)</label>
-                <input
-                  type="number"
-                  placeholder="500000"
-                  value={montantMin}
-                  onChange={(e) => setMontantMin(e.target.value)}
-                />
-              </div>
-              <div>
-                <label>Montant max (FCFA)</label>
-                <input
-                  type="number"
-                  placeholder="10000000"
-                  value={montantMax}
-                  onChange={(e) => setMontantMax(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button onClick={resetFilters} className={styles.btnReset}>
-              Réinitialiser
-            </button>
-          </div>
-        )}
-
-        {/* Tableau */}
+        {/* TABLEAU */}
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>N° Contrat</th>
-                <th>Date</th>
-                <th>Projet</th>
-                <th>Investisseur</th>
-                <th className={styles.textCenter}>Montant</th>
-                <th className={styles.textCenter}>Parts</th>
-                <th className={styles.textCenter}>% Équité</th>
-                <th className={styles.textCenter}>Statut</th>
-                <th className={styles.textCenter}>Actions</th>
+                <th className={styles.th}>
+                  {t("admin.contracts.table.contract_no")}
+                </th>
+                <th className={styles.th}>{t("admin.contracts.table.date")}</th>
+                <th className={styles.th}>
+                  {t("admin.contracts.table.project")}
+                </th>
+                <th className={styles.th}>
+                  {t("admin.contracts.table.investor")}
+                </th>
+                <th className={`${styles.th} ${styles.textCenter}`}>
+                  {t("admin.contracts.table.amount")}
+                </th>
+                <th className={`${styles.th} ${styles.textCenter}`}>
+                  {t("admin.contracts.table.status")}
+                </th>
+                <th className={`${styles.th} ${styles.textCenter}`}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} className={styles.loading}>
-                    Chargement des contrats...
-                  </td>
-                </tr>
-              ) : contrats.length === 0 ? (
-                <tr>
-                  <td colSpan={9} className={styles.empty}>
-                    Aucun contrat trouvé
+                  <td colSpan={7} className={styles.loading}>
+                    {t("common.loading")}
                   </td>
                 </tr>
               ) : (
                 contrats.map((c) => (
                   <tr key={c.id} className={styles.row}>
-                    <td className={styles.boldGreen}>{c.numeroContrat}</td>
-                    <td>
-                      {format(new Date(c.dateGeneration), "dd MMM yyyy", { locale: fr })}
+                    <td className={styles.td}>{c.numeroContrat}</td>
+                    <td className={styles.td}>
+                      {format(new Date(c.dateGeneration), "dd/MM/yyyy", {
+                        locale: currentLocale,
+                      })}
                     </td>
-                    <td className={styles.bold}>{c.projet}</td>
-                    <td>
-                      <div>{c.investisseur}</div>
-                      <div className={styles.email}>{c.emailInvestisseur}</div>
+                    <td className={styles.td}>{c.projet}</td>
+                    <td className={styles.td}>{c.investisseur}</td>
+                    <td className={`${styles.td} ${styles.textCenter}`}>
+                      {formatCurrency(
+                        c.montantInvesti,
+                        c.currencyCode || "XOF"
+                      )}
                     </td>
-                    <td className={`${styles.textCenter} ${styles.bigAmount}`}>
-                      {c.montantInvesti.toLocaleString()} FCFA
-                    </td>
-                    <td className={styles.textCenter + " " + styles.bold}>
-                      {c.nombreParts}
-                    </td>
-                    <td className={styles.textCenter}>
-                      <span className={styles.badgeYellow}>{c.pourcentage}%</span>
-                    </td>
-                    <td className={styles.textCenter}>
+                    <td className={`${styles.td} ${styles.textCenter}`}>
                       <span
                         className={
                           c.statutInvestissement === "VALIDE"
@@ -258,27 +235,29 @@ const ContratsAdmin: React.FC = () => {
                             : styles.badgeOrange
                         }
                       >
-                        {c.statutInvestissement.replace("_", " ")}
+                        {c.statutInvestissement}
                       </span>
                     </td>
-                    <td className={styles.textCenter}>
+                    <td className={`${styles.td} ${styles.textCenter}`}>
                       <div className={styles.actionsCell}>
-                        <a
-                          href={`/contrat/${c.numeroContrat}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Voir le contrat"
+                        <button
+                          onClick={() => handleVoir(c.numeroContrat)}
+                          className={styles.actionBtn}
+                          disabled={downloading === c.numeroContrat}
                         >
-                          <FiEye size={20} />
-                        </a>
-                        <a
-                          href={c.lienPdf}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Télécharger PDF"
+                          <FiEye />
+                        </button>
+                        <button
+                          onClick={() => handleDownload(c.numeroContrat)}
+                          className={styles.actionBtn}
+                          disabled={downloading === c.numeroContrat}
                         >
-                          <FiFileText size={20} />
-                        </a>
+                          {downloading === c.numeroContrat ? (
+                            <FiRefreshCw className={styles.spin} />
+                          ) : (
+                            <FiDownload />
+                          )}
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -286,27 +265,6 @@ const ContratsAdmin: React.FC = () => {
               )}
             </tbody>
           </table>
-        </div>
-
-        {/* Pagination */}
-        <div className={styles.pagination}>
-          <button
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            disabled={page === 0}
-            className={styles.pageBtn}
-          >
-            Précédent
-          </button>
-          <span className={styles.pageInfo}>
-            Page {page + 1} / {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((p) => p + 1)}
-            disabled={page + 1 >= totalPages}
-            className={styles.pageBtn}
-          >
-            Suivant
-          </button>
         </div>
       </div>
     </div>

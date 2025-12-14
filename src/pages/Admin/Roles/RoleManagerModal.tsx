@@ -1,9 +1,9 @@
-// src/components/admin/RolesManagerModal.tsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../service/api";
 import toast from "react-hot-toast";
 import styles from "./RoleManagerModal.module.css";
+import { useTranslation } from "react-i18next";
 
 interface RolesManagerModalProps {
   userId: number;
@@ -16,24 +16,24 @@ export default function RolesManagerModal({
   currentRoles,
   onClose,
 }: RolesManagerModalProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedRoles, setSelectedRoles] = useState<string[]>(currentRoles);
 
-  // CORRIGÉ : si ton api.get retourne directement le tableau (pas { data: ... })
   const { data: allRoles = [], isLoading } = useQuery<string[]>({
     queryKey: ["all-roles"],
-    queryFn: () => api.get<string[]>("/api/admin/users/roles"), // ← plus de .then() ni .data
+    queryFn: () => api.get<string[]>("/api/admin/users/roles"),
   });
 
   const updateRoles = useMutation({
     mutationFn: (roles: string[]) =>
       api.patch(`/api/admin/users/${userId}/roles`, roles),
     onSuccess: () => {
-      toast.success("Rôles mis à jour !");
+      toast.success(t("admin.roles.success"));
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       onClose();
     },
-    onError: () => toast.error("Erreur lors de la sauvegarde"),
+    onError: () => toast.error(t("admin.withdrawals.toast.error")),
   });
 
   const toggleRole = (role: string) => {
@@ -49,10 +49,10 @@ export default function RolesManagerModal({
 
   return (
     <div className={styles.modalContainer}>
-      <h3 className={styles.title}>Gérer les rôles</h3>
+      <h3 className={styles.title}>{t("admin.roles.title")}</h3>
 
       {isLoading ? (
-        <p className={styles.loadingText}>Chargement des rôles...</p>
+        <p className={styles.loadingText}>{t("admin.roles.loading")}</p>
       ) : (
         <div className={styles.rolesList}>
           {allRoles.map((role: string) => {
@@ -86,14 +86,16 @@ export default function RolesManagerModal({
 
       <div className={styles.actions}>
         <button onClick={onClose} className={styles.btnCancel}>
-          Annuler
+          {t("admin.roles.cancel")}
         </button>
         <button
           onClick={save}
           disabled={updateRoles.isPending}
           className={styles.btnSave}
         >
-          {updateRoles.isPending ? "Sauvegarde..." : "Sauvegarder"}
+          {updateRoles.isPending
+            ? t("admin.roles.saving")
+            : t("admin.roles.save")}
         </button>
       </div>
     </div>

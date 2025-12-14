@@ -1,22 +1,22 @@
-// src/pages/Contrat/ContratPage.tsx → VERSION FINALE PARFAITE (2025)
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { api } from "../../service/api";
+import { api } from "../../../service/api";
 import toast from "react-hot-toast";
-import ContratView from "../../components/Contrat/ContratView/ContratView";
+import ContratView from "../../../components/Contrat/ContratView/ContratView";
 import styles from "./ContratPage.module.css";
+import { useTranslation } from "react-i18next"; // <--- IMPORT
 
 export default function ContratPage() {
   const { numero } = useParams<{ numero: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation(); // <--- HOOK
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchContrat = async () => {
       if (!numero) {
-        toast.error("Lien invalide");
+        toast.error(t("contract_view.invalid_link"));
         navigate("/mon-espace");
         return;
       }
@@ -26,15 +26,15 @@ export default function ContratPage() {
         const res = await api.get<any>(`/api/contrats/details/${numero}`);
         setData(res);
       } catch (err: any) {
-        let message = "Impossible de charger le contrat";
+        let message = t("contract_view.error_generic");
 
         if (err.message) {
           if (err.message.includes("404")) {
-            message = "Ce contrat n'existe pas";
+            message = t("contract_view.error_404");
           } else if (err.message.includes("403")) {
-            message = "Vous n'avez pas accès à ce contrat";
+            message = t("contract_view.error_403");
           } else if (err.message.includes("401")) {
-            message = "Session expirée, veuillez vous reconnecter";
+            message = t("contract_view.error_401");
           } else {
             message = err.message;
           }
@@ -51,14 +51,14 @@ export default function ContratPage() {
     };
 
     fetchContrat();
-  }, [numero, navigate]);
+  }, [numero, navigate, t]);
 
   // État de chargement
   if (loading) {
     return (
       <div className={styles.message}>
         <div className={styles.loader} />
-        <p>Chargement du contrat...</p>
+        <p>{t("contract_view.loading")}</p>
       </div>
     );
   }
@@ -67,10 +67,10 @@ export default function ContratPage() {
   if (!data) {
     return (
       <div className={styles.message}>
-        <h2>Contrat introuvable</h2>
-        <p>Le contrat demandé n'existe pas ou vous n'y avez pas accès.</p>
+        <h2>{t("contract_view.not_found_title")}</h2>
+        <p>{t("contract_view.not_found_desc")}</p>
         <Link to="/mon-espace" className={styles.backLink}>
-          Retour à mon espace
+          {t("contract_view.back_to_space")}
         </Link>
       </div>
     );
