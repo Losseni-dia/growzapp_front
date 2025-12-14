@@ -1,0 +1,78 @@
+/* LanguageSelector.module.css */
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.15); /* Un peu plus visible */
+  padding: 8px 12px;
+  border-radius: 30px;
+  backdrop-filter: blur(8px); /* Flou un peu plus prononcé */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Fine bordure subtile pour le conteneur */
+}
+
+.btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.6;
+  /* On enlève le grayscale complet, on laisse un peu de couleur mais désaturée, c'est plus élégant */
+  filter: saturate(60%) brightness(0.9); 
+}
+
+.flag {
+  width: 28px;
+  height: 28px;
+  /* CRUCIAL : Force le ratio carré parfait */
+  aspect-ratio: 1 / 1; 
+  border-radius: 50%;
+  /* Ombre douce par défaut */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  object-fit: cover;
+  display: block;
+  /* Évite les micro-débordements sur certains navigateurs */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+/* --- ÉTAT HOVER --- */
+.btn:hover {
+  opacity: 1;
+  filter: saturate(100%) brightness(1);
+  transform: translateY(-2px);
+}
+
+/* --- ÉTAT ACTIF --- */
+.active {
+  opacity: 1;
+  filter: saturate(100%) brightness(1);
+  transform: scale(1.15);
+  z-index: 2; /* Passe au-dessus des autres si léger chevauchement lors du zoom */
+}
+
+/* C'EST ICI LE SECRET DES CERCLES PARFAITS */
+.active .flag {
+  /* Astuce : On utilise box-shadow au lieu de border.
+     1ère ombre : 0 décalage, 0 flou, 2px de taille, couleur blanche -> Simule une bordure parfaite.
+     2ème ombre : L'ombre portée classique pour le relief.
+  */
+  box-shadow: 
+    0 0 0 2px #ffffff, 
+    0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+.activeDot {
+  position: absolute;
+  bottom: -7px; /* Un peu plus bas à cause du zoom */
+  width: 5px;  /* Un peu plus gros */
+  height: 5px;
+  background-color: #fbbf24;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(251, 191, 36, 0.6); /* Petite ombre lumineuse sur le point */
+}

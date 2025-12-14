@@ -1,9 +1,12 @@
-// src/App.tsx → VERSION ULTIME & PARFAITE 2025
+// src/App.tsx → VERSION CORRIGÉE 2025
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import GrowzToaster from "./components/ui/Toaster";
+
+// === IMPORT DU PROVIDER DE MONNAIE ===
+import { CurrencyProvider } from "./components/context/CurrencyContext";
 
 // Pages publiques
 import HomePage from "./pages/HomePage/HomePage";
@@ -25,14 +28,9 @@ import WithdrawCancelPage from "./pages/Retrait/Cancel/CancelPage";
 import WithdrawSuccessPage from "./pages/Retrait/Success/SuccessPage";
 import MesInvestissementsPage from "./pages/MonEspace/Mes-investissements/MesInvestissementsPage";
 import MesProjetsPage from "./pages/MonEspace/Mes-projets/MesProjetsPage";
-import ProfileUpdateForm from "./components/ProfileUpdateForm/ProfileUpdateForm";
+import MesDividendesPage from "./pages/MonEspace/Mes-dividendes/MesDividendes";
 
 // Pages Admin
-
-// Composants
-
-// Guards
-import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
 import DashboardAdmin from "./pages/Admin/AdminDashboard";
 import AdminWithdrawalsPage from "./pages/Admin/AdminRetraitWalletPage/AdminRetraitWalletPage";
 import ContratsAdmin from "./pages/Admin/Contrats/ContratAdminPage";
@@ -42,14 +40,20 @@ import UsersAdminPage from "./pages/Admin/Users/AdminUsersPage";
 import ProjectWalletDetailPage from "./pages/Admin/WalletsProjets/WalletProjetDetails/WalletProjetDetails";
 import ProjectWalletsAdminPage from "./pages/Admin/WalletsProjets/WalletsProjetsAdminPage";
 import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
-import ContratPage from "./pages/Contrat/ContratPage";
+import ContratPage from "./pages/Contrat/ContratsPage/ContratPage";
 import VerifierContrat from "./pages/VerifierContrat/VerifierContrat";
 import ProjetAdminDetail from "./pages/Admin/Projets/ProjetDetails/ProjetAdminDetail";
 import AdminProjetsList from "./pages/Admin/Projets/AdminProjetsList";
+import ContratViewer from "./pages/Contrat/ContratView/ContratView";
+
+// Guards
+import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
+import ProfileUpdateForm from "./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm";
 
 function App() {
   return (
-    <>
+    /* LE PROVIDER DOIT ENVELOPPER LE HEADER ET LES ROUTES */
+    <CurrencyProvider>
       <Header />
       <GrowzToaster />
 
@@ -84,9 +88,9 @@ function App() {
               element={<MesInvestissementsPage />}
             />
             <Route path="/mes-projets" element={<MesProjetsPage />} />
-
-            {/* LA ROUTE QUI POSAIT PROBLÈME — CORRIGÉE À 100% */}
+            <Route path="/mes-dividendes" element={<MesDividendesPage />} />
             <Route path="/contrat/:numero" element={<ContratPage />} />
+            <Route path="/contrat/:numero/viewer" element={<ContratViewer />} />
           </Route>
 
           {/* ==================== ROUTES ADMIN ==================== */}
@@ -152,7 +156,7 @@ function App() {
       </main>
 
       <Footer />
-    </>
+    </CurrencyProvider>
   );
 }
 

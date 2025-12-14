@@ -1,4 +1,4 @@
-// src/types/projet.ts → VERSION 100% PROPRE & COHÉRENTE – 27 NOV 2025
+// src/types/projet.ts
 
 import type { StatutProjet } from "./enum";
 import type { DocumentDTO } from "./document";
@@ -17,6 +17,10 @@ export interface ProjetDTO {
   prixUnePart: number;
   objectifFinancement: number;
   montantCollecte: number;
+
+  // NOUVEAU CHAMP : Indispensable pour la conversion automatique
+  currencyCode: string;
+
   dateDebut?: string;
   dateFin?: string;
   valeurTotalePartsEnPourcent: number;
@@ -37,10 +41,9 @@ export interface ProjetDTO {
 
   documents: DocumentDTO[];
   investissements: InvestissementDTO[];
-
 }
 
-// Résumé pour les cartes publiques (optionnel, tu peux garder)
+// Optionnel : Mise à jour du résumé si tu l'utilises
 export interface ProjetSummary {
   id: number;
   poster?: string;
@@ -48,6 +51,7 @@ export interface ProjetSummary {
   description?: string;
   montantCollecte: number;
   objectifFinancement: number;
+  currencyCode: string; // Ajouté ici aussi
   partsPrises: number;
   partsDisponible: number;
   prixUnePart: number;
@@ -57,8 +61,6 @@ export interface ProjetSummary {
   paysNom: string;
   secteurNom?: string;
   siteNom?: string;
-
- 
 }
 
 // Pour créer/éditer un projet
@@ -70,12 +72,9 @@ export interface ProjetCreateRequest {
   partsDisponible: number;
   prixUnePart: number;
   objectifFinancement: number;
+  currencyCode: string; // Ajouté pour permettre le choix à la création
   dateDebut?: string;
   dateFin?: string;
   siteId?: number;
   secteurId?: number;
-}
-
-export interface ProjetUpdateRequest extends Partial<ProjetCreateRequest> {
-  id: number;
 }

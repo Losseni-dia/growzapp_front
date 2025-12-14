@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.icon {
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+.select {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.select option {
+  color: #333; /* Pour que les options soient lisibles dans le menu déroulant */
+}

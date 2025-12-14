@@ -1,44 +1,37 @@
-/* src/pages/admin/AdminProjetsList.module.css */
-.container {
-  padding: 2rem;
-  background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%);
-  min-height: 100vh;
-}
-
-.title {
-  font-size: 2.8rem;
-  color: #1B5E20;
-  text-align: center;
-  margin-bottom: 3rem;
-  font-weight: 800;
-}
-
+/* GRILLE */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2.5rem;
-  max-width: 1600px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  padding-bottom: 3rem;
 }
 
+/* CARTE */
 .card {
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(27,94,32,0.18);
-  transition: all 0.4s ease;
-  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px; /* IMPORTANT : Hauteur minimale pour laisser la place aux boutons */
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-12px);
-  border-color: #1B5E20;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  border-color: #1b5e20;
 }
 
+/* IMAGE */
 .posterWrapper {
-  position: relative;
   height: 220px;
-  overflow: hidden;
+  background-color: #f5f5f5;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .poster {
@@ -48,121 +41,133 @@
 }
 
 .noPoster {
-  height: 220px;
-  background: #eee;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #999;
-}
-
-.statutBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 6px 14px;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 0.8rem;
-  color: white;
-  text-transform: uppercase;
-}
-
-.soumis, .en_attente { background: #FF9800; }
-.valide, .en_cours { background: #4CAF50; }
-.termine { background: #9C27B0; }
-.rejete { background: #F44336; }
-.badgeDefault { background: #607D8B; }
-
-.content {
-  padding: 1.8rem;
-}
-
-.projectTitle {
-  margin: 0 0 0.5rem;
-  font-size: 1.5rem;
-  color: #1B5E20;
-  font-weight: 700;
-}
-
-.porteur {
-  color: #2e7d32;
-  margin-bottom: 1rem;
   font-weight: 600;
 }
 
+/* BADGES STATUT */
+.statutBadge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.statutBadge:global(.VALIDE), .statutBadge:global(.EN_COURS) { background: #2e7d32; }
+.statutBadge:global(.SOUMIS), .statutBadge:global(.EN_ATTENTE) { background: #f57c00; }
+.statutBadge:global(.REJETE) { background: #d32f2f; }
+.statutBadge:global(.TERMINE) { background: #7b1fa2; }
+.badgeDefault { background: #607d8b; }
+
+/* CONTENU TEXTE */
+.content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.8rem;
+}
+
+.projectTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #1b5e20;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.porteur {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+}
+
+/* BARRE DE PROGRESSION */
 .progress {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 1rem 0;
-  font-size: 0.9rem;
+  gap: 12px;
+  font-weight: bold;
+  color: #1b5e20;
+  margin-top: 0.5rem;
 }
 
 .progressBar {
-  flex: 1;
-  height: 8px;
-  background: #E8F5E9;
-  border-radius: 4px;
+  flex-grow: 1;
+  height: 10px;
+  background: #e0e0e0;
+  border-radius: 5px;
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #FFC107, #FFB300);
-  transition: width 0.6s ease;
+  background: #1b5e20;
 }
 
-.actions, .statusActions {
-  display: flex;
-  gap: 0.8rem;
-  margin: 1rem 0;
-  flex-wrap: wrap;
+/* --- BOUTONS (Zone critique) --- */
+.actions {
+  margin-top: auto; /* Pousse vers le bas */
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 3 colonnes strictes */
+  gap: 10px;
 }
 
+/* Style des boutons */
 .btnDetail, .btnEdit, .btnDelete, .btnValider, .btnRejeter, .btnPublic {
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  color: white !important; /* Force le texte blanc */
+  transition: all 0.2s;
+  height: 40px;
 }
 
-.btnDetail { background: #1B5E20; color: white; }
-.btnDetail:hover { background: #2e7d32; transform: translateY(-3px); }
+/* Couleurs vives pour être sûr de les voir */
+.btnDetail { background: #1B5E20; }
+.btnDetail:hover { background: #144a17; }
 
-.btnEdit { background: #2196F3; color: white; }
-.btnEdit:hover { background: #1976D2; }
+.btnEdit { background: #1976d2; }
+.btnEdit:hover { background: #1565c0; }
 
-.btnDelete { background: #D32F2F; color: white; }
-.btnDelete:hover { background: #B71C1C; }
+.btnDelete { background: #d32f2f; }
+.btnDelete:hover { background: #b71c1c; }
 
-.btnValider { background: #4CAF50; color: white; flex: 1; }
-.btnValider:hover { background: #388E3C; }
+.statusActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
 
-.btnRejeter { background: #F44336; color: white; flex: 1; }
-.btnRejeter:hover { background: #D32F2F; }
+.btnValider { background: #2e7d32; }
+.btnRejeter { background: #c62828; }
 
 .btnPublic {
-  background: #17a2b8;
-  color: white;
+  margin-top: 10px;
+  background: white;
+  border: 2px solid #ccc;
+  color: #555 !important;
   width: 100%;
-  justify-content: center;
-  margin-top: 1rem;
 }
-
-.btnPublic:hover {
-  background: #138496;
-}
-
-.loading {
-  text-align: center;
-  padding: 8rem;
-  font-size: 2rem;
-  color: #1B5E20;
-}
+.btnPublic:hover { background: #f5f5f5; color: #333 !important; }

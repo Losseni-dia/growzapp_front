@@ -1,0 +1,750 @@
+{
+  "welcome": "Welcome to GrowzApp",
+  "login": "Login",
+  "logout": "Logout",
+  "create_project": "Create a project",
+  "link_verify_contract": "Verify a contract",
+  "admin_space": "Admin Area",
+  "my_profile": "My Space",
+  "login_page": {
+    "title": "Login to growzapp",
+    "subtitle": "Login to manage your investments",
+    "placeholder_login": "Login or email",
+    "placeholder_password": "Password",
+    "btn_loading": "Logging in...",
+    "btn_submit": "Login",
+    "no_account": "No account yet?",
+    "register_link": "Sign up for free",
+    "toast_success": "Successfully connected!",
+    "toast_error_server": "Invalid server response",
+    "toast_error_credentials": "Invalid credentials"
+  },
+  "register_page": {
+    "title": "Create your GrowzApp account",
+    "photo": {
+      "add_text": "Add a photo",
+      "validate": "Validate",
+      "cancel": "Cancel",
+      "error_type": "Image only",
+      "error_size": "Max 10 MB",
+      "success_crop": "Photo cropped!",
+      "error_crop": "Cropping error"
+    },
+    "form": {
+      "firstname": "First Name",
+      "lastname": "Last Name",
+      "login": "Username",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "password": "Password",
+      "confirm_password": "Confirm password",
+      "gender_male": "Male",
+      "gender_female": "Female",
+      "select_region": "Choose your region / city",
+      "select_languages": "Spoken languages (click)",
+      "languages_count": "language(s)"
+    },
+    "buttons": {
+      "submit_loading": "Creating...",
+      "submit": "Sign up for free"
+    },
+    "footer": {
+      "already_account": "Already have an account?",
+      "login_link": "Log in"
+    },
+    "errors": {
+      "load_data": "Unable to load data",
+      "password_mismatch": "Passwords do not match",
+      "missing_region": "Choose a region",
+      "missing_language": "Choose at least one language",
+      "generic": "Error during registration"
+    },
+    "success": "Registration successful! Welcome!"
+  },
+  "projects_page": {
+    "loading": "Loading projects...",
+    "filters": {
+      "title": "Filters",
+      "search_label": "Search",
+      "search_placeholder": "Name, city, country, sector...",
+      "sector_label": "Sector",
+      "all_sectors": "All",
+      "price_label": "Price per share",
+      "price_min": "Min",
+      "price_max": "Max",
+      "to": "to",
+      "sort_label": "Sort by",
+      "sort_recent": "Newest",
+      "sort_funding": "Best funding",
+      "sort_price_asc": "Price ascending",
+      "sort_price_desc": "Price descending",
+      "results": "project(s)"
+    },
+    "empty": {
+      "title": "No projects found",
+      "subtitle": "Change your filters"
+    },
+    "toast_error": "Unable to load projects"
+  },
+  "project_card": {
+    "status": {
+      "finished": "Funding completed",
+      "ongoing": "In progress"
+    },
+    "no_poster": "No poster",
+    "roi": "ROI",
+    "price_per_share": "Price/share",
+    "goal": "Goal",
+    "collected": "raised",
+    "dates": "From {{start}} to {{end}}",
+    "btn_view": "View",
+    "btn_invest": "Invest"
+  },
+  "project_details": {
+    "loading": "Loading project...",
+    "error_not_found": "Project not found",
+    "no_poster": "No poster available",
+    "sector": "Sector",
+    "location": "Location",
+    "country": "Country",
+    "roi_projected": "Projected ROI",
+    "collected": "raised",
+    "goal": "goal",
+    "reached": "reached",
+    "description_title": "Project Description",
+    "documents": {
+      "title": "Project Documents",
+      "empty": "No documents available at the moment",
+      "error_download": "Unable to download document"
+    },
+    "invest_title": "Invest in this project",
+    "toast_invest_success": "Investment recorded!"
+  },
+  "project_form": {
+    "title": "Submit a new project",
+    "photo": {
+      "placeholder": "Add a poster (16:9 recommended)",
+      "crop_validate": "Validate",
+      "crop_cancel": "Cancel",
+      "error_type": "Image only",
+      "error_size": "Max 10 MB",
+      "success_crop": "Poster cropped!"
+    },
+    "fields": {
+      "name_placeholder": "Project name *",
+      "desc_placeholder": "Detailed description *",
+      "sector_placeholder": "Activity sector *",
+      "city_placeholder": "City / Locality *",
+      "country_placeholder": "Country (Ivory Coast by default)"
+    },
+    "buttons": {
+      "submit": "Submit project",
+      "sending": "Sending..."
+    },
+    "errors": {
+      "required_name": "Project name is required",
+      "required_desc": "Description is required",
+      "required_sector": "Sector is required",
+      "required_city": "Locality is required",
+      "server": "Error while sending"
+    },
+    "success": "Project submitted successfully!"
+  },
+  "data": {
+    "countries": {
+      "SENEGAL": "Senegal",
+      "COTE D'IVOIRE": "Ivory Coast",
+      "GHANA": "Ghana",
+      "NIGERIA": "Nigeria",
+      "MALI": "Mali",
+      "BURKINA FASO": "Burkina Faso",
+      "BENIN": "Benin",
+      "TOGO": "Togo",
+      "GUINEE": "Guinea",
+      "SIERRA LEONE": "Sierra Leone",
+      "LIBERIA": "Liberia",
+      "GAMBIE": "Gambia"
+    },
+    "cities": {
+      "DAKAR": "Dakar",
+      "ABIDJAN": "Abidjan",
+      "ACCRA": "Accra",
+      "LAGOS": "Lagos",
+      "BAMAKO": "Bamako",
+      "OUAGADOUGOU": "Ouagadougou",
+      "COTONOU": "Cotonou",
+      "LOME": "Lome",
+      "CONAKRY": "Conakry",
+      "FREETOWN": "Freetown",
+      "MONROVIA": "Monrovia",
+      "BANJUL": "Banjul"
+    },
+    "sectors": {
+      "IMMOBILIER": "Real Estate",
+      "TECHNOLOGIE": "Technology",
+      "SANTE": "Health",
+      "EDUCATION": "Education",
+      "TOURISME": "Tourism",
+      "ALIMENTATION": "Food & Beverage",
+      "ENVIRONNEMENT": "Environment",
+      "TRANSPORT": "Transport",
+      "FINANCE": "Finance",
+      "MINIER": "Mining",
+      "HORECA": "Horeca (Hotel & Restaurant)",
+      "ART": "Art"
+    }
+  },
+  "dashboard": {
+    "loading": "Loading...",
+    "edit_profile": "Edit profile",
+    "wallet": {
+      "title": "Wallet",
+      "available": "available",
+      "view_detail": "View details"
+    },
+    "stats": {
+      "my_investments": "My Investments",
+      "my_projects": "My Projects",
+      "my_dividends": "My Dividends",
+      "invested": "invested",
+      "collected": "collected",
+      "received": "received",
+      "none_invested": "No investments",
+      "none_projects": "No projects",
+      "none_received": "No dividends received"
+    }
+  },
+  "user_projects": {
+    "title": "My Projects",
+    "count": "You have created {{count}} project(s)",
+    "empty": {
+      "title": "You haven't created a project yet",
+      "subtitle": "Launch your investment campaign now!",
+      "btn": "Create new project"
+    },
+    "status": {
+      "ongoing": "Funding in progress",
+      "funded": "Funded",
+      "pending": "Awaiting validation",
+      "rejected": "Rejected"
+    },
+    "card": {
+      "created_at": "Created on",
+      "investors": "Investors",
+      "goal": "Goal",
+      "btn_view": "View project"
+    }
+  },
+  "user_investments": {
+    "title": "My Investments",
+    "count": "investment(s)",
+    "empty": "No investments",
+    "btn_discover": "Discover projects",
+    "status": {
+      "pending": "Pending",
+      "validated": "Validated",
+      "rejected": "Rejected"
+    },
+    "card": {
+      "parts": "shares",
+      "invested": "invested",
+      "btn_view_contract": "View contract",
+      "btn_download": "Download",
+      "btn_unavailable": "Unavailable",
+      "btn_view_project": "View project",
+      "validation_delay": "Validation within 48h"
+    }
+  },
+  "dividends": {
+    "title": "My Dividends & Invoices",
+    "btn_refresh": "Refresh",
+    "stats": {
+      "received": "Received",
+      "planned": "Planned",
+      "total": "Total"
+    },
+    "empty": "No dividends at the moment.",
+    "table": {
+      "project": "Project",
+      "total": "Total amount",
+      "per_share": "Amount/share",
+      "date": "Date",
+      "status": "Status",
+      "invoice": "Invoice",
+      "status_paid": "Paid",
+      "status_planned": "Planned",
+      "generating": "Generating..."
+    }
+  },
+  "invest_form": {
+    "invest_in": "Invest in \"{{name}}\"",
+    "price_per_share": "Price per share",
+    "available_shares": "Available shares",
+    "number_of_shares": "Number of shares",
+    "locked_amount": "Locked amount",
+    "methods": {
+      "wallet_title": "GrowzApp Wallet",
+      "wallet_available": "{{amount}} FCFA available",
+      "mobile_title": "Mobile Money",
+      "mobile_subtitle": "Orange, MTN, Wave, Moov",
+      "card_title": "Credit Card",
+      "card_subtitle": "Visa, Mastercard"
+    },
+    "buttons": {
+      "processing": "Processing...",
+      "pay_wallet": "Pay with wallet",
+      "pay_mobile": "Pay with Mobile Money",
+      "pay_card": "Pay by credit card"
+    },
+    "hint": "Your funds will be locked immediately • Validation within 48h • Contract sent by email",
+    "messages": {
+      "loading_balance": "Loading...",
+      "error_balance": "Unable to load balance",
+      "invalid_shares": "Invalid number of shares",
+      "insufficient_balance": "Insufficient wallet balance",
+      "success_wallet": "Investment confirmed with your wallet!",
+      "mobile_dev": "Mobile Money payment under development",
+      "stripe_redirect": "Redirecting to Stripe...",
+      "error_url": "Payment URL missing"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "contracts": "Generated Contracts",
+      "title": "Admin Dashboard",
+      "users": "Registered Users",
+      "projects": "Published Projects",
+      "investments_pending": "Pending Investments",
+      "withdrawals_pending": "Pending Withdrawals",
+      "real_escrow": "Real Escrow Treasury",
+      "displayed_amount": "Amount displayed to investors",
+      "quick_actions": "Quick Actions",
+      "manage_users": "Manage Users",
+      "see_projects": "See All Projects",
+      "validate_investments": "Validate Investments",
+      "validate_withdrawals": "Validate Withdrawals",
+      "manage_escrow": "Manage Escrow Treasury"
+    },
+    "withdrawals": {
+      "title": "Withdrawal Validation",
+      "subtitle": "{{count}} request(s) pending",
+      "table": {
+        "date": "Date",
+        "user": "User",
+        "amount": "Amount",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "pending": "Pending",
+        "validated": "Validated",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "validate": "Validate",
+        "reject": "Reject"
+      },
+      "modal": {
+        "title": "Reject Withdrawal",
+        "reason_placeholder": "Reason for rejection (required)",
+        "cancel": "Cancel",
+        "confirm": "Confirm rejection"
+      },
+      "toast": {
+        "validate_success": "Withdrawal validated!",
+        "reject_success": "Withdrawal rejected",
+        "error": "An error occurred"
+      }
+    },
+    "contracts": {
+      "title": "CONTRACT MANAGEMENT",
+      "subtitle": "All investment contracts",
+      "search_placeholder": "Search...",
+      "filter_btn": "Filters",
+      "refresh_btn": "Refresh",
+      "export_btn": "Export Excel",
+      "table": {
+        "contract_no": "Contract No",
+        "date": "Date",
+        "project": "Project",
+        "investor": "Investor",
+        "amount": "Amount",
+        "shares": "Shares",
+        "equity": "% Equity",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "investments": {
+      "title": "Investment Management",
+      "subtitle": "{{count}} request(s) pending validation",
+      "status": {
+        "pending": "Pending",
+        "validated": "Validated",
+        "cancelled": "Cancelled"
+      },
+      "btn_validate": "Validate & Send Contract",
+      "sent": "Contract {{number}} sent"
+    },
+    "projects": {
+      "title": "Project Administration ({{count}})",
+      "no_poster": "No poster",
+      "by": "By",
+      "real_balance": "real escrow",
+      "btn_docs": "Documents",
+      "btn_edit": "Edit",
+      "btn_delete": "Delete",
+      "btn_validate": "Validate",
+      "btn_reject": "Reject",
+      "btn_wallet": "Project Wallet",
+      "btn_public": "View Project (Public)",
+      "confirm_delete": "Permanently delete project \"{{name}}\"? This action is irreversible."
+    },
+    "users": {
+      "title": "User Management ({{count}})",
+      "table": {
+        "photo": "Photo",
+        "name": "Full Name",
+        "email": "Email / Login",
+        "roles": "Roles",
+        "status": "Status",
+        "projects": "Projects",
+        "investments": "Investments",
+        "actions": "Actions"
+      },
+      "modal": {
+        "account_status": "Account {{status}}",
+        "active": "active",
+        "disabled": "disabled",
+        "his_projects": "Their projects",
+        "his_investments": "Their investments",
+        "manage_roles": "Manage roles",
+        "make_admin": "Make Admin"
+      },
+      "empty": "No users found"
+    },
+    "roles": {
+      "title": "Manage Roles",
+      "loading": "Loading roles...",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "success": "Roles updated!"
+    },
+    "wallets": {
+      "title": "Escrow Treasury – All Projects",
+      "empty": "No funds collected yet",
+      "available": "available",
+      "blocked": "Blocked",
+      "detail_btn": "View Treasury Details",
+      "pay_owner_btn": "Pay to Owner",
+      "modal": {
+        "title": "Payment to Owner",
+        "project": "Project",
+        "owner": "Owner",
+        "available": "Available Balance",
+        "amount_label": "Amount to pay (FCFA)",
+        "reason_label": "Reason (optional)",
+        "reason_placeholder": "Ex: Project closing",
+        "confirm": "Confirm Transfer",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "invalid_amount": "Invalid amount",
+        "insufficient_funds": "Amount exceeds available balance",
+        "success": "{{amount}} FCFA paid successfully!",
+        "error": "Transfer failed"
+      }
+    },
+    "project_detail": {
+      "title": "Administration: {{title}}",
+      "docs_title": "Project Documents ({{count}})",
+      "no_docs": "No documents uploaded yet",
+      "download_start": "Download started!",
+      "download_error": "Download failed",
+      "load_error": "Error loading project",
+      "not_found": "Project not found"
+    }
+  },
+  "contract_view": {
+    "loading": "Loading contract...",
+    "invalid_link": "Invalid link",
+    "invalid_contract": "Invalid contract",
+    "must_login": "You must be logged in",
+    "number": "Number:",
+    "error_generic": "Unable to load contract",
+    "error_404": "This contract does not exist",
+    "error_403": "You do not have access to this contract",
+    "error_401": "Session expired, please log in again",
+    "not_found_title": "Contract not found",
+    "not_found_desc": "The requested contract does not exist or you do not have access.",
+    "back_to_space": "Back to my space"
+  },
+  "contract_details": {
+    "title": "INVESTMENT CONTRACT",
+    "subtitle": "Between GrowzApp and the Investor",
+    "ref": "Ref",
+    "section_project": "Project Information",
+    "section_investor": "Investor Information",
+    "section_investment": "Investment Details",
+    "label_project": "Project Name",
+    "label_investor": "Full Name",
+    "label_email": "Email",
+    "label_phone": "Phone",
+    "label_amount": "Invested Amount",
+    "label_shares": "Number of Shares",
+    "label_unit_price": "Unit Price",
+    "label_date": "Signature Date",
+    "label_status": "Status",
+    "signatures_title": "Digital Signatures",
+    "signed_by": "Signed by",
+    "certified": "Certified by GrowzApp Blockchain",
+    "verify_label": "Official Verification Link:",
+    "btn_download": "Download Official PDF"
+  },
+  "wallet": {
+    "title": "My Wallet",
+    "total": "Total",
+    "balance": {
+      "available": "Available Balance",
+      "blocked": "Blocked (pending)",
+      "withdrawable": "Withdrawable (admin validated)"
+    },
+    "actions": {
+      "deposit_title": "Deposit Money",
+      "deposit_desc": "Credit card – secured via Stripe",
+      "deposit_btn": "Deposit with card",
+      "withdraw_admin_title": "Request Withdrawal",
+      "withdraw_admin_desc": "Send a request to admin",
+      "withdraw_admin_btn": "Send Request",
+      "withdraw_direct_title": "Withdraw Validated Earnings",
+      "withdraw_direct_desc": "Orange Money, Wave, MTN or bank transfer",
+      "withdraw_direct_btn": "Withdraw Now",
+      "transfer_title": "Transfer to a Friend",
+      "transfer_desc": "Send money to another user",
+      "transfer_search_placeholder": "Search by name or login...",
+      "transfer_dest": "Recipient:",
+      "transfer_amount_placeholder": "Amount to send",
+      "transfer_source": "Pay from:",
+      "transfer_btn": "Send Transfer",
+      "loading": "Loading wallet...",
+      "not_found": "Wallet not found",
+      "pending_count": "{{count}} pending request(s)"
+    },
+    "history": {
+      "title": "Transaction History",
+      "empty": "No transactions yet",
+      "cols": {
+        "date": "Date",
+        "type": "Type",
+        "amount": "Amount",
+        "status": "Status",
+        "detail": "Detail"
+      }
+    },
+    "tx_type": {
+      "DEPOT": "Deposit",
+      "RETRAIT": "Withdrawal Request",
+      "TRANSFER_OUT": "Transfer Sent",
+      "TRANSFER_IN": "Transfer Received",
+      "PAYOUT_STRIPE": "Bank Payout",
+      "DIVIDENDE": "Dividend"
+    },
+    "status": {
+      "SUCCESS": "Validated",
+      "EN_ATTENTE_VALIDATION": "Pending Admin",
+      "REJETEE": "Rejected"
+    }
+  },
+  "deposit": {
+    "title": "Deposit Money",
+    "back": "Back",
+    "amount_label": "Amount (€)",
+    "min_amount": "Minimum 5",
+    "method_label": "Method",
+    "methods": { "card": "Credit Card" },
+    "btn_continue": "Continue",
+    "processing": "Processing...",
+    "modal_phone": {
+      "title": "Phone Number",
+      "for": "For",
+      "cancel": "Cancel",
+      "confirm": "Confirm Deposit",
+      "sending": "Sending..."
+    },
+    "modal_stripe": {
+      "title": "Card Payment",
+      "amount": "Amount:",
+      "pay_btn": "Pay with Card",
+      "redirect": "Redirecting to Stripe..."
+    },
+    "redirect_overlay": {
+      "title": "Secure Redirection...",
+      "subtitle": "Connecting to bank"
+    },
+    "toast": {
+      "min_error": "Minimum amount: 5 €",
+      "session_expired": "Session expired",
+      "success": "Deposit successful!",
+      "success_redirect": "Secure redirection...",
+      "fail": "Deposit failed"
+    },
+    "result": {
+      "success_title": "Payment Successful!",
+      "success_msg": "Your wallet has been successfully credited",
+      "redirect_msg": "Redirecting to your wallet in 3 seconds...",
+      "cancel_title": "Payment Cancelled",
+      "cancel_msg": "No charge was made",
+      "retry_btn": "Retry Deposit",
+      "home_link": "Or return home"
+    }
+  },
+  "withdraw": {
+    "title": "Withdraw Earnings",
+    "back": "Back",
+    "balance_label": "Withdrawable Balance:",
+    "amount_label": "Amount to withdraw",
+    "placeholder_amount": "Ex: 50",
+    "min_max_hint": "Minimum 5 € • Maximum {{max}} €",
+    "method_label": "Withdrawal Method",
+    "methods": {
+      "om": "Orange Money",
+      "wave": "Wave",
+      "mtn": "MTN MoMo",
+      "bank": "Bank Transfer"
+    },
+    "btn_confirm": "Confirm Withdrawal",
+    "processing": "Processing...",
+    "info_fees": "Fees: 2% + 100 FCFA",
+    "info_delay": "Received within 24 business hours",
+    "toast": {
+      "session_expired": "Session expired",
+      "connection_error": "Connection error",
+      "invalid_amount": "Invalid amount. Min: 5 € • Max: {{max}} €",
+      "success_redirect": "Redirecting to Stripe...",
+      "success_sent": "Withdrawal sent successfully!",
+      "fail": "Withdrawal failed"
+    },
+    "modal_phone": {
+      "title": "Phone Number",
+      "for": "For",
+      "placeholder": "+225 07 89 01 23 45",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "sending": "Sending..."
+    },
+    "modal_stripe": {
+      "title": "Bank Transfer Withdrawal",
+      "amount": "Amount:",
+      "delay_info": "You will receive the money within 1-2 business days",
+      "confirm_btn": "Confirm Withdrawal",
+      "sending": "Sending..."
+    },
+    "loader": {
+      "title": "Secure Redirection...",
+      "subtitle": "Do not close this page"
+    },
+    "success": {
+      "title": "Withdrawal Sent!",
+      "message": "Your money is being transferred",
+      "redirect": "Redirecting to your wallet...",
+      "toast": "Withdrawal sent successfully! You will receive the money within 24h"
+    },
+    "cancel": {
+      "title": "Withdrawal Cancelled",
+      "message": "No transaction was made",
+      "retry": "Retry Withdrawal",
+      "home": "Or return to your wallet"
+    }
+  },
+  "admin_wallet": {
+    "back": "Back",
+    "title": "Treasury",
+    "loading": "Loading...",
+    "not_found": "Project not found",
+    "balance": {
+      "available": "Available",
+      "available_hint": "For dividends or withdrawals",
+      "blocked": "Blocked",
+      "blocked_hint": "Pending investments",
+      "withdrawable": "Withdrawable",
+      "withdrawable_hint": "Owner's validated earnings"
+    },
+    "summary": {
+      "title": "Project Summary",
+      "available_balance": "Available Balance",
+      "total_collected": "Total Collected",
+      "project_owner": "Project Owner"
+    },
+    "dividends": {
+      "title": "Pay Dividends (Pro-rata)",
+      "amount_placeholder": "Total amount to distribute",
+      "reason_placeholder": "Reason (e.g. Q4 2025 Profits)",
+      "btn_pay": "Pay All Investors",
+      "btn_processing": "Processing Distribution..."
+    },
+    "withdraw": {
+      "title": "Project Wallet Withdrawal",
+      "amount_placeholder": "Amount to withdraw",
+      "method_momo": "Mobile Money",
+      "method_stripe": "Stripe / Transfer",
+      "btn_withdraw": "Withdraw",
+      "btn_processing": "Processing..."
+    },
+    "investments": {
+      "title": "Investment History ({{count}})",
+      "col_investor": "Investor",
+      "col_amount": "Amount",
+      "col_shares": "Shares",
+      "col_date": "Date",
+      "col_status": "Status",
+      "col_contract": "Contract"
+    },
+    "history_dividends": {
+      "title": "Dividend Payment History ({{count}})",
+      "col_investor": "Investor",
+      "col_amount": "Amount",
+      "col_date": "Date",
+      "col_reason": "Reason",
+      "col_invoice": "Invoice",
+      "empty": "No dividends paid yet",
+      "btn_invoice": "Invoice PDF",
+      "status_pending": "Processing...",
+      "default_reason": "Pro-rata dividend"
+    },
+    "toasts": {
+      "load_error": "Error loading data",
+      "download_success": "Download successful!",
+      "download_error": "Error during download",
+      "file_unavailable": "File unavailable",
+      "invalid_amount": "Please enter a valid amount",
+      "amount_exceeds": "Amount exceeds available balance",
+      "reason_required": "Reason is required",
+      "dividend_success": "Dividends distributed successfully!",
+      "dividend_error": "Error distributing dividends",
+      "withdraw_success": "Withdrawal successful",
+      "withdraw_error": "Withdrawal failed"
+    }
+  },
+  "verify_contract": {
+    "title": "Authenticity Verification",
+    "subtitle": "Enter the contract number or scan the QR code",
+    "placeholder": "CTR-2025-000127",
+    "btn_verify": "Verify",
+    "btn_verifying": "Verifying...",
+    "success_title": "100% Authentic Contract",
+    "error_title": "Contract Not Found",
+    "error_desc": "This contract does not exist in our database or has been falsified.",
+    "label_contract_no": "Contract No:",
+    "label_project": "Project:",
+    "label_investor": "Investor:",
+    "label_amount": "Amount:",
+    "label_date": "Date:",
+    "qr_hint": "Share this link to prove authenticity",
+    "footer_text": "All GrowzApp contracts are electronically signed and blockchain protected — Impossible to forge.",
+    "back_home": "Back to Home",
+    "toast_empty": "Enter a contract number",
+    "toast_success": "Contract is authentic!",
+    "toast_error": "Contract not found or invalid"
+  }
+}

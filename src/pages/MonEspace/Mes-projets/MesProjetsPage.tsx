@@ -1,11 +1,13 @@
-// src/pages/porteur/MesProjetsPage.tsx → VERSION FINALE (comme tu veux)
+// src/pages/porteur/MesProjetsPage.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../service/api";
 import { ProjetDTO } from "../../../types/projet";
 import toast from "react-hot-toast";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { format as formatDate } from "date-fns";
+import { fr, enUS, es } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../../components/context/CurrencyContext"; // <--- IMPORT
 import {
   FiTrendingUp,
   FiCalendar,
@@ -16,66 +18,48 @@ import {
 import styles from "./MesProjetsPage.module.css";
 
 export default function MesProjetsPage() {
+  const { t, i18n } = useTranslation();
+  const { format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
   const [projets, setProjets] = useState<ProjetDTO[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
 
   useEffect(() => {
     api
       .get<{ data: ProjetDTO[] }>("/api/projets/mes-projets")
-      .then((response) => {
-        setProjets(response.data || []);
-      })
-      .catch(() => {
-        toast.error("Impossible de charger vos projets");
-      })
+      .then((response) => setProjets(response.data || []))
+      .catch(() => toast.error(t("projects_page.toast_error")))
       .finally(() => setLoading(false));
-  }, []);
-
-  const getStatutClass = (statut: string) => {
-    switch (statut) {
-      case "VALIDE":
-      case "EN_COURS":
-        return styles.statutEnCours;
-      case "TERMINE":
-        return styles.statutTermine;
-      case "SOUMIS":
-        return styles.statutSoumis;
-      case "REJETE":
-        return styles.statutRejete;
-      default:
-        return styles.statutDefault;
-    }
-  };
+  }, [t]);
 
   const getStatutLabel = (statut: string) => {
     switch (statut) {
       case "VALIDE":
       case "EN_COURS":
-        return "En cours de financement";
+        return t("user_projects.status.ongoing");
       case "TERMINE":
-        return "Financé";
+        return t("user_projects.status.funded");
       case "SOUMIS":
-        return "En attente de validation";
+        return t("user_projects.status.pending");
       case "REJETE":
-        return "Refusé";
+        return t("user_projects.status.rejected");
       default:
         return statut;
     }
   };
 
-  if (loading) {
-    return <div className={styles.loading}>Chargement de vos projets...</div>;
-  }
+  if (loading)
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>
-          <FiTrendingUp /> Mes Projets
+          <FiTrendingUp /> {t("user_projects.title")}
         </h1>
-        <p>
-          Vous avez créé <strong>{projets.length}</strong> projet(s)
-        </p>
+        <p>{t("user_projects.count", { count: projets.length })}</p>
       </div>
 
       {projets.length === 0 ? (
@@ -83,10 +67,9 @@ export default function MesProjetsPage() {
           <div className={styles.emptyIcon}>
             <FiDollarSign />
           </div>
-          <h2>Vous n'avez pas encore créé de projet</h2>
-          <p>Lancez votre campagne d'investissement dès maintenant !</p>
+          <h2>{t("user_projects.empty.title")}</h2>
           <Link to="/projet/creer" className={styles.btnCreer}>
-            Créer un nouveau projet
+            {t("user_projects.empty.btn")}
           </Link>
         </div>
       ) : (
@@ -96,7 +79,6 @@ export default function MesProjetsPage() {
               projet.objectifFinancement > 0
                 ? (projet.montantCollecte / projet.objectifFinancement) * 100
                 : 0;
-
             return (
               <div key={projet.id} className={styles.card}>
                 <div className={styles.poster}>
@@ -106,43 +88,45 @@ export default function MesProjetsPage() {
                     className={styles.posterImg}
                   />
                   <div
-                    className={`${styles.statutBadge} ${getStatutClass(
-                      projet.statutProjet
-                    )}`}
+                    className={`${styles.statutBadge} ${
+                      styles[projet.statutProjet?.toLowerCase()] || ""
+                    }`}
                   >
                     {getStatutLabel(projet.statutProjet)}
                   </div>
                 </div>
-
                 <div className={styles.content}>
                   <h3 className={styles.title}>{projet.libelle}</h3>
-
                   <div className={styles.infoGrid}>
                     <div className={styles.infoItem}>
                       <FiCalendar className={styles.icon} />
                       <div>
-                        <small>Créé le</small>
+                        <small>{t("user_projects.card.created_at")}</small>
                         <div>
-                          {format(new Date(projet.createdAt), "dd MMM yyyy", {
-                            locale: fr,
-                          })}
+                          {formatDate(
+                            new Date(projet.createdAt),
+                            "dd MMM yyyy",
+                            { locale: currentLocale }
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className={styles.infoItem}>
                       <FiUsers className={styles.icon} />
                       <div>
-                        <small>Investisseurs</small>
+                        <small>{t("user_projects.card.investors")}</small>
                         <div>
                           <strong>{projet.investissements?.length || 0}</strong>
                         </div>
                       </div>
                     </div>
                   </div>
-
                   <div className={styles.progressContainer}>
                     <div className={styles.progressText}>
-                      <span>{projet.montantCollecte.toLocaleString()} €</span>
+                      {/* CONVERSION COLLECTÉ */}
+                      <span>
+                        {formatCurrency(projet.montantCollecte, "XOF")}
+                      </span>
                       <span>{progress.toFixed(0)}%</span>
                     </div>
                     <div className={styles.progressBar}>
@@ -152,16 +136,14 @@ export default function MesProjetsPage() {
                       />
                     </div>
                   </div>
-
                   <div className={styles.objectif}>
-                    Objectif :{" "}
+                    {t("user_projects.card.goal")} : {/* CONVERSION OBJECTIF */}
                     <strong>
-                      {projet.objectifFinancement.toLocaleString()} €
+                      {formatCurrency(projet.objectifFinancement, "XOF")}
                     </strong>
                   </div>
-
                   <Link to={`/projet/${projet.id}`} className={styles.btnVoir}>
-                    <FiEye /> Voir le projet
+                    <FiEye /> {t("user_projects.card.btn_view")}
                   </Link>
                 </div>
               </div>

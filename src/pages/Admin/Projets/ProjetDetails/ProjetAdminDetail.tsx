@@ -54,30 +54,47 @@ export default function ProjetAdminDetail() {
     if (id) loadProjetAndDocuments();
   }, [id]);
 
-  const handleDownload = async (docId: number, nom: string) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/documents/${docId}/download`,
-        {
-          headers: {
-            Authorization: `Bearer ${
-              localStorage.getItem("access_token") || ""
-            }`,
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Échec téléchargement");
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = nom;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch {
-      toast.error("Impossible de télécharger le fichier");
-    }
-  };
+ const handleDownload = async (docId: number, nom: string, type: string) => {
+   try {
+     const token = localStorage.getItem("access_token") || "";
+     const response = await fetch(
+       `http://localhost:8080/api/documents/${docId}/download`,
+       {
+         method: "GET",
+         headers: {
+           Authorization: `Bearer ${token}`,
+           // Important : ne pas définir Content-Type → laisser le navigateur gérer
+         },
+       }
+     );
+
+     if (!response.ok) {
+       const errorText = await response.text();
+       throw new Error(errorText || "Téléchargement refusé");
+     }
+
+     const blob = await response.blob();
+     const url = window.URL.createObjectURL(blob);
+     const a = document.createElement("a");
+     a.href = url;
+     a.download =
+       type === "PDF"
+         ? `${nom}.pdf`
+         : type === "EXCEL"
+         ? `${nom}.xlsx`
+         : type === "CSV"
+         ? `${nom}.csv`
+         : nom;
+     document.body.appendChild(a);
+     a.click();
+     document.body.removeChild(a);
+     window.URL.revokeObjectURL(url);
+
+     toast.success("Téléchargement démarré !");
+   } catch (err: any) {
+     toast.error(err.message || "Échec du téléchargement");
+   }
+ };
 
   const getIcon = (type: string) => {
     switch (type.toUpperCase()) {
@@ -123,12 +140,7 @@ export default function ProjetAdminDetail() {
                   </small>
                 </div>
                 <button
-                  onClick={() =>
-                    handleDownload(
-                      doc.id,
-                      doc.type === "PDF" ? `${doc.nom}.pdf` : doc.nom
-                    )
-                  }
+                  onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
                   className={styles.downloadBtn}
                   title="Télécharger"
                 >

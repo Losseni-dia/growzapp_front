@@ -7,6 +7,9 @@ import Cropper from "react-easy-crop";
 import styles from "./RegisterForm.module.css";
 import { getCroppedImg, dataURLtoFile } from "../../types/utils/CropImage";
 
+// 1. IMPORT I18N
+import { useTranslation } from "react-i18next";
+
 interface Localite {
   id: number;
   nom: string;
@@ -17,6 +20,9 @@ interface Langue {
 }
 
 export default function RegisterForm() {
+  // 2. INITIALISATION I18N
+  const { t } = useTranslation();
+
   // Photo + cropper
   const [preview, setPreview] = useState<string | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -60,11 +66,12 @@ export default function RegisterForm() {
         setLocalites(locData.data || []);
         setLangues(langData.data || []);
       } catch (err) {
-        toast.error("Impossible de charger les données");
+        // TRADUCTION ERREUR
+        toast.error(t("register_page.errors.load_data"));
       }
     };
     fetchData();
-  }, []);
+  }, [t]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -84,8 +91,11 @@ export default function RegisterForm() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return toast.error("Image uniquement");
-    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 Mo");
+    // TRADUCTION ERREURS PHOTO
+    if (!file.type.startsWith("image/"))
+      return toast.error(t("register_page.photo.error_type"));
+    if (file.size > 10 * 1024 * 1024)
+      return toast.error(t("register_page.photo.error_size"));
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -106,9 +116,10 @@ export default function RegisterForm() {
       setPreview(cropped);
       setPhotoFile(dataURLtoFile(cropped, "profile.jpg"));
       setShowCropper(false);
-      toast.success("Photo recadrée !");
+      // TRADUCTION SUCCÈS
+      toast.success(t("register_page.photo.success_crop"));
     } catch {
-      toast.error("Erreur recadrage");
+      toast.error(t("register_page.photo.error_crop"));
     }
   };
 
@@ -119,67 +130,63 @@ export default function RegisterForm() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // === SOUMISSION – IDENTIQUE À TON PROJET ===
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (form.password !== form.confirmPassword)
-      return toast.error("Mots de passe différents");
-    if (!form.localiteId) return toast.error("Choisissez une région");
-    if (selectedLangues.length === 0)
-      return toast.error("Choisissez au moins une langue");
+  // === SOUMISSION ===
+ const handleSubmit = async (e: React.FormEvent) => {
+   e.preventDefault();
+   setLoading(true);
 
-    setLoading(true);
+   const formData = new FormData();
 
-    const formData = new FormData();
+   // On crée l'objet JSON SANS la propriété image
+   const userJson = {
+     login: form.login.trim(),
+     password: form.password,
+     confirmPassword: form.confirmPassword,
+     prenom: form.prenom,
+     nom: form.nom,
+     email: form.email,
+     contact: form.contact || null,
+     sexe: form.sexe,
+     localite: { id: Number(form.localiteId) },
+     langues: selectedLangues.map((id) => ({ id: Number(id) })),
+   };
 
-    // JSON utilisateur
-    const userJson = {
-      login: form.login.trim(),
-      password: form.password,
-      confirmPassword: form.confirmPassword,
-      prenom: form.prenom,
-      nom: form.nom,
-      email: form.email,
-      contact: form.contact || null,
-      sexe: form.sexe,
-      localite: { id: Number(form.localiteId) },
-      langues: selectedLangues.map((id) => ({ id: Number(id) })),
-    };
+   // On ajoute le JSON en tant que Blob
+   formData.append(
+     "user",
+     new Blob([JSON.stringify(userJson)], { type: "application/json" })
+   );
 
-    formData.append(
-      "user",
-      new Blob([JSON.stringify(userJson)], { type: "application/json" })
-    );
+   // On ajoute le fichier image séparément (MultipartFile côté Java)
+   if (photoFile) {
+     formData.append("image", photoFile);
+   }
 
-    if (photoFile) {
-      formData.append("image", photoFile);
-    }
+   try {
+     const response = await fetch("http://localhost:8080/api/auth/register", {
+       method: "POST",
+       body: formData,
+       // Ne PAS mettre de Header Content-Type, fetch le gère seul pour le FormData
+     });
 
-    try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+     if (!response.ok) {
+       const errorData = await response.json();
+       throw new Error(errorData.message || t("register_page.errors.generic"));
+     }
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Erreur inscription");
-      }
+     toast.success(t("register_page.success"));
+     navigate("/login");
+   } catch (err: any) {
+     toast.error(err.message);
+   } finally {
+     setLoading(false);
+   }
+ };
 
-      toast.success("Inscription réussie ! Bienvenue !");
-      navigate("/login");
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de l'inscription");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // === RENDU (identique à ton style) ===
+  // === RENDU ===
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h2>Créer votre compte GrowzApp</h2>
+      <h2>{t("register_page.title")}</h2>
 
       {/* PHOTO + CROP */}
       <div className={styles.photoSection}>
@@ -193,9 +200,9 @@ export default function RegisterForm() {
             ) : (
               <div className={styles.placeholder}>
                 <span role="img" aria-label="camera">
-                  Camera
+                  📷
                 </span>
-                <p>Ajouter une photo</p>
+                <p>{t("register_page.photo.add_text")}</p>
               </div>
             )}
             {preview && (
@@ -232,14 +239,14 @@ export default function RegisterForm() {
                 onClick={createCroppedImage}
                 className={styles.cropBtn}
               >
-                Valider
+                {t("register_page.photo.validate")}
               </button>
               <button
                 type="button"
                 onClick={removePhoto}
                 className={styles.cancelBtn}
               >
-                Annuler
+                {t("register_page.photo.cancel")}
               </button>
             </div>
           </div>
@@ -257,14 +264,14 @@ export default function RegisterForm() {
       <div className={styles.row}>
         <input
           name="prenom"
-          placeholder="Prénom"
+          placeholder={t("register_page.form.firstname")}
           value={form.prenom}
           onChange={handleChange}
           required
         />
         <input
           name="nom"
-          placeholder="Nom"
+          placeholder={t("register_page.form.lastname")}
           value={form.nom}
           onChange={handleChange}
           required
@@ -273,7 +280,7 @@ export default function RegisterForm() {
 
       <input
         name="login"
-        placeholder="Login"
+        placeholder={t("register_page.form.login")}
         value={form.login}
         onChange={handleChange}
         required
@@ -281,14 +288,14 @@ export default function RegisterForm() {
       <input
         name="email"
         type="email"
-        placeholder="Email"
+        placeholder={t("register_page.form.email")}
         value={form.email}
         onChange={handleChange}
         required
       />
       <input
         name="contact"
-        placeholder="Téléphone (facultatif)"
+        placeholder={t("register_page.form.phone")}
         value={form.contact}
         onChange={handleChange}
       />
@@ -297,7 +304,7 @@ export default function RegisterForm() {
         <input
           name="password"
           type="password"
-          placeholder="Mot de passe"
+          placeholder={t("register_page.form.password")}
           value={form.password}
           onChange={handleChange}
           required
@@ -305,7 +312,7 @@ export default function RegisterForm() {
         <input
           name="confirmPassword"
           type="password"
-          placeholder="Confirmer"
+          placeholder={t("register_page.form.confirm_password")}
           value={form.confirmPassword}
           onChange={handleChange}
           required
@@ -321,7 +328,7 @@ export default function RegisterForm() {
             checked={form.sexe === "M"}
             onChange={handleChange}
           />{" "}
-          Homme
+          {t("register_page.form.gender_male")}
         </label>
         <label>
           <input
@@ -331,7 +338,7 @@ export default function RegisterForm() {
             checked={form.sexe === "F"}
             onChange={handleChange}
           />{" "}
-          Femme
+          {t("register_page.form.gender_female")}
         </label>
       </div>
 
@@ -342,7 +349,7 @@ export default function RegisterForm() {
         className={styles.select}
         required
       >
-        <option value="">Choisir votre région / ville</option>
+        <option value="">{t("register_page.form.select_region")}</option>
         {localites.map((loc) => (
           <option key={loc.id} value={loc.id}>
             {loc.nom}
@@ -358,8 +365,10 @@ export default function RegisterForm() {
       >
         <span className={styles.languesSelected}>
           {selectedLangues.length === 0
-            ? "Langues parlées (cliquez)"
-            : `${selectedLangues.length} langue(s)`}
+            ? t("register_page.form.select_languages")
+            : `${selectedLangues.length} ${t(
+                "register_page.form.languages_count"
+              )}`}
         </span>
       </div>
 
@@ -379,11 +388,14 @@ export default function RegisterForm() {
       )}
 
       <button type="submit" disabled={loading} className={styles.submitBtn}>
-        {loading ? "Création..." : "S'inscrire gratuitement"}
+        {loading
+          ? t("register_page.buttons.submit_loading")
+          : t("register_page.buttons.submit")}
       </button>
 
       <p className={styles.loginLink}>
-        Déjà un compte ? <Link to="/login">Se connecter</Link>
+        {t("register_page.footer.already_account")}{" "}
+        <Link to="/login">{t("register_page.footer.login_link")}</Link>
       </p>
     </form>
   );

@@ -1,0 +1,750 @@
+{
+  "welcome": "Bienvenido a GrowzApp",
+  "login": "Iniciar sesión",
+  "logout": "Cerrar sesión",
+  "create_project": "Crear un proyecto",
+  "link_verify_contract": "Verificar contrato",
+  "admin_space": "Zona de administración",
+  "my_profile": "Mi Espacio",
+  "login_page": {
+    "title": "Iniciar sesión en growzapp",
+    "subtitle": "Inicia sesión para gestionar tus inversiones",
+    "placeholder_login": "Usuario o correo",
+    "placeholder_password": "Contraseña",
+    "btn_loading": "Conectando...",
+    "btn_submit": "Iniciar sesión",
+    "no_account": "¿Aún no tienes cuenta?",
+    "register_link": "Regístrate gratis",
+    "toast_success": "¡Conectado con éxito!",
+    "toast_error_server": "Respuesta del servidor no válida",
+    "toast_error_credentials": "Credenciales incorrectas"
+  },
+  "register_page": {
+    "title": "Crea tu cuenta GrowzApp",
+    "photo": {
+      "add_text": "Añadir una foto",
+      "validate": "Validar",
+      "cancel": "Cancelar",
+      "error_type": "Solo imagen",
+      "error_size": "Máx 10 MB",
+      "success_crop": "¡Foto recortada!",
+      "error_crop": "Error al recortar"
+    },
+    "form": {
+      "firstname": "Nombre",
+      "lastname": "Apellido",
+      "login": "Usuario",
+      "email": "Correo electrónico",
+      "phone": "Teléfono (opcional)",
+      "password": "Contraseña",
+      "confirm_password": "Confirmar contraseña",
+      "gender_male": "Hombre",
+      "gender_female": "Mujer",
+      "select_region": "Elige tu región / ciudad",
+      "select_languages": "Idiomas hablados (clic)",
+      "languages_count": "idioma(s)"
+    },
+    "buttons": {
+      "submit_loading": "Creando...",
+      "submit": "Registrarse gratis"
+    },
+    "footer": {
+      "already_account": "¿Ya tienes cuenta?",
+      "login_link": "Iniciar sesión"
+    },
+    "errors": {
+      "load_data": "Imposible cargar datos",
+      "password_mismatch": "Las contraseñas no coinciden",
+      "missing_region": "Elige una región",
+      "missing_language": "Elige al menos un idioma",
+      "generic": "Error durante el registro"
+    },
+    "success": "¡Registro exitoso! ¡Bienvenido!"
+  },
+  "projects_page": {
+    "loading": "Cargando proyectos...",
+    "filters": {
+      "title": "Filtros",
+      "search_label": "Buscar",
+      "search_placeholder": "Nombre, ciudad, país, sector...",
+      "sector_label": "Sector",
+      "all_sectors": "Todos",
+      "price_label": "Precio por acción",
+      "price_min": "Mín",
+      "price_max": "Máx",
+      "to": "a",
+      "sort_label": "Ordenar por",
+      "sort_recent": "Más reciente",
+      "sort_funding": "Mejor financiación",
+      "sort_price_asc": "Precio ascendente",
+      "sort_price_desc": "Precio descendente",
+      "results": "proyecto(s)"
+    },
+    "empty": {
+      "title": "No se encontraron proyectos",
+      "subtitle": "Modifica tus filtros"
+    },
+    "toast_error": "Imposible cargar proyectos"
+  },
+  "project_card": {
+    "status": {
+      "finished": "Financiación completada",
+      "ongoing": "En curso"
+    },
+    "no_poster": "Sin póster",
+    "roi": "ROI",
+    "price_per_share": "Precio/acción",
+    "goal": "Objetivo",
+    "collected": "recaudados",
+    "dates": "Del {{start}} al {{end}}",
+    "btn_view": "Ver",
+    "btn_invest": "Invertir"
+  },
+  "project_details": {
+    "loading": "Cargando proyecto...",
+    "error_not_found": "Proyecto no encontrado",
+    "no_poster": "Ningún póster disponible",
+    "sector": "Sector",
+    "location": "Ubicación",
+    "country": "País",
+    "roi_projected": "ROI Proyectado",
+    "collected": "recaudados",
+    "goal": "objetivo",
+    "reached": "alcanzado",
+    "description_title": "Descripción del proyecto",
+    "documents": {
+      "title": "Documentos del proyecto",
+      "empty": "No hay documentos disponibles por el momento",
+      "error_download": "Imposible descargar el documento"
+    },
+    "invest_title": "Invertir en este proyecto",
+    "toast_invest_success": "¡Inversión registrada!"
+  },
+  "project_form": {
+    "title": "Enviar un nuevo proyecto",
+    "photo": {
+      "placeholder": "Añadir un póster (16:9 recomendado)",
+      "crop_validate": "Validar",
+      "crop_cancel": "Cancelar",
+      "error_type": "Solo imagen",
+      "error_size": "Máx 10 MB",
+      "success_crop": "¡Póster recortado!"
+    },
+    "fields": {
+      "name_placeholder": "Nombre del proyecto *",
+      "desc_placeholder": "Descripción detallada *",
+      "sector_placeholder": "Sector de actividad *",
+      "city_placeholder": "Ciudad / Localidad *",
+      "country_placeholder": "País (Costa de Marfil por defecto)"
+    },
+    "buttons": {
+      "submit": "Enviar proyecto",
+      "sending": "Enviando..."
+    },
+    "errors": {
+      "required_name": "El nombre del proyecto es obligatorio",
+      "required_desc": "La descripción es obligatoria",
+      "required_sector": "El sector es obligatorio",
+      "required_city": "La localidad es obligatoria",
+      "server": "Error al enviar"
+    },
+    "success": "¡Proyecto enviado con éxito!"
+  },
+  "data": {
+    "countries": {
+      "SENEGAL": "Senegal",
+      "COTE D'IVOIRE": "Costa de Marfil",
+      "GHANA": "Ghana",
+      "NIGERIA": "Nigeria",
+      "MALI": "Malí",
+      "BURKINA FASO": "Burkina Faso",
+      "BENIN": "Benín",
+      "TOGO": "Togo",
+      "GUINEE": "Guinea",
+      "SIERRA LEONE": "Sierra Leona",
+      "LIBERIA": "Liberia",
+      "GAMBIE": "Gambia"
+    },
+    "cities": {
+      "DAKAR": "Dakar",
+      "ABIDJAN": "Abiyán",
+      "ACCRA": "Acra",
+      "LAGOS": "Lagos",
+      "BAMAKO": "Bamako",
+      "OUAGADOUGOU": "Uagadugú",
+      "COTONOU": "Cotonú",
+      "LOME": "Lomé",
+      "CONAKRY": "Conakri",
+      "FREETOWN": "Freetown",
+      "MONROVIA": "Monrovia",
+      "BANJUL": "Banjul"
+    },
+    "sectors": {
+      "IMMOBILIER": "Inmobiliaria",
+      "TECHNOLOGIE": "Tecnología",
+      "SANTE": "Salud",
+      "EDUCATION": "Educación",
+      "TOURISME": "Turismo",
+      "ALIMENTATION": "Alimentación",
+      "ENVIRONNEMENT": "Medio Ambiente",
+      "TRANSPORT": "Transporte",
+      "FINANCE": "Finanzas",
+      "MINIER": "Minería",
+      "HORECA": "Horeca (Hoteles y Restaurantes)",
+      "ART": "Arte"
+    }
+  },
+  "dashboard": {
+    "loading": "Cargando...",
+    "edit_profile": "Editar mi perfil",
+    "wallet": {
+      "title": "Billetera",
+      "available": "disponible",
+      "view_detail": "Ver detalle"
+    },
+    "stats": {
+      "my_investments": "Mis Inversiones",
+      "my_projects": "Mis Proyectos",
+      "my_dividends": "Mis Dividendos",
+      "invested": "invertidos",
+      "collected": "recaudados",
+      "received": "percibidos",
+      "none_invested": "Ninguna inversión",
+      "none_projects": "Ningún proyecto",
+      "none_received": "Ningún dividendo percibido"
+    }
+  },
+  "user_projects": {
+    "title": "Mis Proyectos",
+    "count": "Has creado {{count}} proyecto(s)",
+    "empty": {
+      "title": "Aún no has creado ningún proyecto",
+      "subtitle": "¡Lanza tu campaña de inversión ahora mismo!",
+      "btn": "Crear un nuevo proyecto"
+    },
+    "status": {
+      "ongoing": "Financiación en curso",
+      "funded": "Financiado",
+      "pending": "En espera de validación",
+      "rejected": "Rechazado"
+    },
+    "card": {
+      "created_at": "Creado el",
+      "investors": "Inversores",
+      "goal": "Objetivo",
+      "btn_view": "Ver el proyecto"
+    }
+  },
+  "user_investments": {
+    "title": "Mis Inversiones",
+    "count": "inversión(es)",
+    "empty": "Ninguna inversión",
+    "btn_discover": "Descubrir proyectos",
+    "status": {
+      "pending": "En espera",
+      "validated": "Validado",
+      "rejected": "Rechazado"
+    },
+    "card": {
+      "parts": "acciones",
+      "invested": "invertidos",
+      "btn_view_contract": "Ver el contrato",
+      "btn_download": "Descargar",
+      "btn_unavailable": "No disponible",
+      "btn_view_project": "Ver el proyecto",
+      "validation_delay": "Validación en menos de 48h"
+    }
+  },
+  "dividends": {
+    "title": "Mis Dividendos y Facturas",
+    "btn_refresh": "Actualizar",
+    "stats": {
+      "received": "Recibidos",
+      "planned": "Planificados",
+      "total": "Total"
+    },
+    "empty": "No hay dividendos por el momento.",
+    "table": {
+      "project": "Proyecto",
+      "total": "Monto total",
+      "per_share": "Monto/acción",
+      "date": "Fecha",
+      "status": "Estado",
+      "invoice": "Factura",
+      "status_paid": "Pagado",
+      "status_planned": "Planificado",
+      "generating": "Generando..."
+    }
+  },
+  "invest_form": {
+    "invest_in": "Invertir en \"{{name}}\"",
+    "price_per_share": "Precio por acción",
+    "available_shares": "Acciones disponibles",
+    "number_of_shares": "Número de acciones",
+    "locked_amount": "Monto bloqueado",
+    "methods": {
+      "wallet_title": "Billetera GrowzApp",
+      "wallet_available": "{{amount}} FCFA disponible",
+      "mobile_title": "Dinero Móvil",
+      "mobile_subtitle": "Orange, MTN, Wave, Moov",
+      "card_title": "Tarjeta bancaria",
+      "card_subtitle": "Visa, Mastercard"
+    },
+    "buttons": {
+      "processing": "Procesando...",
+      "pay_wallet": "Pagar con la billetera",
+      "pay_mobile": "Pagar con Dinero Móvil",
+      "pay_card": "Pagar con tarjeta bancaria"
+    },
+    "hint": "Su dinero será bloqueado inmediatamente • Validación en 48h • Contrato enviado por correo electrónico",
+    "messages": {
+      "loading_balance": "Cargando...",
+      "error_balance": "Imposible cargar su saldo",
+      "invalid_shares": "Número de acciones no válido",
+      "insufficient_balance": "Saldo insuficiente en su billetera",
+      "success_wallet": "¡Inversión confirmada con su billetera!",
+      "mobile_dev": "Pago móvil en desarrollo",
+      "stripe_redirect": "Redirigiendo a Stripe...",
+      "error_url": "Falta la URL de pago"
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Panel de Administración",
+      "users": "Usuarios registrados",
+      "projects": "Proyectos publicados",
+      "investments_pending": "Inversiones pendientes",
+      "withdrawals_pending": "Retiros pendientes",
+      "real_escrow": "Tesorería en custodia (real)",
+      "displayed_amount": "Monto mostrado a inversores",
+      "quick_actions": "Acciones rápidas",
+      "manage_users": "Gestionar usuarios",
+      "see_projects": "Ver todos los proyectos",
+      "validate_investments": "Validar inversiones",
+      "validate_withdrawals": "Validar retiros",
+      "manage_escrow": "Gestionar tesorería"
+    },
+    "withdrawals": {
+      "title": "Validación de Retiros",
+      "subtitle": "{{count}} solicitud(es) pendiente(s)",
+      "table": {
+        "date": "Fecha",
+        "user": "Usuario",
+        "amount": "Monto",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "validated": "Validado",
+        "rejected": "Rechazado"
+      },
+      "actions": {
+        "validate": "Validar",
+        "reject": "Rechazar"
+      },
+      "modal": {
+        "title": "Rechazar Retiro",
+        "reason_placeholder": "Motivo del rechazo (obligatorio)",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar rechazo"
+      },
+      "toast": {
+        "validate_success": "¡Retiro validado!",
+        "reject_success": "Retiro rechazado",
+        "error": "Ocurrió un error"
+      }
+    },
+    "contracts": {
+      "contracts": "Contratos generados",
+      "title": "GESTIÓN DE CONTRATOS",
+      "subtitle": "Todos los contratos de inversión",
+      "search_placeholder": "Buscar...",
+      "filter_btn": "Filtros",
+      "refresh_btn": "Actualizar",
+      "export_btn": "Exportar Excel",
+      "table": {
+        "contract_no": "N° Contrato",
+        "date": "Fecha",
+        "project": "Proyecto",
+        "investor": "Inversor",
+        "amount": "Monto",
+        "shares": "Acciones",
+        "equity": "% Equidad",
+        "status": "Estado",
+        "actions": "Acciones"
+      }
+    },
+    "investments": {
+      "title": "Gestión de Inversiones",
+      "subtitle": "{{count}} solicitud(es) pendiente(s) de validación",
+      "status": {
+        "pending": "Pendiente",
+        "validated": "Validado",
+        "cancelled": "Cancelado"
+      },
+      "btn_validate": "Validar y Enviar Contrato",
+      "sent": "Contrato {{number}} enviado"
+    },
+    "projects": {
+      "title": "Administración de Proyectos ({{count}})",
+      "no_poster": "Sin póster",
+      "by": "Por",
+      "real_balance": "saldo real",
+      "btn_docs": "Documentos",
+      "btn_edit": "Editar",
+      "btn_delete": "Eliminar",
+      "btn_validate": "Validar",
+      "btn_reject": "Rechazar",
+      "btn_wallet": "Billetera del proyecto",
+      "btn_public": "Ver proyecto (público)",
+      "confirm_delete": "¿Eliminar definitivamente el proyecto \"{{name}}\"? Esta acción es irreversible."
+    },
+    "users": {
+      "title": "Gestión de usuarios ({{count}})",
+      "table": {
+        "photo": "Foto",
+        "name": "Nombre completo",
+        "email": "Correo / Usuario",
+        "roles": "Roles",
+        "status": "Estado",
+        "projects": "Proyectos",
+        "investments": "Inversiones",
+        "actions": "Acciones"
+      },
+      "modal": {
+        "account_status": "Cuenta {{status}}",
+        "active": "activa",
+        "disabled": "desactivada",
+        "his_projects": "Sus proyectos",
+        "his_investments": "Sus inversiones",
+        "manage_roles": "Gestionar roles",
+        "make_admin": "Hacer Admin"
+      },
+      "empty": "Ningún usuario encontrado"
+    },
+    "roles": {
+      "title": "Gestionar roles",
+      "loading": "Cargando roles...",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "cancel": "Cancelar",
+      "success": "¡Roles actualizados!"
+    },
+    "wallets": {
+      "title": "Tesorería en Custodia – Todos los Proyectos",
+      "empty": "Ningún fondo recaudado por el momento",
+      "available": "disponibles",
+      "blocked": "Bloqueado",
+      "detail_btn": "Ver detalle de tesorería",
+      "pay_owner_btn": "Pagar al promotor",
+      "modal": {
+        "title": "Pago al promotor",
+        "project": "Proyecto",
+        "owner": "Promotor",
+        "available": "Saldo disponible",
+        "amount_label": "Monto a pagar (FCFA)",
+        "reason_label": "Motivo (opcional)",
+        "reason_placeholder": "Ej: Cierre del proyecto",
+        "confirm": "Confirmar transferencia",
+        "cancel": "Cancelar"
+      },
+      "toast": {
+        "invalid_amount": "Monto inválido",
+        "insufficient_funds": "El monto excede el saldo disponible",
+        "success": "¡{{amount}} FCFA pagados con éxito!",
+        "error": "Error en la transferencia"
+      }
+    },
+    "project_detail": {
+      "title": "Administración: {{title}}",
+      "docs_title": "Documentos del proyecto ({{count}})",
+      "no_docs": "Ningún documento subido por el momento",
+      "download_start": "¡Descarga iniciada!",
+      "download_error": "Error de descarga",
+      "load_error": "Error al cargar el proyecto",
+      "not_found": "Proyecto no encontrado"
+    }
+  },
+  "contract_view": {
+    "loading": "Cargando contrato...",
+    "invalid_link": "Enlace inválido",
+    "invalid_contract": "Contrato inválido",
+    "must_login": "Debes iniciar sesión",
+    "number": "Número:",
+    "error_generic": "Imposible cargar el contrato",
+    "error_404": "Este contrato no existe",
+    "error_403": "No tienes acceso a este contrato",
+    "error_401": "Sesión expirada, por favor inicia sesión de nuevo",
+    "not_found_title": "Contrato no encontrado",
+    "not_found_desc": "El contrato solicitado no existe o no tienes acceso.",
+    "back_to_space": "Volver a mi espacio"
+  },
+  "contract_details": {
+    "title": "CONTRATO DE INVERSIÓN",
+    "subtitle": "Entre GrowzApp y el Inversor",
+    "ref": "Ref",
+    "section_project": "Información del Proyecto",
+    "section_investor": "Información del Inversor",
+    "section_investment": "Detalles de la Inversión",
+    "label_project": "Nombre del proyecto",
+    "label_investor": "Nombre completo",
+    "label_email": "Correo",
+    "label_phone": "Teléfono",
+    "label_amount": "Monto invertido",
+    "label_shares": "Número de acciones",
+    "label_unit_price": "Precio unitario",
+    "label_date": "Fecha de firma",
+    "label_status": "Estado",
+    "signatures_title": "Firmas Digitales",
+    "signed_by": "Firmado por",
+    "certified": "Certificado por la Blockchain GrowzApp",
+    "verify_label": "Enlace de verificación oficial:",
+    "btn_download": "Descargar PDF oficial"
+  },
+  "wallet": {
+    "title": "Mi Billetera",
+    "total": "Total",
+    "balance": {
+      "available": "Saldo disponible",
+      "blocked": "Bloqueado (pendiente)",
+      "withdrawable": "Retirable (validado admin)"
+    },
+    "actions": {
+      "deposit_title": "Depositar dinero",
+      "deposit_desc": "Tarjeta bancaria – seguro vía Stripe",
+      "deposit_btn": "Depositar con tarjeta",
+      "withdraw_admin_title": "Solicitar retiro",
+      "withdraw_admin_desc": "Enviar solicitud al admin",
+      "withdraw_admin_btn": "Enviar solicitud",
+      "withdraw_direct_title": "Retirar ganancias validadas",
+      "withdraw_direct_desc": "Orange Money, Wave, MTN o transferencia",
+      "withdraw_direct_btn": "Retirar ahora",
+      "transfer_title": "Transferir a un amigo",
+      "transfer_desc": "Enviar dinero a otro usuario",
+      "transfer_search_placeholder": "Buscar por nombre o login...",
+      "transfer_dest": "Destinatario:",
+      "transfer_amount_placeholder": "Monto a enviar",
+      "transfer_source": "Pagar desde:",
+      "transfer_btn": "Enviar transferencia",
+      "loading": "Cargando billetera...",
+      "not_found": "Billetera no encontrada",
+      "pending_count": "{{count}} solicitud(es) pendiente(s)"
+    },
+    "history": {
+      "title": "Historial de transacciones",
+      "empty": "Aún no hay transacciones",
+      "cols": {
+        "date": "Fecha",
+        "type": "Tipo",
+        "amount": "Monto",
+        "status": "Estado",
+        "detail": "Detalle"
+      }
+    },
+    "tx_type": {
+      "DEPOT": "Depósito",
+      "RETRAIT": "Solicitud de retiro",
+      "TRANSFER_OUT": "Transferencia enviada",
+      "TRANSFER_IN": "Transferencia recibida",
+      "PAYOUT_STRIPE": "Retiro bancario",
+      "DIVIDENDE": "Dividendo"
+    },
+    "status": {
+      "SUCCESS": "Validado",
+      "EN_ATTENTE_VALIDATION": "Pendiente admin",
+      "REJETEE": "Rechazado"
+    }
+  },
+  "deposit": {
+    "title": "Depositar dinero",
+    "back": "Volver",
+    "amount_label": "Monto (€)",
+    "min_amount": "Mínimo 5",
+    "method_label": "Método",
+    "methods": { "card": "Tarjeta bancaria" },
+    "btn_continue": "Continuar",
+    "processing": "Procesando...",
+    "modal_phone": {
+      "title": "Número de teléfono",
+      "for": "Para",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar depósito",
+      "sending": "Enviando..."
+    },
+    "modal_stripe": {
+      "title": "Pago con tarjeta",
+      "amount": "Monto:",
+      "pay_btn": "Pagar con tarjeta",
+      "redirect": "Redirigiendo a Stripe..."
+    },
+    "redirect_overlay": {
+      "title": "Redirección segura...",
+      "subtitle": "Conectando con el banco"
+    },
+    "toast": {
+      "min_error": "Monto mínimo: 5 €",
+      "session_expired": "Sesión expirada",
+      "success": "¡Depósito exitoso!",
+      "success_redirect": "Redirección segura...",
+      "fail": "Fallo en el depósito"
+    },
+    "result": {
+      "success_title": "¡Pago Exitoso!",
+      "success_msg": "Tu billetera ha sido acreditada con éxito",
+      "redirect_msg": "Redirigiendo a tu billetera en 3 segundos...",
+      "cancel_title": "Pago Cancelado",
+      "cancel_msg": "No se realizó ningún cobro",
+      "retry_btn": "Reintentar depósito",
+      "home_link": "O volver al inicio"
+    }
+  },
+  "withdraw": {
+    "title": "Retirar Ganancias",
+    "back": "Volver",
+    "balance_label": "Saldo retirable:",
+    "amount_label": "Monto a retirar",
+    "placeholder_amount": "Ej: 50",
+    "min_max_hint": "Mínimo 5 € • Máximo {{max}} €",
+    "method_label": "Método de retiro",
+    "methods": {
+      "om": "Orange Money",
+      "wave": "Wave",
+      "mtn": "MTN MoMo",
+      "bank": "Transferencia Bancaria"
+    },
+    "btn_confirm": "Confirmar Retiro",
+    "processing": "Procesando...",
+    "info_fees": "Tarifas: 2% + 100 FCFA",
+    "info_delay": "Recibido en 24h laborables",
+    "toast": {
+      "session_expired": "Sesión expirada",
+      "connection_error": "Error de conexión",
+      "invalid_amount": "Monto inválido. Min: 5 € • Max: {{max}} €",
+      "success_redirect": "Redirigiendo a Stripe...",
+      "success_sent": "¡Retiro enviado con éxito!",
+      "fail": "Fallo en el retiro"
+    },
+    "modal_phone": {
+      "title": "Número de teléfono",
+      "for": "Para",
+      "placeholder": "+225 07 89 01 23 45",
+      "cancel": "Cancelar",
+      "confirm": "Confirmar",
+      "sending": "Enviando..."
+    },
+    "modal_stripe": {
+      "title": "Retiro por transferencia bancaria",
+      "amount": "Monto:",
+      "delay_info": "Recibirás el dinero en 1-2 días laborables",
+      "confirm_btn": "Confirmar Retiro",
+      "sending": "Enviando..."
+    },
+    "loader": {
+      "title": "Redirección segura...",
+      "subtitle": "No cierres esta página"
+    },
+    "success": {
+      "title": "¡Retiro Enviado!",
+      "message": "Tu dinero está siendo transferido",
+      "redirect": "Redirigiendo a tu billetera...",
+      "toast": "¡Retiro enviado con éxito! Recibirás el dinero en 24h"
+    },
+    "cancel": {
+      "title": "Retiro Cancelado",
+      "message": "No se realizó ninguna transacción",
+      "retry": "Reintentar Retiro",
+      "home": "O volver a tu billetera"
+    }
+  },
+  "admin_wallet": {
+    "back": "Volver",
+    "title": "Tesorería",
+    "loading": "Cargando...",
+    "not_found": "Proyecto no encontrado",
+    "balance": {
+      "available": "Disponible",
+      "available_hint": "Para dividendos o retiros",
+      "blocked": "Bloqueado",
+      "blocked_hint": "Inversiones pendientes",
+      "withdrawable": "Retirable",
+      "withdrawable_hint": "Ganancias validadas del titular"
+    },
+    "summary": {
+      "title": "Resumen del Proyecto",
+      "available_balance": "Saldo disponible",
+      "total_collected": "Total recaudado",
+      "project_owner": "Titular del proyecto"
+    },
+    "dividends": {
+      "title": "Pagar Dividendos (Prorrata)",
+      "amount_placeholder": "Monto total a distribuir",
+      "reason_placeholder": "Motivo (ej: Beneficios Q4 2025)",
+      "btn_pay": "Pagar a todos los inversores",
+      "btn_processing": "Distribución en curso..."
+    },
+    "withdraw": {
+      "title": "Retiro de billetera del proyecto",
+      "amount_placeholder": "Monto a retirar",
+      "method_momo": "Dinero Móvil",
+      "method_stripe": "Stripe / Transferencia",
+      "btn_withdraw": "Retirar",
+      "btn_processing": "Procesando..."
+    },
+    "investments": {
+      "title": "Historial de Inversiones ({{count}})",
+      "col_investor": "Inversor",
+      "col_amount": "Monto",
+      "col_shares": "Acciones",
+      "col_date": "Fecha",
+      "col_status": "Estado",
+      "col_contract": "Contrato"
+    },
+    "history_dividends": {
+      "title": "Historial de Dividendos Pagados ({{count}})",
+      "col_investor": "Inversor",
+      "col_amount": "Monto",
+      "col_date": "Fecha",
+      "col_reason": "Motivo",
+      "col_invoice": "Factura",
+      "empty": "Aún no se han pagado dividendos",
+      "btn_invoice": "Factura PDF",
+      "status_pending": "En curso...",
+      "default_reason": "Dividendo prorrata"
+    },
+    "toasts": {
+      "load_error": "Error al cargar datos",
+      "download_success": "¡Descarga exitosa!",
+      "download_error": "Error durante la descarga",
+      "file_unavailable": "Archivo no disponible",
+      "invalid_amount": "Por favor ingrese un monto válido",
+      "amount_exceeds": "El monto excede el saldo disponible",
+      "reason_required": "El motivo es obligatorio",
+      "dividend_success": "¡Dividendos distribuidos con éxito!",
+      "dividend_error": "Error al distribuir dividendos",
+      "withdraw_success": "Retiro exitoso",
+      "withdraw_error": "Fallo en el retiro"
+    }
+  },
+  "verify_contract": {
+    "title": "Verificación de Autenticidad",
+    "subtitle": "Ingrese el número de contrato o escanee el código QR",
+    "placeholder": "CTR-2025-000127",
+    "btn_verify": "Verificar",
+    "btn_verifying": "Verificando...",
+    "success_title": "Contrato 100% Auténtico",
+    "error_title": "Contrato no encontrado",
+    "error_desc": "Este contrato no existe en nuestra base de datos o ha sido falsificado.",
+    "label_contract_no": "N° Contrato:",
+    "label_project": "Proyecto:",
+    "label_investor": "Inversor:",
+    "label_amount": "Monto:",
+    "label_date": "Fecha:",
+    "qr_hint": "Comparta este enlace para probar la autenticidad",
+    "footer_text": "Todos los contratos de GrowzApp están firmados electrónicamente y protegidos por blockchain — Imposibles de falsificar.",
+    "back_home": "Volver al inicio",
+    "toast_empty": "Ingrese un número de contrato",
+    "toast_success": "¡Contrato auténtico!",
+    "toast_error": "Contrato no encontrado o inválido"
+  }
+}

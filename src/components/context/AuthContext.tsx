@@ -9,11 +9,11 @@ import {
 import { UserDTO } from "../../types/user";
 import toast from "react-hot-toast";
 
-// Type du contexte — on utilise directement UserDTO
+// 1. Définition de l'interface du contexte
 export interface AuthContextType {
   user: UserDTO | null;
   login: (token: string, user: UserDTO) => void;
-  updateUser: (user: UserDTO) => void;
+  updateUserInfo: (user: UserDTO) => void; // Nom harmonisé
   logout: () => void;
   loading: boolean;
   isAuthenticated: boolean;
@@ -25,6 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 2. Récupération de la session au démarrage
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (!stored) {
@@ -45,37 +46,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // 3. Fonction de Connexion
   const login = (token: string, userData: UserDTO) => {
     const safeUser = { ...userData, enabled: userData.enabled ?? true };
+    // On stocke l'objet complet pour la persistance au rafraîchissement
     localStorage.setItem("user", JSON.stringify({ token, user: safeUser }));
+    // On stocke le token seul pour les intercepteurs API
     localStorage.setItem("access_token", token);
     setUser(safeUser);
-    toast.success(`Bienvenue ${safeUser.prenom} !`);
+    
   };
 
-  const updateUser = (userData: UserDTO) => {
+  // 4. Fonction de mise à jour du profil (Correctement renommée)
+  const updateUserInfo = (userData: UserDTO) => {
     const safeUser = { ...userData, enabled: userData.enabled ?? true };
     const current = localStorage.getItem("user");
+
     if (current) {
       try {
         const parsed = JSON.parse(current);
+        // On met à jour l'utilisateur dans le localStorage sans perdre le token
         localStorage.setItem(
           "user",
           JSON.stringify({ ...parsed, user: safeUser })
         );
-      } catch {}
+      } catch (err) {
+        console.error("Erreur mise à jour localStorage", err);
+      }
     }
+
     setUser(safeUser);
-    toast.success("Profil mis à jour !");
+    // Note : le toast est optionnel ici car souvent géré par le composant qui appelle
   };
 
+  // 5. Fonction de Déconnexion
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("access_token");
     localStorage.removeItem("token");
     setUser(null);
     toast.success("Déconnexion réussie");
-    window.location.href = "/login";
+    // Redirection propre
+    window.location.href = "/";
   };
 
   return (
@@ -83,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         login,
-        updateUser,
+        updateUserInfo,
         logout,
         loading,
         isAuthenticated: !!user,
@@ -94,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook dédié (à importer partout)
+// 6. Hook personnalisé pour utiliser le contexte
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {

@@ -1,11 +1,12 @@
-// src/pages/admin/UsersAdminPage.tsx
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../service/api";
 import { UserDTO } from "../../../types/user";
 import toast from "react-hot-toast";
-import RolesManagerModal from "../../Admin/Roles/RoleManagerModal"; // Assure-toi du bon chemin
+import RolesManagerModal from "../../Admin/Roles/RoleManagerModal";
 import styles from "./AdminUsersPage.module.css";
+import { useTranslation } from "react-i18next";
+import { getAvatarUrl } from "../../../types/utils/UserUtils"; // IMPORT CRUCIAL
 
 interface ApiResponse<T> {
   success: boolean;
@@ -14,9 +15,11 @@ interface ApiResponse<T> {
 }
 
 export default function UsersAdminPage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
 
+  // Récupération des utilisateurs
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => api.get<ApiResponse<UserDTO[]>>("/admin/users"),
@@ -24,51 +27,58 @@ export default function UsersAdminPage() {
 
   const users = data?.data || [];
 
+  // Mutation pour activer/désactiver un compte
   const toggleEnabled = useMutation({
     mutationFn: (id: number) => api.patch(`/admin/users/${id}/toggle`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      toast.success("Statut mis à jour");
+      toast.success(t("admin.roles.success"));
     },
   });
 
+  // Mutation pour donner le rôle ADMIN rapidement
   const makeAdmin = useMutation({
     mutationFn: (id: number) =>
       api.patch(`/admin/users/${id}/roles`, ["ADMIN"]),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      toast.success("Utilisateur promu ADMIN");
+      toast.success(t("admin.roles.success"));
     },
   });
 
-  if (isLoading) return <div className={styles.loading}>Chargement...</div>;
-  if (isError) return <div className={styles.error}>Erreur de chargement</div>;
+  if (isLoading)
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
+
+  if (isError)
+    return (
+      <div className={styles.error}>{t("admin.withdrawals.toast.error")}</div>
+    );
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
-        Gestion des utilisateurs ({users.length})
+        {t("admin.users.title", { count: users.length })}
       </h1>
 
       <div className={styles.tableContainer}>
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Photo</th>
-              <th>Nom complet</th>
-              <th>Email / Login</th>
-              <th>Rôles</th>
-              <th>Statut</th>
-              <th>Projets</th>
-              <th>Investissements</th>
-              <th>Actions</th>
+              <th>{t("admin.users.table.photo")}</th>
+              <th>{t("admin.users.table.name")}</th>
+              <th>{t("admin.users.table.email")}</th>
+              <th>{t("admin.users.table.roles")}</th>
+              <th>{t("admin.users.table.status")}</th>
+              <th>{t("admin.users.table.projects")}</th>
+              <th>{t("admin.users.table.investments")}</th>
+              <th>{t("admin.users.table.actions")}</th>
             </tr>
           </thead>
           <tbody>
             {users.length === 0 ? (
               <tr>
                 <td colSpan={8} style={{ textAlign: "center" }}>
-                  Aucun utilisateur
+                  {t("admin.users.empty")}
                 </td>
               </tr>
             ) : (
@@ -80,9 +90,13 @@ export default function UsersAdminPage() {
                 >
                   <td>
                     <img
-                      src={u.image || "/default-avatar.png"}
+                      src={getAvatarUrl(u.image)} // UTILISATION DE L'UTILITAIRE
                       alt=""
                       className={styles.avatar}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src =
+                          "/default-avatar.png";
+                      }}
                     />
                   </td>
                   <td className={styles.fullName}>
@@ -125,7 +139,7 @@ export default function UsersAdminPage() {
                         onClick={() => makeAdmin.mutate(u.id)}
                         className={styles.adminBtn}
                       >
-                        Faire Admin
+                        {t("admin.users.modal.make_admin")}
                       </button>
                     )}
                   </td>
@@ -136,7 +150,7 @@ export default function UsersAdminPage() {
         </table>
       </div>
 
-      {/* MODALE DÉTAIL + GESTION DES RÔLES */}
+      {/* MODAL DE DÉTAILS ET GESTION DES RÔLES */}
       {selectedUser && (
         <div
           className={styles.modalOverlay}
@@ -150,52 +164,56 @@ export default function UsersAdminPage() {
               ×
             </button>
 
-            <h2>
-              {selectedUser.prenom} {selectedUser.nom}
-            </h2>
-            <p>
-              Email: {selectedUser.email} | Login: {selectedUser.login}
-            </p>
-            <p>Compte {selectedUser.enabled ? "activé" : "désactivé"}</p>
-
-            <h3>Ses projets ({selectedUser.projets?.length || 0})</h3>
-            {selectedUser.projets?.length ? (
-              selectedUser.projets.map((p) => (
-                <div key={p.id} className={styles.itemCard}>
-                  {p.libelle} – {p.localiteNom}, {p.paysNom}
-                </div>
-              ))
-            ) : (
-              <p>Aucun projet</p>
-            )}
-
-            <h3>
-              Ses investissements ({selectedUser.investissements?.length || 0})
-            </h3>
-            {selectedUser.investissements?.length ? (
-              selectedUser.investissements.map((i) => (
-                <div key={i.id} className={styles.itemCard}>
-                  {i.projetLibelle} – {i.nombrePartsPris} parts –{" "}
-                  {(i.prixUnePart * i.nombrePartsPris).toLocaleString()} FCFA
-                  <br />
-                  <small>Statut: {i.statutPartInvestissement}</small>
-                </div>
-              ))
-            ) : (
-              <p>Aucun investissement</p>
-            )}
-
-            {/* === NOUVELLE SECTION : GESTION DES RÔLES === */}
             <div
               style={{
-                marginTop: "2rem",
-                paddingTop: "1.5rem",
-                borderTop: "2px solid #eee",
+                display: "flex",
+                alignItems: "center",
+                gap: "20px",
+                marginBottom: "20px",
               }}
             >
-              <h3 style={{ marginBottom: "1rem", color: "#1976d2" }}>
-                Gérer les rôles
-              </h3>
+              <img
+                src={getAvatarUrl(selectedUser.image)}
+                className={styles.modalAvatar}
+                alt="User"
+                onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+              />
+              <div>
+                <h2 style={{ margin: 0 }}>
+                  {selectedUser.prenom} {selectedUser.nom}
+                </h2>
+                <p style={{ margin: 0, color: "#666" }}>
+                  @{selectedUser.login} | {selectedUser.email}
+                </p>
+              </div>
+            </div>
+
+            <p>
+              {t("admin.users.modal.account_status", {
+                status: selectedUser.enabled
+                  ? t("admin.users.modal.active")
+                  : t("admin.users.modal.disabled"),
+              })}
+            </p>
+
+            <h3>
+              {t("admin.users.modal.his_projects")} (
+              {selectedUser.projets?.length || 0})
+            </h3>
+            {selectedUser.projets?.length ? (
+              <div className={styles.itemsGrid}>
+                {selectedUser.projets.map((p) => (
+                  <div key={p.id} className={styles.itemCard}>
+                    {p.libelle} – {p.localiteNom}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>{t("admin.users.empty")}</p>
+            )}
+
+            <div className={styles.roleSection}>
+              <h3>{t("admin.users.modal.manage_roles")}</h3>
               <RolesManagerModal
                 userId={selectedUser.id}
                 currentRoles={selectedUser.roles}

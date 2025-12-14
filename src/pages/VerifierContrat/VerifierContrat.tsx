@@ -1,10 +1,11 @@
-// src/pages/VerifierContrat/VerifierContrat.tsx → LA PAGE LA PLUS CLASSE D'AFRIQUE 2025
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api } from "../../service/api";
 import toast from "react-hot-toast";
 import { QRCodeSVG } from "qrcode.react";
+import { useTranslation } from "react-i18next"; // Import i18n
+import { format } from "date-fns";
+import { fr, enUS, es } from "date-fns/locale"; // Import locales
 import styles from "./VerifierContrat.module.css";
 import {
   FiCheckCircle,
@@ -24,7 +25,13 @@ interface ContratPublic {
 }
 
 export default function VerifierContrat() {
+  const { t, i18n } = useTranslation(); // Hook traduction
   const { code } = useParams<{ code?: string }>();
+
+  // Gestion de la date locale
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
+
   const [input, setInput] = useState(code?.toUpperCase() || "");
   const [result, setResult] = useState<ContratPublic | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,7 +40,7 @@ export default function VerifierContrat() {
   const verifier = async () => {
     const numero = input.trim().toUpperCase();
     if (!numero) {
-      toast.error("Entrez un numéro de contrat");
+      toast.error(t("verify_contract.toast_empty"));
       return;
     }
 
@@ -45,10 +52,10 @@ export default function VerifierContrat() {
         `/api/contrats/public/verifier/${numero}`
       );
       setResult(res);
-      toast.success("Contrat authentique !");
+      toast.success(t("verify_contract.toast_success"));
     } catch (err) {
       setResult(null);
-      toast.error("Contrat non trouvé ou invalide");
+      toast.error(t("verify_contract.toast_error"));
     } finally {
       setLoading(false);
     }
@@ -65,8 +72,8 @@ export default function VerifierContrat() {
           {/* En-tête */}
           <div className={styles.header}>
             <FiShield size={60} />
-            <h1>Vérification d’authenticité</h1>
-            <p>Entrez le numéro du contrat ou scannez le QR code</p>
+            <h1>{t("verify_contract.title")}</h1>
+            <p>{t("verify_contract.subtitle")}</p>
           </div>
 
           {/* Barre de recherche */}
@@ -75,7 +82,7 @@ export default function VerifierContrat() {
               <FiSearch size={28} />
               <input
                 type="text"
-                placeholder="CTR-2025-000127"
+                placeholder={t("verify_contract.placeholder")}
                 value={input}
                 onChange={(e) => setInput(e.target.value.toUpperCase())}
                 onKeyDown={(e) => e.key === "Enter" && verifier()}
@@ -86,7 +93,9 @@ export default function VerifierContrat() {
               disabled={loading}
               className={styles.btn}
             >
-              {loading ? "Vérification..." : "Vérifier"}
+              {loading
+                ? t("verify_contract.btn_verifying")
+                : t("verify_contract.btn_verify")}
             </button>
           </div>
 
@@ -96,25 +105,30 @@ export default function VerifierContrat() {
               {result ? (
                 <div className={styles.success}>
                   <FiCheckCircle size={100} />
-                  <h2>Contrat 100% authentique</h2>
+                  <h2>{t("verify_contract.success_title")}</h2>
 
                   <div className={styles.details}>
                     <p>
-                      <strong>N° contrat :</strong> {result.numeroContrat}
+                      <strong>{t("verify_contract.label_contract_no")}</strong>{" "}
+                      {result.numeroContrat}
                     </p>
                     <p>
-                      <strong>Projet :</strong> {result.projet}
+                      <strong>{t("verify_contract.label_project")}</strong>{" "}
+                      {result.projet}
                     </p>
                     <p>
-                      <strong>Investisseur :</strong> {result.investisseur}
+                      <strong>{t("verify_contract.label_investor")}</strong>{" "}
+                      {result.investisseur}
                     </p>
                     <p>
-                      <strong>Montant :</strong>{" "}
-                      {result.montant.toLocaleString()} FCFA
+                      <strong>{t("verify_contract.label_amount")}</strong>{" "}
+                      {result.montant.toLocaleString(i18n.language)} FCFA
                     </p>
                     <p>
-                      <strong>Date :</strong>{" "}
-                      {new Date(result.date).toLocaleDateString("fr-FR")}
+                      <strong>{t("verify_contract.label_date")}</strong>{" "}
+                      {format(new Date(result.date), "dd MMMM yyyy", {
+                        locale: currentLocale,
+                      })}
                     </p>
                   </div>
 
@@ -124,16 +138,14 @@ export default function VerifierContrat() {
                       size={180}
                       fgColor="#1B5E20"
                     />
-                    <small>Partagez ce lien pour prouver l’authenticité</small>
+                    <small>{t("verify_contract.qr_hint")}</small>
                   </div>
                 </div>
               ) : (
                 <div className={styles.error}>
                   <FiXCircle size={100} />
-                  <h2>Contrat non trouvé</h2>
-                  <p>
-                    Ce contrat n’existe pas dans notre base ou a été falsifié.
-                  </p>
+                  <h2>{t("verify_contract.error_title")}</h2>
+                  <p>{t("verify_contract.error_desc")}</p>
                 </div>
               )}
             </div>
@@ -144,13 +156,9 @@ export default function VerifierContrat() {
             <div className={styles.logo}>
               <h3>growzapp</h3>
             </div>
-            <p>
-              Tous les contrats GrowzApp sont signés électroniquement
-              <br />
-              et protégés par blockchain — Impossibles à falsifier.
-            </p>
+            <p>{t("verify_contract.footer_text")}</p>
             <Link to="/" className={styles.back}>
-              <FiArrowLeft /> Retour à l’accueil
+              <FiArrowLeft /> {t("verify_contract.back_home")}
             </Link>
           </div>
         </div>

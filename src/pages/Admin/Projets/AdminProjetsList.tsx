@@ -5,14 +5,13 @@ import { Link } from "react-router-dom";
 import { api } from "../../../service/api";
 import toast from "react-hot-toast";
 import styles from "./AdminProjetsList.module.css";
+import { useTranslation } from "react-i18next";
 import {
-  FiDollarSign,
   FiEdit,
   FiCheckCircle,
   FiXCircle,
   FiEye,
   FiTrash2,
-  FiAlertCircle,
 } from "react-icons/fi";
 
 interface ProjetAdmin {
@@ -27,6 +26,7 @@ interface ProjetAdmin {
 }
 
 export default function AdminProjetsList() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { data: projetsData, isLoading } = useQuery({
@@ -36,52 +36,51 @@ export default function AdminProjetsList() {
 
   const projets = projetsData?.data || [];
 
-  // Mutations
+  // --- MUTATIONS ---
+
   const validerMutation = useMutation({
     mutationFn: (id: number) => api.patch(`/api/admin/projets/${id}/valider`),
     onSuccess: () => {
-      toast.success("Projet validé !");
+      toast.success(t("admin.withdrawals.toast.validate_success"));
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
     },
-    onError: () => toast.error("Échec de la validation"),
+    onError: () => toast.error(t("admin.withdrawals.toast.error")),
   });
 
   const rejeterMutation = useMutation({
     mutationFn: (id: number) => api.patch(`/api/admin/projets/${id}/rejeter`),
     onSuccess: () => {
-      toast.success("Projet rejeté");
+      toast.success(t("admin.withdrawals.toast.reject_success"));
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
     },
-    onError: () => toast.error("Échec du rejet"),
+    onError: () => toast.error(t("admin.withdrawals.toast.error")),
   });
 
   const supprimerMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/api/admin/projets/${id}`),
     onSuccess: () => {
-      toast.success("Projet supprimé définitivement");
+      toast.success(t("admin.roles.success")); // Message "Succès" générique
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
     },
-    onError: () => toast.error("Impossible de supprimer"),
+    onError: () => toast.error(t("admin.withdrawals.toast.error")),
   });
 
+  // --- ACTIONS ---
+
   const handleSupprimer = (id: number, libelle: string) => {
-    if (
-      window.confirm(
-        `Supprimer définitivement "${libelle}" ? Cette action est irréversible.`
-      )
-    ) {
+    if (window.confirm(t("admin.projects.confirm_delete", { name: libelle }))) {
       supprimerMutation.mutate(id);
     }
   };
 
   if (isLoading) {
-    return <div className={styles.loading}>Chargement des projets...</div>;
+    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
   }
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
-        Administration des Projets ({projets.length})
+        {t("admin.projects.title", { count: projets.length })}
       </h1>
 
       <div className={styles.grid}>
@@ -93,6 +92,7 @@ export default function AdminProjetsList() {
 
           return (
             <div key={p.id} className={styles.card}>
+              {/* HEADER : IMAGE + BADGE */}
               <div className={styles.posterWrapper}>
                 {p.poster ? (
                   <img
@@ -101,7 +101,9 @@ export default function AdminProjetsList() {
                     className={styles.poster}
                   />
                 ) : (
-                  <div className={styles.noPoster}>Aucun poster</div>
+                  <div className={styles.noPoster}>
+                    {t("admin.projects.no_poster")}
+                  </div>
                 )}
                 <div
                   className={`${styles.statutBadge} ${
@@ -112,12 +114,15 @@ export default function AdminProjetsList() {
                 </div>
               </div>
 
+              {/* CONTENU */}
               <div className={styles.content}>
                 <h3 className={styles.projectTitle}>{p.libelle}</h3>
                 <p className={styles.porteur}>
-                  Par {p.porteurPrenom || ""} {p.porteurNom}
+                  {t("admin.projects.by")} {p.porteurPrenom || ""}{" "}
+                  {p.porteurNom}
                 </p>
 
+                {/* PROGRESSION */}
                 <div className={styles.progress}>
                   <div className={styles.progressBar}>
                     <div
@@ -128,35 +133,32 @@ export default function AdminProjetsList() {
                   <span>{progression.toFixed(0)}%</span>
                 </div>
 
-                {/* ACTIONS PRINCIPALES */}
+                {/* BOUTONS DE GESTION (Visibles pour tous les statuts) */}
                 <div className={styles.actions}>
-                  {/* Voir les documents */}
                   <Link
                     to={`/admin/projets/detail/${p.id}`}
                     className={styles.btnDetail}
                   >
-                    <FiEye /> Documents
+                    <FiEye /> {t("admin.projects.btn_docs")}
                   </Link>
 
-                  {/* Modifier */}
                   <Link
                     to={`/admin/projets/edit/${p.id}`}
                     className={styles.btnEdit}
                   >
-                    <FiEdit /> Modifier
+                    <FiEdit /> {t("admin.projects.btn_edit")}
                   </Link>
 
-                  {/* Supprimer */}
                   <button
                     onClick={() => handleSupprimer(p.id, p.libelle)}
                     className={styles.btnDelete}
                     disabled={supprimerMutation.isPending}
                   >
-                    <FiTrash2 /> Supprimer
+                    <FiTrash2 /> {t("admin.projects.btn_delete")}
                   </button>
                 </div>
 
-                {/* ACTIONS STATUT */}
+                {/* BOUTONS DE VALIDATION (Uniquement si en attente) */}
                 {(p.statutProjet === "SOUMIS" ||
                   p.statutProjet === "EN_ATTENTE") && (
                   <div className={styles.statusActions}>
@@ -165,25 +167,25 @@ export default function AdminProjetsList() {
                       className={styles.btnValider}
                       disabled={validerMutation.isPending}
                     >
-                      <FiCheckCircle /> Valider
+                      <FiCheckCircle /> {t("admin.projects.btn_validate")}
                     </button>
                     <button
                       onClick={() => rejeterMutation.mutate(p.id)}
                       className={styles.btnRejeter}
                       disabled={rejeterMutation.isPending}
                     >
-                      <FiXCircle /> Rejeter
+                      <FiXCircle /> {t("admin.projects.btn_reject")}
                     </button>
                   </div>
                 )}
 
-                {/* Voir public */}
+                {/* LIEN PUBLIC */}
                 <Link
                   to={`/projet/${p.id}`}
                   target="_blank"
                   className={styles.btnPublic}
                 >
-                  Voir en public
+                  {t("admin.projects.btn_public")}
                 </Link>
               </div>
             </div>

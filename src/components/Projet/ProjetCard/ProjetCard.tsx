@@ -1,4 +1,3 @@
-// src/components/Projet/ProjectCard/ProjectCard.tsx
 import {
   FiEye,
   FiDollarSign,
@@ -9,44 +8,54 @@ import {
 import { Link } from "react-router-dom";
 import { ProjetDTO } from "../../../types/projet";
 import styles from "./ProjetCard.module.css";
+import { useTranslation } from "react-i18next";
+import { useCurrency } from "../../context/CurrencyContext"; // Import du nouveau context
 
 interface ProjectCardProps {
   projet: ProjetDTO;
 }
 
 export default function ProjectCard({ projet }: ProjectCardProps) {
+  const { t, i18n } = useTranslation();
+  const { format } = useCurrency(); // Hook de conversion et formatage
+
+  const translateData = (
+    category: "sectors" | "countries" | "cities",
+    value: string
+  ) => {
+    if (!value) return "---";
+    const searchKey = value.trim().toUpperCase();
+    return t(`data.${category}.${searchKey}`, { defaultValue: value });
+  };
+
+  // Calcul du progrès (on reste sur les valeurs brutes car le ratio est le même)
   const progress =
     projet.objectifFinancement > 0
-      ? (projet.montantCollecte / projet.objectifFinancement) * 100
+      ? (Number(projet.montantCollecte) / Number(projet.objectifFinancement)) *
+        100
       : 0;
 
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
 
   const getBadgeText = () => {
-    if (financementTermine) return "Financement terminé";
-    if (projet.statutProjet === "VALIDE") return "En cours";
+    if (financementTermine) return t("project_card.status.finished");
+    if (projet.statutProjet === "VALIDE")
+      return t("project_card.status.ongoing");
     return projet.statutProjet.replace(/_/g, " ");
-  };
-
-  const getBadgeClass = () => {
-    if (financementTermine) return styles.badgeTermine;
-    if (projet.statutProjet === "VALIDE") return styles.badgeEnCours;
-    return styles.badgeDefault;
   };
 
   const formatDate = (dateStr?: string) =>
     dateStr
-      ? new Date(dateStr).toLocaleDateString("fr-FR", {
+      ? new Date(dateStr).toLocaleDateString(i18n.language, {
           day: "numeric",
           month: "short",
           year: "numeric",
         })
-      : "Non définie";
+      : "---";
 
   return (
     <div className={styles.card}>
-      {/* POSTER — LA VERSION QUI MARCHE À 100% */}
       <div className={styles.posterWrapper}>
         {projet.poster ? (
           <img
@@ -56,11 +65,18 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           />
         ) : (
           <div className={styles.noPoster}>
-            <span>Aucun poster</span>
+            <span>{t("project_card.no_poster")}</span>
           </div>
         )}
-
-        <div className={`${styles.statutBadge} ${getBadgeClass()}`}>
+        <div
+          className={`${styles.statutBadge} ${
+            financementTermine
+              ? styles.badgeTermine
+              : projet.statutProjet === "VALIDE"
+              ? styles.badgeEnCours
+              : styles.badgeDefault
+          }`}
+        >
           {getBadgeText()}
         </div>
       </div>
@@ -68,7 +84,12 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
       <div className={styles.content}>
         <h3 className={styles.title}>{projet.libelle}</h3>
         <p className={styles.location}>
-          <FiMapPin /> {projet.localiteNom}, {projet.paysNom}
+          <FiMapPin /> {translateData("cities", projet.localiteNom ?? "")},{" "}
+          {translateData("countries", projet.paysNom ?? "")}
+        </p>
+        <p className={styles.sector}>
+          <strong>{t("project_details.sector")} :</strong>{" "}
+          {translateData("sectors", projet.secteurNom ?? "")}
         </p>
         <p className={styles.description}>
           {projet.description.substring(0, 100)}
@@ -78,26 +99,34 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
             <span className={styles.highlight}>
-              <strong>ROI</strong> <FiTrendingUp /> {projet.roiProjete}%
+              <strong>{t("project_card.roi")}</strong> <FiTrendingUp />{" "}
+              {projet.roiProjete}%
             </span>
           </div>
+
           <div className={styles.infoItem}>
-            <strong>Prix/part </strong>
-            <span>{projet.prixUnePart.toLocaleString()} €</span>
+            <strong>{t("project_card.price_per_share")} </strong>
+            {/* Utilisation de format(montant, devise_origine) */}
+            <span>
+              {format(Number(projet.prixUnePart), projet.currencyCode)}
+            </span>
           </div>
+
           <div className={styles.infoItem}>
-            <strong>Objectif  </strong>
-            <span>{projet.objectifFinancement.toLocaleString()} €</span>
+            <strong>{t("project_card.goal")} </strong>
+            <span>
+              {format(Number(projet.objectifFinancement), projet.currencyCode)}
+            </span>
           </div>
         </div>
 
         <div className={styles.progressContainer}>
           <div className={styles.progressText}>
             <strong>
-              {Math.round(projet.montantCollecte).toLocaleString()} €
+              {/* Le montant collecté est aussi converti automatiquement */}
+              {format(Number(projet.montantCollecte), projet.currencyCode)}
             </strong>{" "}
-            collectés
-            <span>{progress.toFixed(0)}%</span>
+            {t("project_card.collected")} <span>{progress.toFixed(0)}%</span>
           </div>
           <div className={styles.progressBar}>
             <div
@@ -110,13 +139,16 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         </div>
 
         <p className={styles.dates}>
-          <FiCalendar /> Du {formatDate(projet.dateDebut)} au{" "}
-          {formatDate(projet.dateFin)}
+          <FiCalendar />{" "}
+          {t("project_card.dates", {
+            start: formatDate(projet.dateDebut),
+            end: formatDate(projet.dateFin),
+          })}
         </p>
 
         <div className={styles.actions}>
           <Link to={`/projet/${projet.id}`} className={styles.btnView}>
-            <FiEye /> Voir
+            <FiEye /> {t("project_card.btn_view")}
           </Link>
           <Link
             to={financementTermine ? "#" : `/projet/${projet.id}#investir`}
@@ -125,7 +157,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             }`}
             onClick={(e) => financementTermine && e.preventDefault()}
           >
-            <FiDollarSign /> Investir
+            <FiDollarSign /> {t("project_card.btn_invest")}
           </Link>
         </div>
       </div>
