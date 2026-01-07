@@ -1,5 +1,5 @@
 // src/components/CurrencySwitcher/CurrencySwitcher.tsx
-import { useCurrency } from "../context/CurrencyContext";
+import { useCurrency } from "../Context/CurrencyContext";
 import { FiGlobe } from "react-icons/fi";
 import styles from "./CurrencySwitcher.module.css";
 

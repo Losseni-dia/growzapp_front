@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 import styles from "./Header.module.css";
 import {
   FiPlusCircle,
@@ -7,67 +7,51 @@ import {
   FiShield,
   FiChevronDown,
   FiSearch,
-  FiSettings,
   FiLogOut,
   FiLogIn,
   FiLayout,
   FiPackage,
   FiFileText,
+  FiGlobe,
+  FiDollarSign,
+  FiSettings,
 } from "react-icons/fi";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../context/CurrencyContext";
+import { useCurrency } from "../Context/CurrencyContext";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
 
 export default function Header() {
   const { user, logout, loading: authLoading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { currency, setCurrency, rates } = useCurrency();
 
   const [showAdminMenu, setShowAdminMenu] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  const settingsRef = useRef<HTMLDivElement>(null);
   const adminRef = useRef<HTMLDivElement>(null);
 
-  const isAdmin = useMemo(
-    () => user?.roles?.includes("ADMIN") ?? false,
-    [user]
-  );
+  const isAdmin = useMemo(() => user?.roles?.includes("ADMIN") ?? false, [user]);
   const availableCurrencies = useMemo(() => Object.keys(rates), [rates]);
 
-  const languages = useMemo(
-    () => [
-      {
-        code: "fr",
-        label: "Français",
-        flag: "https://hatscripts.github.io/circle-flags/flags/fr.svg",
-      },
-      {
-        code: "en",
-        label: "English",
-        flag: "https://hatscripts.github.io/circle-flags/flags/gb.svg",
-      },
-      {
-        code: "es",
-        label: "Español",
-        flag: "https://hatscripts.github.io/circle-flags/flags/es.svg",
-      },
-    ],
-    []
-  );
-
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    localStorage.setItem("i18nextLng", lng);
-    setShowSettings(false);
+  const toggleLanguage = () => {
+    const langs = ["fr", "en", "es"];
+    const nextLang = langs[(langs.indexOf(i18n.language) + 1) % langs.length];
+    i18n.changeLanguage(nextLang);
+    localStorage.setItem("i18nextLng", nextLang);
   };
 
-  const handleCurrencyChange = (code: string) => {
-    setCurrency(code);
-    setShowSettings(false);
+  const toggleCurrency = () => {
+    const nextCurr = availableCurrencies[(availableCurrencies.indexOf(currency) + 1) % availableCurrencies.length];
+    setCurrency(nextCurr);
+  };
+
+  const handleLogout = () => {
+    if (window.confirm(t("confirm_logout") || "Voulez-vous vous déconnecter ?")) {
+      logout();
+      navigate("/login");
+    }
   };
 
   useEffect(() => {
@@ -77,12 +61,8 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (settingsRef.current && !settingsRef.current.contains(target))
-        setShowSettings(false);
-      if (adminRef.current && !adminRef.current.contains(target))
-        setShowAdminMenu(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      if (adminRef.current && !adminRef.current.contains(e.target as Node)) setShowAdminMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -91,68 +71,42 @@ export default function Header() {
   if (authLoading) return null;
 
   return (
-    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+   <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <Link to="/" className={styles.logo}>
-        <h1>growzapp</h1>
+        {/* On remplace le texte h1 par l'image */}
+        <img 
+          src="/logo.svg" 
+          alt="Growzapp" 
+          style={{ height: '40px', width: 'auto' }} /* Ajuste la hauteur selon ton header */
+        />
       </Link>
 
       <nav className={styles.nav}>
-        {/* --- ACTIONS GAUCHE --- */}
         <div className={styles.navLeft}>
           {user && (
             <>
               <Link to="/projet/creer" className={styles.navLink}>
                 <FiPlusCircle /> <span>{t("create_project")}</span>
               </Link>
-
-              <Link
-                to="/verifier-contrat"
-                className={`${styles.navLink} ${
-                  location.pathname.startsWith("/verifier-contrat")
-                    ? styles.active
-                    : ""
-                }`}
-              >
+              <Link to="/verifier-contrat" className={`${styles.navLink} ${location.pathname.startsWith("/verifier-contrat") ? styles.active : ""}`}>
                 <FiSearch /> <span>{t("link_verify_contract")}</span>
               </Link>
 
               {isAdmin && (
                 <div className={styles.adminWrapper} ref={adminRef}>
-                  <button
-                    onClick={() => setShowAdminMenu(!showAdminMenu)}
-                    className={`${styles.adminBtn} ${
-                      showAdminMenu ? styles.active : ""
-                    }`}
-                  >
-                    <FiShield /> <span>{t("admin_space")}</span>{" "}
-                    <FiChevronDown />
+                  <button onClick={() => setShowAdminMenu(!showAdminMenu)} className={`${styles.adminBtn} ${showAdminMenu ? styles.active : ""}`}>
+                    <FiShield /> <span>{t("admin_space")}</span> <FiChevronDown />
                   </button>
-
                   {showAdminMenu && (
                     <div className={styles.adminMenu}>
-                      <Link to="/admin" onClick={() => setShowAdminMenu(false)}>
-                        <FiLayout /> {t("admin.dashboard.title")}
+                      <Link to="/admin" onClick={() => setShowAdminMenu(false)}><FiLayout /> {t("admin.dashboard.title")}</Link>
+                      <Link to="/admin/settings" onClick={() => setShowAdminMenu(false)}>
+                        <FiSettings /> {t("admin.projects.project_config") || "Config Projets"}
                       </Link>
-                      <Link
-                        to="/admin/users"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiUser /> {t("admin.dashboard.manage_users")}
-                      </Link>
-                      <Link
-                        to="/admin/contrats"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiFileText />{" "}
-                        {t("admin.dashboard.contracts") || "Contrats"}
-                      </Link>
+                      <Link to="/admin/kyc" onClick={() => setShowAdminMenu(false)}><FiShield /> Validation KYC</Link>
+                      <Link to="/admin/users" onClick={() => setShowAdminMenu(false)}><FiUser /> Gestion Users</Link>
                       <div className={styles.divider}></div>
-                      <Link
-                        to="/admin/projets"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiPackage /> {t("admin.dashboard.see_projects")}
-                      </Link>
+                      <Link to="/admin/projets" onClick={() => setShowAdminMenu(false)}><FiPackage /> Voir Projets</Link>
                     </div>
                   )}
                 </div>
@@ -161,92 +115,37 @@ export default function Header() {
           )}
         </div>
 
-        {/* --- SECTION DROITE --- */}
-        <div className={styles.rightSection} ref={settingsRef}>
-          {user ? (
-            <Link to="/mon-espace" className={styles.monEspaceLink}>
-              <img
-                src={getAvatarUrl(user.image)}
-                alt={user.prenom}
-                className={styles.userAvatar}
-                onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
-              />
-              <span className={styles.userName}>{user.prenom}</span>
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className={`${styles.actionBtn} ${styles.loginBtn}`}
-            >
-              <FiLogIn /> {t("login")}
-            </Link>
-          )}
+        <div className={styles.rightSection}>
+          <div className={styles.userSection}>
+            
+            {/* --- SELECTEURS TOUJOURS VISIBLES (MÊME DÉCONNECTÉ) --- */}
+            <button onClick={toggleCurrency} className={styles.directActionBtn} title="Changer Devise">
+              <FiDollarSign /> <span className={styles.directBtnText}>{currency}</span>
+            </button>
 
-          <button
-            className={`${styles.settingsBtn} ${
-              showSettings ? styles.active : ""
-            }`}
-            onClick={() => setShowSettings(!showSettings)}
-            aria-label="Paramètres"
-          >
-            <FiSettings size={22} />
-          </button>
+            <button onClick={toggleLanguage} className={styles.directActionBtn} title="Changer Langue">
+              <FiGlobe /> <span className={styles.directBtnText}>{i18n.language.toUpperCase()}</span>
+            </button>
 
-          {showSettings && (
-            <div className={styles.settingsMenu}>
-              <div className={styles.menuSection}>
-                <span className={styles.menuLabel}>Langue</span>
-                <div className={styles.languageRow}>
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => changeLanguage(lang.code)}
-                      className={`${styles.flagBtn} ${
-                        i18n.language === lang.code ? styles.activeFlag : ""
-                      }`}
-                    >
-                      <img
-                        src={lang.flag}
-                        alt={lang.code}
-                        className={styles.flagImg}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
+            {/* --- SECTIONS RÉSERVÉES AUX CONNECTÉS --- */}
+            {user ? (
+              <>
+                <Link to="/mon-espace" className={styles.monEspaceLink}>
+                  <img src={getAvatarUrl(user.image)} alt={user.prenom} className={styles.userAvatar} onError={(e) => (e.currentTarget.src = "/default-avatar.png")} />
+                  <span className={styles.userName}>{user.prenom}</span>
+                </Link>
 
-              <div className={styles.menuSection}>
-                <span className={styles.menuLabel}>Devise</span>
-                <div className={styles.currencyRow}>
-                  {availableCurrencies.map((code) => (
-                    <button
-                      key={code}
-                      onClick={() => handleCurrencyChange(code)}
-                      className={`${styles.currencyBtn} ${
-                        currency === code ? styles.activeCurrency : ""
-                      }`}
-                    >
-                      {code}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {user && (
-                <>
-                  <div className={styles.divider}></div>
-                  <div className={styles.menuSection}>
-                    <button
-                      onClick={logout}
-                      className={`${styles.actionBtn} ${styles.logoutBtn}`}
-                    >
-                      <FiLogOut /> {t("logout")}
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+                <button onClick={handleLogout} className={styles.logoutDirectBtn} title={t("logout")}>
+                  <FiLogOut />
+                </button>
+              </>
+            ) : (
+              /* --- BOUTON LOGIN SI DÉCONNECTÉ --- */
+              <Link to="/login" className={styles.loginBtn}>
+                <FiLogIn /> <span>{t("login")}</span>
+              </Link>
+            )}
+          </div>
         </div>
       </nav>
     </header>

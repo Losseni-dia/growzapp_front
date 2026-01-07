@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Cropper from "react-easy-crop";
-import { useAuth } from "../../../components/context/AuthContext";
+import { useAuth } from "../../../components/Context/AuthContext";
 import { api } from "../../../service/api";
 import styles from "./ProfileUpdateForm.module.css";
 import { getCroppedImg, dataURLtoFile } from "../../../types/utils/CropImage";

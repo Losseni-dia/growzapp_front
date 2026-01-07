@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { fr, enUS, es } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/context/CurrencyContext";
+import { useCurrency } from "../../../components/Context/CurrencyContext";
 import {
   FiSearch,
   FiDownload,

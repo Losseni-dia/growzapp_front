@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { api } from "../../../service/api";
 import styles from "./WalletsProjetsAdminPage.module.css";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/context/CurrencyContext"; // <--- IMPORT
+import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT
 
 interface WalletProjet {
   id: number;

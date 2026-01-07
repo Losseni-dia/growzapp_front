@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../../service/api";
 import DocumentUpload from "../../../../components/DocumentUpload/DocumentUpload";
-import { useAuth } from "../../../../components/context/AuthContext";
+import { useAuth } from "../../../../components/Context/AuthContext";
 import toast from "react-hot-toast";
 import styles from "./ProjetAdminDetail.module.css";
 import {

@@ -31,3 +31,13 @@ export interface InvestissementDTO {
   dividendesPlanifies: number;
   statutGlobalDividendes: string;
 }
+
+export interface InvestissementSummary {
+  id: number;
+  projetLibelle: string;
+  montantInvesti: number;
+  date: string;
+  nombrePartsPris: number; 
+  prixUnePart: number;
+  statutPartInvestissement: StatutPartInvestissement;
+}

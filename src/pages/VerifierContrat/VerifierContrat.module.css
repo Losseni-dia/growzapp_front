@@ -176,3 +176,44 @@ input {
   align-items: center;
   gap: 0.5rem;
 }
+
+
+.inputWrapper {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto 1rem;
+  /* Moins d'espace entre les champs */
+}
+
+.innerIcon {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1B5E20;
+  z-index: 10;
+}
+
+.luxuryInput {
+  width: 100%;
+  padding: 1.2rem 1.5rem 1.2rem 4rem;
+  /* Padding ajusté pour les icônes */
+  border: 2px solid #E8F5E9;
+  /* Bordure plus fine par défaut */
+  border-radius: 15px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.luxuryInput:focus {
+  border-color: #1B5E20;
+  box-shadow: 0 0 10px rgba(27, 94, 32, 0.1);
+  outline: none;
+}
+
+.btn {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 420px;
+}

@@ -1,0 +1,41 @@
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    width: fit-content;
+}
+
+.label {
+    white-space: nowrap;
+}
+
+/* Couleurs selon l'état */
+.valid {
+    background-color: #e6f7ed;
+    color: #27ae60;
+    border: 1px solid #27ae60;
+}
+
+.pending {
+    background-color: #fff9e6;
+    color: #f1c40f;
+    border: 1px solid #f1c40f;
+}
+
+.rejected {
+    background-color: #fff5f5;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.none {
+    background-color: #f4f7f6;
+    color: #7f8c8d;
+    border: 1px solid #bdc3c7;
+}

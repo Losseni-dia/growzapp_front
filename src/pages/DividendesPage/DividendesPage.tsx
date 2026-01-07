@@ -1,7 +1,7 @@
 // src/pages/DividendesPage/DividendesPage.tsx
 import { useState, useEffect } from "react";
 import { api, getFreshToken } from "../../service/api";
-import { useAuth } from "../../components/context/AuthContext";
+import { useAuth } from "../../components/Context/AuthContext";
 import toast from "react-hot-toast";
 import {
   FiDownload,

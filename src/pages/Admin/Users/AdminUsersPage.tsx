@@ -6,7 +6,8 @@ import toast from "react-hot-toast";
 import RolesManagerModal from "../../Admin/Roles/RoleManagerModal";
 import styles from "./AdminUsersPage.module.css";
 import { useTranslation } from "react-i18next";
-import { getAvatarUrl } from "../../../types/utils/UserUtils"; // IMPORT CRUCIAL
+import { getAvatarUrl } from "../../../types/utils/UserUtils";
+import { KycBadge } from "../../../components/ui/kycBadge/KycBadge"; // Import du badge
 
 interface ApiResponse<T> {
   success: boolean;
@@ -19,7 +20,6 @@ export default function UsersAdminPage() {
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
 
-  // Récupération des utilisateurs
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => api.get<ApiResponse<UserDTO[]>>("/admin/users"),
@@ -27,7 +27,6 @@ export default function UsersAdminPage() {
 
   const users = data?.data || [];
 
-  // Mutation pour activer/désactiver un compte
   const toggleEnabled = useMutation({
     mutationFn: (id: number) => api.patch(`/admin/users/${id}/toggle`),
     onSuccess: () => {
@@ -36,23 +35,24 @@ export default function UsersAdminPage() {
     },
   });
 
-  // Mutation pour donner le rôle ADMIN rapidement
   const makeAdmin = useMutation({
-    mutationFn: (id: number) =>
-      api.patch(`/admin/users/${id}/roles`, ["ADMIN"]),
+    mutationFn: (id: number) => api.patch(`/admin/users/${id}/roles`, ["ADMIN"]),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast.success(t("admin.roles.success"));
     },
   });
 
-  if (isLoading)
-    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
+  // Fonction utilitaire pour la couleur de la date d'expiration
+  const getExpirationClass = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const expiry = new Date(dateStr);
+    const today = new Date();
+    return expiry < today ? styles.expiredText : "";
+  };
 
-  if (isError)
-    return (
-      <div className={styles.error}>{t("admin.withdrawals.toast.error")}</div>
-    );
+  if (isLoading) return <div className={styles.loading}>{t("dashboard.loading")}</div>;
+  if (isError) return <div className={styles.error}>{t("admin.withdrawals.toast.error")}</div>;
 
   return (
     <div className={styles.container}>
@@ -67,111 +67,82 @@ export default function UsersAdminPage() {
               <th>{t("admin.users.table.photo")}</th>
               <th>{t("admin.users.table.name")}</th>
               <th>{t("admin.users.table.email")}</th>
+              <th>KYC Status</th> {/* Nouvelle Colonne */}
+              <th>Exp. Pièce</th> {/* Nouvelle Colonne */}
               <th>{t("admin.users.table.roles")}</th>
               <th>{t("admin.users.table.status")}</th>
-              <th>{t("admin.users.table.projects")}</th>
-              <th>{t("admin.users.table.investments")}</th>
               <th>{t("admin.users.table.actions")}</th>
             </tr>
           </thead>
           <tbody>
-            {users.length === 0 ? (
-              <tr>
-                <td colSpan={8} style={{ textAlign: "center" }}>
-                  {t("admin.users.empty")}
+            {users.map((u) => (
+              <tr key={u.id} onClick={() => setSelectedUser(u)} className={styles.rowHover}>
+                <td>
+                  <img
+                    src={getAvatarUrl(u.image)}
+                    alt=""
+                    className={styles.avatar}
+                    onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+                  />
+                </td>
+                <td className={styles.fullName}>{u.prenom} {u.nom}</td>
+                <td>
+                  <div>{u.email}</div>
+                  <small>({u.login})</small>
+                </td>
+                
+                {/* STATUT KYC */}
+                <td>
+                  <KycBadge status={u.kycStatus} showLabel={true} />
+                </td>
+
+                {/* DATE EXPIRATION */}
+                <td className={getExpirationClass(u.kycDateExpiration)}>
+                  {u.kycDateExpiration 
+                    ? new Date(u.kycDateExpiration).toLocaleDateString() 
+                    : "—"}
+                </td>
+
+                <td>
+                  <div className={styles.roles}>
+                    {u.roles.map((r) => (
+                      <span key={r} className={`${styles.roleChip} ${styles[r.toLowerCase()] || ""}`}>
+                        {r}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td>
+                  <label className={styles.switch}>
+                    <input
+                      type="checkbox"
+                      checked={u.enabled}
+                      onChange={() => toggleEnabled.mutate(u.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <span className={styles.slider} />
+                  </label>
+                </td>
+                <td onClick={(e) => e.stopPropagation()}>
+                  {!u.roles.includes("ADMIN") && (
+                    <button onClick={() => makeAdmin.mutate(u.id)} className={styles.adminBtn}>
+                      {t("admin.users.modal.make_admin")}
+                    </button>
+                  )}
                 </td>
               </tr>
-            ) : (
-              users.map((u) => (
-                <tr
-                  key={u.id}
-                  onClick={() => setSelectedUser(u)}
-                  className={styles.rowHover}
-                >
-                  <td>
-                    <img
-                      src={getAvatarUrl(u.image)} // UTILISATION DE L'UTILITAIRE
-                      alt=""
-                      className={styles.avatar}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src =
-                          "/default-avatar.png";
-                      }}
-                    />
-                  </td>
-                  <td className={styles.fullName}>
-                    {u.prenom} {u.nom}
-                  </td>
-                  <td>
-                    <div>{u.email}</div>
-                    <small>({u.login})</small>
-                  </td>
-                  <td>
-                    <div className={styles.roles}>
-                      {u.roles.map((r) => (
-                        <span
-                          key={r}
-                          className={`${styles.roleChip} ${
-                            styles[r.toLowerCase()] || ""
-                          }`}
-                        >
-                          {r}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td>
-                    <label className={styles.switch}>
-                      <input
-                        type="checkbox"
-                        checked={u.enabled}
-                        onChange={() => toggleEnabled.mutate(u.id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <span className={styles.slider} />
-                    </label>
-                  </td>
-                  <td>{u.projets?.length || 0}</td>
-                  <td>{u.investissements?.length || 0}</td>
-                  <td onClick={(e) => e.stopPropagation()}>
-                    {!u.roles.includes("ADMIN") && (
-                      <button
-                        onClick={() => makeAdmin.mutate(u.id)}
-                        className={styles.adminBtn}
-                      >
-                        {t("admin.users.modal.make_admin")}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* MODAL DE DÉTAILS ET GESTION DES RÔLES */}
+      {/* MODAL DE DÉTAILS */}
       {selectedUser && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => setSelectedUser(null)}
-        >
+        <div className={styles.modalOverlay} onClick={() => setSelectedUser(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <button
-              className={styles.closeBtn}
-              onClick={() => setSelectedUser(null)}
-            >
-              ×
-            </button>
+            <button className={styles.closeBtn} onClick={() => setSelectedUser(null)}>×</button>
 
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "20px",
-                marginBottom: "20px",
-              }}
-            >
+            <div className={styles.modalHeaderCustom}>
               <img
                 src={getAvatarUrl(selectedUser.image)}
                 className={styles.modalAvatar}
@@ -179,38 +150,22 @@ export default function UsersAdminPage() {
                 onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
               />
               <div>
-                <h2 style={{ margin: 0 }}>
-                  {selectedUser.prenom} {selectedUser.nom}
-                </h2>
-                <p style={{ margin: 0, color: "#666" }}>
-                  @{selectedUser.login} | {selectedUser.email}
-                </p>
+                <h2>{selectedUser.prenom} {selectedUser.nom}</h2>
+                <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                    <p>@{selectedUser.login}</p>
+                    <KycBadge status={selectedUser.kycStatus} />
+                </div>
               </div>
             </div>
 
-            <p>
-              {t("admin.users.modal.account_status", {
-                status: selectedUser.enabled
-                  ? t("admin.users.modal.active")
-                  : t("admin.users.modal.disabled"),
-              })}
-            </p>
-
-            <h3>
-              {t("admin.users.modal.his_projects")} (
-              {selectedUser.projets?.length || 0})
-            </h3>
-            {selectedUser.projets?.length ? (
-              <div className={styles.itemsGrid}>
-                {selectedUser.projets.map((p) => (
-                  <div key={p.id} className={styles.itemCard}>
-                    {p.libelle} – {p.localiteNom}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p>{t("admin.users.empty")}</p>
-            )}
+            <div className={styles.kycDetailsBox}>
+                <h3>Informations d'identité</h3>
+                <p><strong>Numéro de pièce :</strong> {selectedUser.kycNumeroPiece || "N/A"}</p>
+                <p><strong>Date d'expiration :</strong> {selectedUser.kycDateExpiration || "N/A"}</p>
+                {selectedUser.kycCommentaireRejet && (
+                    <p className={styles.rejectionText}><strong>Raison du rejet :</strong> {selectedUser.kycCommentaireRejet}</p>
+                )}
+            </div>
 
             <div className={styles.roleSection}>
               <h3>{t("admin.users.modal.manage_roles")}</h3>

@@ -1,5 +1,4 @@
-// src/types/user.ts → VERSION FINALE ULTIME 2025
-import type { Sexe } from "./enum";
+import type { KycStatus, Sexe } from "./enum";
 import type { RoleDTO } from "./role";
 import type { ProjetSummary } from "./projet";
 import type { InvestissementSummary } from "./investissement";
@@ -9,7 +8,7 @@ export interface WalletSummary {
   soldeDisponible: number;
   soldeBloque: number;
   soldeRetirable: number;
-  soldeTotal?: number; // optionnel, calculé côté front si besoin
+  soldeTotal?: number;
 }
 
 export interface UserDTO {
@@ -23,14 +22,25 @@ export interface UserDTO {
   contact?: string;
   localite?: LocaliteDTO | null;
   langues: { id: number; nom: string }[];
-  roles: RoleDTO[];
+  
+  // Modifié pour correspondre à l'usage .includes() dans vos composants
+  roles: string[]; 
 
-  // Toujours présent
   enabled: boolean;
-
-  // Wallet intégré — propre, clair, pro
   wallet: WalletSummary;
 
   projets?: ProjetSummary[];
   investissements?: InvestissementSummary[];
+
+  // === CHAMPS KYC COMPLETS ===
+  kycStatus: KycStatus; 
+  kycNumeroPiece?: string;         // <-- AJOUTÉ
+  kycDateDelivrance?: string;      // <-- AJOUTÉ
+  kycDateExpiration?: string;      // <-- AJOUTÉ
+  kycRectoUrl?: string;            // <-- AJOUTÉ
+  kycVersoUrl?: string;            // <-- AJOUTÉ
+  kycSelfieUrl?: string;           // <-- AJOUTÉ
+  kycCommentaireRejet?: string;
+  dateNaissance?: string;
+  adresseResidencielle?: string;
 }

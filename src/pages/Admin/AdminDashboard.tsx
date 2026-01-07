@@ -1,13 +1,11 @@
-// src/pages/Admin/AdminDashboard.tsx
-
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../components/context/AuthContext";
+import { useAuth } from "../../components/Context/AuthContext";
 import { api } from "../../service/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../components/context/CurrencyContext"; // <--- IMPORT DU CONTEXT
+import { useCurrency } from "../../components/Context/CurrencyContext";
 
 // IMPORTS CSS
 import styles from "./AdminDashboard.module.css";
@@ -26,6 +24,7 @@ import {
   FiEye,
   FiTrash2,
   FiFileText,
+  FiShield,
 } from "react-icons/fi";
 
 // --- INTERFACES ---
@@ -37,6 +36,7 @@ interface Stats {
   retraitsEnAttente: number;
   montantCollecteSequestre: number;
   montantCollecteAffiche: number;
+  kycEnAttente: number;
 }
 
 interface ProjetAdmin {
@@ -53,7 +53,7 @@ interface ProjetAdmin {
 export default function DashboardAdmin() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
-  const { format } = useCurrency(); // <--- HOOK MONNAIE
+  const { format } = useCurrency();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -66,6 +66,7 @@ export default function DashboardAdmin() {
     retraitsEnAttente: 0,
     montantCollecteSequestre: 0,
     montantCollecteAffiche: 0,
+    kycEnAttente: 0,
   });
   const [loadingStats, setLoadingStats] = useState(true);
 
@@ -80,7 +81,7 @@ export default function DashboardAdmin() {
 
   const projets = projetsData?.data || [];
 
-  // --- 2. CHARGEMENT DES STATS ---
+  // --- 2. CHARGEMENT DES STATS AVEC PROTECTION CONTRE JSON INVALIDE ---
   useEffect(() => {
     if (!isAdmin) {
       toast.error("Accès refusé");
@@ -93,6 +94,8 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoadingStats(true);
+      
+      // On utilise .catch sur chaque promesse pour éviter que le crash d'une seule stat bloque tout
       const [
         usersRes,
         investissementsRes,
@@ -100,30 +103,32 @@ export default function DashboardAdmin() {
         contratsRes,
         soldeSequestreRes,
         montantAfficheRes,
+        kycRes,
       ] = await Promise.all([
-        api.get<any>("/api/admin/users"),
-        api.get<any>("/api/admin/investissements"),
-        api.get<any>("/api/transactions/retraits-en-attente"),
-        api.get<any>("/api/contrats/admin/liste?page=0&size=1"),
-        api.get<any>("/api/admin/projet-wallet/solde-total"),
-        api.get<any>("/api/admin/projet-wallet/montant-total-collecte"),
+        api.get<any>("/api/admin/users").catch(() => ({ data: [] })),
+        api.get<any>("/api/admin/investissements").catch(() => ({ data: [] })),
+        api.get<any>("/api/transactions/retraits-en-attente").catch(() => []),
+        api.get<any>("/api/contrats/admin/liste?page=0&size=1").catch(() => null),
+        api.get<any>("/api/admin/projet-wallet/solde-total").catch(() => 0),
+        api.get<any>("/api/admin/projet-wallet/montant-total-collecte").catch(() => 0),
+        api.get<any>("/api/kyc/admin/en-attente").catch(() => []),
       ]);
 
+      // Calcul sécurisé des contrats
       let totalContratsCount = 0;
       if (contratsRes) {
-        if (typeof contratsRes.totalContrats === "number")
-          totalContratsCount = contratsRes.totalContrats;
-        else if (typeof contratsRes.totalElements === "number")
-          totalContratsCount = contratsRes.totalElements;
+        totalContratsCount = contratsRes.totalContrats ?? contratsRes.totalElements ?? 0;
       }
 
-      const enAttenteInvest =
-        investissementsRes?.data?.filter(
-          (i: any) => i.statutPartInvestissement === "EN_ATTENTE"
-        )?.length || 0;
+      // Filtrage sécurisé des investissements
+      const investList = Array.isArray(investissementsRes?.data) ? investissementsRes.data : [];
+      const enAttenteInvest = investList.filter(
+        (i: any) => i && i.statutPartInvestissement === "EN_ATTENTE"
+      ).length;
 
       setStats({
-        totalUsers: usersRes?.data?.length || 0,
+        kycEnAttente: Array.isArray(kycRes) ? kycRes.length : 0,
+        totalUsers: Array.isArray(usersRes?.data) ? usersRes.data.length : 0,
         totalProjets: projets.length,
         totalContrats: totalContratsCount,
         investissementsEnAttente: enAttenteInvest,
@@ -134,13 +139,13 @@ export default function DashboardAdmin() {
         montantCollecteAffiche: Number(montantAfficheRes) || 0,
       });
     } catch (err: any) {
-      console.error("Erreur stats", err);
+      console.error("Erreur critique fetchStats:", err);
     } finally {
       setLoadingStats(false);
     }
   };
 
-  // --- MUTATIONS (Garder les mêmes) ---
+  // --- MUTATIONS ---
   const validerMutation = useMutation({
     mutationFn: (id: number) => api.patch(`/api/admin/projets/${id}/valider`),
     onSuccess: () => {
@@ -208,6 +213,17 @@ export default function DashboardAdmin() {
             </Link>
 
             <Link
+              to="/admin/kyc"
+              className={`${styles.statCard} ${stats.kycEnAttente > 0 ? styles.warning : styles.success}`}
+            >
+              <FiShield className={styles.icon} />
+              <div>
+                <h3>{stats.kycEnAttente}</h3>
+                <p>{t("admin.dashboard.kyc_pending") || "KYC en attente"}</p>
+              </div>
+            </Link>
+
+            <Link
               to="/admin/investissements"
               className={`${styles.statCard} ${styles.warning}`}
             >
@@ -237,7 +253,6 @@ export default function DashboardAdmin() {
             >
               <FiPackage className={styles.icon} />
               <div>
-                {/* CONVERSION MONTANT SEQUESTRE */}
                 <h3>{format(stats.montantCollecteSequestre, "XOF")}</h3>
                 <p>{t("admin.dashboard.real_escrow")}</p>
               </div>
@@ -246,7 +261,6 @@ export default function DashboardAdmin() {
             <div className={`${styles.statCard} ${styles.success}`}>
               <FiTrendingUp className={styles.icon} />
               <div>
-                {/* CONVERSION MONTANT AFFICHE */}
                 <h3>{format(stats.montantCollecteAffiche, "XOF")}</h3>
                 <p>{t("admin.dashboard.displayed_amount")}</p>
               </div>
@@ -257,64 +271,33 @@ export default function DashboardAdmin() {
             <h2>{t("admin.dashboard.quick_actions")}</h2>
             <div className={styles.actionsGrid}>
               <Link to="/admin/users">{t("admin.dashboard.manage_users")}</Link>
-              <Link to="/admin/projets">
-                {t("admin.dashboard.see_projects")}
-              </Link>
-              <Link to="/admin/investissements">
-                {t("admin.dashboard.validate_investments")}
-              </Link>
+              <Link to="/admin/kyc">{t("admin.dashboard.kyc_validation") || "Validation KYC"}</Link>
+              <Link to="/admin/projets">{t("admin.dashboard.see_projects")}</Link>
+              <Link to="/admin/investissements">{t("admin.dashboard.validate_investments")}</Link>
               <Link to="/admin/retraits" className={styles.highlightLink}>
-                {t("admin.dashboard.validate_withdrawals")} (
-                {stats.retraitsEnAttente})
-              </Link>
-              <Link
-                to="/admin/project-wallets"
-                className={styles.highlightLink}
-              >
-                {t("admin.dashboard.manage_escrow")}
+                {t("admin.dashboard.validate_withdrawals")} ({stats.retraitsEnAttente})
               </Link>
             </div>
           </div>
 
           <div className={styles.divider} />
 
-          <h2
-            style={{
-              marginTop: "4rem",
-              fontSize: "2rem",
-              color: "#1b5e20",
-              textAlign: "center",
-            }}
-          >
+          <h2 style={{ marginTop: "4rem", fontSize: "2rem", color: "#1b5e20", textAlign: "center" }}>
             {t("admin.projects.title", { count: projets.length })}
           </h2>
 
           <div className={stylesProjets.grid}>
             {projets.map((p) => {
-              const progression =
-                p.objectifFinancement > 0
-                  ? (p.montantCollecte / p.objectifFinancement) * 100
-                  : 0;
+              const progression = p.objectifFinancement > 0 ? (p.montantCollecte / p.objectifFinancement) * 100 : 0;
               return (
                 <div key={p.id} className={stylesProjets.card}>
                   <div className={stylesProjets.posterWrapper}>
                     {p.poster ? (
-                      <img
-                        src={p.poster}
-                        alt={p.libelle}
-                        className={stylesProjets.poster}
-                      />
+                      <img src={p.poster} alt={p.libelle} className={stylesProjets.poster} />
                     ) : (
-                      <div className={stylesProjets.noPoster}>
-                        {t("admin.projects.no_poster")}
-                      </div>
+                      <div className={stylesProjets.noPoster}>{t("admin.projects.no_poster")}</div>
                     )}
-                    <div
-                      className={`${stylesProjets.statutBadge} ${
-                        stylesProjets[p.statutProjet?.toLowerCase()] ||
-                        stylesProjets.badgeDefault
-                      }`}
-                    >
+                    <div className={`${stylesProjets.statutBadge} ${stylesProjets[p.statutProjet?.toLowerCase()] || stylesProjets.badgeDefault}`}>
                       {p.statutProjet}
                     </div>
                   </div>
@@ -322,80 +305,33 @@ export default function DashboardAdmin() {
                   <div className={stylesProjets.content}>
                     <h3 className={stylesProjets.projectTitle}>{p.libelle}</h3>
                     <p className={stylesProjets.porteur}>
-                      {t("admin.projects.by")} {p.porteurPrenom || ""}{" "}
-                      {p.porteurNom}
+                      {t("admin.projects.by")} {p.porteurPrenom || ""} {p.porteurNom}
                     </p>
 
                     <div className={stylesProjets.progress}>
                       <div className={stylesProjets.progressBar}>
-                        <div
-                          className={stylesProjets.progressFill}
-                          style={{ width: `${progression}%` }}
-                        />
+                        <div className={stylesProjets.progressFill} style={{ width: `${progression}%` }} />
                       </div>
                       <span>{progression.toFixed(0)}%</span>
                     </div>
 
-                    {/* MONTANTS PROJETS CONVERTIS */}
-                    <div
-                      style={{
-                        fontSize: "0.9rem",
-                        marginBottom: "1rem",
-                        color: "#666",
-                      }}
-                    >
-                      {format(p.montantCollecte, "XOF")} /{" "}
-                      {format(p.objectifFinancement, "XOF")}
+                    <div style={{ fontSize: "0.9rem", marginBottom: "1rem", color: "#666" }}>
+                      {format(p.montantCollecte, "XOF")} / {format(p.objectifFinancement, "XOF")}
                     </div>
 
                     <div className={stylesProjets.actions}>
-                      <Link
-                        to={`/admin/projets/detail/${p.id}`}
-                        className={stylesProjets.btnDetail}
-                      >
-                        <FiEye /> {t("admin.projects.btn_docs")}
-                      </Link>
-                      <Link
-                        to={`/admin/projets/edit/${p.id}`}
-                        className={stylesProjets.btnEdit}
-                      >
-                        <FiEdit /> {t("admin.projects.btn_edit")}
-                      </Link>
-                      <button
-                        onClick={() => handleSupprimer(p.id, p.libelle)}
-                        className={stylesProjets.btnDelete}
-                        disabled={supprimerMutation.isPending}
-                      >
-                        <FiTrash2 /> {t("admin.projects.btn_delete")}
-                      </button>
+                      <Link to={`/admin/projets/detail/${p.id}`} className={stylesProjets.btnDetail}><FiEye /> {t("admin.projects.btn_docs")}</Link>
+                      <Link to={`/admin/projets/edit/${p.id}`} className={stylesProjets.btnEdit}><FiEdit /> {t("admin.projects.btn_edit")}</Link>
+                      <button onClick={() => handleSupprimer(p.id, p.libelle)} className={stylesProjets.btnDelete} disabled={supprimerMutation.isPending}><FiTrash2 /> {t("admin.projects.btn_delete")}</button>
                     </div>
 
-                    {(p.statutProjet === "SOUMIS" ||
-                      p.statutProjet === "EN_ATTENTE") && (
+                    {(p.statutProjet === "SOUMIS" || p.statutProjet === "EN_ATTENTE") && (
                       <div className={stylesProjets.statusActions}>
-                        <button
-                          onClick={() => validerMutation.mutate(p.id)}
-                          className={stylesProjets.btnValider}
-                          disabled={validerMutation.isPending}
-                        >
-                          <FiCheckCircle /> {t("admin.projects.btn_validate")}
-                        </button>
-                        <button
-                          onClick={() => rejeterMutation.mutate(p.id)}
-                          className={stylesProjets.btnRejeter}
-                          disabled={rejeterMutation.isPending}
-                        >
-                          <FiXCircle /> {t("admin.projects.btn_reject")}
-                        </button>
+                        <button onClick={() => validerMutation.mutate(p.id)} className={stylesProjets.btnValider} disabled={validerMutation.isPending}><FiCheckCircle /> {t("admin.projects.btn_validate")}</button>
+                        <button onClick={() => rejeterMutation.mutate(p.id)} className={stylesProjets.btnRejeter} disabled={rejeterMutation.isPending}><FiXCircle /> {t("admin.projects.btn_reject")}</button>
                       </div>
                     )}
-                    <Link
-                      to={`/projet/${p.id}`}
-                      target="_blank"
-                      className={stylesProjets.btnPublic}
-                    >
-                      {t("admin.projects.btn_public")}
-                    </Link>
+                    <Link to={`/projet/${p.id}`} target="_blank" className={stylesProjets.btnPublic}>{t("admin.projects.btn_public")}</Link>
                   </div>
                 </div>
               );

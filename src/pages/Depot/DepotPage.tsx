@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getFreshToken } from "../../service/api";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../components/context/CurrencyContext"; // <--- IMPORT
+import { useCurrency } from "../../components/Context/CurrencyContext"; // <--- IMPORT
 import styles from "./DepotPage.module.css";
 
 type DepositMethod = "STRIPE_CARD" | "ORANGE_MONEY" | "WAVE" | "MTN_MOMO";

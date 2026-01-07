@@ -2,6 +2,7 @@
   "welcome": "Welcome to GrowzApp",
   "login": "Login",
   "logout": "Logout",
+  "confirm_logout": "Are you sure you want to log out?",
   "create_project": "Create a project",
   "link_verify_contract": "Verify a contract",
   "admin_space": "Admin Area",
@@ -101,25 +102,27 @@
     "btn_invest": "Invest"
   },
   "project_details": {
-    "loading": "Loading project...",
-    "error_not_found": "Project not found",
-    "no_poster": "No poster available",
-    "sector": "Sector",
-    "location": "Location",
-    "country": "Country",
-    "roi_projected": "Projected ROI",
-    "collected": "raised",
-    "goal": "goal",
-    "reached": "reached",
-    "description_title": "Project Description",
-    "documents": {
-      "title": "Project Documents",
-      "empty": "No documents available at the moment",
-      "error_download": "Unable to download document"
-    },
-    "invest_title": "Invest in this project",
-    "toast_invest_success": "Investment recorded!"
-  },
+  "equity_to_raise": "Equity to raise",
+  "loading": "Loading project...",
+  "error_not_found": "Project not found",
+  "no_poster": "No poster available",
+  "sector": "Sector",
+  "location": "Location",
+  "country": "Country",
+  "roi_projected": "Projected ROI",
+  "collected": "raised",
+  "goal": "goal",
+  "reached": "reached",
+  "description_title": "Project Description",
+  "documents_title": "Project Documents",
+  "no_documents": "No documents have been published for this project.",
+  "docs_restricted_title": "Documents reserved for investors",
+  "docs_restricted_hint": "You must invest in this project to access technical, financial, and legal documents.",
+  "invest_title": "Invest in this project",
+  "invest_in_title": "Invest in",
+  "back_to_details": "Back to project details",
+  "toast_invest_success": "Investment recorded!"
+},
   "project_form": {
     "title": "Submit a new project",
     "photo": {
@@ -310,6 +313,8 @@
   },
   "admin": {
     "dashboard": {
+      "kyc_pending": "Pending KYC",
+      "kyc_validation": "KYC Validation",
       "contracts": "Generated Contracts",
       "title": "Admin Dashboard",
       "users": "Registered Users",
@@ -387,6 +392,7 @@
       "sent": "Contract {{number}} sent"
     },
     "projects": {
+      "project_config": "Project Settings",
       "title": "Project Administration ({{count}})",
       "no_poster": "No poster",
       "by": "By",
@@ -399,6 +405,58 @@
       "btn_wallet": "Project Wallet",
       "btn_public": "View Project (Public)",
       "confirm_delete": "Permanently delete project \"{{name}}\"? This action is irreversible."
+    },
+      "settings": {
+        "analytics": "Global Analytics",
+      "performance_analysis": "Performance Analysis",
+      "total_invested": "Total Volume Invested",
+      "active_projects": "Active Projects",
+      "global_goal": "Global Goal Reached",
+      "investment_evolution": "Validated Investment Flow",
+      "sector_distribution": "Projects by Sector",
+      "geographic_coverage": "Geographic Coverage",
+      "real_time": "Real-time",
+      "loading_stats": "Analyzing financial flows...",
+      "btn_export_pdf": "Download Financial Report",
+      "analytics_title": "Growzapp Analytical Report",
+        "stats_projects": "{{count}} projects",
+      "stats_localities": "{{count}} localities",
+      "presence_countries": "Present in {{count}} countries",
+      "col_projects": "Associated Projects",
+      "no_projects": "No projects",
+      "title": "Project Configuration",
+      "sectors": "Sectors",
+      "localities": "Cities / Localities",
+      "sites": "Project Sites",
+      "load_error": "Error loading data",
+      "save_error": "Error during saving",
+      "required_fields": "Please fill in all required fields",
+      "name_required": "Name is required",
+      "confirm_delete": "Do you want to delete this item?",
+      "confirm_delete_site": "Do you want to delete this physical site?",
+      "delete_success": "Successfully deleted",
+      "delete_error_linked": "Action impossible: this item is linked to existing projects",
+      "sector_success": "Sector successfully added",
+      "locality_success": "City successfully added",
+      "site_success": "Site successfully registered",
+      "add_site_title": "Add a physical project site",
+      "site_name_placeholder": "Site name (e.g. Alpha Farm)",
+      "choose_city": "Choose city",
+      "label_manager": "Manager",
+      "label_contact": "Contact",
+      "label_address": "Exact address",
+      "btn_add_site": "Add Site",
+      "btn_add": "Add",
+      "city_placeholder": "City / Locality",
+      "zip_placeholder": "Zip Code",
+      "country_placeholder": "Country",
+      "new_sector_placeholder": "New sector (e.g. AGRO-FOOD)",
+      "col_name": "Name",
+      "col_city": "City",
+      "col_manager": "Manager",
+      "col_actions": "Actions",
+      "col_zip": "Zip",
+      "col_country": "Country"
     },
     "users": {
       "title": "User Management ({{count}})",
@@ -529,7 +587,11 @@
       "transfer_btn": "Send Transfer",
       "loading": "Loading wallet...",
       "not_found": "Wallet not found",
-      "pending_count": "{{count}} pending request(s)"
+      "pending_count": "{{count}} pending request(s)",
+
+      "deposit_btn_card": "Pay by Card",
+      "deposit_btn_mm": "Mobile Money Deposit",
+      "processing_mm": "Mobile Money payment request sent. Please confirm on your phone."
     },
     "history": {
       "title": "Transaction History",
@@ -548,12 +610,14 @@
       "TRANSFER_OUT": "Transfer Sent",
       "TRANSFER_IN": "Transfer Received",
       "PAYOUT_STRIPE": "Bank Payout",
-      "DIVIDENDE": "Dividend"
+      "DIVIDENDE": "Dividend",
+      "INVESTISSEMENT": "Investment"
     },
     "status": {
       "SUCCESS": "Validated",
       "EN_ATTENTE_VALIDATION": "Pending Admin",
-      "REJETEE": "Rejected"
+      "REJETEE": "Rejected",
+      "FAILED": "Failed"
     }
   },
   "deposit": {
@@ -746,5 +810,25 @@
     "toast_empty": "Enter a contract number",
     "toast_success": "Contract is authentic!",
     "toast_error": "Contract not found or invalid"
+  },
+  "kyc": {
+    "pending_action_hint": "Please verify your identity to unlock all withdrawal and investment features.",
+    "title": "Identity Verification",
+    "label_birthdate": "Date of Birth",
+    "label_address": "Current Residential Address",
+    "placeholder_address": "Street, City, Zip Code...",
+    "upload_hint": "Click to upload your ID or Passport (JPG, PNG, PDF)",
+    "btn_submit": "Submit for Verification",
+    "success_message": "Documents sent! Our teams will review them.",
+    "error_message": "Error sending documents.",
+    "pending_verification": "Your file is under review. Please check back later.",
+    "verified": "Your identity is verified!",
+    "status_rejected": "File rejected",
+    "no_reason_provided": "No reason provided",
+    "retry_button": "Resubmit documents",
+     "status_locked": "Restricted access (KYC required)",
+    "investment_blocked_title": "Action Required",
+    "error_investment_blocked": "KYC verification required to invest"
   }
+
 }
