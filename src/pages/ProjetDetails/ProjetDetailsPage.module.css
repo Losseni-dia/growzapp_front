@@ -201,7 +201,169 @@
   border: 2px dashed #1B5E20;
 }
 
+/* ... Tes styles précédents ... */
+
+.sectionTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid #FFC107;
+  padding-bottom: 0.5rem;
+}
+
+.sectionTitleRow h2 {
+  margin: 0;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.lockedBadge {
+  background: #FFF3E0;
+  color: #E65100;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #FFE0B2;
+}
+
+/* === STYLE DOCUMENTS VERROUILLÉS === */
+.lockedDocs {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.lockIconLarge {
+  color: #64748b;
+  background: white;
+  padding: 15px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.lockedText h3 {
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.lockedText p {
+  color: #64748b;
+  margin: 0;
+  max-width: 450px;
+  line-height: 1.5;
+}
+
+/* Ajustement ROI Badge pour être relatif au header */
+.header {
+  position: relative;
+  /* Crucial pour le positionnement du ROI Badge */
+}
+
+
+.minimalHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-top: 2rem;
+}
+
+.minimalHeader h1 {
+  color: #1B5E20;
+  font-size: 2.2rem;
+  margin-top: 1rem;
+}
+
+.backToDetails {
+  color: #666;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.backToDetails:hover {
+  color: #1B5E20;
+  text-decoration: underline;
+}
+
+/* On centre le formulaire en mode investir */
+.container:has(.minimalHeader) .investSection {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+
+/* --- MODE CHECKOUT (INVESTIR UNIQUEMENT) --- */
+.checkoutHeader {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: white;
+  border-radius: 20px;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1B5E20;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  transition: 0.3s;
+}
+
+.backBtn:hover {
+  transform: translateX(-5px);
+}
+
+.checkoutTitle {
+  font-size: 2.2rem;
+  color: #333;
+}
+
+.checkoutTitle span {
+  color: #1B5E20;
+  font-weight: 900;
+}
+
+.priceRecall {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.priceRecall strong {
+  color: #1B5E20;
+  background: #E8F5E9;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.checkoutFormWrapper {
+  max-width: 650px;
+  margin: 0 auto 4rem auto;
+}
+
+/* ... Reste de tes styles existants ... */
+
 @media (max-width: 768px) {
+
+    .checkoutTitle {
+        font-size: 1.6rem;
+      }
   .header {
     grid-template-columns: 1fr;
   }

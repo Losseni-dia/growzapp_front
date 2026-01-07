@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./LoginForm.module.css";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../Context/AuthContext";
 import toast from "react-hot-toast";
 import { UserDTO } from "../../types/user";
 import { api } from "../../service/api";

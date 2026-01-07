@@ -1,12 +1,15 @@
-// src/App.tsx → VERSION CORRIGÉE 2025
+import { useEffect } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Crisp } from "crisp-sdk-web";
 
-import { Routes, Route, Navigate } from "react-router-dom";
+// === COMPONENTS ===
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import GrowzToaster from "./components/ui/Toaster";
+import CrispUserHandler from "./components/Crips-ChatBox/CrispUserHandler";
 
-// === IMPORT DU PROVIDER DE MONNAIE ===
-import { CurrencyProvider } from "./components/context/CurrencyContext";
+// === PROVIDERS ===
+import { CurrencyProvider } from "./components/Context/CurrencyContext";
 
 // Pages publiques
 import HomePage from "./pages/HomePage/HomePage";
@@ -29,6 +32,7 @@ import WithdrawSuccessPage from "./pages/Retrait/Success/SuccessPage";
 import MesInvestissementsPage from "./pages/MonEspace/Mes-investissements/MesInvestissementsPage";
 import MesProjetsPage from "./pages/MonEspace/Mes-projets/MesProjetsPage";
 import MesDividendesPage from "./pages/MonEspace/Mes-dividendes/MesDividendes";
+import ProfileUpdateForm from "./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm";
 
 // Pages Admin
 import DashboardAdmin from "./pages/Admin/AdminDashboard";
@@ -39,22 +43,47 @@ import EditProjetPage from "./pages/Admin/Projets/EditProjet/EditProjetsPage";
 import UsersAdminPage from "./pages/Admin/Users/AdminUsersPage";
 import ProjectWalletDetailPage from "./pages/Admin/WalletsProjets/WalletProjetDetails/WalletProjetDetails";
 import ProjectWalletsAdminPage from "./pages/Admin/WalletsProjets/WalletsProjetsAdminPage";
-import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
-import ContratPage from "./pages/Contrat/ContratsPage/ContratPage";
-import VerifierContrat from "./pages/VerifierContrat/VerifierContrat";
 import ProjetAdminDetail from "./pages/Admin/Projets/ProjetDetails/ProjetAdminDetail";
 import AdminProjetsList from "./pages/Admin/Projets/AdminProjetsList";
+
+// Documents & Contrats
+import ContratPage from "./pages/Contrat/ContratsPage/ContratPage";
+import VerifierContrat from "./pages/VerifierContrat/VerifierContrat";
 import ContratViewer from "./pages/Contrat/ContratView/ContratView";
 
 // Guards
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
-import ProfileUpdateForm from "./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm";
+import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
+import KYCUploadForm from "./components/kyc/KycUploadForm";
+import { KycAdminPanel } from "./pages/Admin/Kyc/KycAdminPanel";
+import ProjectSettingsPanel from "./pages/Admin/Projets/ProjectSettings/ProjectsSettingsPanel";
+
+// Pages Légales
+import CGV from "./pages/LegalPages/CGV";
+import RGPD from "./pages/LegalPages/RGPD";
+import CGU from "./pages/LegalPages/CGU";
+import MentionsLegales from "./pages/LegalPages/MentionsLegales";
 
 function App() {
+  const location = useLocation();
+
+useEffect(() => {
+    // 1. Initialisation simple (Le français sera automatique car c'est la seule langue restant)
+    Crisp.configure("5437aabc-9202-40af-9d91-9901c5bb0271");
+
+    // 2. Gestion de la visibilité sur les pages Admin
+    if (location.pathname.startsWith("/admin")) {
+      Crisp.chat.hide();
+    } else {
+      Crisp.chat.show();
+    }
+  }, [location]);
+
   return (
-    /* LE PROVIDER DOIT ENVELOPPER LE HEADER ET LES ROUTES */
     <CurrencyProvider>
       <Header />
+      {/* Gère l'identification du nom et de l'email de l'investisseur */}
+      <CrispUserHandler /> 
       <GrowzToaster />
 
       <main style={{ minHeight: "80vh" }}>
@@ -67,12 +96,19 @@ function App() {
           <Route path="/projet/:id" element={<ProjetDetailsPage />} />
           <Route path="/verifier-contrat" element={<VerifierContrat />} />
           <Route path="/verifier-contrat/:code" element={<VerifierContrat />} />
+          
+          {/* Routes Légales */}
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/cgu" element={<CGU />} />
+          <Route path="/rgpd" element={<RGPD />} />
+          <Route path="/cgv" element={<CGV />} />
 
           {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/mon-espace" element={<Dashboard />} />
             <Route path="/profile/edit" element={<ProfileUpdateForm />} />
+            <Route path="/profile/kyc" element={<KYCUploadForm />} />
             <Route path="/dividendes" element={<DividendesPage />} />
             <Route path="/projet/creer" element={<ProjectForm />} />
             <Route path="/projet/edit/:id" element={<ProjectForm />} />
@@ -83,10 +119,7 @@ function App() {
             <Route path="/depot/cancel" element={<DepositCancel />} />
             <Route path="/retrait/success" element={<WithdrawSuccessPage />} />
             <Route path="/retrait/cancel" element={<WithdrawCancelPage />} />
-            <Route
-              path="/mes-investissements"
-              element={<MesInvestissementsPage />}
-            />
+            <Route path="/mes-investissements" element={<MesInvestissementsPage />} />
             <Route path="/mes-projets" element={<MesProjetsPage />} />
             <Route path="/mes-dividendes" element={<MesDividendesPage />} />
             <Route path="/contrat/:numero" element={<ContratPage />} />
@@ -96,38 +129,19 @@ function App() {
           {/* ==================== ROUTES ADMIN ==================== */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
+              <Route path="/admin/settings" element={<ProjectSettingsPanel />} />
               <Route path="/admin" element={<DashboardAdmin />} />
               <Route path="/admin/users" element={<UsersAdminPage />} />
+              <Route path="/admin/kyc" element={<KycAdminPanel />} />
               <Route path="/admin/projets" element={<ProjetsPage />} />
               <Route path="/admin/contrats" element={<ContratsAdmin />} />
-              <Route
-                path="/admin/investissements"
-                element={<InvestissementsAdminPage />}
-              />
-              <Route
-                path="/admin/project-wallets"
-                element={<ProjectWalletsAdminPage />}
-              />
-              <Route
-                path="/admin/project-wallets/:projetId"
-                element={<ProjectWalletDetailPage />}
-              />
-              <Route
-                path="/admin/retraits"
-                element={<AdminWithdrawalsPage />}
-              />
-              <Route
-                path="/admin/projets/edit/:id"
-                element={<EditProjetPage />}
-              />
-              <Route
-                path="/admin/projets/:id"
-                element={<ProjetAdminDetail />}
-              />
-              <Route
-                path="/admin/projets/detail/:id"
-                element={<ProjetAdminDetail />}
-              />
+              <Route path="/admin/investissements" element={<InvestissementsAdminPage />} />
+              <Route path="/admin/project-wallets" element={<ProjectWalletsAdminPage />} />
+              <Route path="/admin/project-wallets/:projetId" element={<ProjectWalletDetailPage />} />
+              <Route path="/admin/retraits" element={<AdminWithdrawalsPage />} />
+              <Route path="/admin/projets/edit/:id" element={<EditProjetPage />} />
+              <Route path="/admin/projets/:id" element={<ProjetAdminDetail />} />
+              <Route path="/admin/projets/detail/:id" element={<ProjetAdminDetail />} />
               <Route path="/admin/projetsList" element={<AdminProjetsList />} />
             </Route>
           </Route>
@@ -137,21 +151,7 @@ function App() {
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
           {/* ==================== 404 ==================== */}
-          <Route
-            path="*"
-            element={
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "100px",
-                  fontSize: "2rem",
-                  color: "#666",
-                }}
-              >
-                404 – Page non trouvée
-              </div>
-            }
-          />
+          <Route path="*" element={<div style={{ textAlign: "center", padding: "100px", fontSize: "2rem", color: "#666" }}>404 – Page non trouvée</div>} />
         </Routes>
       </main>
 

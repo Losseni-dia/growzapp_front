@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";
 import { fr, enUS, es } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/context/CurrencyContext"; // <--- IMPORT
+import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT
 import {
   FiTrendingUp,
   FiCalendar,

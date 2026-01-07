@@ -90,6 +90,7 @@
 .infoGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  /* Garde 2 colonnes, créera 2 lignes pour 4 items */
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -99,6 +100,16 @@
   padding: 0.8rem;
   background: #e8f5e9;
   border-radius: 12px;
+  display: flex;
+  /* Optionnel : pour aligner label et valeur */
+  flex-direction: column;
+  justify-content: center;
+}
+
+.equityValue {
+  color: #1b5e20;
+  font-weight: bold;
+  font-size: 1.1rem;
 }
 
 .highlight {

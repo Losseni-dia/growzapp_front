@@ -1,0 +1,108 @@
+.container {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 2.5rem;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(27, 94, 32, 0.05);
+}
+
+.header {
+    margin-bottom: 3rem;
+    text-align: left;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #1B5E20, #4CAF50);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+    margin-bottom: 2rem;
+}
+
+/* NAVIGATION TABS STYLE WAOOO */
+.tabs {
+    display: flex;
+    gap: 8px;
+    background: #f8fafc;
+    padding: 8px;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    width: fit-content;
+}
+
+.tabs button {
+    background: transparent;
+    border: none;
+    padding: 12px 24px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tabs button svg {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.tabs button:hover {
+    color: #1B5E20;
+    background: rgba(27, 94, 32, 0.04);
+}
+
+.tabs button:hover svg {
+    transform: translateY(-2px);
+}
+
+.activeTab {
+    background: white !important;
+    color: #1B5E20 !important;
+    box-shadow: 0 10px 20px rgba(27, 94, 32, 0.1);
+    transform: translateY(0);
+}
+
+.activeTab svg {
+    color: #4CAF50;
+}
+
+.content {
+    margin-top: 2rem;
+    animation: slideUp 0.5s ease-out;
+}
+
+/* ANIMATIONS */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .tabs {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .tabs button {
+        width: 100%;
+    }
+}

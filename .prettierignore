@@ -1,0 +1,2 @@
+# Ignorer le fichier WalletPage pour éviter le conflit d'espacement HTML dans les tableaux.
+src/pages/Wallet/WalletPage.tsx

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { api, getFreshToken } from "../../../service/api";
-import { useAuth } from "../../../components/context/AuthContext";
+import { useAuth } from "../../../components/Context/AuthContext";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/context/CurrencyContext"; // <--- IMPORT DU CONTEXT
+import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT DU CONTEXT
 import {
   FiDownload,
   FiClock,

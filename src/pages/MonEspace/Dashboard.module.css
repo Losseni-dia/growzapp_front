@@ -212,3 +212,86 @@
   font-size: 1.4rem;
   color: #666;
 }
+
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* BANNIÈRE D'ALERTE KYC */
+.kycAlert {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: #fff9e6;
+  border-left: 6px solid #ffc107;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.kycError {
+  background: #fff5f5;
+  border-left-color: #e74c3c;
+  color: #c53030;
+}
+
+.kycAlertText {
+  flex: 1;
+}
+
+.kycAlertText strong {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  color: #1b5e20;
+}
+
+.kycError .kycAlertText strong {
+  color: #c53030;
+}
+
+.kycAlertBtn {
+  background: #1b5e20;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.kycAlertBtn:hover {
+  background: #000;
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .profileCard {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .avatar {
+    margin: 0 auto;
+  }
+
+  .nameRow {
+    justify-content: center;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .kycAlert {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+

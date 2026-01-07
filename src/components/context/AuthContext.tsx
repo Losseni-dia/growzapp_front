@@ -8,12 +8,14 @@ import {
 } from "react";
 import { UserDTO } from "../../types/user";
 import toast from "react-hot-toast";
+import { api } from "../../service/api"; // Assure-toi que l'import de ton service api est correct
 
-// 1. Définition de l'interface du contexte
+// 1. Définition de l'interface du contexte mise à jour
 export interface AuthContextType {
   user: UserDTO | null;
   login: (token: string, user: UserDTO) => void;
-  updateUserInfo: (user: UserDTO) => void; // Nom harmonisé
+  updateUserInfo: (user: UserDTO) => void;
+  reloadUser: () => Promise<void>; // <-- AJOUTÉ
   logout: () => void;
   loading: boolean;
   isAuthenticated: boolean;
@@ -49,15 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 3. Fonction de Connexion
   const login = (token: string, userData: UserDTO) => {
     const safeUser = { ...userData, enabled: userData.enabled ?? true };
-    // On stocke l'objet complet pour la persistance au rafraîchissement
     localStorage.setItem("user", JSON.stringify({ token, user: safeUser }));
-    // On stocke le token seul pour les intercepteurs API
     localStorage.setItem("access_token", token);
     setUser(safeUser);
-    
   };
 
-  // 4. Fonction de mise à jour du profil (Correctement renommée)
+  // 4. Fonction de mise à jour du profil (locale)
   const updateUserInfo = (userData: UserDTO) => {
     const safeUser = { ...userData, enabled: userData.enabled ?? true };
     const current = localStorage.getItem("user");
@@ -65,7 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (current) {
       try {
         const parsed = JSON.parse(current);
-        // On met à jour l'utilisateur dans le localStorage sans perdre le token
         localStorage.setItem(
           "user",
           JSON.stringify({ ...parsed, user: safeUser })
@@ -74,19 +72,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Erreur mise à jour localStorage", err);
       }
     }
-
     setUser(safeUser);
-    // Note : le toast est optionnel ici car souvent géré par le composant qui appelle
   };
 
-  // 5. Fonction de Déconnexion
+  // 5. AJOUT : Fonction Reload (Appel API pour synchroniser le statut KYC)
+  const reloadUser = async () => {
+    try {
+      // On récupère les données fraîches depuis le serveur
+      const freshUser = await api.get<UserDTO>("/api/auth/me");
+      if (freshUser) {
+        updateUserInfo(freshUser);
+        console.log("Données utilisateur rafraîchies :", freshUser.kycStatus);
+      }
+    } catch (err) {
+      console.error("Erreur lors du rafraîchissement de l'utilisateur", err);
+    }
+  };
+
+  // 6. Fonction de Déconnexion
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("access_token");
     localStorage.removeItem("token");
     setUser(null);
     toast.success("Déconnexion réussie");
-    // Redirection propre
     window.location.href = "/";
   };
 
@@ -96,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         login,
         updateUserInfo,
+        reloadUser, // <-- EXPOSÉ ICI
         logout,
         loading,
         isAuthenticated: !!user,
@@ -106,7 +116,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// 6. Hook personnalisé pour utiliser le contexte
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {

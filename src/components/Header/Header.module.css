@@ -1,4 +1,3 @@
-/* --- LAYOUT PRINCIPAL --- */
 .header {
   position: fixed;
   top: 0;
@@ -15,7 +14,12 @@
   transition: all 0.3s ease;
 }
 
-/* --- LOGO --- */
+.scrolled {
+  padding: 0.5rem 3rem;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
 .logo {
   text-decoration: none;
   display: flex;
@@ -25,16 +29,14 @@
 
 .logo h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 900;
   background: linear-gradient(135deg, #1B5E20, #4CAF50);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -1px;
 }
 
-/* --- NAVIGATION --- */
 .nav {
   display: flex;
   align-items: center;
@@ -51,229 +53,172 @@
   color: #334155;
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.95rem;
-  padding: 0.6rem 1rem;
-  border-radius: 12px;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: 0.2s;
 }
 
-.navLink:hover, .navLink.active {
-  background: rgba(27, 94, 32, 0.08);
+.navLink:hover {
+  background: rgba(27, 94, 32, 0.05);
   color: #1B5E20;
 }
 
-/* --- ESPACE ADMIN --- */
+/* --- ACTIONS DIRECTES DROITE --- */
+.rightSection {
+  margin-left: auto;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.directActionBtn {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 8px 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.directActionBtn:hover {
+  border-color: #1B5E20;
+  color: #1B5E20;
+  background: white;
+}
+
+.directBtnText {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.logoutDirectBtn {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  color: #e53e3e;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  transition: 0.2s;
+}
+
+.logoutDirectBtn:hover {
+  background: #feb2b2;
+  color: white;
+}
+
+/* Re-use of your existing styles */
+.kycUploadLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fff7ed;
+  color: #c2410c;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid #ffedd5;
+}
+
+.monEspaceLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #334155;
+  font-weight: 700;
+  padding-right: 10px;
+}
+
+.userAvatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #4CAF50;
+}
+
+.loginBtn {
+  background: #1B5E20;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Admin Dropdown Styles */
 .adminWrapper {
   position: relative;
 }
 
 .adminBtn {
-  background: linear-gradient(135deg, #2E7D32, #1B5E20);
-  border: none;
+  background: #1B5E20;
   color: white;
-  padding: 0.6rem 1.2rem;
+  border: none;
+  padding: 0.5rem 1rem;
   border-radius: 50px;
-  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.3s ease;
-}
-
-/* --- DROPDOWNS (MENU ADMIN & SETTINGS) --- */
-.adminMenu, 
-.settingsMenu {
-  position: absolute;
-  top: calc(100% + 15px);
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-  border: 1px solid #f0f0f0;
-  padding: 1.2rem;
-  z-index: 1001;
-  animation: slideIn 0.2s ease-out;
+  font-weight: 700;
 }
 
 .adminMenu {
+  position: absolute;
+  top: 120%;
   left: 0;
-  min-width: 220px;
+  background: white;
+  min-width: 200px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+  z-index: 100;
 }
 
 .adminMenu a {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 15px;
+  padding: 10px;
   color: #334155;
   text-decoration: none;
-  font-weight: 500;
   border-radius: 8px;
-  transition: all 0.2s;
 }
-
-.adminMenu a:hover {
-  background: #f8fafc;
-  color: #1B5E20;
-}
-
-/* --- SECTION DROITE (PROFIL + SETTINGS) --- */
-.rightSection {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
-  position: relative;
-}
-
-.monEspaceLink {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #334155;
-  text-decoration: none;
-  font-weight: 700;
-  padding: 0.4rem 0.8rem;
-  border-radius: 50px;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.monEspaceLink:hover {
-  background: rgba(27, 94, 32, 0.05);
-}
-
-.userAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #4CAF50;
-  transition: transform 0.3s ease;
-}
-
-.monEspaceLink:hover .userAvatar {
-  transform: scale(1.1);
-}
-
-.userName {
-  font-size: 0.95rem;
-}
-
-/* --- BOUTON SETTINGS --- */
-.settingsBtn {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.settingsBtn:hover, .settingsBtn.active {
-  background: #1B5E20;
-  color: white;
-  border-color: #1B5E20;
-  transform: rotate(45deg);
-}
-
-.settingsMenu {
-  right: 0;
-  width: 280px;
-}
-
-/* --- CONTENU DU MENU SETTINGS --- */
-.menuSection {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 1rem;
-}
-
-.menuSection:last-child {
-  margin-bottom: 0;
-}
-
-.menuLabel {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  color: #94a3b8;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-}
-
-.languageRow, .currencyRow {
-  display: flex;
-  gap: 8px;
-  background: #f1f5f9;
-  padding: 6px;
-  border-radius: 12px;
-}
-
-.flagBtn, .currencyBtn {
-  flex: 1;
-  border: none;
-  background: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.flagBtn { opacity: 0.5; filter: grayscale(100%); }
-.flagBtn.activeFlag, .flagBtn:hover { opacity: 1; filter: grayscale(0); background: white; }
-
-.currencyBtn { font-size: 0.85rem; font-weight: 700; color: #64748b; }
-.currencyBtn.activeCurrency { background: white; color: #1B5E20; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
 .divider {
   height: 1px;
-  background: #f1f5f9;
-  margin: 10px 0;
-}
-
-/* Boutons Actions */
-.actionBtn {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 12px;
-  border: none;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-}
-
-.loginBtn { background: #1B5E20; color: white; }
-.logoutBtn { background: #fef2f2; color: #ef4444; }
-.logoutBtn:hover { background: #fee2e2; }
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 1024px) {
-  .header { padding: 0.8rem 1.5rem; }
-  .navLink span { display: none; }
+  background: #eee;
+  margin: 5px 0;
 }
 
 @media (max-width: 768px) {
-  .userName { display: none; }
-  .navLeft { gap: 5px; }
+
+  .userName,
+  .directBtnText,
+  .navLink span,
+  .adminBtn span {
+    display: none;
+  }
+
+  .header {
+    padding: 0.8rem 1rem;
+  }
 }

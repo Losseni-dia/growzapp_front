@@ -1,7 +1,7 @@
 // src/pages/Projets/ProjectForm.tsx
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../components/context/AuthContext";
+import { useAuth } from "../../Context/AuthContext";
 import toast from "react-hot-toast";
 import Cropper from "react-easy-crop";
 import { FiCamera, FiSend } from "react-icons/fi";

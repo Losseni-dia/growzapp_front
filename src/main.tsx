@@ -3,7 +3,7 @@ import React, { Suspense } from "react"; // <--- 1. AJOUT DE SUSPENSE
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./components/context/AuthContext";
+import { AuthProvider } from "./components/Context/AuthContext";
 import GrowzToaster from "./components/ui/Toaster";
 import "./index.css";
 

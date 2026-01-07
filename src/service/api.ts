@@ -1,8 +1,4 @@
-// src/service/api.ts
-
-// === AJOUT 1 : On importe juste i18n pour lire la langue actuelle ===
 import i18n from "../i18n";
-// ===================================================================
 
 const getFreshToken = (): string | null => {
   try {
@@ -69,12 +65,9 @@ const request = async <T = unknown>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  // === AJOUT 2 : C'est la seule modification dans la logique ===
-  // Si i18n est chargé, on ajoute la langue dans l'en-tête
   if (i18n && i18n.language) {
     headers["Accept-Language"] = i18n.language;
   }
-  // ===========================================================
 
   try {
     const response = await fetch(url, {
@@ -86,13 +79,23 @@ const request = async <T = unknown>(
 
     console.log(`API ← ${response.status} ${response.statusText}`, url);
 
+    // ========================================================================
+    // MODIFICATION ICI : Exception pour la vérification de contrat
+    // ========================================================================
     if (response.status === 401) {
-      console.error("401 Unauthorized – Session expirée sur :", url);
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-      throw new Error("Session expirée");
+      const isVerifyRoute = url.includes("/api/contrats/public/verifier-securise");
+
+      if (!isVerifyRoute) {
+        console.error("401 Unauthorized – Session expirée sur :", url);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        throw new Error("Session expirée");
+      }
+      // Si c'est la route de vérification, on ne fait rien ici, 
+      // on laisse la logique d'erreur standard ci-dessous prendre le relais.
     }
+    // ========================================================================
 
     if (!response.ok) {
       let msg = "Erreur serveur";

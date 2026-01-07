@@ -98,3 +98,18 @@ export const TypeTransactionLabel: Record<TypeTransaction, string> = {
   DIVIDENDE: "Dividende"
 };
 
+
+export enum KycStatus {
+  NON_SOUMIS = "NON_SOUMIS",
+  EN_ATTENTE = "EN_ATTENTE",
+  VALIDE = "VALIDE",
+  REJETE = "REJETE"
+}
+
+export enum KycStatusLabel {
+  NON_SOUMIS = "Non vérifié",
+  EN_ATTENTE = "En attente",
+  VALIDE = "Vérifié",
+  REJETE = "Rejeté"
+}
+

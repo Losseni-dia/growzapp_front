@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { ProjetDTO } from "../../../types/projet";
 import styles from "./ProjetCard.module.css";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../context/CurrencyContext"; // Import du nouveau context
+import { useCurrency } from "../../Context/CurrencyContext"; // Import du nouveau context
 
 interface ProjectCardProps {
   projet: ProjetDTO;
@@ -104,6 +104,14 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             </span>
           </div>
 
+          {/*Pourcentage du montant à lever (Equity) */}
+          <div className={styles.infoItem}>
+            <strong>{t("project_details.equity_to_raise")} </strong>
+            <span className={styles.equityValue}>
+              {projet.valeurTotalePartsEnPourcent}%
+            </span>
+          </div>
+
           <div className={styles.infoItem}>
             <strong>{t("project_card.price_per_share")} </strong>
             {/* Utilisation de format(montant, devise_origine) */}
@@ -146,12 +154,15 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           })}
         </p>
 
-        <div className={styles.actions}>
+       <div className={styles.actions}>
+          {/* Bouton VOIR : mène à la page complète */}
           <Link to={`/projet/${projet.id}`} className={styles.btnView}>
             <FiEye /> {t("project_card.btn_view")}
           </Link>
+
+          {/* Bouton INVESTIR : mène au mode Checkout simplifié */}
           <Link
-            to={financementTermine ? "#" : `/projet/${projet.id}#investir`}
+            to={financementTermine ? "#" : `/projet/${projet.id}?action=invest`}
             className={`${styles.btnInvest} ${
               financementTermine ? styles.btnDisabled : ""
             }`}

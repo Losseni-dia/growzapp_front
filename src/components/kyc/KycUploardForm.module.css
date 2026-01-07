@@ -1,0 +1,161 @@
+.kycWrapper {
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.formKyc {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+}
+
+.inputGroup label {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.input,
+.textarea {
+    padding: 0.8rem;
+    border: 2px solid #ecf0f1;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.input:focus,
+.textarea:focus {
+    outline: none;
+    border-color: #27ae60;
+}
+
+.textarea {
+    height: 70px;
+    resize: none;
+}
+
+.photoGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.uploadPlaceholder {
+    width: 100%;
+    height: 120px;
+    border: 2px dashed #27ae60;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f9fdfb;
+    color: #27ae60;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.uploadPlaceholder span {
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.uploadPlaceholder:hover {
+    background: #f0faf4;
+}
+
+.hasImage {
+    border-style: solid;
+}
+
+.uploadPlaceholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.submitBtn {
+    background: #f1c40f;
+    color: #2c3e50;
+    border: none;
+    padding: 1.1rem;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(241, 196, 15, 0.3);
+    transition: all 0.3s;
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: #e2b607;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(241, 196, 15, 0.4);
+}
+
+.statusBox,
+.statusBoxSuccess {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    max-width: 450px;
+}
+
+.iconPending {
+    color: #f1c40f;
+}
+
+.iconSuccess {
+    color: #27ae60;
+}
+
+@media (max-width: 600px) {
+
+    .row,
+    .photoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .formKyc {
+        padding: 1.5rem;
+    }
+}

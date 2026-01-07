@@ -2,6 +2,7 @@
   "welcome": "Bienvenido a GrowzApp",
   "login": "Iniciar sesión",
   "logout": "Cerrar sesión",
+  "confirm_logout": "¿Estás seguro de que quieres cerrar sesión?",
   "create_project": "Crear un proyecto",
   "link_verify_contract": "Verificar contrato",
   "admin_space": "Zona de administración",
@@ -62,6 +63,7 @@
     "success": "¡Registro exitoso! ¡Bienvenido!"
   },
   "projects_page": {
+    "equity_to_raise": "Acciones a captar",
     "loading": "Cargando proyectos...",
     "filters": {
       "title": "Filtros",
@@ -100,26 +102,28 @@
     "btn_view": "Ver",
     "btn_invest": "Invertir"
   },
-  "project_details": {
-    "loading": "Cargando proyecto...",
-    "error_not_found": "Proyecto no encontrado",
-    "no_poster": "Ningún póster disponible",
-    "sector": "Sector",
-    "location": "Ubicación",
-    "country": "País",
-    "roi_projected": "ROI Proyectado",
-    "collected": "recaudados",
-    "goal": "objetivo",
-    "reached": "alcanzado",
-    "description_title": "Descripción del proyecto",
-    "documents": {
-      "title": "Documentos del proyecto",
-      "empty": "No hay documentos disponibles por el momento",
-      "error_download": "Imposible descargar el documento"
-    },
-    "invest_title": "Invertir en este proyecto",
-    "toast_invest_success": "¡Inversión registrada!"
-  },
+ "project_details": {
+  "equity_to_raise": "Acciones a captar",
+  "loading": "Cargando proyecto...",
+  "error_not_found": "Proyecto no encontrado",
+  "no_poster": "Ningún póster disponible",
+  "sector": "Sector",
+  "location": "Ubicación",
+  "country": "País",
+  "roi_projected": "ROI Proyectado",
+  "collected": "recaudados",
+  "goal": "objetivo",
+  "reached": "alcanzado",
+  "description_title": "Descripción del proyecto",
+  "documents_title": "Documentos del proyecto",
+  "no_documents": "No se han publicado documentos para este proyecto.",
+  "docs_restricted_title": "Documentos reservados para inversores",
+  "docs_restricted_hint": "Debe invertir en este proyecto para acceder a los documentos técnicos, financieros y legales.",
+  "invest_title": "Invertir en este proyecto",
+  "invest_in_title": "Invertir en",
+  "back_to_details": "Volver a los detalles del proyecto",
+  "toast_invest_success": "¡Inversión registrada!"
+},
   "project_form": {
     "title": "Enviar un nuevo proyecto",
     "photo": {
@@ -310,6 +314,8 @@
   },
   "admin": {
     "dashboard": {
+      "kyc_pending": "KYC pendiente",
+      "kyc_validation": "Validación KYC",
       "title": "Panel de Administración",
       "users": "Usuarios registrados",
       "projects": "Proyectos publicados",
@@ -387,6 +393,7 @@
       "sent": "Contrato {{number}} enviado"
     },
     "projects": {
+      "project_config": "Configuración Proyectos",
       "title": "Administración de Proyectos ({{count}})",
       "no_poster": "Sin póster",
       "by": "Por",
@@ -399,6 +406,58 @@
       "btn_wallet": "Billetera del proyecto",
       "btn_public": "Ver proyecto (público)",
       "confirm_delete": "¿Eliminar definitivamente el proyecto \"{{name}}\"? Esta acción es irreversible."
+    },
+    "settings": {
+      "analytics": "Análisis Global",
+      "total_invested": "Volumen Total Invertido",
+      "active_projects": "Proyectos Activos",
+      "global_goal": "Meta Global Alcanzada",
+      "investment_evolution": "Flujo de Inversiones Validadas",
+      "sector_distribution": "Proyectos por Sector",
+      "geographic_coverage": "Cobertura Geográfica",
+      "real_time": "Tiempo real",
+      "loading_stats": "Analizando flujos financieros...",
+      "stats_projects": "{{count}} proyectos",
+      "stats_localities": "{{count}} localidades",
+      "presence_countries": "Presente en {{count}} países",
+      "col_projects": "Proyectos asociados",
+      "no_projects": "Ningún proyecto",
+      "title": "Configuración de Proyectos",
+      "sectors": "Sectores",
+      "localities": "Ciudades / Localidades",
+      "sites": "Sitios de Proyectos",
+      "load_error": "Error al cargar los datos",
+      "save_error": "Error al guardar",
+      "required_fields": "Por favor, complete los campos obligatorios",
+      "name_required": "El nombre es obligatorio",
+      "confirm_delete": "¿Desea eliminar este elemento?",
+      "confirm_delete_site": "¿Desea eliminar este sitio físico?",
+      "delete_success": "Eliminado con éxito",
+      "delete_error_linked": "Imposible: este elemento está vinculado a proyectos existentes",
+      "sector_success": "Sector añadido con éxito",
+      "locality_success": "Ciudad añadida con éxito",
+      "site_success": "Sitio registrado con éxito",
+      "add_site_title": "Añadir un sitio de proyecto físico",
+      "site_name_placeholder": "Nombre del sitio (ej. Granja Alfa)",
+      "choose_city": "Elegir ciudad",
+      "label_manager": "Responsable",
+      "label_contact": "Contacto",
+      "label_address": "Dirección exacta",
+      "btn_add_site": "Añadir sitio",
+      "btn_add": "Añadir",
+      "city_placeholder": "Ciudad / Localidad",
+      "zip_placeholder": "Código Postal",
+      "country_placeholder": "País",
+      "new_sector_placeholder": "Nuevo sector (ej. AGROALIMENTARIO)",
+      "col_name": "Nombre",
+      "col_city": "Ciudad",
+      "col_manager": "Responsable",
+      "col_actions": "Acciones",
+      "col_zip": "CP",
+      "col_country": "País",
+      "btn_export_pdf": "Descargar informe financiero",
+      "analytics_title": "Informe Analítico Growzapp",
+      "performance_analysis": "Análisis de Rendimiento"
     },
     "users": {
       "title": "Gestión de usuarios ({{count}})",
@@ -529,7 +588,11 @@
       "transfer_btn": "Enviar transferencia",
       "loading": "Cargando billetera...",
       "not_found": "Billetera no encontrada",
-      "pending_count": "{{count}} solicitud(es) pendiente(s)"
+      "pending_count": "{{count}} solicitud(es) pendiente(s)",
+
+      "deposit_btn_card": "Pagar con Tarjeta",
+      "deposit_btn_mm": "Depósito Dinero Móvil",
+      "processing_mm": "Solicitud de pago Dinero Móvil enviada. Por favor, confirme en su teléfono."
     },
     "history": {
       "title": "Historial de transacciones",
@@ -548,12 +611,14 @@
       "TRANSFER_OUT": "Transferencia enviada",
       "TRANSFER_IN": "Transferencia recibida",
       "PAYOUT_STRIPE": "Retiro bancario",
-      "DIVIDENDE": "Dividendo"
+      "DIVIDENDE": "Dividendo",
+      "INVESTISSEMENT": "Inversión"
     },
     "status": {
       "SUCCESS": "Validado",
       "EN_ATTENTE_VALIDATION": "Pendiente admin",
-      "REJETEE": "Rechazado"
+      "REJETEE": "Rechazado",
+      "FAILED": "Fallido"
     }
   },
   "deposit": {
@@ -746,5 +811,26 @@
     "toast_empty": "Ingrese un número de contrato",
     "toast_success": "¡Contrato auténtico!",
     "toast_error": "Contrato no encontrado o inválido"
+  },
+ 
+  "kyc": {
+    "pending_action_hint": "Por favor, verifica tu identidad para desbloquear todas las funciones de retiro e inversión.",
+    "title": "Verificación de identidad",
+    "label_birthdate": "Fecha de nacimiento",
+    "label_address": "Dirección de residencia actual",
+    "placeholder_address": "Calle, Ciudad, Código postal...",
+    "upload_hint": "Haga clic para subir su DNI o Pasaporte (JPG, PNG, PDF)",
+    "btn_submit": "Enviar para verificación",
+    "success_message": "¡Documentos enviados! Nuestros equipos los revisarán.",
+    "error_message": "Error al enviar los documentos.",
+    "pending_verification": "Su solicitud está en revisión. Vuelva más tarde.",
+    "verified": "¡Su identidad ha sido verificada!",
+    "status_rejected": "Solicitud rechazada",
+    "no_reason_provided": "No se especificó motivo",
+    "retry_button": "Enviar de nuevo",
+    "status_locked": "Acceso restringido (KYC requerido)",
+    "investment_blocked_title": "Acción requerida",
+    "error_investment_blocked": "Se requiere verificación KYC para invertir"
   }
+
 }
