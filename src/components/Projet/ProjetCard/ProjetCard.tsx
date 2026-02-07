@@ -175,3 +175,4 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
     </div>
   );
 }
+
