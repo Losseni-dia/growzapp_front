@@ -15,6 +15,7 @@ import {
   FiGlobe,
   FiDollarSign,
   FiSettings,
+  FiMapPin,
 } from "react-icons/fi";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -71,13 +72,16 @@ export default function Header() {
   if (authLoading) return null;
 
   return (
-   <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
+    <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <Link to="/" className={styles.logo}>
         {/* On remplace le texte h1 par l'image */}
-        <img 
-          src="/logo.svg" 
-          alt="Growzapp" 
-          style={{ height: '40px', width: 'auto' }} /* Ajuste la hauteur selon ton header */
+        <img
+          src="/logo.svg"
+          alt="Growzapp"
+          style={{
+            height: "40px",
+            width: "auto",
+          }} /* Ajuste la hauteur selon ton header */
         />
       </Link>
 
@@ -88,27 +92,67 @@ export default function Header() {
               <Link to="/projet/creer" className={styles.navLink}>
                 <FiPlusCircle /> <span>{t("create_project")}</span>
               </Link>
-              <Link to="/verifier-contrat" className={`${styles.navLink} ${location.pathname.startsWith("/verifier-contrat") ? styles.active : ""}`}>
+              <Link
+                to="/projets/proximite"
+                className={`${styles.navLink} ${styles.proximityLink}`}
+              >
+                <FiMapPin />
+                <span>Autour de moi</span>
+              </Link>
+              <Link
+                to="/verifier-contrat"
+                className={`${styles.navLink} ${location.pathname.startsWith("/verifier-contrat") ? styles.active : ""}`}
+              >
                 <FiSearch /> <span>{t("link_verify_contract")}</span>
               </Link>
 
               {isAdmin && (
                 <div className={styles.adminWrapper} ref={adminRef}>
-                  <button onClick={() => setShowAdminMenu(!showAdminMenu)} className={`${styles.adminBtn} ${showAdminMenu ? styles.active : ""}`}>
-                    <FiShield /> <span>{t("admin_space")}</span> <FiChevronDown />
+                  <button
+                    onClick={() => setShowAdminMenu(!showAdminMenu)}
+                    className={`${styles.adminBtn} ${showAdminMenu ? styles.active : ""}`}
+                  >
+                    <FiShield /> <span>{t("admin_space")}</span>{" "}
+                    <FiChevronDown />
                   </button>
                   {showAdminMenu && (
                     <div className={styles.adminMenu}>
-                      <Link to="/admin" onClick={() => setShowAdminMenu(false)}><FiLayout /> {t("admin.dashboard.title")}</Link>
-                      <Link to="/admin/settings" onClick={() => setShowAdminMenu(false)}>
-                        <FiSettings /> {t("admin.projects.project_config") || "Config Projets"}
+                      <Link to="/admin" onClick={() => setShowAdminMenu(false)}>
+                        <FiLayout /> {t("admin.dashboard.title")}
                       </Link>
-                      <Link to="/admin/kyc" onClick={() => setShowAdminMenu(false)}><FiShield /> Validation KYC</Link>
-                      <Link to="/admin/users" onClick={() => setShowAdminMenu(false)}><FiUser /> Gestion Users</Link>
+                      <Link
+                        to="/admin/settings"
+                        onClick={() => setShowAdminMenu(false)}
+                      >
+                        <FiSettings />{" "}
+                        {t("admin.projects.project_config") || "Config Projets"}
+                      </Link>
+                      <Link
+                        to="/admin/kyc"
+                        onClick={() => setShowAdminMenu(false)}
+                      >
+                        <FiShield /> Validation KYC
+                      </Link>
+                      <Link
+                        to="/admin/users"
+                        onClick={() => setShowAdminMenu(false)}
+                      >
+                        <FiUser /> Gestion Users
+                      </Link>
                       <div className={styles.divider}></div>
-                      <Link to="/admin/projets" onClick={() => setShowAdminMenu(false)}><FiPackage /> Voir Projets</Link>
-                      <Link to="/admin/project-wallets" onClick={() => setShowAdminMenu(false)}>
-                      <FiDollarSign /> {t("admin.wallets.title") || "Wallets Projets"}</Link>
+                      <Link
+                        to="/admin/projets"
+                        onClick={() => setShowAdminMenu(false)}
+                      >
+                        <FiPackage /> Voir Projets
+                      </Link>
+                      <Link
+                        to="/admin/project-wallets"
+                        onClick={() => setShowAdminMenu(false)}
+                      >
+                        <FiDollarSign />{" "}
+                        {t("admin.wallets.title") || "Wallets Projets"}
+                      </Link>
                     </div>
                   )}
                 </div>
@@ -119,25 +163,47 @@ export default function Header() {
 
         <div className={styles.rightSection}>
           <div className={styles.userSection}>
-            
             {/* --- SELECTEURS TOUJOURS VISIBLES (MÊME DÉCONNECTÉ) --- */}
-            <button onClick={toggleCurrency} className={styles.directActionBtn} title="Changer Devise">
-              <FiDollarSign /> <span className={styles.directBtnText}>{currency}</span>
+            <button
+              onClick={toggleCurrency}
+              className={styles.directActionBtn}
+              title="Changer Devise"
+            >
+              <FiDollarSign />{" "}
+              <span className={styles.directBtnText}>{currency}</span>
             </button>
 
-            <button onClick={toggleLanguage} className={styles.directActionBtn} title="Changer Langue">
-              <FiGlobe /> <span className={styles.directBtnText}>{i18n.language.toUpperCase()}</span>
+            <button
+              onClick={toggleLanguage}
+              className={styles.directActionBtn}
+              title="Changer Langue"
+            >
+              <FiGlobe />{" "}
+              <span className={styles.directBtnText}>
+                {i18n.language.toUpperCase()}
+              </span>
             </button>
 
             {/* --- SECTIONS RÉSERVÉES AUX CONNECTÉS --- */}
             {user ? (
               <>
                 <Link to="/mon-espace" className={styles.monEspaceLink}>
-                  <img src={getAvatarUrl(user.image)} alt={user.prenom} className={styles.userAvatar} onError={(e) => (e.currentTarget.src = "/default-avatar.png")} />
+                  <img
+                    src={getAvatarUrl(user.image)}
+                    alt={user.prenom}
+                    className={styles.userAvatar}
+                    onError={(e) =>
+                      (e.currentTarget.src = "/default-avatar.png")
+                    }
+                  />
                   <span className={styles.userName}>{user.prenom}</span>
                 </Link>
 
-                <button onClick={handleLogout} className={styles.logoutDirectBtn} title={t("logout")}>
+                <button
+                  onClick={handleLogout}
+                  className={styles.logoutDirectBtn}
+                  title={t("logout")}
+                >
                   <FiLogOut />
                 </button>
               </>

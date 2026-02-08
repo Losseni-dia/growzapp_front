@@ -14,6 +14,7 @@ import {
   FiDollarSign,
   FiEye,
   FiUsers,
+  FiMapPin,
 } from "react-icons/fi";
 import styles from "./MesProjetsPage.module.css";
 
@@ -106,7 +107,7 @@ export default function MesProjetsPage() {
                           {formatDate(
                             new Date(projet.createdAt),
                             "dd MMM yyyy",
-                            { locale: currentLocale }
+                            { locale: currentLocale },
                           )}
                         </div>
                       </div>
@@ -145,6 +146,18 @@ export default function MesProjetsPage() {
                   <Link to={`/projet/${projet.id}`} className={styles.btnVoir}>
                     <FiEye /> {t("user_projects.card.btn_view")}
                   </Link>
+
+                  {projet.googleMapsLink && (
+                    <a
+                      href={projet.googleMapsLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.btnSite}
+                    >
+                      <FiMapPin />{" "}
+                      {t("user_projects.card.btn_site") || "Localisation"}
+                    </a>
+                  )}
                 </div>
               </div>
             );

@@ -63,6 +63,7 @@ import CGU from "./pages/LegalPages/CGU";
 import MentionsLegales from "./pages/LegalPages/MentionsLegales";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
+import ProjetsProches from "./pages/projet/gps-projetProche/ProjetsProches";
 
 function App() {
   const location = useLocation();
@@ -83,7 +84,7 @@ useEffect(() => {
     <CurrencyProvider>
       <Header />
       {/* Gère l'identification du nom et de l'email de l'investisseur */}
-      <CrispUserHandler /> 
+      <CrispUserHandler />
       <GrowzToaster />
 
       <main style={{ minHeight: "80vh" }}>
@@ -96,7 +97,7 @@ useEffect(() => {
           <Route path="/projet/:id" element={<ProjetDetailsPage />} />
           <Route path="/verifier-contrat" element={<VerifierContrat />} />
           <Route path="/verifier-contrat/:code" element={<VerifierContrat />} />
-          
+
           {/* Routes Légales */}
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/cgu" element={<CGU />} />
@@ -118,29 +119,57 @@ useEffect(() => {
             <Route path="/depot/cancel" element={<DepositCancel />} />
             <Route path="/retrait/success" element={<WithdrawSuccessPage />} />
             <Route path="/retrait/cancel" element={<WithdrawCancelPage />} />
-            <Route path="/mes-investissements" element={<MesInvestissementsPage />} />
+            <Route
+              path="/mes-investissements"
+              element={<MesInvestissementsPage />}
+            />
             <Route path="/mes-projets" element={<MesProjetsPage />} />
             <Route path="/mes-dividendes" element={<MesDividendesPage />} />
             <Route path="/contrat/:numero" element={<ContratPage />} />
             <Route path="/contrat/:numero/viewer" element={<ContratViewer />} />
+            <Route path="/projets/proximite" element={<ProjetsProches />} />
           </Route>
 
           {/* ==================== ROUTES ADMIN ==================== */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminRoute />}>
-              <Route path="/admin/settings" element={<ProjectSettingsPanel />} />
+              <Route
+                path="/admin/settings"
+                element={<ProjectSettingsPanel />}
+              />
               <Route path="/admin" element={<DashboardAdmin />} />
               <Route path="/admin/users" element={<UsersAdminPage />} />
               <Route path="/admin/kyc" element={<KycAdminPanel />} />
               <Route path="/admin/projets" element={<ProjetsPage />} />
               <Route path="/admin/contrats" element={<ContratsAdmin />} />
-              <Route path="/admin/investissements" element={<InvestissementsAdminPage />} />
-              <Route path="/admin/project-wallets" element={<ProjectWalletsAdminPage />} />
-              <Route path="/admin/project-wallets/:projetId" element={<ProjectWalletDetailPage />} />
-              <Route path="/admin/retraits" element={<AdminWithdrawalsPage />} />
-              <Route path="/admin/projets/edit/:id" element={<EditProjetPage />} />
-              <Route path="/admin/projets/:id" element={<ProjetAdminDetail />} />
-              <Route path="/admin/projets/detail/:id" element={<ProjetAdminDetail />} />
+              <Route
+                path="/admin/investissements"
+                element={<InvestissementsAdminPage />}
+              />
+              <Route
+                path="/admin/project-wallets"
+                element={<ProjectWalletsAdminPage />}
+              />
+              <Route
+                path="/admin/project-wallets/:projetId"
+                element={<ProjectWalletDetailPage />}
+              />
+              <Route
+                path="/admin/retraits"
+                element={<AdminWithdrawalsPage />}
+              />
+              <Route
+                path="/admin/projets/edit/:id"
+                element={<EditProjetPage />}
+              />
+              <Route
+                path="/admin/projets/:id"
+                element={<ProjetAdminDetail />}
+              />
+              <Route
+                path="/admin/projets/detail/:id"
+                element={<ProjetAdminDetail />}
+              />
               <Route path="/admin/projetsList" element={<AdminProjetsList />} />
             </Route>
           </Route>
@@ -150,7 +179,21 @@ useEffect(() => {
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
           {/* ==================== 404 ==================== */}
-          <Route path="*" element={<div style={{ textAlign: "center", padding: "100px", fontSize: "2rem", color: "#666" }}>404 – Page non trouvée</div>} />
+          <Route
+            path="*"
+            element={
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "100px",
+                  fontSize: "2rem",
+                  color: "#666",
+                }}
+              >
+                404 – Page non trouvée
+              </div>
+            }
+          />
         </Routes>
       </main>
 

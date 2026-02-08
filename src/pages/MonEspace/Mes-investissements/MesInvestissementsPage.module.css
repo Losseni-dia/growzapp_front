@@ -1,261 +1,213 @@
-/* src/pages/investisseur/MesInvestissementsPage.module.css */
-/* VERSION ULTIME — 3 BOUTONS PARFAITS, JAMAIS DÉBORDANTS, TOUJOURS VISIBLES */
+/* src/pages/MonEspace/Mes-investissements/MesInvestissementsPage.module.css */
 
 .container {
   max-width: 1400px;
   margin: 2rem auto;
   padding: 0 1.5rem;
+  font-family: 'Inter', sans-serif;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .header h1 {
   color: #1b5e20;
-  font-size: 3rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
 }
 
 .header p {
-  color: #555;
-  font-size: 1.4rem;
-  margin-top: 0.5rem;
+  color: #666;
+  font-size: 1.1rem;
 }
 
+/* GRILLE DES CARTES */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
 }
 
 .card {
   background: white;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
-  border: 3px solid #e8f5e9;
-  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-15px);
-  box-shadow: 0 30px 60px rgba(27, 94, 32, 0.25);
-  border-color: #ffc107;
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.15);
 }
 
+/* ZONE IMAGE ET BADGE */
 .poster {
   position: relative;
-  height: 220px;
-  overflow: hidden;
+  height: 200px;
 }
 
-.posterImg {
+.poster img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.card:hover .posterImg {
-  transform: scale(1.1);
 }
 
 .statutBadge {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  padding: 10px 18px;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 0.9rem;
+  top: 12px;
+  right: 12px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
-  gap: 8px;
-  z-index: 10;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* CONTENU DE LA CARTE */
 .content {
-  padding: 2rem;
-  flex-grow: 1;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 
-.projetTitle {
-  margin: 0 0 1.2rem 0;
-  font-size: 1.6rem;
-  color: #1b5e20;
+.content h3 {
+  margin: 0 0 1rem 0;
+  color: #1e293b;
+  font-size: 1.3rem;
   font-weight: 700;
 }
 
 .infoRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
-.infoItem {
+.infoRow div {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-}
-
-.icon {
-  color: #ffc107;
+  gap: 5px;
 }
 
 .montantInvesti {
-  background: #e8f5e9;
-  padding: 1.2rem;
-  border-radius: 14px;
-  text-align: center;
-  font-size: 1.7rem;
-  font-weight: bold;
-  color: #1b5e20;
-  margin: 1.5rem 0;
-}
-
-/* 3 BOUTONS — PARFAITS, ALIGNÉS, JAMAIS DÉBORDANTS */
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin: 1.5rem 0 0.5rem 0;
-  padding: 0 4px;
-}
-
-.btnVoirContrat,
-.btnDownloadContrat,
-.btnVoirProjet,
-.btnDisabled {
-  padding: 12px 8px;
-  border-radius: 14px;
-  font-weight: bold;
-  font-size: 0.92rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  min-height: 56px;
-  text-align: center;
-  word-break: break-word;
-}
-
-/* VOIR LE CONTRAT */
-.btnVoirContrat {
-  background: #1b5e20;
-  color: white;
-}
-
-.btnVoirContrat:hover {
-  background: #2e7d32;
-  transform: translateY(-3px);
-}
-
-/* TÉLÉCHARGER LE CONTRAT */
-.btnDownloadContrat {
-  background: #ffc107;
-  color: #1b5e20;
-}
-
-.btnDownloadContrat:hover {
-  background: #ffb300;
-  transform: translateY(-3px);
-}
-
-/* VOIR LE PROJET */
-.btnVoirProjet {
-  background: #17a2b8;
-  color: white;
-}
-
-.btnVoirProjet:hover {
-  background: #138496;
-  transform: translateY(-3px);
-}
-
-/* BOUTON DÉSACTIVÉ (quand pas de contrat) */
-.btnDisabled {
-  background: #f5f5f5 !important;
-  color: #aaa !important;
-  cursor: not-allowed;
-  border: 2px dashed #ddd;
-}
-
-.pending {
-  text-align: center;
-  padding: 12px;
-  background: #fff3e0;
-  color: #e67e22;
+  background: #f8fafc;
+  padding: 1rem;
   border-radius: 12px;
-  font-weight: 600;
-  margin: 1rem 0;
-}
-
-/* ÉTAT VIDE & LOADING */
-.emptyState, .loading {
   text-align: center;
-  padding: 6rem 2rem;
-  color: #666;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 1.5rem;
 }
 
-.emptyIcon {
-  font-size: 7rem;
-  color: #ddd;
-  margin-bottom: 1rem;
-}
-
-.btnInvestir {
-  display: inline-block;
-  margin-top: 2rem;
-  padding: 1.2rem 3rem;
-  background: #ffc107;
+.montantInvesti strong {
+  display: block;
+  font-size: 1.5rem;
   color: #1b5e20;
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-radius: 14px;
-  text-decoration: none;
 }
 
+/* === ZONE DES ACTIONS (LA BARRE DE BOUTONS) === */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Espace entre les blocs de boutons */
+  margin-top: auto;
+  /* Pousse vers le bas */
+}
+
+/* Groupe Oeil + Download */
 .btnGroup {
   display: flex;
-  gap: 8px;
-  margin-right: auto; /* Pousse le bouton "Voir projet" à droite */
+  gap: 4px;
 }
 
 .btnAction {
-  background-color: #e8f5e9;
-  color: #1b5e20;
-  border: 1px solid #c8e6c9;
-  border-radius: 6px;
-  padding: 8px 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 8px;
+  border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.btnAction:hover {
-  background-color: #1b5e20;
+.btnAction:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #1b5e20;
+}
+
+/* Bouton Voir Projet (Le plus large) */
+.btnVoirProjet {
+  flex-grow: 1;
+  /* Prend l'espace disponible au centre */
+  background: #1b5e20;
   color: white;
-  border-color: #1b5e20;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  transition: background 0.2s;
 }
 
-.btnAction:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.btnVoirProjet:hover {
+  background: #2d6a2f;
+}
+
+/* Bouton GPS (Le bouton jaune) */
+.btnGPS {
+  background: #ffc107;
+  color: #1b5e20;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* Garde sa taille carrée */
+  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+}
+
+.btnGPS:hover {
+  background: #ffb300;
+  transform: scale(1.05);
+}
+
+/* États vides et chargement */
+.loading,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem;
+  color: #64748b;
+}
+
+.btnInvestir {
+  margin-top: 1.5rem;
+  background: #ffc107;
+  color: #1b5e20;
+  padding: 12px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
 }

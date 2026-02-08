@@ -30,6 +30,8 @@ export interface InvestissementDTO {
   dividendesPayes: number;
   dividendesPlanifies: number;
   statutGlobalDividendes: string;
+
+  googleMapsUrl: string; // Ajouté pour le lien Google Maps
 }
 
 export interface InvestissementSummary {

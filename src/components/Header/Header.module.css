@@ -231,3 +231,63 @@
     padding: 0.8rem 1rem;
   }
 }
+
+/* --- STYLE SPÉCIFIQUE POUR LE LIEN GÉO --- */
+
+.proximityLink {
+  color: #1B5E20 !important;
+  /* Force le vert Growzapp */
+  background: rgba(255, 193, 7, 0.15);
+  /* Fond jaune très léger */
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  font-weight: 800 !important;
+  /* Plus gras pour l'importance */
+  position: relative;
+  overflow: hidden;
+}
+
+.proximityLink svg {
+  color: #FFC107;
+  /* Icône en Jaune Growzapp */
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.1));
+}
+
+.proximityLink:hover {
+  background: #FFC107 !important;
+  /* Devient jaune au survol */
+  color: #1B5E20 !important;
+  border-color: #1B5E20;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Animation "Pulse" discrète pour attirer l'investisseur */
+.proximityLink::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #FFC107;
+  border-radius: 50%;
+  top: 8px;
+  right: 8px;
+  box-shadow: 0 0 0 rgba(255, 193, 7, 0.4);
+  animation: pulseGps 2s infinite;
+}
+
+@keyframes pulseGps {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
