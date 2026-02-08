@@ -1,13 +1,19 @@
-import { useEffect, useState, useRef } from "react";
-import { api } from "../../../service/api";
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  BarChart, Bar
-} from "recharts";
-import { FiUsers, FiDollarSign, FiTarget, FiDownload, FiTrendingUp, FiPieChart } from "react-icons/fi";
-import { useTranslation } from "react-i18next";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { FiDollarSign, FiDownload, FiPieChart, FiTarget, FiTrendingUp, FiUsers } from "react-icons/fi";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis, YAxis
+} from "recharts";
+import { api } from "../../../service/api";
 import styles from "./GlobalStats.module.css";
 
 export default function AdminStatsPanel() {
@@ -15,12 +21,37 @@ export default function AdminStatsPanel() {
   const [stats, setStats] = useState<any>(null);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    api.get<any>("api/admin/dashboard-stats")
-      .then(res => setStats(res.data))
-      .catch(err => console.error("Erreur stats:", err));
-  }, []);
-
+useEffect(() => {
+  api
+    .get<any>("api/admin/dashboard-stats")
+    .then((res) => {
+      // Sécurité : on vérifie que res ET res.data existent
+      if (res && res.data) {
+        setStats(res.data);
+      } else {
+        // Si res.data est vide, on initialise avec des valeurs par défaut
+        console.warn("Stats reçues vides, initialisation par défaut");
+        setStats({
+          evolution: [],
+          secteurs: {},
+          totalCollecte: 0,
+          totalObjectif: 0,
+          countUsers: 0,
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Erreur stats:", err);
+      // FORCE l'affichage même en cas d'erreur API (très utile pour Storybook)
+      setStats({
+        totalCollecte: 0,
+        totalObjectif: 0,
+        countUsers: 0,
+        secteurs: {},
+        evolution: [],
+      });
+    });
+}, []);
   // Exportation Ultra-HD (Zéro flou)
   const handleDownloadPDF = async () => {
     if (!dashboardRef.current) return;
