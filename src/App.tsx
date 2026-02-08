@@ -15,8 +15,7 @@ import { CurrencyProvider } from "./components/Context/CurrencyContext";
 import HomePage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import ProjetsPage from "./pages/projet/projetsPage/ProjetsPage";
-import ProjetDetailsPage from "./pages/projetDetails/ProjetDetailsPage";
-import RegisterPage from "./pages/projet/RegisterPage/RegisterPage";
+
 
 // Pages utilisateur connecté
 import Dashboard from "./pages/MonEspace/Dashboard";
@@ -62,6 +61,8 @@ import CGV from "./pages/LegalPages/CGV";
 import RGPD from "./pages/LegalPages/RGPD";
 import CGU from "./pages/LegalPages/CGU";
 import MentionsLegales from "./pages/LegalPages/MentionsLegales";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
 
 function App() {
   const location = useLocation();
