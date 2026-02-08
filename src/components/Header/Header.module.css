@@ -209,6 +209,15 @@
   margin: 5px 0;
 }
 
+.logo img {
+  transition: transform 0.3s ease;
+}
+
+.scrolled .logo img {
+  transform: scale(0.9);
+  /* Le logo rétrécit légèrement au scroll pour gagner de la place */
+}
+
 @media (max-width: 768px) {
 
   .userName,
