@@ -188,7 +188,7 @@ const ContratViewer: React.FC = () => {
           <div className={styles.qrLink}>
             <a
               href={data.lienVerification}
-              target="_blank"
+              target="_self"
               rel="noopener noreferrer"
             >
               {data.lienVerification}
@@ -201,7 +201,7 @@ const ContratViewer: React.FC = () => {
       <div className={styles.actions}>
         <a
           href={data.lienPdf}
-          target="_blank"
+          target="_self"
           rel="noopener noreferrer"
           className={styles.downloadBtn}
         >
