@@ -107,6 +107,8 @@ export default function Header() {
                       <Link to="/admin/users" onClick={() => setShowAdminMenu(false)}><FiUser /> Gestion Users</Link>
                       <div className={styles.divider}></div>
                       <Link to="/admin/projets" onClick={() => setShowAdminMenu(false)}><FiPackage /> Voir Projets</Link>
+                      <Link to="/admin/project-wallets" onClick={() => setShowAdminMenu(false)}>
+                      <FiDollarSign /> {t("admin.wallets.title") || "Wallets Projets"}</Link>
                     </div>
                   )}
                 </div>
