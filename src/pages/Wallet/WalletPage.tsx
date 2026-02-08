@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { format as formatDate } from "date-fns";
+import { enUS, es, fr } from "date-fns/locale";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
-import { api, getFreshToken } from "../../service/api";
-import toast from "react-hot-toast";
-import { format as formatDate } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
-import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../components/Context/CurrencyContext";
+import { api, getFreshToken } from "../../service/api";
 import styles from "./WalletPage.module.css";
 
-import type { WalletDTO } from "../../types/wallet";
 import type { TransactionDTO } from "../../types/transaction";
+import type { WalletDTO } from "../../types/wallet";
 
 interface UserSearchResult {
   id: number;
@@ -123,8 +123,21 @@ export default function WalletPage() {
  // ========================================================
   // HANDLERS (AVEC REDIRECTION PAYDUNYA CORRIGÉE)
   // ========================================================
-  const handleDeposit = async () => {
-    const montant = parseFloat(depositMontant);
+    const handleDeposit = async () => {
+      
+     // 1. Déclarer et calculer 'montant' en premier
+    const montant = parseFloat(depositMontant);
+
+    // 2. Effectuer les validations APRES la déclaration
+    if (isNaN(montant)) {
+        return toast.error(t("deposit.toast.invalid_number")); 
+    }
+
+    // Validation spécifique PayDunya (Mobile Money)
+    if (depositMethod === "MOBILE_MONEY" && montant < 200) {
+        return toast.error("Impossible d'initier un dépôt en dessous de 200 FCFA.");
+    }
+        
     if (isNaN(montant) || montant < 5)
       return toast.error(t("deposit.toast.min_error"));
 

@@ -21,7 +21,6 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage";
 // Pages utilisateur connecté
 import Dashboard from "./pages/MonEspace/Dashboard";
 import ProjectForm from "./components/Projet/ProjetForm/ProjetForm";
-import DividendesPage from "./pages/DividendesPage/DividendesPage";
 import WalletPage from "./pages/Wallet/WalletPage";
 import DepotPage from "./pages/Depot/DepotPage";
 import RetraitPage from "./pages/Retrait/RetraitPage";
@@ -109,7 +108,6 @@ useEffect(() => {
             <Route path="/mon-espace" element={<Dashboard />} />
             <Route path="/profile/edit" element={<ProfileUpdateForm />} />
             <Route path="/profile/kyc" element={<KYCUploadForm />} />
-            <Route path="/dividendes" element={<DividendesPage />} />
             <Route path="/projet/creer" element={<ProjectForm />} />
             <Route path="/projet/edit/:id" element={<ProjectForm />} />
             <Route path="/wallet" element={<WalletPage />} />
