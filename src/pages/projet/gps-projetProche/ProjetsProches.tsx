@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiMapPin, FiNavigation, FiCompass } from "react-icons/fi";
+import { useTranslation } from "react-i18next"; // Import pour les traductions
 import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
 import { api } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
@@ -14,7 +15,7 @@ const getDistance = (
   lon2: number,
 ) => {
   if (!lat1 || !lon1 || !lat2 || !lon2) return "N/A";
-  const R = 6371;
+  const R = 6371; // Rayon de la Terre en km
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
   const a =
@@ -28,55 +29,48 @@ const getDistance = (
 };
 
 const ProjetsProches = () => {
+  const { t } = useTranslation(); // Hook de traduction
   const { coords, error, getLocation } = useUserLocation();
   const [projets, setProjets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
- useEffect(() => {
-   if (coords) {
-     setLoading(true);
+  useEffect(() => {
+    if (coords) {
+      setLoading(true);
+      api
+        .get<ApiResponse<any[]>>(
+          `/api/projets/proche-de-moi?lat=${coords.lat}&lon=${coords.lon}&rayon=100`,
+        )
+        .then((res) => {
+          if (res && res.data) {
+            const sorted = [...res.data].sort((a, b) => {
+              const distA = parseFloat(
+                getDistance(coords!.lat, coords!.lon, a.latitude, a.longitude),
+              );
+              const distB = parseFloat(
+                getDistance(coords!.lat, coords!.lon, b.latitude, b.longitude),
+              );
+              return distA - distB;
+            });
+            setProjets(sorted);
+          }
+        })
+        .catch((err) => {
+          console.error("Erreur API Proximité :", err);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [coords]);
 
-     api
-       .get<ApiResponse<any[]>>(
-         `/api/projets/proche-de-moi?lat=${coords.lat}&lon=${coords.lon}&rayon=100`,
-       )
-       .then((res) => {
-         // Avec ton fetch custom :
-         // res est l'objet ApiResponse { success, message, data }
-         // res.data est le tableau de projets any[]
-
-         if (res && res.data) {
-           const sorted = [...res.data].sort((a, b) => {
-             const distA = parseFloat(
-               getDistance(coords!.lat, coords!.lon, a.latitude, a.longitude),
-             );
-             const distB = parseFloat(
-               getDistance(coords!.lat, coords!.lon, b.latitude, b.longitude),
-             );
-             return distA - distB;
-           });
-           setProjets(sorted);
-         }
-       })
-       .catch((err) => {
-         console.error("Erreur API Proximité :", err);
-       })
-       .finally(() => setLoading(false));
-   }
- }, [coords]);
-
-  // Écran d'activation GPS
+  // Écran d'activation GPS (Empty State)
   if (!coords && !loading) {
     return (
       <div className={styles.emptyState}>
-        <FiCompass className={styles.icon} />
-        <h3>Découvrir les projets autour de vous</h3>
-        <p>
-          Activez votre position pour voir les opportunités d'investissement à
-          proximité.
-        </p>
+        <FiCompass className={styles.iconLarge} />
+        <h3>{t("projets_proches.discover_title")}</h3>
+        <p>{t("projets_proches.discover_text")}</p>
         <button onClick={getLocation} className={styles.btnActivate}>
-          <FiNavigation /> Activer la géolocalisation
+          <FiNavigation /> {t("projets_proches.btn_activate")}
         </button>
         {error && <div className={styles.errorMessage}>⚠️ {error}</div>}
       </div>
@@ -87,15 +81,15 @@ const ProjetsProches = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.sectionTitle}>
-          <FiMapPin /> Projets à proximité
+          <FiMapPin /> {t("projets_proches.title")}
         </h2>
       </div>
 
       <div className={styles.grid}>
         {loading && (
-          <div className={styles.radarContainer}>
+          <div className={styles.loaderContainer}>
             <div className={styles.radar}></div>
-            <p>Scan des opportunités locales...</p>
+            <p>{t("projets_proches.scanning")}</p>
           </div>
         )}
 
@@ -105,7 +99,7 @@ const ProjetsProches = () => {
               <div className={styles.distanceBadge}>
                 <FiNavigation />
                 <span>
-                  À{" "}
+                  {t("projets_proches.distance_prefix")}{" "}
                   {getDistance(
                     coords!.lat,
                     coords!.lon,
@@ -121,11 +115,11 @@ const ProjetsProches = () => {
               {p.googleMapsUrl && (
                 <a
                   href={p.googleMapsUrl}
-                  target="_self"
+                  target="_self" // Ouvre dans la même fenêtre
                   rel="noreferrer"
                   className={styles.gpsButton}
                 >
-                  Itinéraire GPS
+                  <FiNavigation /> {t("projets_proches.gps_label")}
                 </a>
               )}
             </div>
@@ -133,8 +127,8 @@ const ProjetsProches = () => {
       </div>
 
       {!loading && projets.length === 0 && coords && (
-        <p style={{ textAlign: "center", marginTop: "3rem", color: "#64748b" }}>
-          Aucun projet trouvé dans un rayon de 100km.
+        <p className={styles.noProjectsText}>
+          {t("projets_proches.no_projects")}
         </p>
       )}
     </div>

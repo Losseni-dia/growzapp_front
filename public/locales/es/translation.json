@@ -124,6 +124,16 @@
   "back_to_details": "Volver a los detalles del proyecto",
   "toast_invest_success": "¡Inversión registrada!"
 },
+  "projets_proches": {
+    "title": "Proyectos cercanos",
+    "discover_title": "Descubre proyectos a tu autour",
+    "discover_text": "Activa tu ubicación pour ver las oportunidades de inversión cercanas.",
+    "btn_activate": "Activar geolocalización",
+    "scanning": "Escaneando oportunidades locales...",
+    "no_projects": "No se encontraron proyectos en un radio de 100km.",
+    "distance_prefix": "A",
+    "gps_label": "Ruta GPS"
+  },
   "project_form": {
     "title": "Enviar un nuevo proyecto",
     "photo": {

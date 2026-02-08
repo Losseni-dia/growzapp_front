@@ -123,6 +123,16 @@
   "back_to_details": "Back to project details",
   "toast_invest_success": "Investment recorded!"
 },
+  "projets_proches": {
+    "title": "Projects nearby",
+    "discover_title": "Discover projects around you",
+    "discover_text": "Enable your location to see investment opportunities nearby.",
+    "btn_activate": "Enable geolocation",
+    "scanning": "Scanning local opportunities...",
+    "no_projects": "No projects found within 100km.",
+    "distance_prefix": "At",
+    "gps_label": "GPS Directions"
+  },
   "project_form": {
     "title": "Submit a new project",
     "photo": {
