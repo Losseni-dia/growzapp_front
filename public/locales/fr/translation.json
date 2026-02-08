@@ -598,6 +598,9 @@
       "deposit_btn_mm": "Dépôt Mobile Money",
       "processing_mm": "Demande de paiement Mobile Money envoyée. Veuillez confirmer sur votre téléphone."
     },
+    "visual": {
+      "distribution": "Répartition des fonds"
+    },
     "history": {
       "title": "Historique des transactions",
       "empty": "Aucune transaction pour le moment",

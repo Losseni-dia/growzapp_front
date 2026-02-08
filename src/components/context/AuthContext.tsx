@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 2. Récupération de la session au démarrage
+  // 2. Récupération de la session au démarrage (Version Robuste)
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (!stored) {
@@ -37,8 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const data = JSON.parse(stored);
-      if (data?.token && data?.user) {
+
+      // On vérifie si c'est le format imbriqué {user: ...} ou direct {...}
+      if (data?.user) {
         setUser(data.user as UserDTO);
+      } else if (data?.id || data?.email) {
+        // Si l'objet contient un ID ou email, c'est l'utilisateur direct
+        setUser(data as UserDTO);
       }
     } catch (err) {
       console.error("Erreur parsing user storage", err);
@@ -66,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(current);
         localStorage.setItem(
           "user",
-          JSON.stringify({ ...parsed, user: safeUser })
+          JSON.stringify({ ...parsed, user: safeUser }),
         );
       } catch (err) {
         console.error("Erreur mise à jour localStorage", err);

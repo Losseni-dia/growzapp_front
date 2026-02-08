@@ -594,6 +594,9 @@
       "deposit_btn_mm": "Depósito Dinero Móvil",
       "processing_mm": "Solicitud de pago Dinero Móvil enviada. Por favor, confirme en su teléfono."
     },
+    "visual": {
+      "distribution": "Distribución de fondos"
+    },
     "history": {
       "title": "Historial de transacciones",
       "empty": "Aún no hay transacciones",
