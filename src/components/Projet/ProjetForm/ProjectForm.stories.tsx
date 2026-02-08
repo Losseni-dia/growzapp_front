@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import ProjectForm from '../components/Projet/ProjetForm/ProjetForm';
-import { AuthProvider } from '../components/Context/AuthContext';
+import ProjectForm from './ProjetForm';
+import { AuthProvider } from '../../Context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
 
 const meta: Meta<typeof ProjectForm> = {
-  title: 'Growzapp/Entrepreneur/ProjectForm',
+  title: 'Growzapp/Components/ProjectForm',
   component: ProjectForm,
   decorators: [
     (Story) => {

@@ -1,20 +1,19 @@
 // src/pages/ProjetsPage/ProjetsPage.tsx
 
-import { useState, useMemo, useEffect } from "react";
-import ProjectCard from "../../components/Projet/ProjetCard/ProjetCard";
-import styles from "./ProjetsPage.module.css";
-import { api } from "../../service/api";
-import { ProjetDTO } from "../../types/projet";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
-  FiSearch,
-  FiFilter,
   FiChevronLeft,
-  FiChevronRight,
+  FiFilter,
+  FiSearch,
   FiSliders, // <--- NOUVELLE ICÔNE POUR LE BOUTON ROND
-  FiX, // <--- POUR FERMER
+  FiX
 } from "react-icons/fi";
+import ProjectCard from "../../components/Projet/ProjetCard/ProjetCard";
+import { api } from "../../service/api";
+import { ProjetDTO } from "../../types/projet";
+import styles from "./ProjetsPage.module.css";
 
 interface ApiResponse<T> {
   success: boolean;
