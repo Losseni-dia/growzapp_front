@@ -5,7 +5,7 @@ import { CurrencyProvider } from "../Context/CurrencyContext";
 import { BrowserRouter } from "react-router-dom";
 
 const meta: Meta<typeof Header> = {
-  title: "Growzapp/Components/Header",
+  title: "Growzapp/Starters/Header",
   component: Header,
   decorators: [
     (Story) => (
@@ -58,6 +58,7 @@ export const MembreConnecte: StoryObj<typeof Header> = {
     },
   ],
 };
+
 
 // 3. Vue Administrateur
 export const Administrateur: StoryObj<typeof Header> = {

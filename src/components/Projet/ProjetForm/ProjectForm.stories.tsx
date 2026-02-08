@@ -4,7 +4,7 @@ import { AuthProvider } from '../../Context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
 
 const meta: Meta<typeof ProjectForm> = {
-  title: 'Growzapp/Components/ProjectForm',
+  title: 'Growzapp/Projet/ProjectForm',
   component: ProjectForm,
   decorators: [
     (Story) => {

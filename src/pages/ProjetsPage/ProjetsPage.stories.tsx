@@ -5,7 +5,7 @@ import { CurrencyProvider } from '../../components/Context/CurrencyContext';
 import { BrowserRouter } from 'react-router-dom';
 
 const meta: Meta<typeof ProjetsPage> = {
-  title: 'Growzapp/Pages/CatalogueProjets',
+  title: 'Growzapp/Projet/CatalogueProjets',
   component: ProjetsPage,
   decorators: [
     (Story) => {
