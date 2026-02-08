@@ -153,6 +153,17 @@
     },
     "success": "Projet soumis avec succès !"
   },
+  "projets_proches": {
+    "title": "Projets à proximité",
+    "discover_title": "Découvrir les projets autour de vous",
+    "discover_text": "Activez votre position pour voir les opportunités d'investissement à proximité.",
+    "btn_activate": "Activer la géolocalisation",
+    "scanning": "Scan des opportunités locales...",
+    "no_projects": "Aucun projet trouvé dans un rayon de 100km.",
+    "distance_prefix": "À",
+    "gps_label": "Itinéraire GPS"
+  },
+
   "data": {
     "countries": {
       "SENEGAL": "Sénégal",
