@@ -12,7 +12,7 @@ import {
   FiAlertTriangle,
 } from "react-icons/fi";
 import styles from "./InvestForm.module.css";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import { useCurrency } from "../../Context/CurrencyContext";
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { api, getFreshToken } from "../../../service/api";
+import { api, getFreshToken } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
 import toast from "react-hot-toast";
 import { Check, X, ShieldCheck, FileText, Image as ImageIcon, UserCircle, Calendar } from "lucide-react";

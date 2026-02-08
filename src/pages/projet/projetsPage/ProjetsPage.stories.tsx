@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ProjetsPage from './ProjetsPage';
-import { AuthProvider } from '../../components/Context/AuthContext';
-import { CurrencyProvider } from '../../components/Context/CurrencyContext';
+import { AuthProvider } from '../../../components/Context/AuthContext';
+import { CurrencyProvider } from '../../../components/Context/CurrencyContext';
 import { BrowserRouter } from 'react-router-dom';
 
 const meta: Meta<typeof ProjetsPage> = {

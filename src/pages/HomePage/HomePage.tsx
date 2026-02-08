@@ -1,7 +1,7 @@
 // src/pages/HomePage/HomePage.tsx
 // VERSION 100% MINIMALISTE — QUE DES PROJETS, RIEN D'AUTRE
 
-import ProjetsPage from "../ProjetsPage/ProjetsPage";
+import ProjetsPage from "../projet/projetsPage/ProjetsPage";
 import styles from "./HomePage.module.css";
 
 export default function HomePage() {

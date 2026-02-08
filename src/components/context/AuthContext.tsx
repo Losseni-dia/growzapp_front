@@ -8,7 +8,7 @@ import {
 } from "react";
 import { UserDTO } from "../../types/user";
 import toast from "react-hot-toast";
-import { api } from "../../service/api"; // Assure-toi que l'import de ton service api est correct
+import { api } from "../../service/Api"; // Assure-toi que l'import de ton service api est correct
 
 // 1. Définition de l'interface du contexte mise à jour
 export interface AuthContextType {

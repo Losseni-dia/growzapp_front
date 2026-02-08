@@ -1,7 +1,7 @@
 // src/pages/investisseur/MesDividendesPage.tsx
 
 import { useState, useEffect } from "react";
-import { api, getFreshToken } from "../../../service/api";
+import { api, getFreshToken } from "../../../service/Api";
 import { useAuth } from "../../../components/Context/AuthContext";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";

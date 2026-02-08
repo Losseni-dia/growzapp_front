@@ -1,7 +1,7 @@
 // src/pages/MonEspace/Mes-investissements/MesInvestissementsPage.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import { InvestissementDTO } from "../../../types/investissement";
 import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";

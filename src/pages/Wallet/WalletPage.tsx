@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api, getFreshToken } from "../../service/api";
+import { api, getFreshToken } from "../../service/Api";
 import styles from "./WalletPage.module.css";
 
 import type { TransactionDTO } from "../../types/transaction";

@@ -15,7 +15,7 @@ import {
   getCroppedImg,
   dataURLtoFile,
 } from "../../../../types/utils/CropImage";
-import { api } from "../../../../service/api";
+import { api } from "../../../../service/Api";
 
 export default function EditProjetPage() {
   const { id } = useParams<{ id: string }>();

@@ -13,7 +13,7 @@ import {
   Tooltip,
   XAxis, YAxis
 } from "recharts";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import styles from "./GlobalStats.module.css";
 
 export default function AdminStatsPanel() {

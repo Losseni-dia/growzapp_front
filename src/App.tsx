@@ -14,9 +14,9 @@ import { CurrencyProvider } from "./components/Context/CurrencyContext";
 // Pages publiques
 import HomePage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
-import ProjetsPage from "./pages/ProjetsPage/ProjetsPage";
-import ProjetDetailsPage from "./pages/ProjetDetails/ProjetDetailsPage";
-import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import ProjetsPage from "./pages/projet/projetsPage/ProjetsPage";
+import ProjetDetailsPage from "./pages/projetDetails/ProjetDetailsPage";
+import RegisterPage from "./pages/projet/RegisterPage/RegisterPage";
 
 // Pages utilisateur connecté
 import Dashboard from "./pages/MonEspace/Dashboard";

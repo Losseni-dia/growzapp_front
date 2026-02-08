@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../../components/Context/AuthContext";
 
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 
 import { useEffect, useCallback, useState } from "react";
 

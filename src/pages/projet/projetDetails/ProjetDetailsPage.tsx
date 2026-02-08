@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom"; // Ajout de useSearchParams et Link
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 import { ProjetDTO } from "../../types/projet";
 import { DocumentDTO } from "../../types/document";
 import InvestForm from "../../components/Investissement/InvestForm/InvestForm";

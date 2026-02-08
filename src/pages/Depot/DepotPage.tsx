@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { getFreshToken } from "../../service/api";
+import { getFreshToken } from "../../service/Api";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../components/Context/CurrencyContext"; // <--- IMPORT
 import styles from "./DepotPage.module.css";

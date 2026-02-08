@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 
 // Stockage hors React pour garantir la stabilité
 let CACHED_RATES: Record<string, number> = { XOF: 1, EUR: 0.0015, USD: 0.0016 };
