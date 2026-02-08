@@ -285,7 +285,34 @@ export default function WalletPage() {
         <div className={styles.total}>
           {t("wallet.total")} : {format(totalBalance, "XOF")}
         </div>
-      </header>
+          </header>
+          
+          {/* --- AJOUT : VISUALISATION DE RÉPARTITION --- */}
+        <section className={styles.visualSection}>
+        <h3 className={styles.actionTitle}>📊 {t("wallet.visual.distribution")}</h3>
+        <div className={styles.distributionBar}>
+            <div 
+            className={styles.distAvailable} 
+            style={{ width: `${(wallet.soldeDisponible / totalBalance) * 100}%` }}
+            title="Disponible"
+            />
+            <div 
+            className={styles.distBlocked} 
+            style={{ width: `${(wallet.soldeBloque / totalBalance) * 100}%` }}
+            title="Bloqué"
+            />
+            <div 
+            className={styles.distWithdrawable} 
+            style={{ width: `${(wallet.soldeRetirable / totalBalance) * 100}%` }}
+            title="Retirable"
+            />
+        </div>
+        <div className={styles.distLegend}>
+            <span><span className={styles.dotAvailable}></span> {t("wallet.balance.available")}</span>
+            <span><span className={styles.dotBlocked}></span> {t("wallet.balance.blocked")}</span>
+            <span><span className={styles.dotWithdrawable}></span> {t("wallet.balance.withdrawable")}</span>
+        </div>
+        </section>
 
       <div className={styles.actionsGrid}>
         {/* DÉPÔT (CARTE / MOBILE MONEY) */}

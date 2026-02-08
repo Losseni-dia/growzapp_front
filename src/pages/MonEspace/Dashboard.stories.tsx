@@ -1,58 +1,63 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import Dashboard from './Dashboard';
-import { AuthProvider } from '../../components/Context/AuthContext';
-import { CurrencyProvider } from '../../components/Context/CurrencyContext';
-import { BrowserRouter } from 'react-router-dom';
+// src/pages/Dashboard/Dashboard.stories.tsx
+import type { Meta, StoryObj } from "@storybook/react";
+import Dashboard from "./Dashboard";
+import { AuthProvider } from "../../components/Context/AuthContext";
+import { CurrencyProvider } from "../../components/Context/CurrencyContext";
+import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta<typeof Dashboard> = {
-  title: 'Growzapp/Pages/Dashboard',
+  title: "Growzapp/Pages/Dashboard",
   component: Dashboard,
   decorators: [
     (Story) => {
-      // Simulation du localStorage pour AuthContext
-      localStorage.setItem("user", JSON.stringify({ 
-        id: 1, 
-        nom: "Kouassi", 
-        prenom: "Jean", 
-        email: "jean.kouassi@email.com",
-        kycStatus: "REJETE", // On simule un rejet pour voir la bannière d'alerte
-        kycCommentaireRejet: "Photo de la pièce d'identité floue.",
-        image: null,
+      // 1. ON FORCE LES DONNÉES DANS LE STORAGE
+      const fakeUser = {
+        id: 1,
+        prenom: "Losseni",
+        nom: "Dia",
+        email: "losseni@growzapp.com",
+        kycStatus: "VALIDE", // Change en "REJETE" pour tester l'alerte
         roles: ["INVESTISSEUR", "PORTEUR_PROJET"],
-        localite: { nom: "Abidjan", paysNom: "Côte d'Ivoire" }
-      }));
+        image: null,
+        localite: { nom: "Abidjan", paysNom: "Côte d'Ivoire" },
+      };
 
-      // Mock de tous les appels API du Dashboard
+      localStorage.setItem("user", JSON.stringify(fakeUser));
+      localStorage.setItem("access_token", "fake-token-123");
+
+      // 2. MOCK FETCH POUR TOUTES LES ROUTES DU DASHBOARD
       window.fetch = (url: any) => {
-        const urlStr = url.toString();
-        
-        if (urlStr.includes('/api/wallets/solde')) {
-          return Promise.resolve(new Response(JSON.stringify({ soldeDisponible: 750000 }), { status: 200 }));
-        }
-        if (urlStr.includes('/api/investissements/mes-investissements')) {
-          return Promise.resolve(new Response(JSON.stringify({ data: new Array(5).fill({}) }), { status: 200 }));
-        }
-        if (urlStr.includes('/api/projets/mes-projets')) {
-          return Promise.resolve(new Response(JSON.stringify({ data: new Array(2).fill({ montantCollecte: 12000000 }) }), { status: 200 }));
-        }
-        if (urlStr.includes('/api/dividendes/mes-dividendes')) {
-          return Promise.resolve(new Response(JSON.stringify({ data: [{ statutDividende: "PAYE", montantTotal: 45000 }] }), { status: 200 }));
-        }
-        return Promise.resolve(new Response(JSON.stringify({ XOF: 1, EUR: 0.0015 }), { status: 200 }));
+        const path = url.toString();
+        let data = {};
+
+        if (path.includes("/wallets/solde"))
+          data = { soldeDisponible: 1500000 };
+        if (path.includes("/investissements")) data = { data: [{}, {}, {}] };
+        if (path.includes("/projets"))
+          data = { data: [{ montantCollecte: 2000000 }] };
+        if (path.includes("/dividendes")) data = { data: [] };
+        if (path.includes("/currencies")) data = { XOF: 1, EUR: 0.0015 };
+
+        return Promise.resolve(
+          new Response(JSON.stringify(data), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
       };
 
       return (
-        <BrowserRouter>
+        <MemoryRouter>
           <AuthProvider>
             <CurrencyProvider>
               <Story />
             </CurrencyProvider>
           </AuthProvider>
-        </BrowserRouter>
+        </MemoryRouter>
       );
     },
   ],
 };
 
 export default meta;
-export const VueComplete: StoryObj<typeof Dashboard> = {};
+export const VueFonctionnelle: StoryObj<typeof Dashboard> = {};

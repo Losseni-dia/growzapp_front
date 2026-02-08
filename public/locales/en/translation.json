@@ -593,6 +593,9 @@
       "deposit_btn_mm": "Mobile Money Deposit",
       "processing_mm": "Mobile Money payment request sent. Please confirm on your phone."
     },
+    "visual": {
+      "distribution": "Funds Distribution"
+    },
     "history": {
       "title": "Transaction History",
       "empty": "No transactions yet",

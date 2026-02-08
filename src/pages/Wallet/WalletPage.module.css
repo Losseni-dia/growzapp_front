@@ -162,3 +162,66 @@
   height: 16px;
 }
 
+.visualSection {
+  background: white;
+  padding: 2rem;
+  border-radius: 1.8rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.distributionBar {
+  display: flex;
+  height: 25px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #edf2f7;
+  margin: 1.5rem 0;
+}
+
+.distAvailable {
+  background: #27ae60;
+  transition: width 0.5s ease;
+}
+
+.distBlocked {
+  background: #e2b607;
+  transition: width 0.5s ease;
+}
+
+.distWithdrawable {
+  background: #3498db;
+  transition: width 0.5s ease;
+}
+
+.distLegend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.dotAvailable,
+.dotBlocked,
+.dotWithdrawable {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.dotAvailable {
+  background: #27ae60;
+}
+
+.dotBlocked {
+  background: #e2b607;
+}
+
+.dotWithdrawable {
+  background: #3498db;
+}
+
