@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../Context/AuthContext";
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 import { toast } from "react-hot-toast";
 import { FiUploadCloud, FiCheckCircle, FiAlertCircle, FiCamera } from "react-icons/fi";
 import styles from "./KycUploardForm.module.css";

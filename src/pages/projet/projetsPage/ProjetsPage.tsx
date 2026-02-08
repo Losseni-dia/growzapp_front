@@ -10,9 +10,9 @@ import {
   FiSliders, // <--- NOUVELLE ICÔNE POUR LE BOUTON ROND
   FiX
 } from "react-icons/fi";
-import ProjectCard from "../../components/Projet/ProjetCard/ProjetCard";
-import { api } from "../../service/api";
-import { ProjetDTO } from "../../types/projet";
+import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
+import { api } from "../../../service/Api";
+import { ProjetDTO } from "../../../types/projet";
 import styles from "./ProjetsPage.module.css";
 
 interface ApiResponse<T> {

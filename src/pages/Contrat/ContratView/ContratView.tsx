@@ -7,7 +7,7 @@ import { fr, enUS, es } from "date-fns/locale";
 import styles from "./ContratView.module.css";
 import { FiCheckCircle, FiDownload, FiShield } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import { useCurrency } from "../../../components/Context/CurrencyContext"; // Vérifie bien le chemin
 import toast from "react-hot-toast";
 

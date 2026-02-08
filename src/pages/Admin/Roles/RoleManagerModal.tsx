@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import toast from "react-hot-toast";
 import styles from "./RoleManagerModal.module.css";
 import { useTranslation } from "react-i18next";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 import toast from "react-hot-toast";
 import { QRCodeSVG } from "qrcode.react";
 import { useTranslation } from "react-i18next";

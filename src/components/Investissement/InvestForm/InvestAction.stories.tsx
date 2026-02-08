@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import ProjetDetailsPage from '../../../pages/ProjetDetails/ProjetDetailsPage';
+import ProjetDetailsPage from '../../../pages/projetDetails/ProjetDetailsPage';
 import { AuthProvider } from '../../Context/AuthContext';
 import { CurrencyProvider } from '../../Context/CurrencyContext';
 

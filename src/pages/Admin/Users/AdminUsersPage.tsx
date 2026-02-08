@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
 import toast from "react-hot-toast";
 import RolesManagerModal from "../../Admin/Roles/RoleManagerModal";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import toast from "react-hot-toast";
 import ContratView from "../../../components/Contrat/ContratView/ContratView";
 import styles from "./ContratPage.module.css";

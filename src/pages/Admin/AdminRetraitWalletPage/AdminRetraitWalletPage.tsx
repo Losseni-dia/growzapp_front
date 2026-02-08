@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { fr, enUS, es } from "date-fns/locale";

@@ -1,8 +1,8 @@
 // src/pages/Auth.stories.tsx
 import type { Meta, StoryObj } from "@storybook/react";
-import LoginPage from "../LoginPage/LoginPage";
+import LoginPage from "../../LoginPage/LoginPage";
 import RegisterPage from "./RegisterPage";
-import { AuthProvider } from "../../components/Context/AuthContext";
+import { AuthProvider } from "../../../components/Context/AuthContext";
 import { MemoryRouter } from "react-router-dom";
 
 const meta: Meta = {

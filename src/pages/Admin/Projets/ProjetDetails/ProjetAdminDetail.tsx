@@ -1,7 +1,7 @@
 // src/pages/Admin/ProjetAdminDetail.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api } from "../../../../service/api";
+import { api } from "../../../../service/Api";
 import DocumentUpload from "../../../../components/DocumentUpload/DocumentUpload";
 import { useAuth } from "../../../../components/Context/AuthContext";
 import toast from "react-hot-toast";

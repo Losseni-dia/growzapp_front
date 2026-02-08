@@ -6,7 +6,7 @@ import styles from "./LoginForm.module.css";
 import { useAuth } from "../Context/AuthContext";
 import toast from "react-hot-toast";
 import { UserDTO } from "../../types/user";
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 
 // 1. IMPORT DE LA TRADUCTION
 import { useTranslation } from "react-i18next";

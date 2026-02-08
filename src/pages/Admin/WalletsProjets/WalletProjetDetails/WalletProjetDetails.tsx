@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { api } from "../../../../service/api";
+import { api } from "../../../../service/Api";
 import styles from "./WalletProjetDetails.module.css";
 import toast from "react-hot-toast";
 import {

@@ -14,7 +14,7 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import styles from "./ContratAdmin.module.css";
-import { api, getFreshToken } from "../../../service/api"; // Import getFreshToken
+import { api, getFreshToken } from "../../../service/Api"; // Import getFreshToken
 
 interface ContratAdmin {
   id: number;

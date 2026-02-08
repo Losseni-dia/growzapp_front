@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import styles from "./WalletsProjetsAdminPage.module.css";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT

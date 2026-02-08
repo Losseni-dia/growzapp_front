@@ -1,7 +1,7 @@
 // src/components/admin/DocumentUpload.tsx
 import { useState, useRef } from "react";
 import toast from "react-hot-toast";
-import { api } from "../../service/api";
+import { api } from "../../service/Api";
 import styles from "./DocumentUpload.module.css";
 import { FiUpload, FiX, FiFileText, FiCheckCircle } from "react-icons/fi";
 

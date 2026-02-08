@@ -13,7 +13,7 @@ import {
   FiTrendingUp,
   FiUser,
 } from "react-icons/fi";
-import { api } from "../../../service/api";
+import { api } from "../../../service/Api";
 import styles from "./InvestissementsAdminPage.module.css";
 
 interface InvestissementAdmin {
