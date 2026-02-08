@@ -23,7 +23,7 @@ const URLWatcher = () => {
 };
 
 const meta: Meta<typeof ProjectCard> = {
-  title: 'Growzapp/Components/ProjectCard',
+  title: 'Growzapp/Projet/ProjectCard',
   component: ProjectCard,
   decorators: [
     (Story) => {

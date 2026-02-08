@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProjetDetailsPage from '../../../pages/ProjetDetails/ProjetDetailsPage';
 import { AuthProvider } from '../../Context/AuthContext';
 import { CurrencyProvider } from '../../Context/CurrencyContext';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
 
 const meta: Meta<typeof ProjetDetailsPage> = {
-  title: 'Growzapp/Actions/InvestClick',
+  title: 'Growzapp/Invest/InvestClick',
   component: ProjetDetailsPage,
   decorators: [
     (Story) => {
