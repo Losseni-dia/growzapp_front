@@ -192,3 +192,56 @@
   font-size: 1.4rem;
   color: #666;
 }
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Les deux boutons côte à côte */
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btnVoir {
+  /* Garde ton style existant, assure-toi juste qu'il prend 100% de sa cellule */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* LE NOUVEAU BOUTON SITE */
+.btnSite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #FFC107;
+  /* Jaune Growzapp */
+  color: #1B5E20;
+  /* Vert Growzapp */
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.btnSite:hover {
+  background: #ffca28;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .actions {
+    grid-template-columns: 1fr;
+    /* L'un sur l'autre sur mobile */
+  }
+}

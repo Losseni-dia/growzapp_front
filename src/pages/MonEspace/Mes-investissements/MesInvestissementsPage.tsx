@@ -16,6 +16,7 @@ import {
   FiDollarSign,
   FiDownload,
   FiEye,
+  FiMapPin,
 } from "react-icons/fi";
 import styles from "./MesInvestissementsPage.module.css";
 
@@ -218,6 +219,19 @@ export default function MesInvestissementsPage() {
                     >
                       {t("user_investments.card.btn_view_project")}
                     </Link>
+
+                    {/* BOUTON GPS (JAUNE) */}
+                    {inv.googleMapsUrl && (
+                      <a
+                        href={inv.googleMapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.btnGPS}
+                        title={t("user_investments.card.view_on_map") || "GPS"}
+                      >
+                        <FiMapPin size={20} />
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>

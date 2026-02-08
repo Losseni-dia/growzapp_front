@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom"; // Ajout de useSearchParams et Link
-import { api } from "../../service/Api";
-import { ProjetDTO } from "../../types/projet";
-import { DocumentDTO } from "../../types/document";
-import InvestForm from "../../components/Investissement/InvestForm/InvestForm";
+import { api } from "../../../service/Api";
+import { ProjetDTO } from "../../../types/projet";
+import { DocumentDTO } from "../../../types/document";
+import InvestForm from "../../../components/Investissement/InvestForm/InvestForm";
 import toast from "react-hot-toast";
 import styles from "./ProjetDetailsPage.module.css";
-import { ApiResponse } from "../../types/common";
-import { useAuth } from "../../components/Context/AuthContext";
+import { ApiResponse } from "../../../types/common";
+import { useAuth } from "../../../components/Context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../components/Context/CurrencyContext";
+import { useCurrency } from "../../../components/Context/CurrencyContext";
 import {
   FiDownload,
   FiFileText,
