@@ -176,6 +176,19 @@
     transform: translateY(-2px);
 }
 
+/* Ajoute ou vérifie ces propriétés dans ton CSS */
+.chartBox,
+.chartBoxBottom {
+    min-height: 300px;
+    /* Force une hauteur pour que ResponsiveContainer ne soit pas à 0 */
+    width: 100%;
+}
+
+.dashboard {
+    display: block;
+    /* Évite certains bugs de calcul de taille Recharts en Flex */
+}
+
 @keyframes pulse {
     0% {
         transform: scale(0.95);

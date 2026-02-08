@@ -1,18 +1,17 @@
 // src/pages/admin/AdminProjetsList.tsx
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { api } from "../../../service/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import styles from "./AdminProjetsList.module.css";
 import { useTranslation } from "react-i18next";
 import {
-  FiEdit,
   FiCheckCircle,
-  FiXCircle,
+  FiEdit,
   FiEye,
   FiTrash2,
+  FiXCircle,
 } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { api } from "../../../service/api";
+import styles from "./AdminProjetsList.module.css";
 
 interface ProjetAdmin {
   id: number;

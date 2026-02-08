@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../../service/api";
-import toast from "react-hot-toast";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { enUS, es, fr } from "date-fns/locale";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
   FiCheckCircle,
   FiClock,
-  FiUser,
   FiMail,
   FiPhone,
   FiSend,
   FiTrendingUp,
+  FiUser,
 } from "react-icons/fi";
+import { api } from "../../../service/api";
 import styles from "./InvestissementsAdminPage.module.css";
 
 interface InvestissementAdmin {
