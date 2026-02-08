@@ -1,15 +1,15 @@
+import { useTranslation } from "react-i18next";
 import {
-  FiEye,
-  FiDollarSign,
-  FiMapPin,
   FiCalendar,
+  FiDollarSign,
+  FiEye,
+  FiMapPin,
   FiTrendingUp,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { ProjetDTO } from "../../../types/projet";
-import styles from "./ProjetCard.module.css";
-import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../Context/CurrencyContext"; // Import du nouveau context
+import styles from "./ProjetCard.module.css";
 
 interface ProjectCardProps {
   projet: ProjetDTO;
@@ -38,13 +38,23 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
 
-  const getBadgeText = () => {
-    if (financementTermine) return t("project_card.status.finished");
-    if (projet.statutProjet === "VALIDE")
-      return t("project_card.status.ongoing");
-    return projet.statutProjet.replace(/_/g, " ");
-  };
+ const getBadgeText = () => {
+  // 1. Priorité au financement terminé
+  if (financementTermine) return t("project_card.status.finished");
 
+  // 2. Sécurité : si le statut n'existe pas du tout dans les données
+  if (!projet?.statutProjet) return "Statut inconnu";
+
+  // 3. Cas spécifique "VALIDE"
+  if (projet.statutProjet === "VALIDE") {
+    return t("project_card.status.ongoing");
+  }
+
+  // 4. Fallback sécurisé : on s'assure que c'est bien une chaîne avant le .replace
+  // L'utilisation de String() ou du check au dessus évite le crash
+  return String(projet.statutProjet).replace(/_/g, " ");
+  };
+  
   const formatDate = (dateStr?: string) =>
     dateStr
       ? new Date(dateStr).toLocaleDateString(i18n.language, {
@@ -53,6 +63,9 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           year: "numeric",
         })
       : "---";
+  
+  const descriptionTexte = projet?.description || "";
+  const descriptionAffichée = descriptionTexte.substring(0, 100)
 
   return (
     <div className={styles.card}>
@@ -92,9 +105,9 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           {translateData("sectors", projet.secteurNom ?? "")}
         </p>
         <p className={styles.description}>
-          {projet.description.substring(0, 100)}
-          {projet.description.length > 100 ? "..." : ""}
-        </p>
+            {descriptionAffichée}
+            {descriptionTexte.length > 100 ? "..." : ""}
+          </p>
 
         <div className={styles.infoGrid}>
           <div className={styles.infoItem}>
