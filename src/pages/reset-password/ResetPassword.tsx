@@ -1,4 +1,3 @@
-// src/pages/Auth/ResetPassword.tsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../service/Api";
@@ -21,7 +20,6 @@ const ResetPassword = () => {
       setStatus({ type: "error", message: "Lien invalide (token manquant)." });
   }, [token]);
 
-  // Calcul de la force du mot de passe (simple)
   const getStrength = () => {
     if (password.length === 0) return 0;
     let s = 0;
@@ -40,13 +38,6 @@ const ResetPassword = () => {
         message: "Les mots de passe diffèrent.",
       });
     }
-    if (password.length < 8) {
-      return setStatus({
-        type: "error",
-        message: "Le mot de passe est trop court (min. 8).",
-      });
-    }
-
     setLoading(true);
     try {
       await api.post("/api/auth/reset-password", { token, password });
@@ -75,18 +66,17 @@ const ResetPassword = () => {
             <Lock size={24} />
           </div>
           <h1>Nouveau mot de passe</h1>
-          <p>Choisissez un mot de passe robuste pour protéger votre compte.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles["reset-form"]}>
-          {/* CHAMP 1 : NOUVEAU MOT DE PASSE */}
+        <form onSubmit={handleSubmit}>
+          {/* CHAMP 2 : CONFIRMATION AVEC OEIL AUSSI */}
           <div className={styles["input-group"]}>
-            <label>Nouveau mot de passe</label>
+            <label>Confirmation du mot de passe</label>
             <div className={styles["password-wrapper"]}>
               <input
                 type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
                 required
               />
@@ -100,7 +90,6 @@ const ResetPassword = () => {
               </button>
             </div>
 
-            {/* BARRE DE FORCE */}
             {password.length > 0 && (
               <div className={styles["strength-meter"]}>
                 <div
@@ -111,9 +100,8 @@ const ResetPassword = () => {
             )}
           </div>
 
-          {/* CHAMP 2 : CONFIRMATION */}
           <div className={styles["input-group"]}>
-            <label>Confirmation du mot de passe</label>
+            <label>Confirmation</label>
             <input
               type={showPassword ? "text" : "password"}
               value={confirmPassword}
@@ -135,13 +123,9 @@ const ResetPassword = () => {
           <button
             type="submit"
             className={styles["btn-submit"]}
-            disabled={loading || !token || strength < 2}
+            disabled={loading || !token}
           >
-            {loading ? (
-              <span className={styles["loader"]}></span>
-            ) : (
-              "Réinitialiser mon mot de passe"
-            )}
+            {loading ? <span className={styles["loader"]}></span> : "Valider"}
           </button>
         </form>
       </div>

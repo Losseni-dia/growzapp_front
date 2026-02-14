@@ -1,5 +1,3 @@
-// src/components/LoginForm/LoginForm.tsx
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./LoginForm.module.css";
@@ -8,10 +6,12 @@ import toast from "react-hot-toast";
 import { UserDTO } from "../../types/user";
 import { api } from "../../service/Api";
 import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react"; // Import des icônes
 
 export default function LoginForm() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { login: authLogin } = useAuth();
@@ -55,6 +55,9 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className={styles.form}>
       <h2>{t("login_page.title")}</h2>
 
+      {/* SOUS-TITRE DANS LA CARTE POUR LE CENTRAGE */}
+      <p className={styles.subtitle}>{t("login_page.subtitle")}</p>
+
       <input
         type="text"
         placeholder={t("login_page.placeholder_login")}
@@ -66,13 +69,21 @@ export default function LoginForm() {
 
       <div className={styles.passwordContainer}>
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder={t("login_page.placeholder_password")}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {/* AJOUT DU LIEN MOT DE PASSE OUBLIÉ */}
+        <button
+          type="button"
+          className={styles.eyeBtn}
+          onClick={() => setShowPassword(!showPassword)}
+          tabIndex={-1}
+        >
+          {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+        </button>
+
         <div className={styles.forgotPasswordWrapper}>
           <Link to="/forgot-password" className={styles.forgotPasswordLink}>
             {t("login_page.forgot_password")}
