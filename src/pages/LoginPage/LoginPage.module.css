@@ -1,74 +1,113 @@
-.page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+/* src/pages/Auth/ResetPassword.module.css */
+.reset-password-page {
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 2rem;
-  color: white;
-}
-
-.container {
-  text-align: center;
-  max-width: 800px;
-  padding: 2rem;
-}
-
-.container h1 {
-  font-size: 3.2rem;
-  font-weight: 800;
-  margin-bottom: 0.8rem;
-  color: white;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.container p {
-  font-size: 1.25rem;
-  margin-bottom: 2.5rem;
-  opacity: 0.95;
-  line-height: 1.6;
-}
-
-/* Bouton qui apparaît souvent sur cette page (ex: "Se connecter" ou "Commencer") */
-.container .btn {
-  display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 1rem 2.2rem;
-  background: #f1c40f;
-  color: #2c3e50;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border: none;
+  min-height: 100vh;
+  background-color: #f4f7f5;
+  font-family: 'Inter', sans-serif;
+}
+
+.reset-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 400px;
+}
+
+.reset-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-placeholder {
+  background: #2e7d32;
+  color: white;
+  width: 50px;
+  height: 50px;
   border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-decoration: none;
-  box-shadow: 0 6px 20px rgba(241,196,15,0.4);
-}
-
-.container .btn:hover {
-  background: #e2b607;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(241,196,15,0.5);
-}
-
-
-.forgotPasswordWrapper {
   display: flex;
-  justify-content: flex-end;
-  margin-top: -10px;
-  /* Pour le coller un peu au champ */
-  margin-bottom: 15px;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto 1rem;
 }
 
-.forgotPasswordLink {
+.reset-header h1 {
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
   font-size: 0.85rem;
-  color: #2e7d32;
-  /* Ton vert Growzapp */
-  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #444;
 }
 
-.forgotPasswordLink:hover {
-  text-decoration: underline;
+.input-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 0.9rem;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.btn-submit:disabled {
+  background: #ccc;
+}
+
+.alert {
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.success {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.error {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.reset-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.reset-footer a {
+  color: #2e7d32;
+  text-decoration: none;
+  font-size: 0.9rem;
 }
