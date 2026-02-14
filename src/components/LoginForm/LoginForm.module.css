@@ -1,26 +1,24 @@
-/* src/components/LoginForm/LoginForm.module.css */
-/* VERSION 100% IDENTIQUE AU REGISTER – BORDURES PARFAITES */
-
 .form {
   max-width: 460px;
   margin: 3rem auto;
   padding: 3rem 2.8rem;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   border: 3px solid #E8F5E9;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* TITRE BLANC SUR FOND VERT */
 .form h2 {
   text-align: center;
   background: #1B5E20;
   color: white !important;
   padding: 1.2rem 2rem;
   border-radius: 16px;
-  margin: -3rem -2.8rem 2.8rem -2.8rem;
+  margin: -3rem -2.8rem 1rem -2.8rem;
   font-size: 2.1rem;
   font-weight: 700;
   box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
@@ -28,37 +26,67 @@
   z-index: 1;
 }
 
-.error {
-  background: #FFEBEE;
-  color: #C62828;
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1.8rem;
+.subtitle {
+  display: block;
   text-align: center;
-  border: 2px solid #FF5252;
-  font-size: 1rem;
+  color: #2e7d32;
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 2.8rem;
 }
 
-/* INPUTS – EXACTEMENT COMME REGISTER */
 input {
   display: block;
   width: 100%;
   padding: 1.1rem 1.2rem;
-  border: 2.5px solid #1B5E20;     /* même épaisseur et couleur */
+  border: 2.5px solid #1B5E20;
   border-radius: 14px;
   font-size: 1.1rem;
   background: white;
   box-sizing: border-box;
-  margin-bottom: 2.4rem;           /* même espacement vertical */
+  margin-bottom: 2.4rem;
 }
 
-input:focus {
-  outline: none;
-  border-color: #27ae60;           /* vert au focus */
-  box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
+.passwordContainer {
+  position: relative;
+  width: 100%;
+  margin-bottom: 2.4rem;
 }
 
-/* BOUTON IDENTIQUE */
+.passwordContainer input {
+  margin-bottom: 0.6rem;
+  padding-right: 55px;
+  /* Espace pour l'oeil */
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 15px;
+  top: 32px;
+  /* Centrage vertical dans l'input large */
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #1B5E20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  z-index: 10;
+}
+
+.forgotPasswordWrapper {
+  text-align: right;
+}
+
+.forgotPasswordLink {
+  color: #1b5e20;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .submitBtn {
   width: 100%;
   padding: 1.3rem;
@@ -76,15 +104,9 @@ input:focus {
 .submitBtn:hover:not(:disabled) {
   background: #FFB300;
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(255,193,7,0.5);
+  box-shadow: 0 12px 30px rgba(255, 193, 7, 0.5);
 }
 
-.submitBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* LIEN S’INSCRIRE */
 .registerLink {
   margin-top: 3rem;
   text-align: center;
@@ -95,10 +117,5 @@ input:focus {
 .registerLink a {
   color: #1b5e20 !important;
   font-weight: 700 !important;
-  font-size: 1.18rem;
   text-decoration: underline;
-}
-
-.registerLink a:hover {
-  color: #FFC107 !important;
 }
