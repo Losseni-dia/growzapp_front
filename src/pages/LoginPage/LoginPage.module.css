@@ -52,3 +52,23 @@
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(241,196,15,0.5);
 }
+
+
+.forgotPasswordWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -10px;
+  /* Pour le coller un peu au champ */
+  margin-bottom: 15px;
+}
+
+.forgotPasswordLink {
+  font-size: 0.85rem;
+  color: #2e7d32;
+  /* Ton vert Growzapp */
+  text-decoration: none;
+}
+
+.forgotPasswordLink:hover {
+  text-decoration: underline;
+}

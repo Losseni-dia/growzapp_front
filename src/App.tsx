@@ -64,6 +64,8 @@ import MentionsLegales from "./pages/LegalPages/MentionsLegales";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
 import ProjetsProches from "./pages/projet/gps-projetProche/ProjetsProches";
+import ResetPassword from "./pages/reset-password/ResetPassword";
+import ForgotPassword from "./components/forgotten-password/ForgottenPassword";
 
 function App() {
   const location = useLocation();
@@ -128,6 +130,11 @@ useEffect(() => {
             <Route path="/contrat/:numero" element={<ContratPage />} />
             <Route path="/contrat/:numero/viewer" element={<ContratViewer />} />
             <Route path="/projets/proximite" element={<ProjetsProches />} />
+            
+            {/* Étape 1 : Demander le reset */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            {/* Étape 2 : Changer le mdp (Lien reçu par email) */}
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
 
           {/* ==================== ROUTES ADMIN ==================== */}
