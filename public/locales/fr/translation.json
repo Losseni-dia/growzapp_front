@@ -18,7 +18,8 @@
     "register_link": "S’inscrire gratuitement",
     "toast_success": "Connecté avec succès !",
     "toast_error_server": "Réponse invalide du serveur",
-    "toast_error_credentials": "Identifiants incorrects"
+    "toast_error_credentials": "Identifiants incorrects",
+    "forgot_password": "Mot de passe oublié ?"
   },
   "register_page": {
     "title": "Créer votre compte GrowzApp",
