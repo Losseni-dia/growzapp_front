@@ -1,0 +1,75 @@
+.formContainer {
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.card {
+    background: white;
+    padding: 2.5rem;
+    border: 3px solid #1B5E20;
+    /* Bordure verte directe pour l'admin */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.inputGroup {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.inputGroup label {
+    font-weight: 700;
+    color: #1B5E20;
+}
+
+.inputGroup input,
+.inputGroup select,
+.inputGroup textarea {
+    padding: 0.8rem;
+    border: 2px solid #E8F5E9;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.inputGroup input:focus {
+    border-color: #1B5E20;
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 1rem;
+    background: #1B5E20;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.submitBtn:hover {
+    background: #FFC107;
+    color: #1B5E20;
+}
+
+.alert.success {
+    color: #2e7d32;
+    background: #e8f5e9;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.alert.error {
+    color: #d32f2f;
+    background: #ffebee;
+    padding: 1rem;
+    border-radius: 10px;
+}
