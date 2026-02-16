@@ -66,6 +66,7 @@ import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
 import ProjetsProches from "./pages/projet/gps-projetProche/ProjetsProches";
 import ResetPassword from "./pages/reset-password/ResetPassword";
 import ForgotPassword from "./pages/reset-password/ForgottenPassword";
+import NewsPage from "./pages/news/NewsPage";
 
 function App() {
   const location = useLocation();
@@ -99,6 +100,7 @@ useEffect(() => {
           <Route path="/projet/:id" element={<ProjetDetailsPage />} />
           <Route path="/verifier-contrat" element={<VerifierContrat />} />
           <Route path="/verifier-contrat/:code" element={<VerifierContrat />} />
+          <Route path="/news" element={<NewsPage />} />
 
           {/* Étape 1 : Demander le reset */}
           <Route path="/forgot-password" element={<ForgotPassword />} />

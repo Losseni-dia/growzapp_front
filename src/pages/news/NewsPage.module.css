@@ -135,3 +135,70 @@
     font-weight: 600;
     font-size: 1.2rem;
 }
+
+/* --- RESPONSIVE DESIGN --- */
+
+/* Tablettes (iPad, etc.) */
+@media (max-width: 1024px) {
+    .container {
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .grid {
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Mobiles (Smartphones) */
+@media (max-width: 768px) {
+    .container {
+        margin: 1.5rem auto;
+    }
+
+    .header {
+        justify-content: center;
+        /* Centre le titre sur mobile */
+        margin-bottom: 2rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        /* Une seule colonne */
+        gap: 2rem;
+    }
+
+    .card {
+        border-radius: 16px;
+        /* Bords légèrement moins arrondis sur petit écran */
+    }
+
+    .imageWrapper {
+        height: 180px;
+        /* Image un peu moins haute */
+    }
+
+    .content {
+        padding: 1.2rem;
+    }
+
+    .content h2 {
+        font-size: 1.2rem;
+    }
+
+    .readMore {
+        width: 100%;
+        /* Le bouton prend toute la largeur sur mobile pour faciliter le clic */
+        text-align: center;
+    }
+}
