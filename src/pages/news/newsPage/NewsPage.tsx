@@ -1,6 +1,6 @@
 import { Link, Newspaper } from "lucide-react";
 import { useEffect, useState } from "react";
-import { News, newsService } from "../../service/newsService";
+import { News, newsService } from "../../../service/newsService";
 import styles from "./NewsPage.module.css";
 
 const NewsPage = () => {

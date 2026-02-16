@@ -66,7 +66,7 @@ import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
 import ProjetsProches from "./pages/projet/gps-projetProche/ProjetsProches";
 import ResetPassword from "./pages/reset-password/ResetPassword";
 import ForgotPassword from "./pages/reset-password/ForgottenPassword";
-import NewsPage from "./pages/news/NewsPage";
+import NewsPage from "./pages/news/newsPage/NewsPage";
 
 function App() {
   const location = useLocation();
