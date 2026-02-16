@@ -1,4 +1,6 @@
-import { Link, Newspaper } from "lucide-react";
+// MODIFIE TES IMPORTS ICI
+import { Link } from "react-router-dom"; // Pour la navigation
+import { Newspaper } from "lucide-react"; // Uniquement pour l'icône
 import { useEffect, useState } from "react";
 import { News, newsService } from "../../../service/newsService";
 import styles from "./NewsPage.module.css";
@@ -13,6 +15,8 @@ const NewsPage = () => {
       .then(setArticles)
       .finally(() => setLoading(false));
   }, []);
+
+  if (loading) return <div className={styles.loader}>Chargement...</div>;
 
   return (
     <div className={styles.container}>
@@ -35,9 +39,14 @@ const NewsPage = () => {
               </span>
               <h2>{article.title}</h2>
               <p>{article.content.substring(0, 120)}...</p>
-              <Link to={`/news/${article.id}`} className={styles.readMore}>
-                Lire la suite
-              </Link>
+
+              {article.id ? (
+                <Link to={`/news/${article.id}`} className={styles.readMore}>
+                  Lire la suite
+                </Link>
+              ) : (
+                <span className={styles.error}>ID manquant</span>
+              )}
             </div>
           </article>
         ))}
