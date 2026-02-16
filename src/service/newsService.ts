@@ -19,6 +19,8 @@ export const newsService = {
   getById: (id: string | number) => 
     api.get<News>(`/news/${id}`),
 
+  create: (data: any) => api.post("/news", data),
+
   // Récupérer le lien du flux RSS
   getRssUrl: () => "/api/news/rss"
 };
