@@ -16,7 +16,6 @@ import HomePage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import ProjetsPage from "./pages/projet/projetsPage/ProjetsPage";
 
-
 // Pages utilisateur connecté
 import Dashboard from "./pages/MonEspace/Dashboard";
 import ProjectForm from "./components/Projet/ProjetForm/ProjetForm";
@@ -68,11 +67,12 @@ import ResetPassword from "./pages/reset-password/ResetPassword";
 import ForgotPassword from "./pages/reset-password/ForgottenPassword";
 import NewsPage from "./pages/news/newsPage/NewsPage";
 import NewsDetail from "./pages/news/newsDetails/NewsDetails";
+import NewsForm from "./pages/news/newsForm/NewsForm";
 
 function App() {
   const location = useLocation();
 
-useEffect(() => {
+  useEffect(() => {
     // 1. Initialisation simple (Le français sera automatique car c'est la seule langue restant)
     Crisp.configure("5437aabc-9202-40af-9d91-9901c5bb0271");
 
@@ -183,6 +183,14 @@ useEffect(() => {
               />
               <Route path="/admin/projetsList" element={<AdminProjetsList />} />
             </Route>
+          </Route>
+
+          {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
+          {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
+          <Route
+            element={<ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />}
+          >
+            <Route path="/admin/news/new" element={<NewsForm />} />
           </Route>
 
           {/* ==================== REDIRECTIONS ==================== */}
