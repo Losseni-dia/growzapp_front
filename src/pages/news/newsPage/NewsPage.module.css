@@ -7,23 +7,56 @@
     font-family: 'Inter', sans-serif;
 }
 
+/* HEADER AJUSTÉ POUR LE BOUTON */
 .header {
+    display: flex;
+    justify-content: space-between;
+    /* Écarte le titre et le bouton */
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    color: #1B5E20;
+}
+
+.titleArea {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 3rem;
-    color: #1B5E20;
-    /* Vert Growzapp Foncé */
 }
 
 .header h1 {
     font-size: 2.2rem;
     font-weight: 800;
+    margin: 0;
 }
 
 .icon {
     color: #FFC107;
     /* Jaune Growzapp */
+}
+
+/* BOUTON ÉCRIRE (Visible pour Admin/Communicant) */
+.adminBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #FFC107;
+    color: #1B5E20;
+    padding: 0.8rem 1.4rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+    white-space: nowrap;
+    /* Évite que le texte passe à la ligne */
+}
+
+.adminBtn:hover {
+    background: #1B5E20;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(27, 94, 32, 0.2);
 }
 
 /* GRILLE D'ACTUALITÉS */
@@ -37,7 +70,6 @@
 .card {
     background: white;
     border: 3px solid #E8F5E9;
-    /* Bordure discrète par défaut */
     border-radius: 20px;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -49,11 +81,9 @@
 .card:hover {
     transform: translateY(-8px);
     border-color: #1B5E20;
-    /* Devient vert foncé au survol */
     box-shadow: 0 15px 40px rgba(27, 94, 32, 0.15);
 }
 
-/* IMAGE DE L'ARTICLE */
 .imageWrapper {
     width: 100%;
     height: 200px;
@@ -72,7 +102,6 @@
     transform: scale(1.05);
 }
 
-/* CONTENU DE LA CARTE */
 .content {
     padding: 1.8rem;
     display: flex;
@@ -107,33 +136,30 @@
     line-height: 1.6;
     margin-bottom: 1.5rem;
     flex-grow: 1;
+    /* Coupe le texte proprement */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-/* BOUTON LIRE LA SUITE */
 .readMore {
     display: inline-block;
-    /* Crucial pour un composant Link */
     background: #1B5E20;
-    /* Vert foncé */
     color: #ffffff !important;
-    /* Force le texte en blanc pour qu'il soit visible */
     padding: 0.8rem 1.5rem;
     border-radius: 12px;
     font-weight: 600;
     text-decoration: none;
-    /* Enlève le soulignement bleu par défaut des liens */
     transition: 0.3s;
     text-align: center;
 }
 
 .readMore:hover {
     background: #FFC107;
-    /* Jaune au survol */
     color: #1B5E20 !important;
-    /* Vert foncé au survol */
 }
 
-/* LOADER */
 .loader {
     text-align: center;
     padding: 5rem;
@@ -142,69 +168,25 @@
     font-size: 1.2rem;
 }
 
-/* --- RESPONSIVE DESIGN --- */
+/* --- RESPONSIVE --- */
 
-/* Tablettes (iPad, etc.) */
-@media (max-width: 1024px) {
-    .container {
-        margin: 2rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .header h1 {
-        font-size: 1.8rem;
-    }
-
-    .grid {
-        gap: 1.5rem;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    }
-}
-
-/* Mobiles (Smartphones) */
 @media (max-width: 768px) {
-    .container {
-        margin: 1.5rem auto;
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
     }
 
-    .header {
+    .adminBtn {
+        width: 100%;
         justify-content: center;
-        /* Centre le titre sur mobile */
-        margin-bottom: 2rem;
     }
 
     .header h1 {
-        font-size: 1.5rem;
-        text-align: center;
+        font-size: 1.6rem;
     }
 
     .grid {
         grid-template-columns: 1fr;
-        /* Une seule colonne */
-        gap: 2rem;
-    }
-
-    .card {
-        border-radius: 16px;
-        /* Bords légèrement moins arrondis sur petit écran */
-    }
-
-    .imageWrapper {
-        height: 180px;
-        /* Image un peu moins haute */
-    }
-
-    .content {
-        padding: 1.2rem;
-    }
-
-    .content h2 {
-        font-size: 1.2rem;
-    }
-
-    .readMore {
-        width: 100%;
-        /* Le bouton prend toute la largeur sur mobile pour faciliter le clic */
-        text-align: center;
     }
 }

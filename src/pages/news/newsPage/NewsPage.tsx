@@ -1,13 +1,19 @@
-// MODIFIE TES IMPORTS ICI
-import { Link } from "react-router-dom"; // Pour la navigation
-import { Newspaper } from "lucide-react"; // Uniquement pour l'icône
+import { Link } from "react-router-dom";
+import { Newspaper, PenLine } from "lucide-react"; // Ajout de l'icône PenLine
 import { useEffect, useState } from "react";
 import { News, newsService } from "../../../service/newsService";
+import { useAuth } from "../../../components/Context/AuthContext"; // Import de ton contexte
 import styles from "./NewsPage.module.css";
 
 const NewsPage = () => {
   const [articles, setArticles] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth(); // Récupération de l'utilisateur
+
+  // Vérification si l'utilisateur peut publier (ADMIN ou COMMUNICANT)
+  const canPublish = user?.roles?.some((role: string) =>
+    ["ADMIN", "COMMUNICANT"].includes(role),
+  );
 
   useEffect(() => {
     newsService
@@ -21,13 +27,24 @@ const NewsPage = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Newspaper size={32} className={styles.icon} />
-        <h1>Actualités & Opportunités</h1>
+        <div className={styles.titleArea}>
+          <Newspaper size={32} className={styles.icon} />
+          <h1>Actualités & Opportunités</h1>
+        </div>
+
+        {/* AFFICHAGE CONDITIONNEL DU BOUTON */}
+        {canPublish && (
+          <Link to="/admin/news/new" className={styles.adminBtn}>
+            <PenLine size={20} />
+            Écrire un article
+          </Link>
+        )}
       </header>
 
       <div className={styles.grid}>
         {articles.map((article) => (
           <article key={article.id} className={styles.card}>
+            {/* ... ton rendu de carte existant ... */}
             {article.imageUrl && (
               <div className={styles.imageWrapper}>
                 <img src={article.imageUrl} alt={article.title} />
@@ -38,15 +55,13 @@ const NewsPage = () => {
                 {article.category.replace("_", " ")}
               </span>
               <h2>{article.title}</h2>
-              <p>{article.content.substring(0, 120)}...</p>
+              <p>
+                {article.content.replace(/<[^>]*>/g, "").substring(0, 120)}...
+              </p>
 
-              {article.id ? (
-                <Link to={`/news/${article.id}`} className={styles.readMore}>
-                  Lire la suite
-                </Link>
-              ) : (
-                <span className={styles.error}>ID manquant</span>
-              )}
+              <Link to={`/news/${article.id}`} className={styles.readMore}>
+                Lire la suite
+              </Link>
             </div>
           </article>
         ))}
