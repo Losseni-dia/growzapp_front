@@ -1,4 +1,4 @@
-import { Newspaper } from "lucide-react";
+import { Link, Newspaper } from "lucide-react";
 import { useEffect, useState } from "react";
 import { News, newsService } from "../../service/newsService";
 import styles from "./NewsPage.module.css";
@@ -35,7 +35,9 @@ const NewsPage = () => {
               </span>
               <h2>{article.title}</h2>
               <p>{article.content.substring(0, 120)}...</p>
-              <button className={styles.readMore}>Lire la suite</button>
+              <Link to={`/news/${article.id}`} className={styles.readMore}>
+                Lire la suite
+              </Link>
             </div>
           </article>
         ))}
