@@ -111,20 +111,26 @@
 
 /* BOUTON LIRE LA SUITE */
 .readMore {
+    display: inline-block;
+    /* Crucial pour un composant Link */
     background: #1B5E20;
-    color: white;
-    border: none;
+    /* Vert foncé */
+    color: #ffffff !important;
+    /* Force le texte en blanc pour qu'il soit visible */
     padding: 0.8rem 1.5rem;
     border-radius: 12px;
     font-weight: 600;
-    cursor: pointer;
+    text-decoration: none;
+    /* Enlève le soulignement bleu par défaut des liens */
     transition: 0.3s;
-    width: fit-content;
+    text-align: center;
 }
 
 .readMore:hover {
     background: #FFC107;
-    color: #1B5E20;
+    /* Jaune au survol */
+    color: #1B5E20 !important;
+    /* Vert foncé au survol */
 }
 
 /* LOADER */
