@@ -11,17 +11,22 @@ export interface News {
 }
 
 export const newsService = {
-  // Récupérer toutes les news (avec filtre optionnel)
   getAll: (category?: string) => 
     api.get<News[]>(category ? `/news?category=${category}` : "/news"),
 
-  // Récupérer un article précis
   getById: (id: string | number) => 
     api.get<News>(`/news/${id}`),
 
   create: (data: any) => api.post("/news", data),
 
-  // Récupérer le lien du flux RSS
+  /**
+   * FIX: Si ton api.post n'accepte pas d'objet config en 3ème paramètre,
+   * utilise directement Axios ou vérifie la signature dans Api.ts.
+   * Généralement, pour le multipart, Axios gère le Content-Type automatiquement.
+   */
+  uploadImage: (formData: FormData) => 
+    api.post<{ url: string }>("/news/upload", formData), 
+
   getRssUrl: () => "/api/news/rss"
 };
 
