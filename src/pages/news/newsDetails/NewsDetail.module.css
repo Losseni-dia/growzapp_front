@@ -1,0 +1,181 @@
+/* src/pages/News/NewsDetail.module.css */
+
+.pageWrapper {
+    background-color: #f9fbf9;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.container {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* BOUTON RETOUR */
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: white;
+    border: 2px solid #E8F5E9;
+    color: #1B5E20;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-bottom: 2rem;
+    width: fit-content;
+}
+
+.backBtn:hover {
+    border-color: #1B5E20;
+    background: #1B5E20;
+    color: white;
+    transform: translateX(-5px);
+}
+
+/* CARTE DE L'ARTICLE */
+.articleCard {
+    background: white;
+    border: 3px solid #E8F5E9;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+    padding: 3rem 3rem 1.5rem;
+}
+
+.badgeRow {
+    margin-bottom: 1rem;
+}
+
+.categoryBadge {
+    background: #FFC107;
+    color: #1B5E20;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.header h1 {
+    font-size: 2.8rem;
+    color: #1B5E20;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+}
+
+.metaData {
+    display: flex;
+    gap: 2rem;
+    color: #666;
+    border-top: 1px solid #eee;
+    padding-top: 1.5rem;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* IMAGE */
+.imageContainer {
+    width: 100%;
+    max-height: 450px;
+    overflow: hidden;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* CORPS DE L'ARTICLE */
+.contentSection {
+    padding: 3rem;
+}
+
+.articleBody {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Styles pour le contenu HTML injecté */
+.articleBody p {
+    margin-bottom: 1.8rem;
+}
+
+.articleBody h2 {
+    color: #1B5E20;
+    font-size: 1.8rem;
+    margin: 2.5rem 0 1.2rem;
+    font-weight: 700;
+}
+
+.articleBody strong {
+    color: #1B5E20;
+}
+
+/* CHARGEMENT & ERREUR */
+.loaderContainer,
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    gap: 1.5rem;
+    color: #1B5E20;
+}
+
+.spinner {
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .header {
+        padding: 2rem 1.5rem 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .contentSection {
+        padding: 1.5rem;
+    }
+
+    .metaData {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .articleBody {
+        font-size: 1.05rem;
+    }
+}
