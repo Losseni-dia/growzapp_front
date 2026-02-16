@@ -1,8 +1,8 @@
+import { CheckCircle2, Eye, EyeOff, Lock } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../service/Api";
 import styles from "./ResetPassword.module.css";
-import { Eye, EyeOff, Lock, CheckCircle2 } from "lucide-react";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -69,14 +69,14 @@ const ResetPassword = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* CHAMP 2 : CONFIRMATION AVEC OEIL AUSSI */}
+          {/* CHAMP 1 : NOUVEAU MOT DE PASSE */}
           <div className={styles["input-group"]}>
-            <label>Confirmation du mot de passe</label>
+            <label>Nouveau mot de passe</label>
             <div className={styles["password-wrapper"]}>
               <input
                 type={showPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
               />
@@ -90,6 +90,7 @@ const ResetPassword = () => {
               </button>
             </div>
 
+            {/* Barre de force liée au mot de passe principal */}
             {password.length > 0 && (
               <div className={styles["strength-meter"]}>
                 <div
@@ -100,15 +101,19 @@ const ResetPassword = () => {
             )}
           </div>
 
+          {/* CHAMP 2 : CONFIRMATION */}
           <div className={styles["input-group"]}>
-            <label>Confirmation</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-            />
+            <label>Confirmation du mot de passe</label>
+            <div className={styles["password-wrapper"]}>
+              <input
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+              />
+              {/* Optionnel: On peut aussi mettre l'oeil ici si tu veux */}
+            </div>
           </div>
 
           {status.message && (
@@ -123,7 +128,7 @@ const ResetPassword = () => {
           <button
             type="submit"
             className={styles["btn-submit"]}
-            disabled={loading || !token}
+            disabled={loading || !token || password !== confirmPassword}
           >
             {loading ? <span className={styles["loader"]}></span> : "Valider"}
           </button>
