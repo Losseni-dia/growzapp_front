@@ -1,5 +1,3 @@
-// src/components/LoginForm/LoginForm.tsx
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./LoginForm.module.css";
@@ -7,25 +5,22 @@ import { useAuth } from "../Context/AuthContext";
 import toast from "react-hot-toast";
 import { UserDTO } from "../../types/user";
 import { api } from "../../service/Api";
-
-// 1. IMPORT DE LA TRADUCTION
 import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react"; // Import des icônes
 
 export default function LoginForm() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
-
-  // 2. RECUPERATION DES OUTILS DE TRADUCTION
   const { t, i18n } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
-
     setLoading(true);
 
     try {
@@ -42,17 +37,14 @@ export default function LoginForm() {
         return;
       }
 
-      // === APPLICATION DE LA LANGUE SAUVEGARDÉE ===
       if (user.interfaceLanguage) {
         i18n.changeLanguage(user.interfaceLanguage);
       }
-      // ============================================
 
       authLogin(token, user as UserDTO);
       toast.success(t("login_page.toast_success"));
       navigate("/");
     } catch (err: any) {
-      // Si le backend envoie un message spécifique, on l'affiche, sinon message traduit par défaut
       toast.error(err.message || t("login_page.toast_error_credentials"));
     } finally {
       setLoading(false);
@@ -61,8 +53,10 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      {/* TITRE TRADUIT */}
       <h2>{t("login_page.title")}</h2>
+
+      {/* SOUS-TITRE DANS LA CARTE POUR LE CENTRAGE */}
+      <p className={styles.subtitle}>{t("login_page.subtitle")}</p>
 
       <input
         type="text"
@@ -73,19 +67,34 @@ export default function LoginForm() {
         autoFocus
       />
 
-      <input
-        type="password"
-        placeholder={t("login_page.placeholder_password")}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+      <div className={styles.passwordContainer}>
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder={t("login_page.placeholder_password")}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <button
+          type="button"
+          className={styles.eyeBtn}
+          onClick={() => setShowPassword(!showPassword)}
+          tabIndex={-1}
+        >
+          {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+        </button>
+
+        <div className={styles.forgotPasswordWrapper}>
+          <Link to="/forgot-password" className={styles.forgotPasswordLink}>
+            {t("login_page.forgot_password")}
+          </Link>
+        </div>
+      </div>
 
       <button type="submit" disabled={loading} className={styles.submitBtn}>
         {loading ? t("login_page.btn_loading") : t("login_page.btn_submit")}
       </button>
 
-      {/* LIEN D'INSCRIPTION (Utilise maintenant la classe CSS .registerLink) */}
       <div className={styles.registerLink}>
         <span>{t("login_page.no_account")} </span>
         <Link to="/register">{t("login_page.register_link")}</Link>
