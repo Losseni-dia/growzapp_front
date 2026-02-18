@@ -36,31 +36,33 @@ const NewsForm = () => {
     ],
   };
 
- const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-   const file = e.target.files?.[0];
-   if (!file) return;
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-   const data = new FormData();
-   data.append("file", file);
+    const data = new FormData();
+    data.append("file", file); // Le nom "file" correspond au @RequestParam du backend Java
 
-   setUploading(true);
-   try {
-     // newsService.uploadImage renvoie déjà directement { url: string }
-     const response = await newsService.uploadImage(data);
+    setUploading(true);
+    setMessage({ type: "", text: "" });
 
-     // CORRECTION : On utilise response.url directement
-     setFormData({ ...formData, imageUrl: response.url });
+    try {
+      // Utilisation du mode isFormData = true défini dans newsService
+      const response = await newsService.uploadImage(data);
 
-     setMessage({ type: "success", text: "Image téléchargée avec succès !" });
-   } catch (err) {
-     setMessage({
-       type: "error",
-       text: "Échec du téléchargement de l'image.",
-     });
-   } finally {
-     setUploading(false);
-   }
- };
+      // On récupère l'URL renvoyée par FileStorageService (ex: /uploads/posters/...)
+      setFormData({ ...formData, imageUrl: response.url });
+      setMessage({ type: "success", text: "Image chargée avec succès !" });
+    } catch (err: any) {
+      console.error("Erreur upload:", err);
+      setMessage({
+        type: "error",
+        text: "Erreur lors de l'upload de l'image.",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +75,7 @@ const NewsForm = () => {
         type: "success",
         text: "L'actualité a été publiée avec succès !",
       });
+      // Réinitialisation après succès
       setFormData({
         title: "",
         content: "",
@@ -80,9 +83,10 @@ const NewsForm = () => {
         category: "PLATFORM_UPDATE",
       });
     } catch (err: any) {
+      console.error("Erreur publication:", err);
       setMessage({
         type: "error",
-        text: "Une erreur est survenue lors de la publication.",
+        text: "Une erreur est survenue lors de la publication de l'article.",
       });
     } finally {
       setLoading(false);
@@ -94,10 +98,11 @@ const NewsForm = () => {
       <div className={styles.card}>
         <header className={styles.formHeader}>
           <h2>Publier une actualité</h2>
-          <p>Diffusez les dernières informations sur la plateforme.</p>
+          <p>Diffusez les dernières informations sur la plateforme Growzapp.</p>
         </header>
 
         <form onSubmit={handleSubmit} className={styles.form}>
+          {/* TITRE */}
           <div className={styles.inputGroup}>
             <label htmlFor="title">Titre de l'article</label>
             <input
@@ -107,11 +112,12 @@ const NewsForm = () => {
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
-              placeholder="Ex: Mise à jour des rendements trimestriels..."
+              placeholder="Ex: Lancement du nouveau projet solaire..."
               required
             />
           </div>
 
+          {/* CATÉGORIE */}
           <div className={styles.inputGroup}>
             <label htmlFor="category">Catégorie</label>
             <select
@@ -129,6 +135,7 @@ const NewsForm = () => {
             </select>
           </div>
 
+          {/* IMAGE (UPLOAD + URL) */}
           <div className={styles.inputGroup}>
             <label>Image d'illustration</label>
             <div className={styles.uploadArea}>
@@ -163,29 +170,31 @@ const NewsForm = () => {
                     disabled={uploading}
                   >
                     {uploading ? (
-                      "Envoi..."
+                      "Traitement en cours..."
                     ) : (
                       <>
-                        <Upload size={20} /> Choisir un fichier local
+                        <Upload size={20} /> Charger une image locale
                       </>
                     )}
                   </button>
                 </div>
               )}
+
               <div className={styles.urlInputWrapper}>
                 <ImageIcon size={18} className={styles.inputIcon} />
                 <input
-                  type="url"
+                  type="text" // Changé de "url" à "text" pour accepter les deux formats (/uploads/ ou http://)
                   value={formData.imageUrl}
                   onChange={(e) =>
                     setFormData({ ...formData, imageUrl: e.target.value })
                   }
-                  placeholder="Ou collez une URL d'image ici..."
+                  placeholder="Collez une URL externe ou utilisez le bouton charger"
                 />
               </div>
             </div>
           </div>
 
+          {/* ÉDITEUR RICHE */}
           <div className={styles.inputGroup}>
             <label>Corps de l'article</label>
             <div className={styles.editorContainer}>
@@ -194,27 +203,29 @@ const NewsForm = () => {
                 value={formData.content}
                 onChange={(content) => setFormData({ ...formData, content })}
                 modules={modules}
-                placeholder="Rédigez votre contenu..."
+                placeholder="Rédigez le contenu détaillé de votre actualité ici..."
               />
             </div>
           </div>
 
+          {/* MESSAGES D'ALERTE */}
           {message.text && (
             <div className={`${styles.alert} ${styles[message.type]}`}>
               <AlertCircle size={18} /> {message.text}
             </div>
           )}
 
+          {/* VALIDATION */}
           <button
             type="submit"
             className={styles.submitBtn}
             disabled={loading || uploading}
           >
             {loading ? (
-              "Publication..."
+              "Publication en cours..."
             ) : (
               <>
-                <Send size={18} /> Publier l'article
+                <Send size={18} /> Publier l'actualité
               </>
             )}
           </button>
