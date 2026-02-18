@@ -70,34 +70,45 @@ export default function ProjetDetailsPage() {
   if (loading) return <p className={styles.loading}>{t("project_details.loading")}</p>;
   if (!projet) return <p className={styles.error}>{t("project_details.error_not_found")}</p>;
 
-  const progress = projet.objectifFinancement > 0
-      ? (projet.montantCollecte / projet.objectifFinancement) * 100
-      : 0;
+ const progress =
+   projet?.objectifFinancement > 0
+     ? (Number(projet.montantCollecte || 0) /
+         Number(projet.objectifFinancement)) *
+       100
+     : 0;
 
   // ==========================================
   // RENDU 1 : MODE INVESTIR (Checkout)
   // ==========================================
-  if (isInvestMode) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.checkoutHeader}>
-          <Link to={`/projet/${id}`} className={styles.backBtn}>
-            <FiArrowLeft /> {t("project_details.back_to_details") || "Retour au projet"}
-          </Link>
-          <h1 className={styles.checkoutTitle}>
-            {t("project_details.invest_in_title") || "Investir dans"} <span>{projet.libelle}</span>
-          </h1>
-          <div className={styles.priceRecall}>
-            {t("project_card.price_per_share")} : <strong>{format(projet.prixUnePart, projet.currencyCode)}</strong>
-          </div>
-        </div>
+ if (isInvestMode) {
+   return (
+     <div className={styles.container}>
+       <div className={styles.checkoutHeader}>
+         <Link to={`/projet/${id}`} className={styles.backBtn}>
+           <FiArrowLeft />{" "}
+           {t("project_details.back_to_details") || "Retour au projet"}
+         </Link>
+         <h1 className={styles.checkoutTitle}>
+           {t("project_details.invest_in_title") || "Investir dans"}{" "}
+           <span>{projet.libelle}</span>
+         </h1>
+         <div className={styles.priceRecall}>
+           {t("project_card.price_per_share")} :{" "}
+           <strong>
+             {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
+           </strong>
+         </div>
+       </div>
 
-        <div className={styles.checkoutFormWrapper}>
-          <InvestForm projet={projet} onSuccess={() => loadProjetAndDocuments()} />
-        </div>
-      </div>
-    );
-  }
+       <div className={styles.checkoutFormWrapper}>
+         <InvestForm
+           projet={projet}
+           onSuccess={() => loadProjetAndDocuments()}
+         />
+       </div>
+     </div>
+   );
+ }
 
   // ==========================================
   // RENDU 2 : MODE COMPLET (Détails)

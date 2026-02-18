@@ -1,21 +1,21 @@
 // src/pages/Admin/Projets/EditProjetPage.tsx
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
+import toast from "react-hot-toast";
 import {
+  FiCheckCircle,
+  FiFileText,
   FiSave,
   FiUpload,
   FiX,
-  FiFileText,
-  FiCheckCircle,
 } from "react-icons/fi";
-import styles from "./EditProjetsPage.module.css";
-import {
-  getCroppedImg,
-  dataURLtoFile,
-} from "../../../../types/utils/CropImage";
+import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../../service/Api";
+import {
+  dataURLtoFile,
+  getCroppedImg,
+} from "../../../../types/utils/CropImage";
+import styles from "./EditProjetsPage.module.css";
 
 export default function EditProjetPage() {
   const { id } = useParams<{ id: string }>();
@@ -54,7 +54,7 @@ export default function EditProjetPage() {
       try {
         const res = await fetch(
           `http://localhost:8080/api/admin/projets/${id}`,
-          { headers }
+          { headers },
         );
         if (!res.ok) throw new Error("Projet non trouvé");
         const data = (await res.json()).data || (await res.json());
@@ -205,6 +205,7 @@ export default function EditProjetPage() {
       prixUnePart: projet.prixUnePart || 0,
       partsDisponible: projet.partsDisponible || 0,
       roiProjete: projet.roiProjete || 0,
+      valeurTotalePartsEnPourcent: projet.valeurTotalePartsEnPourcent || 0,
       statutProjet: projet.statutProjet,
       dateDebut: projet.dateDebut || null,
       dateFin: projet.dateFin || null,
@@ -212,7 +213,7 @@ export default function EditProjetPage() {
 
     formData.append(
       "projet",
-      new Blob([JSON.stringify(updateData)], { type: "application/json" })
+      new Blob([JSON.stringify(updateData)], { type: "application/json" }),
     );
     if (posterFile) formData.append("poster", posterFile);
 
@@ -224,7 +225,7 @@ export default function EditProjetPage() {
           headers: { Authorization: `Bearer ${token}` },
           credentials: "include",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) throw new Error(await response.text());
@@ -426,7 +427,7 @@ export default function EditProjetPage() {
                 objectifFinancement: Number(e.target.value) || 0,
               })
             }
-            placeholder="Objectif de financement (€)"
+            placeholder="Objectif de financement (CFA)"
           />
           <input
             type="number"
@@ -435,7 +436,7 @@ export default function EditProjetPage() {
             onChange={(e) =>
               setProjet({ ...projet, prixUnePart: Number(e.target.value) || 0 })
             }
-            placeholder="Prix d'une part (€)"
+            placeholder="Prix d'une part (CFA)"
           />
           <input
             type="number"
@@ -457,6 +458,26 @@ export default function EditProjetPage() {
             }
             placeholder="ROI projeté (%)"
           />
+          <div className={styles.inputWrapper}>
+            <label className={styles.label}>Parts à lever (%)</label>
+            <div className={styles.percentageInputWrapper}>
+              <input
+                type="number"
+                step="0.01"
+                value={projet.valeurTotalePartsEnPourcent || ""}
+                onChange={(e) =>
+                  setProjet({
+                    ...projet,
+                    valeurTotalePartsEnPourcent: Number(e.target.value) || 0,
+                  })
+                }
+                placeholder="Ex: 20 %"
+                className={styles.percentageInput}
+                
+              />
+             
+            </div>
+          </div>
         </div>
 
         <textarea
