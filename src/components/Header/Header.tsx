@@ -105,6 +105,9 @@ export default function Header() {
               >
                 <FiSearch /> <span>{t("link_verify_contract")}</span>
               </Link>
+              <Link to="/news" className={styles.navLink}>
+                Actualités
+              </Link>
 
               {isAdmin && (
                 <div className={styles.adminWrapper} ref={adminRef}>

@@ -16,7 +16,6 @@ import HomePage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import ProjetsPage from "./pages/projet/projetsPage/ProjetsPage";
 
-
 // Pages utilisateur connecté
 import Dashboard from "./pages/MonEspace/Dashboard";
 import ProjectForm from "./components/Projet/ProjetForm/ProjetForm";
@@ -66,11 +65,15 @@ import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
 import ProjetsProches from "./pages/projet/gps-projetProche/ProjetsProches";
 import ResetPassword from "./pages/reset-password/ResetPassword";
 import ForgotPassword from "./pages/reset-password/ForgottenPassword";
+import NewsPage from "./pages/news/newsPage/NewsPage";
+import NewsDetail from "./pages/news/newsDetails/NewsDetails";
+import NewsForm from "./pages/news/newsForm/NewsForm";
+import NewsEdit from "./pages/news/newsEdit/newsEdit";
 
 function App() {
   const location = useLocation();
 
-useEffect(() => {
+  useEffect(() => {
     // 1. Initialisation simple (Le français sera automatique car c'est la seule langue restant)
     Crisp.configure("5437aabc-9202-40af-9d91-9901c5bb0271");
 
@@ -99,6 +102,8 @@ useEffect(() => {
           <Route path="/projet/:id" element={<ProjetDetailsPage />} />
           <Route path="/verifier-contrat" element={<VerifierContrat />} />
           <Route path="/verifier-contrat/:code" element={<VerifierContrat />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
 
           {/* Étape 1 : Demander le reset */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -179,6 +184,15 @@ useEffect(() => {
               />
               <Route path="/admin/projetsList" element={<AdminProjetsList />} />
             </Route>
+          </Route>
+
+          {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
+          {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
+          <Route
+            element={<ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />}
+          >
+            <Route path="/admin/news/new" element={<NewsForm />} />
+            <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
           </Route>
 
           {/* ==================== REDIRECTIONS ==================== */}
