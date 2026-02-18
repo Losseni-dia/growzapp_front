@@ -3,19 +3,20 @@ import { api } from "../service/Api"; // Importe l'objet exporté
 import { Notification } from "../types/notification"; 
 
 export const notificationService = {
-  // Liste complète
   getAll: async () => {
-    // Avec ton utilitaire fetch personnalisé, le .get() retourne directement le JSON (T)
-    return await api.get<Notification[]>("notifications");
+    // Ton api.get retourne déjà le JSON, on accède à .data qui contient la liste
+    const response = await api.get<any>("notifications");
+    return response.data as Notification[]; 
   },
 
-  // Juste le chiffre pour la bulle rouge
   getUnreadCount: async () => {
-    return await api.get<number>("notifications/unread-count");
+    const response = await api.get<any>("notifications/unread-count");
+    return response.data as number;
   },
 
-  // Marquer comme lu au clic
   markAsRead: async (id: number) => {
     return await api.patch(`notifications/${id}/read`);
   }
 };
+
+export default notificationService; // Export par défaut
