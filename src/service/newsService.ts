@@ -22,6 +22,10 @@ export const newsService = {
   // FIX : On passe 'true' pour activer isFormData dans ton Api.ts
   uploadImage: (formData: FormData) => 
     api.post<{ url: string }>("/news/upload", formData, true), 
+  
+  update: (id: number | string, data: any) => api.put(`/news/${id}`, data),
+  
+  delete: (id: number | string) => api.delete(`/news/${id}`),
 
   getRssUrl: () => "/api/news/rss"
 };
