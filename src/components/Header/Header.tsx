@@ -1,26 +1,28 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
-import styles from "./Header.module.css";
-import {
-  FiPlusCircle,
-  FiUser,
-  FiShield,
-  FiChevronDown,
-  FiSearch,
-  FiLogOut,
-  FiLogIn,
-  FiLayout,
-  FiPackage,
-  FiFileText,
-  FiGlobe,
-  FiDollarSign,
-  FiSettings,
-  FiMapPin,
-} from "react-icons/fi";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../Context/CurrencyContext";
+import {
+  FiChevronDown,
+  FiDollarSign,
+  FiGlobe,
+  FiLayout,
+  FiLogIn,
+  FiLogOut,
+  FiMapPin,
+  FiPackage,
+  FiPlusCircle,
+  FiSearch,
+  FiSettings,
+  FiShield,
+  FiUser
+} from "react-icons/fi";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
+import { useAuth } from "../Context/AuthContext";
+import { useCurrency } from "../Context/CurrencyContext";
+import styles from "./Header.module.css";
+
+// IMPORT DU COMPOSANT CLOCHE
+import NotificationBell from "../../pages/notification/notificationBell/NotificationBell";
 
 export default function Header() {
   const { user, logout, loading: authLoading } = useAuth();
@@ -33,7 +35,10 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const adminRef = useRef<HTMLDivElement>(null);
 
-  const isAdmin = useMemo(() => user?.roles?.includes("ADMIN") ?? false, [user]);
+  const isAdmin = useMemo(
+    () => user?.roles?.includes("ADMIN") ?? false,
+    [user],
+  );
   const availableCurrencies = useMemo(() => Object.keys(rates), [rates]);
 
   const toggleLanguage = () => {
@@ -44,12 +49,17 @@ export default function Header() {
   };
 
   const toggleCurrency = () => {
-    const nextCurr = availableCurrencies[(availableCurrencies.indexOf(currency) + 1) % availableCurrencies.length];
+    const nextCurr =
+      availableCurrencies[
+        (availableCurrencies.indexOf(currency) + 1) % availableCurrencies.length
+      ];
     setCurrency(nextCurr);
   };
 
   const handleLogout = () => {
-    if (window.confirm(t("confirm_logout") || "Voulez-vous vous déconnecter ?")) {
+    if (
+      window.confirm(t("confirm_logout") || "Voulez-vous vous déconnecter ?")
+    ) {
       logout();
       navigate("/login");
     }
@@ -63,7 +73,8 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (adminRef.current && !adminRef.current.contains(e.target as Node)) setShowAdminMenu(false);
+      if (adminRef.current && !adminRef.current.contains(e.target as Node))
+        setShowAdminMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -74,14 +85,13 @@ export default function Header() {
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <Link to="/" className={styles.logo}>
-        {/* On remplace le texte h1 par l'image */}
         <img
           src="/logo.svg"
           alt="Growzapp"
           style={{
             height: "40px",
             width: "auto",
-          }} /* Ajuste la hauteur selon ton header */
+          }}
         />
       </Link>
 
@@ -166,7 +176,27 @@ export default function Header() {
 
         <div className={styles.rightSection}>
           <div className={styles.userSection}>
-            {/* --- SELECTEURS TOUJOURS VISIBLES (MÊME DÉCONNECTÉ) --- */}
+            {/* --- SECTIONS RÉSERVÉES AUX CONNECTÉS --- */}
+            {user && (
+              <>
+                {/* LA CLOCHE ICI */}
+                <NotificationBell />
+
+                <Link to="/mon-espace" className={styles.monEspaceLink}>
+                  <img
+                    src={getAvatarUrl(user.image)}
+                    alt={user.prenom}
+                    className={styles.userAvatar}
+                    onError={(e) =>
+                      (e.currentTarget.src = "/default-avatar.png")
+                    }
+                  />
+                  <span className={styles.userName}>{user.prenom}</span>
+                </Link>
+              </>
+            )}
+
+            {/* --- SELECTEURS TOUJOURS VISIBLES --- */}
             <button
               onClick={toggleCurrency}
               className={styles.directActionBtn}
@@ -187,31 +217,16 @@ export default function Header() {
               </span>
             </button>
 
-            {/* --- SECTIONS RÉSERVÉES AUX CONNECTÉS --- */}
+            {/* --- LOGOUT OU LOGIN --- */}
             {user ? (
-              <>
-                <Link to="/mon-espace" className={styles.monEspaceLink}>
-                  <img
-                    src={getAvatarUrl(user.image)}
-                    alt={user.prenom}
-                    className={styles.userAvatar}
-                    onError={(e) =>
-                      (e.currentTarget.src = "/default-avatar.png")
-                    }
-                  />
-                  <span className={styles.userName}>{user.prenom}</span>
-                </Link>
-
-                <button
-                  onClick={handleLogout}
-                  className={styles.logoutDirectBtn}
-                  title={t("logout")}
-                >
-                  <FiLogOut />
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className={styles.logoutDirectBtn}
+                title={t("logout")}
+              >
+                <FiLogOut />
+              </button>
             ) : (
-              /* --- BOUTON LOGIN SI DÉCONNECTÉ --- */
               <Link to="/login" className={styles.loginBtn}>
                 <FiLogIn /> <span>{t("login")}</span>
               </Link>

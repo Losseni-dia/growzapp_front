@@ -1,0 +1,167 @@
+.bellContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bellIconBox {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+  color: #1B5E20;
+}
+
+.bellIconBox:hover {
+  background: rgba(27, 94, 32, 0.1);
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #ff4757;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 320px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  z-index: 1000;
+  animation: slideIn 0.2s ease-out;
+  border: 1px solid #eee;
+}
+
+.dropdownHeader {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdownHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1B5E20;
+  font-weight: 700;
+}
+
+.unreadTag {
+  background: #E8F5E9;
+  color: #1B5E20;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.list {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.notifItem {
+  padding: 15px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notifItem:hover {
+  background: #f9f9f9;
+}
+
+.unread {
+  background: #f1f8e9;
+  border-left: 4px solid #FFC107;
+}
+
+.notifTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.notifTitle {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  background: #FFC107;
+  border-radius: 50%;
+}
+
+.notifText {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+.notifDate {
+  font-size: 0.7rem;
+  color: #aaa;
+}
+
+.dropdownFooter {
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+.dropdownFooter button {
+  background: none;
+  border: none;
+  color: #1B5E20;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: #ccc;
+}
+
+.emptyState p {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.shake {
+  animation: bellRing 2s ease infinite;
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0); }
+  5%, 15%, 25% { transform: rotate(10deg); }
+  10%, 20%, 30% { transform: rotate(-10deg); }
+  35% { transform: rotate(0); }
+}
