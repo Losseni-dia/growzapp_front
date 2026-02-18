@@ -168,6 +168,48 @@
     font-size: 1.2rem;
 }
 
+.adminActions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E8F5E9;
+}
+
+.editBtn {
+    flex: 1;
+    text-align: center;
+    background: #E8F5E9;
+    color: #1B5E20;
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.deleteBtn {
+    flex: 1;
+    background: #ffebee;
+    color: #d32f2f;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.editBtn:hover {
+    background: #1B5E20;
+    color: white;
+}
+
+.deleteBtn:hover {
+    background: #d32f2f;
+    color: white;
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;

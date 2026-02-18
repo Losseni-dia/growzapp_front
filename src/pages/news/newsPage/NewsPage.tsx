@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Newspaper, PenLine } from "lucide-react";
+import { Newspaper, PenLine, Edit, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { News, newsService } from "../../../service/newsService";
 import { useAuth } from "../../../components/Context/AuthContext";
@@ -10,19 +10,45 @@ const NewsPage = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Vérification des droits d'accès
+  // Vérification des permissions selon les rôles définis dans le SI
   const canPublish = user?.roles?.some((role: string) =>
     ["ADMIN", "COMMUNICANT"].includes(role),
   );
+  const canEdit = user?.roles?.some((role: string) =>
+    ["ADMIN", "COMMUNICANT"].includes(role),
+  );
+  const canDelete = user?.roles?.some((role: string) =>
+    ["ADMIN"].includes(role),
+  );
 
   useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const fetchArticles = () => {
     newsService
       .getAll()
       .then(setArticles)
       .finally(() => setLoading(false));
-  }, []);
+  };
 
-  // Fonction pour extraire le texte brut du HTML pour le résumé
+  const handleDelete = async (id: number) => {
+    if (
+      window.confirm(
+        "Voulez-vous vraiment supprimer cet article ? Cette action est irréversible.",
+      )
+    ) {
+      try {
+        await newsService.delete(id);
+        setArticles(articles.filter((a) => a.id !== id));
+      } catch (err: any) {
+        console.error("Erreur lors de la suppression:", err);
+        alert("Une erreur est survenue lors de la suppression.");
+      }
+    }
+  };
+
+  // Nettoyage du HTML pour le résumé de la carte
   const getPlainText = (html: string) => {
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
@@ -30,7 +56,9 @@ const NewsPage = () => {
   };
 
   if (loading)
-    return <div className={styles.loader}>Chargement de l'actualité...</div>;
+    return (
+      <div className={styles.loader}>Chargement des actualités Growzapp...</div>
+    );
 
   return (
     <div className={styles.container}>
@@ -57,16 +85,42 @@ const NewsPage = () => {
                 alt={article.title}
               />
             </div>
+
             <div className={styles.content}>
               <span className={styles.badge}>
                 {article.category.replace(/_/g, " ")}
               </span>
+
               <h2>{article.title}</h2>
-              <p>{getPlainText(article.content).substring(0, 150)}...</p>
+
+              <p>{getPlainText(article.content).substring(0, 130)}...</p>
 
               <Link to={`/news/${article.id}`} className={styles.readMore}>
                 Lire la suite
               </Link>
+
+              {/* ACTIONS D'ADMINISTRATION : Modification et Suppression */}
+              {(canEdit || canDelete) && (
+                <div className={styles.adminActions}>
+                  {canEdit && (
+                    <Link
+                      to={`/admin/news/edit/${article.id}`}
+                      className={styles.editBtn}
+                    >
+                      <Edit size={16} style={{ marginRight: "5px" }} /> Modifier
+                    </Link>
+                  )}
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(article.id)}
+                      className={styles.deleteBtn}
+                    >
+                      <Trash2 size={16} style={{ marginRight: "5px" }} />{" "}
+                      Supprimer
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </article>
         ))}
