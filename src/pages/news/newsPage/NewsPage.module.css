@@ -7,11 +7,9 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* HEADER AJUSTÉ POUR LE BOUTON */
 .header {
     display: flex;
     justify-content: space-between;
-    /* Écarte le titre et le bouton */
     align-items: center;
     gap: 1.5rem;
     margin-bottom: 3rem;
@@ -32,10 +30,8 @@
 
 .icon {
     color: #FFC107;
-    /* Jaune Growzapp */
 }
 
-/* BOUTON ÉCRIRE (Visible pour Admin/Communicant) */
 .adminBtn {
     display: flex;
     align-items: center;
@@ -49,7 +45,6 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
     white-space: nowrap;
-    /* Évite que le texte passe à la ligne */
 }
 
 .adminBtn:hover {
@@ -59,14 +54,13 @@
     box-shadow: 0 6px 15px rgba(27, 94, 32, 0.2);
 }
 
-/* GRILLE D'ACTUALITÉS */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 2.5rem;
+    align-items: stretch;
 }
 
-/* CARTE INDIVIDUELLE */
 .card {
     background: white;
     border: 3px solid #E8F5E9;
@@ -86,7 +80,7 @@
 
 .imageWrapper {
     width: 100%;
-    height: 200px;
+    height: 220px;
     overflow: hidden;
     background-color: #f0f0f0;
 }
@@ -107,11 +101,12 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    /* Permet à la zone de texte de s'étendre */
 }
 
 .badge {
     align-self: flex-start;
-    background: #FFC107;
+    background: #E8F5E9;
     color: #1B5E20;
     padding: 0.4rem 1rem;
     border-radius: 10px;
@@ -120,6 +115,7 @@
     text-transform: uppercase;
     margin-bottom: 1.2rem;
     letter-spacing: 0.5px;
+    border: 1px solid #1B5E20;
 }
 
 .content h2 {
@@ -128,6 +124,8 @@
     margin-bottom: 1rem;
     font-weight: 700;
     line-height: 1.3;
+    min-height: 3.6rem;
+    /* Aligne les titres sur 2 lignes */
 }
 
 .content p {
@@ -136,7 +134,7 @@
     line-height: 1.6;
     margin-bottom: 1.5rem;
     flex-grow: 1;
-    /* Coupe le texte proprement */
+    /* Pousse le bouton vers le bas */
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -144,7 +142,7 @@
 }
 
 .readMore {
-    display: inline-block;
+    display: block;
     background: #1B5E20;
     color: #ffffff !important;
     padding: 0.8rem 1.5rem;
@@ -153,6 +151,8 @@
     text-decoration: none;
     transition: 0.3s;
     text-align: center;
+    margin-top: auto;
+    /* Force l'alignement en bas */
 }
 
 .readMore:hover {
@@ -168,8 +168,6 @@
     font-size: 1.2rem;
 }
 
-/* --- RESPONSIVE --- */
-
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
@@ -180,10 +178,6 @@
     .adminBtn {
         width: 100%;
         justify-content: center;
-    }
-
-    .header h1 {
-        font-size: 1.6rem;
     }
 
     .grid {

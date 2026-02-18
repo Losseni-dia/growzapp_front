@@ -19,13 +19,9 @@ export const newsService = {
 
   create: (data: any) => api.post("/news", data),
 
-  /**
-   * FIX: Si ton api.post n'accepte pas d'objet config en 3ème paramètre,
-   * utilise directement Axios ou vérifie la signature dans Api.ts.
-   * Généralement, pour le multipart, Axios gère le Content-Type automatiquement.
-   */
+  // FIX : On passe 'true' pour activer isFormData dans ton Api.ts
   uploadImage: (formData: FormData) => 
-    api.post<{ url: string }>("/news/upload", formData), 
+    api.post<{ url: string }>("/news/upload", formData, true), 
 
   getRssUrl: () => "/api/news/rss"
 };
