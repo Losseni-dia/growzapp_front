@@ -117,6 +117,60 @@
     font-weight: 600;
 }
 
+.rssLink {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1B5E20; /* Vert Growzapp */
+    background: #E8F5E9;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.rssLink:hover {
+    background: #FFC107; /* Jaune Growzapp */
+    color: #1B5E20;
+    transform: translateY(-3px);
+}
+
+/* Tooltip "Abonnez-vous" */
+.tooltip {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #1B5E20;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1B5E20;
+}
+
+.rssLink:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
     .topSection {

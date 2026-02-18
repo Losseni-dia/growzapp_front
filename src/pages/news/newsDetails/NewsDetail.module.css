@@ -1,0 +1,100 @@
+/* NewsDetail.module.css */
+
+.pageWrapper { 
+    background-color: #f8faf8; 
+    min-height: 100vh; 
+    padding: 40px 0; 
+}
+
+.container { 
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.articleCard {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    overflow: hidden; /* Empêche tout ce qui dépasse d'être visible */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.header { padding: 40px; }
+
+.categoryBadge { 
+    background: #FFC107; 
+    color: #1B5E20; 
+    padding: 5px 12px; 
+    border-radius: 6px; 
+    font-weight: 800; 
+    font-size: 0.8rem; 
+}
+
+.mainTitle { 
+    font-size: 2.5rem; 
+    color: #1B5E20; 
+    margin: 20px 0; 
+    font-weight: 800; 
+}
+
+.imageContainer { width: 100%; height: 400px; }
+.fullImage { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- PROTECTION ANTI-DÉBORDEMENT --- */
+.contentSection { 
+    padding: 40px; 
+    width: 100%;
+    max-width: 100%; /* Limite stricte */
+    box-sizing: border-box;
+    overflow-x: hidden; /* Bloque le scroll horizontal interne */
+}
+
+.richContent {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-wrap: break-word !important; /* Force la coupure des mots longs */
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+}
+
+/* On force tous les éléments enfants à ne jamais dépasser 100% */
+.richContent * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-wrap: break-word !important;
+}
+
+.richContent p {
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 1.2rem;
+    color: #333;
+    /* Empêche le texte de rester sur une seule ligne */
+    white-space: normal !important; 
+}
+
+.richContent ul {
+    padding-left: 25px;
+    margin-bottom: 20px;
+    list-style-type: disc !important;
+}
+
+.richContent li {
+    margin-bottom: 10px;
+    display: list-item !important;
+}
+
+/* --- BOUTONS ET CHARGEMENT --- */
+.backBtn {
+    background: #1B5E20; color: white; border: none;
+    padding: 10px 20px; border-radius: 10px;
+    cursor: pointer; margin-bottom: 20px; font-weight: 600;
+}
+
+.loaderContainer { display: flex; justify-content: center; padding: 100px; }
+.spinner { animation: spin 1s linear infinite; color: #1B5E20; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
