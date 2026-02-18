@@ -1,8 +1,7 @@
 import type { KycStatus, Sexe } from "./enum";
-import type { RoleDTO } from "./role";
-import type { ProjetSummary } from "./projet";
 import type { InvestissementSummary } from "./investissement";
 import type { LocaliteDTO } from "./localite";
+import type { ProjetSummary } from "./projet";
 
 export interface WalletSummary {
   soldeDisponible: number;
