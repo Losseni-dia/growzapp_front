@@ -275,6 +275,35 @@
   animation: pulseGps 2s infinite;
 }
 
+/* Dans ton Header.module.css */
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Augmenté légèrement pour laisser respirer la cloche */
+}
+
+/* On s'assure que les icônes de la cloche ont le même style que tes autres icônes */
+.userSection :global(.lucide-bell) {
+  color: #64748b; /* Couleur grise comme tes boutons directActionBtn */
+  transition: color 0.2s;
+}
+
+.userSection :global(.lucide-bell):hover {
+  color: #1B5E20; /* Vert au survol */
+}
+
+/* Pour le responsive mobile */
+@media (max-width: 768px) {
+  /* On peut décider de garder la cloche même sur mobile car elle est importante */
+  .userName,
+  .directBtnText,
+  .navLink span,
+  .adminBtn span {
+    display: none;
+  }
+}
+
 @keyframes pulseGps {
   0% {
     transform: scale(0.95);
