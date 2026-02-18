@@ -1,7 +1,7 @@
 import { Bell, Inbox } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { notificationService } from "../../service/notificationService";
-import { Notification } from "../../types/notification";
+import { notificationService } from "../../../service/notificationService";
+import { Notification } from "../../../types/notification";
 import styles from "./NotificationBell.module.css";
 
 const NotificationBell = () => {
