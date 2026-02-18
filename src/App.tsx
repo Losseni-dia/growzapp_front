@@ -68,6 +68,7 @@ import ForgotPassword from "./pages/reset-password/ForgottenPassword";
 import NewsPage from "./pages/news/newsPage/NewsPage";
 import NewsDetail from "./pages/news/newsDetails/NewsDetails";
 import NewsForm from "./pages/news/newsForm/NewsForm";
+import NewsEdit from "./pages/news/newsEdit/newsEdit";
 
 function App() {
   const location = useLocation();
@@ -191,6 +192,7 @@ function App() {
             element={<ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />}
           >
             <Route path="/admin/news/new" element={<NewsForm />} />
+            <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
           </Route>
 
           {/* ==================== REDIRECTIONS ==================== */}

@@ -1,17 +1,14 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+    ArrowLeft,
+    Loader2,
+    Save
+} from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import { useNavigate, useParams } from "react-router-dom";
 import { newsService } from "../../../service/newsService";
 import styles from "../newsForm/NewsForm.module.css"; // Réutilise tes styles existants
-import {
-  Save,
-  ArrowLeft,
-  Image as ImageIcon,
-  AlertCircle,
-  Upload,
-  Loader2,
-} from "lucide-react";
 
 const NewsEdit = () => {
   const { id } = useParams<{ id: string }>();
