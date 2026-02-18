@@ -10,7 +10,6 @@ const NewsPage = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  // Vérification des permissions selon les rôles définis dans le SI
   const canPublish = user?.roles?.some((role: string) =>
     ["ADMIN", "COMMUNICANT"].includes(role),
   );
@@ -42,13 +41,11 @@ const NewsPage = () => {
         await newsService.delete(id);
         setArticles(articles.filter((a) => a.id !== id));
       } catch (err: any) {
-        console.error("Erreur lors de la suppression:", err);
         alert("Une erreur est survenue lors de la suppression.");
       }
     }
   };
 
-  // Nettoyage du HTML pour le résumé de la carte
   const getPlainText = (html: string) => {
     const tmp = document.createElement("DIV");
     tmp.innerHTML = html;
@@ -56,9 +53,7 @@ const NewsPage = () => {
   };
 
   if (loading)
-    return (
-      <div className={styles.loader}>Chargement des actualités Growzapp...</div>
-    );
+    return <div className={styles.loader}>Chargement des actualités...</div>;
 
   return (
     <div className={styles.container}>
@@ -92,14 +87,12 @@ const NewsPage = () => {
               </span>
 
               <h2>{article.title}</h2>
-
               <p>{getPlainText(article.content).substring(0, 130)}...</p>
 
               <Link to={`/news/${article.id}`} className={styles.readMore}>
                 Lire la suite
               </Link>
 
-              {/* ACTIONS D'ADMINISTRATION : Modification et Suppression */}
               {(canEdit || canDelete) && (
                 <div className={styles.adminActions}>
                   {canEdit && (
