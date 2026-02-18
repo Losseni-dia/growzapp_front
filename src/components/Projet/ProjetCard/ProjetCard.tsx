@@ -21,7 +21,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
   const translateData = (
     category: "sectors" | "countries" | "cities",
-    value: string
+    value: string,
   ) => {
     if (!value) return "---";
     const searchKey = value.trim().toUpperCase();
@@ -30,31 +30,30 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
   // Calcul du progrès (on reste sur les valeurs brutes car le ratio est le même)
   const progress =
-    projet.objectifFinancement > 0
-      ? (Number(projet.montantCollecte) / Number(projet.objectifFinancement)) *
-        100
-      : 0;
+    projet?.objectifFinancement > 0
+      ? (Number(projet.montantCollecte || 0) /
+          Number(projet.objectifFinancement)) * 100 : 0;
 
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
 
- const getBadgeText = () => {
-  // 1. Priorité au financement terminé
-  if (financementTermine) return t("project_card.status.finished");
+  const getBadgeText = () => {
+    // 1. Priorité au financement terminé
+    if (financementTermine) return t("project_card.status.finished");
 
-  // 2. Sécurité : si le statut n'existe pas du tout dans les données
-  if (!projet?.statutProjet) return "Statut inconnu";
+    // 2. Sécurité : si le statut n'existe pas du tout dans les données
+    if (!projet?.statutProjet) return "Statut inconnu";
 
-  // 3. Cas spécifique "VALIDE"
-  if (projet.statutProjet === "VALIDE") {
-    return t("project_card.status.ongoing");
-  }
+    // 3. Cas spécifique "VALIDE"
+    if (projet.statutProjet === "VALIDE") {
+      return t("project_card.status.ongoing");
+    }
 
-  // 4. Fallback sécurisé : on s'assure que c'est bien une chaîne avant le .replace
-  // L'utilisation de String() ou du check au dessus évite le crash
-  return String(projet.statutProjet).replace(/_/g, " ");
+    // 4. Fallback sécurisé : on s'assure que c'est bien une chaîne avant le .replace
+    // L'utilisation de String() ou du check au dessus évite le crash
+    return String(projet.statutProjet).replace(/_/g, " ");
   };
-  
+
   const formatDate = (dateStr?: string) =>
     dateStr
       ? new Date(dateStr).toLocaleDateString(i18n.language, {
@@ -63,9 +62,9 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           year: "numeric",
         })
       : "---";
-  
+
   const descriptionTexte = projet?.description || "";
-  const descriptionAffichée = descriptionTexte.substring(0, 100)
+  const descriptionAffichée = descriptionTexte.substring(0, 100);
 
   return (
     <div className={styles.card}>
@@ -86,8 +85,8 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             financementTermine
               ? styles.badgeTermine
               : projet.statutProjet === "VALIDE"
-              ? styles.badgeEnCours
-              : styles.badgeDefault
+                ? styles.badgeEnCours
+                : styles.badgeDefault
           }`}
         >
           {getBadgeText()}
@@ -105,38 +104,43 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           {translateData("sectors", projet.secteurNom ?? "")}
         </p>
         <p className={styles.description}>
-            {descriptionAffichée}
-            {descriptionTexte.length > 100 ? "..." : ""}
-          </p>
+          {descriptionAffichée}
+          {descriptionTexte.length > 100 ? "..." : ""}
+        </p>
 
         <div className={styles.infoGrid}>
+          {/* ROI : Toujours une valeur par défaut */}
           <div className={styles.infoItem}>
             <span className={styles.highlight}>
               <strong>{t("project_card.roi")}</strong> <FiTrendingUp />{" "}
-              {projet.roiProjete}%
+              {projet.roiProjete || 0}%
             </span>
           </div>
 
-          {/*Pourcentage du montant à lever (Equity) */}
+          {/* Equity : Sécurisé avec || 0 */}
           <div className={styles.infoItem}>
             <strong>{t("project_details.equity_to_raise")} </strong>
             <span className={styles.equityValue}>
-              {projet.valeurTotalePartsEnPourcent}%
+              {projet.valeurTotalePartsEnPourcent || 0}%
             </span>
           </div>
 
+          {/* Prix par part : Conversion Number forcée + fallback 0 */}
           <div className={styles.infoItem}>
             <strong>{t("project_card.price_per_share")} </strong>
-            {/* Utilisation de format(montant, devise_origine) */}
             <span>
-              {format(Number(projet.prixUnePart), projet.currencyCode)}
+              {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
             </span>
           </div>
 
+          {/* Objectif : Conversion Number forcée + fallback 0 */}
           <div className={styles.infoItem}>
             <strong>{t("project_card.goal")} </strong>
             <span>
-              {format(Number(projet.objectifFinancement), projet.currencyCode)}
+              {format(
+                Number(projet.objectifFinancement || 0),
+                projet.currencyCode,
+              )}
             </span>
           </div>
         </div>
@@ -144,8 +148,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         <div className={styles.progressContainer}>
           <div className={styles.progressText}>
             <strong>
-              {/* Le montant collecté est aussi converti automatiquement */}
-              {format(Number(projet.montantCollecte), projet.currencyCode)}
+              {format(Number(projet.montantCollecte || 0), projet.currencyCode)}
             </strong>{" "}
             {t("project_card.collected")} <span>{progress.toFixed(0)}%</span>
           </div>
@@ -154,6 +157,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
               className={`${styles.progressFill} ${
                 progress >= 100 ? styles.progressFull : ""
               }`}
+              /* Sécurité visuelle : la barre ne dépasse jamais 100% du conteneur */
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
@@ -167,7 +171,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
           })}
         </p>
 
-       <div className={styles.actions}>
+        <div className={styles.actions}>
           {/* Bouton VOIR : mène à la page complète */}
           <Link to={`/projet/${projet.id}`} className={styles.btnView}>
             <FiEye /> {t("project_card.btn_view")}
@@ -188,4 +192,3 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
     </div>
   );
 }
-
