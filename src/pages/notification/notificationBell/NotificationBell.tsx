@@ -1,5 +1,6 @@
 import { Bell, Inbox } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom"; // AJOUT : pour la redirection
 import { notificationService } from "../../../service/notificationService";
 import { Notification } from "../../../types/notification";
 import styles from "./NotificationBell.module.css";
@@ -9,8 +10,9 @@ const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate(); // AJOUT : Hook de navigation
 
-  // Charger les données depuis le backend
+  // ... loadNotifications reste identique ...
   const loadNotifications = async () => {
     try {
       const [data, count] = await Promise.all([
@@ -28,9 +30,7 @@ const NotificationBell = () => {
 
   useEffect(() => {
     loadNotifications();
-    const interval = setInterval(loadNotifications, 60000); // Polling 1 min
-
-    // Fermer le dropdown si on clique ailleurs
+    const interval = setInterval(loadNotifications, 60000);
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -39,7 +39,6 @@ const NotificationBell = () => {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       clearInterval(interval);
@@ -47,23 +46,33 @@ const NotificationBell = () => {
     };
   }, []);
 
-  const handleMarkAsRead = async (e: React.MouseEvent, id: number) => {
-    e.stopPropagation();
-    try {
-      await notificationService.markAsRead(id);
-      // Mise à jour locale rapide pour l'UX
-      setNotifications(
-        notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
-      );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-    } catch (err) {
-      console.error("Erreur lors du marquage lue", err);
+  // FONCTION DE CLIC SUR LA NOTIFICATION
+  const handleNotifClick = async (n: Notification) => {
+    // 1. Marquer comme lue si ce n'est pas déjà fait
+    if (!n.read) {
+      try {
+        await notificationService.markAsRead(n.id);
+        setNotifications(
+          notifications.map((item) =>
+            item.id === n.id ? { ...item, read: true } : item,
+          ),
+        );
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      } catch (err) {
+        console.error("Erreur marquage lue", err);
+      }
+    }
+
+    // 2. Rediriger si un projetId est présent (à adapter selon le nom de ton champ backend)
+    // On suppose ici que ton objet Notification a un champ 'projetId' ou 'targetId'
+    if (n.projetId) {
+      navigate(`/projet/${n.projetId}`);
+      setIsOpen(false); // Fermer le menu après redirection
     }
   };
 
   return (
     <div className={styles.bellContainer} ref={dropdownRef}>
-      {/* Icône de la cloche avec badge */}
       <div className={styles.bellIconBox} onClick={() => setIsOpen(!isOpen)}>
         <Bell size={24} className={unreadCount > 0 ? styles.shake : ""} />
         {unreadCount > 0 && (
@@ -73,7 +82,6 @@ const NotificationBell = () => {
         )}
       </div>
 
-      {/* Menu déroulant */}
       {isOpen && (
         <div className={styles.dropdown}>
           <div className={styles.dropdownHeader}>
@@ -93,8 +101,8 @@ const NotificationBell = () => {
               notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`${styles.notifItem} ${!n.read ? styles.unread : ""}`}
-                  onClick={(e) => !n.read && handleMarkAsRead(e, n.id)}
+                  className={`${styles.notifItem} ${!n.read ? styles.unread : ""} ${n.projetId ? styles.clickable : ""}`}
+                  onClick={() => handleNotifClick(n)} // MODIFIÉ : Nouvelle logique de clic
                 >
                   <div className={styles.notifContent}>
                     <div className={styles.notifTop}>
@@ -102,18 +110,24 @@ const NotificationBell = () => {
                       {!n.read && <div className={styles.unreadDot} />}
                     </div>
                     <p className={styles.notifText}>{n.content}</p>
-                    <span className={styles.notifDate}>
-                      {new Date(n.date).toLocaleString("fr-FR", {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      })}
-                    </span>
+                    <div className={styles.notifFooter}>
+                      <span className={styles.notifDate}>
+                        {new Date(n.date).toLocaleString("fr-FR", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })}
+                      </span>
+                      {n.projetId && (
+                        <small className={styles.clickHint}>
+                          Voir le projet →
+                        </small>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
             )}
           </div>
-
           <div className={styles.dropdownFooter}>
             <button onClick={() => setIsOpen(false)}>Fermer</button>
           </div>
