@@ -150,6 +150,42 @@
   font-size: 0.9rem;
 }
 
+/* Style pour indiquer que la notification est une action (redirection) */
+.clickable {
+  cursor: pointer;
+  position: relative;
+}
+
+/* On change légèrement la couleur au survol des notifications cliquables */
+.clickable:hover {
+  background: #f1f8e9 !important; /* Un vert très léger Growzapp */
+}
+
+/* Conteneur pour la date et l'indice de clic */
+.notifFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+/* Petit texte discret "Voir le projet" */
+.clickHint {
+  color: #1B5E20;
+  font-weight: 700;
+  font-size: 0.7rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Animation discrète sur le texte au survol */
+.clickable:hover .clickHint {
+  opacity: 1;
+  transform: translateX(3px);
+  transition: all 0.2s ease;
+}
+
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
