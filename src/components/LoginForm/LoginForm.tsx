@@ -46,9 +46,15 @@ export default function LoginForm() {
         i18n.changeLanguage(user.interfaceLanguage);
       }
 
+      // 1. On lance la connexion
       authLogin(token, user as UserDTO);
-      toast.success(t("login_page.toast_success"));
-      navigate("/");
+
+      // 2. Pas de toast ici comme demandé.
+      // 3. On utilise un micro-délai pour éviter que le Router
+      //    ne change de page avant que le Context ne soit prêt.
+      setTimeout(() => {
+        navigate("/");
+      }, 50);
     } catch (err: any) {
       toast.error(err.message || t("login_page.toast_error_credentials"));
     } finally {
@@ -59,7 +65,6 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <h2>{t("login_page.title")}</h2>
-
       <p className={styles.subtitle}>{t("login_page.subtitle")}</p>
 
       <input
@@ -68,26 +73,21 @@ export default function LoginForm() {
         value={login}
         onChange={(e) => setLogin(e.target.value)}
         required
-        autoFocus
       />
 
       <div className={styles.passwordContainer}>
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder={t("login_page.placeholder_password")}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="button"
-          className={styles.eyeBtn}
-          onClick={() => setShowPassword(!showPassword)}
-          tabIndex={-1}
-        >
-          {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
-        </button>
-
+        <div style={{ position: 'relative' }}>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder={t("login_page.placeholder_password")}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="button" className={styles.eyeBtn} onClick={() => setShowPassword(!showPassword)}>
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
         <div className={styles.forgotPasswordWrapper}>
           <Link to="/forgot-password" className={styles.forgotPasswordLink}>
             {t("login_page.forgot_password")}
@@ -99,27 +99,14 @@ export default function LoginForm() {
         {loading ? t("login_page.btn_loading") : t("login_page.btn_submit")}
       </button>
 
-      {/* SECTION SOCIAL LOGIN */}
-      <div className={styles.socialDivider}>
-        {t("login_page.or_continue_with")}
-      </div>
+      <div className={styles.socialDivider}>{t("login_page.or_continue_with")}</div>
 
       <div className={styles.socialButtons}>
-        <button
-          type="button"
-          className={styles.socialBtn}
-          onClick={() => handleSocialLogin("google")}
-          title="Google"
-        >
+        <button type="button" className={styles.socialBtn} onClick={() => handleSocialLogin("google")}>
           <img src="/google.png" alt="Google" className={styles.socialIcon} />
         </button>
 
-        <button
-          type="button"
-          className={styles.socialBtn}
-          onClick={() => handleSocialLogin("github")}
-          title="GitHub"
-        >
+        <button type="button" className={styles.socialBtn} onClick={() => handleSocialLogin("github")}>
           <img src="/github.png" alt="GitHub" className={styles.socialIcon} />
         </button>
       </div>

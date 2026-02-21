@@ -1,45 +1,51 @@
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
-import { api } from "../../service/Api";
-import { UserDTO } from "../../types/user";
 import toast from "react-hot-toast";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { api } from "../../service/Api";
+import { useAuth } from "../Context/AuthContext";
 
 export default function OAuth2RedirectHandler() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  useEffect(() => {
-    const processLogin = async () => {
-      const token = searchParams.get("token");
+useEffect(() => {
+  const processLogin = async () => {
+    const token = searchParams.get("token");
 
-      if (token) {
-        try {
-          // 1. On stocke temporairement le token pour que l'appel /me fonctionne
-          localStorage.setItem("access_token", token);
+    if (token) {
+      try {
+        // 1. On stocke le token là où ton getFreshToken va le chercher (fallback)
+        localStorage.setItem("access_token", token);
 
-          // 2. On récupère les infos de l'utilisateur depuis le serveur
-          const user = await api.get<UserDTO>("/api/auth/me");
+        // 2. On lance l'appel (sans le 2ème argument qui faisait planter TS)
+        // Ton service 'api' va automatiquement appeler getFreshToken()
+        // qui va trouver "access_token" dans le fallback.
+        console.log("Appel /api/auth/me en cours...");
+        const response: any = await api.get("/api/auth/me");
 
-          // 3. On utilise ta fonction de login du contexte pour tout synchroniser
-          login(token, user);
+        // 3. Extraction des données
+        // Si ton backend renvoie ApiResponseDTO<UserDTO>, les données sont dans response.data
+        const userData = response.data || response;
 
-          toast.success("Connexion réussie !");
-          navigate("/");
-        } catch (err) {
-          console.error("Erreur sync user OAuth2", err);
-          localStorage.removeItem("access_token");
-          toast.error("Erreur lors de la récupération du profil");
-          navigate("/login");
-        }
-      } else {
-        navigate("/login?error=oauth2");
+        // 4. Synchronisation finale
+        login(token, userData);
+
+        
+        navigate("/");
+      } catch (err: any) {
+        console.error("Erreur durant le process OAuth2:", err);
+        localStorage.removeItem("access_token");
+        toast.error("Impossible de récupérer votre profil.");
+        navigate("/login");
       }
-    };
+    } else {
+      navigate("/login?error=oauth2");
+    }
+  };
 
-    processLogin();
-  }, [searchParams, login, navigate]);
+  processLogin();
+}, [searchParams, login, navigate]);
 
   return (
     <div

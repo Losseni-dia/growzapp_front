@@ -1,14 +1,13 @@
 // src/components/context/AuthContext.tsx
 import {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   ReactNode,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
-import { UserDTO } from "../../types/user";
-import toast from "react-hot-toast";
 import { api } from "../../service/Api"; // Assure-toi que l'import de ton service api est correct
+import { UserDTO } from "../../types/user";
 
 // 1. Définition de l'interface du contexte mise à jour
 export interface AuthContextType {
@@ -100,7 +99,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("access_token");
     localStorage.removeItem("token");
     setUser(null);
-    toast.success("Déconnexion réussie");
     window.location.href = "/";
   };
 
