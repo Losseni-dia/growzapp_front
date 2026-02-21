@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { UserDTO } from "../../types/user";
 import { api } from "../../service/Api";
 import { useTranslation } from "react-i18next";
-import { Eye, EyeOff } from "lucide-react"; // Import des icônes
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const [login, setLogin] = useState("");
@@ -17,6 +17,11 @@ export default function LoginForm() {
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+
+  const handleSocialLogin = (provider: "google" | "github") => {
+    // Redirection vers le backend Spring Security
+    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +60,6 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className={styles.form}>
       <h2>{t("login_page.title")}</h2>
 
-      {/* SOUS-TITRE DANS LA CARTE POUR LE CENTRAGE */}
       <p className={styles.subtitle}>{t("login_page.subtitle")}</p>
 
       <input
@@ -94,6 +98,31 @@ export default function LoginForm() {
       <button type="submit" disabled={loading} className={styles.submitBtn}>
         {loading ? t("login_page.btn_loading") : t("login_page.btn_submit")}
       </button>
+
+      {/* SECTION SOCIAL LOGIN */}
+      <div className={styles.socialDivider}>
+        {t("login_page.or_continue_with")}
+      </div>
+
+      <div className={styles.socialButtons}>
+        <button
+          type="button"
+          className={styles.socialBtn}
+          onClick={() => handleSocialLogin("google")}
+          title="Google"
+        >
+          <img src="/google.png" alt="Google" className={styles.socialIcon} />
+        </button>
+
+        <button
+          type="button"
+          className={styles.socialBtn}
+          onClick={() => handleSocialLogin("github")}
+          title="GitHub"
+        >
+          <img src="/github.png" alt="GitHub" className={styles.socialIcon} />
+        </button>
+      </div>
 
       <div className={styles.registerLink}>
         <span>{t("login_page.no_account")} </span>
