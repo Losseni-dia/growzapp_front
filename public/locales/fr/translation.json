@@ -19,7 +19,10 @@
     "toast_success": "Connecté avec succès !",
     "toast_error_server": "Réponse invalide du serveur",
     "toast_error_credentials": "Identifiants incorrects",
-    "forgot_password": "Mot de passe oublié ?"
+    "forgot_password": "Mot de passe oublié ?",
+    "or_continue_with": "Ou continuer avec",
+    "social_google": "Continuer avec Google",
+    "social_github": "Continuer avec GitHub"
   },
   "register_page": {
     "title": "Créer votre compte GrowzApp",
@@ -103,27 +106,27 @@
     "btn_invest": "Investir"
   },
   "project_details": {
-  "equity_to_raise": "Parts à lever",
-  "loading": "Chargement du projet...",
-  "error_not_found": "Projet introuvable",
-  "no_poster": "Aucun poster disponible",
-  "sector": "Secteur",
-  "location": "Localisation",
-  "country": "Pays",
-  "roi_projected": "ROI Projeté",
-  "collected": "collectés",
-  "goal": "objectif",
-  "reached": "atteint",
-  "description_title": "Description du projet",
-  "documents_title": "Documents du projet",
-  "no_documents": "Aucun document n'a été publié pour ce projet.",
-  "docs_restricted_title": "Documents réservés aux investisseurs",
-  "docs_restricted_hint": "Vous devez investir dans ce projet pour accéder aux documents techniques, financiers et juridiques.",
-  "invest_title": "Investir dans ce projet",
-  "invest_in_title": "Investir dans",
-  "back_to_details": "Retour aux détails du projet",
-  "toast_invest_success": "Investissement pris en compte !"
-},
+    "equity_to_raise": "Parts à lever",
+    "loading": "Chargement du projet...",
+    "error_not_found": "Projet introuvable",
+    "no_poster": "Aucun poster disponible",
+    "sector": "Secteur",
+    "location": "Localisation",
+    "country": "Pays",
+    "roi_projected": "ROI Projeté",
+    "collected": "collectés",
+    "goal": "objectif",
+    "reached": "atteint",
+    "description_title": "Description du projet",
+    "documents_title": "Documents du projet",
+    "no_documents": "Aucun document n'a été publié pour ce projet.",
+    "docs_restricted_title": "Documents réservés aux investisseurs",
+    "docs_restricted_hint": "Vous devez investir dans ce projet pour accéder aux documents techniques, financiers et juridiques.",
+    "invest_title": "Investir dans ce projet",
+    "invest_in_title": "Investir dans",
+    "back_to_details": "Retour aux détails du projet",
+    "toast_invest_success": "Investissement pris en compte !"
+  },
   "project_form": {
     "title": "Soumettre un nouveau projet",
     "photo": {
@@ -831,7 +834,7 @@
     "toast_success": "Le contrat est authentique !",
     "toast_error": "Contrat introuvable ou invalide"
   },
- "kyc": {
+  "kyc": {
     "pending_action_hint": "Veuillez vérifier votre identité pour débloquer toutes les fonctionnalités de retrait et d'investissement.",
     "title": "Vérification d'identité",
     "label_birthdate": "Date de naissance",
@@ -850,6 +853,4 @@
     "investment_blocked_title": "Action requise",
     "error_investment_blocked": "Vérification KYC requise pour investir"
   }
-
-
 }

@@ -69,6 +69,7 @@ import NewsPage from "./pages/news/newsPage/NewsPage";
 import NewsDetail from "./pages/news/newsDetails/NewsDetails";
 import NewsForm from "./pages/news/newsForm/NewsForm";
 import NewsEdit from "./pages/news/newsEdit/newsEdit";
+import OAuth2RedirectHandler from "./components/Context/OAuth2RedirectHandler";
 
 function App() {
   const location = useLocation();
@@ -104,6 +105,7 @@ function App() {
           <Route path="/verifier-contrat/:code" element={<VerifierContrat />} />
           <Route path="/news" element={<NewsPage />} />
           <Route path="/news/:id" element={<NewsDetail />} />
+          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
 
           {/* Étape 1 : Demander le reset */}
           <Route path="/forgot-password" element={<ForgotPassword />} />

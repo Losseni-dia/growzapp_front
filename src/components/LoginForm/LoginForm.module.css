@@ -1,13 +1,11 @@
 .form {
-  max-width: 460px;
-  margin: 3rem auto;
-  padding: 3rem 2.8rem;
+  max-width: 420px; /* Un peu moins large pour un look plus pro */
+  margin: 2rem auto;
+  padding: 2.5rem 2rem;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  border: 3px solid #E8F5E9;
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 2px solid #E8F5E9;
   display: flex;
   flex-direction: column;
 }
@@ -16,54 +14,41 @@
   text-align: center;
   background: #1B5E20;
   color: white !important;
-  padding: 1.2rem 2rem;
-  border-radius: 16px;
-  margin: -3rem -2.8rem 1rem -2.8rem;
-  font-size: 2.1rem;
-  font-weight: 700;
-  box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
-  position: relative;
-  z-index: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: -2.5rem -2rem 1.5rem -2rem; /* Aligné sur le nouveau padding */
+  font-size: 1.8rem;
 }
 
 .subtitle {
-  display: block;
   text-align: center;
   color: #2e7d32;
-  font-size: 1.05rem;
-  font-weight: 500;
-  margin-bottom: 2.8rem;
+  margin-bottom: 1.5rem; /* Réduit de 2.8rem */
 }
 
 input {
-  display: block;
   width: 100%;
-  padding: 1.1rem 1.2rem;
-  border: 2.5px solid #1B5E20;
-  border-radius: 14px;
-  font-size: 1.1rem;
-  background: white;
-  box-sizing: border-box;
-  margin-bottom: 2.4rem;
+  padding: 0.9rem 1.1rem; /* Plus compact */
+  border: 2px solid #1B5E20;
+  border-radius: 10px;
+  margin-bottom: 1.2rem; /* Réduit de 2.4rem */
 }
 
 .passwordContainer {
-  position: relative;
+  position: relative; /* Indispensable pour l'oeil */
   width: 100%;
-  margin-bottom: 2.4rem;
+  margin-bottom: 0.8rem; /* Espacement réduit */
 }
 
 .passwordContainer input {
-  margin-bottom: 0.6rem;
-  padding-right: 55px;
-  /* Espace pour l'oeil */
+  padding-right: 45px; /* On laisse de la place à droite pour l'oeil */
+  margin-bottom: 0; /* On gère l'espace via le wrapper */
 }
 
 .eyeBtn {
   position: absolute;
-  right: 15px;
-  top: 32px;
-  /* Centrage vertical dans l'input large */
+  right: 12px;
+  top: 50%; /* On centre verticalement */
   transform: translateY(-50%);
   background: transparent;
   border: none;
@@ -71,51 +56,118 @@ input {
   color: #1B5E20;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 5px;
-  z-index: 10;
+  z-index: 5;
 }
 
 .forgotPasswordWrapper {
   text-align: right;
+  margin-top: 4px;
 }
 
 .forgotPasswordLink {
   color: #1b5e20;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.85rem; /* Plus petit */
+  font-weight: 500;
   text-decoration: none;
+  opacity: 0.8;
+}
+
+.forgotPasswordLink:hover {
+  text-decoration: underline;
+  opacity: 1;
 }
 
 .submitBtn {
   width: 100%;
-  padding: 1.3rem;
+  padding: 1rem;
   background: #FFC107;
   color: #1B5E20;
   font-weight: bold;
-  font-size: 1.3rem;
-  border: none;
-  border-radius: 14px;
+  font-size: 1.1rem;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.3s;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
-.submitBtn:hover:not(:disabled) {
-  background: #FFB300;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(255, 193, 7, 0.5);
+/* Pour que les boutons soient l'un sur l'autre et propres */
+.socialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.socialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 45px; /* Hauteur standard pour un bouton propre */
+  background: white;
+  border: 1.5px solid #E8F5E9;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0; /* On laisse l'image gérer l'espace interne */
+}
+
+.socialBtn:hover {
+  background: #f9fdf9;
+  border-color: #1B5E20;
+}
+
+/* LA CLÉ : On fixe la hauteur de l'image, pas la largeur forcée */
+.socialIcon {
+  height: 22px; /* Taille idéale pour une icône de bouton */
+  width: auto;  /* Garde les proportions d'origine (évite l'effet étiré) */
+  display: block;
+}
+
+.socialDivider {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0; /* Réduit de 1.5rem */
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.socialDivider::before,
+.socialDivider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #E8F5E9;
+}
+
+.socialDivider::before {
+  margin-right: 1rem;
+}
+
+.socialDivider::after {
+  margin-left: 1rem;
 }
 
 .registerLink {
-  margin-top: 3rem;
+  margin-top: 1.5rem; /* Réduit pour gagner de la place */
   text-align: center;
-  font-size: 1.12rem;
-  color: #2e7d32;
+  font-size: 0.95rem; /* Un peu plus petit pour la hiérarchie visuelle */
+  color: #666;
+}
+
+.registerLink span {
+  opacity: 0.9;
 }
 
 .registerLink a {
-  color: #1b5e20 !important;
-  font-weight: 700 !important;
+  color: #1B5E20 !important;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 5px;
+  transition: 0.2s;
+}
+
+.registerLink a:hover {
   text-decoration: underline;
+  color: #2e7d32 !important;
 }
