@@ -119,3 +119,52 @@ input {
   font-weight: 700 !important;
   text-decoration: underline;
 }
+
+.socialDivider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.5rem 0;
+  color: #2e7d32;
+  font-size: 0.9rem;
+}
+
+.socialDivider::before,
+.socialDivider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #E8F5E9;
+}
+
+.socialDivider:not(:empty)::before { margin-right: .75em; }
+.socialDivider:not(:empty)::after { margin-left: .75em; }
+
+.socialButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.socialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem;
+  border: 2px solid #E8F5E9;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.socialBtn:hover {
+  background: #F1F8E9;
+  border-color: #1B5E20;
+  transform: translateY(-2px);
+}
+
+.socialIcon {
+  width: 24px;
+  height: 24px;
+}
