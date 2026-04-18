@@ -4,11 +4,12 @@ import {
   FiDollarSign,
   FiEye,
   FiMapPin,
-  FiTrendingUp,
+  FiTrendingUp
 } from "react-icons/fi";
+import { BsShieldCheck } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { ProjetDTO } from "../../../types/projet";
-import { useCurrency } from "../../Context/CurrencyContext"; // Import du nouveau context
+import { useCurrency } from "../../Context/CurrencyContext";
 import styles from "./ProjetCard.module.css";
 
 interface ProjectCardProps {
@@ -17,7 +18,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ projet }: ProjectCardProps) {
   const { t, i18n } = useTranslation();
-  const { format } = useCurrency(); // Hook de conversion et formatage
+  const { format } = useCurrency();
 
   const translateData = (
     category: "sectors" | "countries" | "cities",
@@ -28,29 +29,22 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
     return t(`data.${category}.${searchKey}`, { defaultValue: value });
   };
 
-  // Calcul du progrès (on reste sur les valeurs brutes car le ratio est le même)
   const progress =
     projet?.objectifFinancement > 0
       ? (Number(projet.montantCollecte || 0) /
-          Number(projet.objectifFinancement)) * 100 : 0;
+          Number(projet.objectifFinancement)) *
+        100
+      : 0;
 
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
 
   const getBadgeText = () => {
-    // 1. Priorité au financement terminé
     if (financementTermine) return t("project_card.status.finished");
-
-    // 2. Sécurité : si le statut n'existe pas du tout dans les données
     if (!projet?.statutProjet) return "Statut inconnu";
-
-    // 3. Cas spécifique "VALIDE"
     if (projet.statutProjet === "VALIDE") {
       return t("project_card.status.ongoing");
     }
-
-    // 4. Fallback sécurisé : on s'assure que c'est bien une chaîne avant le .replace
-    // L'utilisation de String() ou du check au dessus évite le crash
     return String(projet.statutProjet).replace(/_/g, " ");
   };
 
@@ -69,6 +63,17 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.posterWrapper}>
+        {/* --- BADGE CERTIFIÉ (S'affiche si certifiedAt existe) --- */}
+        {projet.certifiedAt && (
+          <div
+            className={styles.certifiedBadge}
+            title="Projet audité et certifié sur l'honneur"
+          >
+            <BsShieldCheck className={styles.checkIcon} />
+            <span>{t("project_card.certified") || "Certifié Growzapp"}</span>
+          </div>
+        )}
+
         {projet.poster ? (
           <img
             src={projet.poster}
@@ -80,6 +85,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             <span>{t("project_card.no_poster")}</span>
           </div>
         )}
+
         <div
           className={`${styles.statutBadge} ${
             financementTermine
@@ -109,7 +115,6 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         </p>
 
         <div className={styles.infoGrid}>
-          {/* ROI : Toujours une valeur par défaut */}
           <div className={styles.infoItem}>
             <span className={styles.highlight}>
               <strong>{t("project_card.roi")}</strong> <FiTrendingUp />{" "}
@@ -117,7 +122,6 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             </span>
           </div>
 
-          {/* Equity : Sécurisé avec || 0 */}
           <div className={styles.infoItem}>
             <strong>{t("project_details.equity_to_raise")} </strong>
             <span className={styles.equityValue}>
@@ -125,7 +129,6 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             </span>
           </div>
 
-          {/* Prix par part : Conversion Number forcée + fallback 0 */}
           <div className={styles.infoItem}>
             <strong>{t("project_card.price_per_share")} </strong>
             <span>
@@ -133,7 +136,6 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             </span>
           </div>
 
-          {/* Objectif : Conversion Number forcée + fallback 0 */}
           <div className={styles.infoItem}>
             <strong>{t("project_card.goal")} </strong>
             <span>
@@ -157,7 +159,6 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
               className={`${styles.progressFill} ${
                 progress >= 100 ? styles.progressFull : ""
               }`}
-              /* Sécurité visuelle : la barre ne dépasse jamais 100% du conteneur */
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
@@ -172,14 +173,14 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         </p>
 
         <div className={styles.actions}>
-          {/* Bouton VOIR : mène à la page complète */}
-          <Link to={`/projet/${projet.id}`} className={styles.btnView}>
+          <Link to={`/projet/${projet.slug}`} className={styles.btnView}>
             <FiEye /> {t("project_card.btn_view")}
           </Link>
 
-          {/* Bouton INVESTIR : mène au mode Checkout simplifié */}
           <Link
-            to={financementTermine ? "#" : `/projet/${projet.id}?action=invest`}
+            to={
+              financementTermine ? "#" : `/projet/${projet.slug}?action=invest`
+            }
             className={`${styles.btnInvest} ${
               financementTermine ? styles.btnDisabled : ""
             }`}
