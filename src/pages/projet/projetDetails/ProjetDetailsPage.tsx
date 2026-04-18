@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom"; // Ajout de useSearchParams et Link
+import { useParams, useSearchParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async"; // SEO
 import { api } from "../../../service/Api";
 import { ProjetDTO } from "../../../types/projet";
 import { DocumentDTO } from "../../../types/document";
@@ -10,17 +11,13 @@ import { ApiResponse } from "../../../types/common";
 import { useAuth } from "../../../components/Context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import {
-  FiDownload,
-  FiFileText,
-  FiLock,
-  FiArrowLeft, // Icône de retour
-} from "react-icons/fi";
+import { FiDownload, FiFileText, FiLock, FiArrowLeft } from "react-icons/fi";
 
 export default function ProjetDetailsPage() {
+  // L'ID dans l'URL correspond désormais au SLUG pour le SEO
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const isInvestMode = searchParams.get("action") === "invest"; // Détection du mode
+  const isInvestMode = searchParams.get("action") === "invest";
 
   const { t } = useTranslation();
   const { format } = useCurrency();
@@ -31,7 +28,10 @@ export default function ProjetDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [canSeeDocs, setCanSeeDocs] = useState(true);
 
-  const translateData = (category: "sectors" | "countries" | "cities", value?: string) => {
+  const translateData = (
+    category: "sectors" | "countries" | "cities",
+    value?: string,
+  ) => {
     if (!value) return "---";
     const searchKey = value.trim().toUpperCase();
     return t(`data.${category}.${searchKey}`, { defaultValue: value });
@@ -41,11 +41,18 @@ export default function ProjetDetailsPage() {
     if (!id) return;
     try {
       setLoading(true);
-      const projetRes = await api.get<ApiResponse<ProjetDTO>>(`api/projets/${id}`);
-      setProjet(projetRes.data);
+      // APPEL API VIA LE SLUG POUR LE RÉFÉRENCEMENT
+      const projetRes = await api.get<ApiResponse<ProjetDTO>>(
+        `api/projets/slug/${id}`,
+      );
+      const projetData = projetRes.data;
+      setProjet(projetData);
 
+      // CHARGEMENT DES DOCUMENTS VIA L'ID NUMÉRIQUE DU PROJET RÉCUPÉRÉ
       try {
-        const docsRes = await api.get<ApiResponse<DocumentDTO[]>>(`api/documents/projet/${id}`);
+        const docsRes = await api.get<ApiResponse<DocumentDTO[]>>(
+          `api/documents/projet/${projetData.id}`,
+        );
         if (docsRes && docsRes.data) {
           setDocuments(docsRes.data);
           setCanSeeDocs(true);
@@ -67,62 +74,132 @@ export default function ProjetDetailsPage() {
     loadProjetAndDocuments();
   }, [id, t]);
 
-  if (loading) return <p className={styles.loading}>{t("project_details.loading")}</p>;
-  if (!projet) return <p className={styles.error}>{t("project_details.error_not_found")}</p>;
+  if (loading)
+    return <p className={styles.loading}>{t("project_details.loading")}</p>;
+  if (!projet)
+    return (
+      <p className={styles.error}>{t("project_details.error_not_found")}</p>
+    );
 
- const progress =
-   projet?.objectifFinancement > 0
-     ? (Number(projet.montantCollecte || 0) /
-         Number(projet.objectifFinancement)) *
-       100
-     : 0;
+  const progress =
+    projet?.objectifFinancement > 0
+      ? (Number(projet.montantCollecte || 0) /
+          Number(projet.objectifFinancement)) *
+        100
+      : 0;
 
   // ==========================================
   // RENDU 1 : MODE INVESTIR (Checkout)
   // ==========================================
- if (isInvestMode) {
-   return (
-     <div className={styles.container}>
-       <div className={styles.checkoutHeader}>
-         <Link to={`/projet/${id}`} className={styles.backBtn}>
-           <FiArrowLeft />{" "}
-           {t("project_details.back_to_details") || "Retour au projet"}
-         </Link>
-         <h1 className={styles.checkoutTitle}>
-           {t("project_details.invest_in_title") || "Investir dans"}{" "}
-           <span>{projet.libelle}</span>
-         </h1>
-         <div className={styles.priceRecall}>
-           {t("project_card.price_per_share")} :{" "}
-           <strong>
-             {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
-           </strong>
-         </div>
-       </div>
+  if (isInvestMode) {
+    return (
+      <div className={styles.container}>
+        <Helmet>
+          <title>
+            {t("project_details.invest_in_title")} {projet.libelle} | Growzapp
+          </title>
+        </Helmet>
 
-       <div className={styles.checkoutFormWrapper}>
-         <InvestForm
-           projet={projet}
-           onSuccess={() => loadProjetAndDocuments()}
-         />
-       </div>
-     </div>
-   );
- }
+        <div className={styles.checkoutHeader}>
+          <Link to={`/projet/${projet.slug}`} className={styles.backBtn}>
+            <FiArrowLeft />{" "}
+            {t("project_details.back_to_details") || "Retour au projet"}
+          </Link>
+          <h1 className={styles.checkoutTitle}>
+            {t("project_details.invest_in_title") || "Investir dans"}{" "}
+            <span>{projet.libelle}</span>
+          </h1>
+          <div className={styles.priceRecall}>
+            {t("project_card.price_per_share")} :{" "}
+            <strong>
+              {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
+            </strong>
+          </div>
+        </div>
+
+        <div className={styles.checkoutFormWrapper}>
+          <InvestForm
+            projet={projet}
+            onSuccess={() => loadProjetAndDocuments()}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Préparation du JSON-LD pour Google
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "InvestmentOrQuote",
+    name: projet.libelle,
+    description: projet.description,
+    image: projet.poster,
+    offers: {
+      "@type": "Offer",
+      price: projet.prixUnePart,
+      priceCurrency: projet.currencyCode,
+      availability:
+        projet.partsDisponible > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+    },
+    provider: {
+      "@type": "Organization",
+      name: "Growzapp",
+      url: "https://growzapp.com",
+    },
+  };
 
   // ==========================================
   // RENDU 2 : MODE COMPLET (Détails)
   // ==========================================
   return (
     <div className={styles.container}>
+      {/* CONFIGURATION SEO DYNAMIQUE */}
+      <Helmet>
+        <title>
+          {projet.libelle} | {t("project_details.invest_title")} Growzapp
+        </title>
+        <meta
+          name="description"
+          content={projet.description?.substring(0, 160)}
+        />
+
+        {/* --- DONNÉES STRUCTURÉES (JSON-LD) --- */}
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+
+        {/* Balises Open Graph pour les partages (WhatsApp, LinkedIn, etc.) */}
+        <meta
+          property="og:title"
+          content={`${projet.libelle} - Investissement Growzapp`}
+        />
+        <meta
+          property="og:description"
+          content={projet.description?.substring(0, 160)}
+        />
+        <meta property="og:image" content={projet.poster} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       <div className={styles.header}>
         {projet.poster && (
-          <img src={projet.poster} alt={projet.libelle} className={styles.poster} />
+          <img
+            src={projet.poster}
+            alt={projet.libelle}
+            className={styles.poster}
+          />
         )}
         <div className={styles.info}>
           <h1>{projet.libelle}</h1>
-          <p><strong>{t("project_details.sector")} :</strong> {translateData("sectors", projet.secteurNom)}</p>
-          <p><strong>{t("project_details.location")} :</strong> {projet.siteNom}, {translateData("cities", projet.localiteNom)}</p>
+          <p>
+            <strong>{t("project_details.sector")} :</strong>{" "}
+            {translateData("sectors", projet.secteurNom)}
+          </p>
+          <p>
+            <strong>{t("project_details.location")} :</strong> {projet.siteNom},{" "}
+            {translateData("cities", projet.localiteNom)}
+          </p>
           <div className={styles.roiBadge}>
             {t("project_details.roi_projected")} : {projet.roiProjete}%
           </div>
@@ -130,13 +207,26 @@ export default function ProjetDetailsPage() {
       </div>
 
       <div className={styles.stats}>
-        <div><strong>{format(projet.montantCollecte, projet.currencyCode)}</strong> {t("project_details.collected")}</div>
-        <div><strong>{format(projet.objectifFinancement, projet.currencyCode)}</strong> {t("project_details.goal")}</div>
-        <div><strong>{progress.toFixed(0)}%</strong> {t("project_details.reached")}</div>
+        <div>
+          <strong>{format(projet.montantCollecte, projet.currencyCode)}</strong>{" "}
+          {t("project_details.collected")}
+        </div>
+        <div>
+          <strong>
+            {format(projet.objectifFinancement, projet.currencyCode)}
+          </strong>{" "}
+          {t("project_details.goal")}
+        </div>
+        <div>
+          <strong>{progress.toFixed(0)}%</strong> {t("project_details.reached")}
+        </div>
       </div>
 
       <div className={styles.progressBar}>
-        <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+        <div
+          className={styles.progressFill}
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
       <div className={styles.description}>
@@ -153,11 +243,17 @@ export default function ProjetDetailsPage() {
             </span>
           )}
         </div>
-        <InvestForm projet={projet} onSuccess={() => loadProjetAndDocuments()} />
+        <InvestForm
+          projet={projet}
+          onSuccess={() => loadProjetAndDocuments()}
+        />
       </div>
 
       <div className={styles.documentsSection}>
-        <h2><FiFileText style={{ marginRight: "10px" }} />{t("project_details.documents_title")}</h2>
+        <h2>
+          <FiFileText style={{ marginRight: "10px" }} />
+          {t("project_details.documents_title")}
+        </h2>
         {canSeeDocs ? (
           <div className={styles.docGrid}>
             {documents.length > 0 ? (
@@ -166,12 +262,25 @@ export default function ProjetDetailsPage() {
                   <FiFileText size={24} color="#1B5E20" />
                   <div className={styles.docInfo}>
                     <strong>{doc.nom}</strong>
-                    <small>{new Date(doc.uploadedAt).toLocaleDateString()}</small>
+                    <small>
+                      {new Date(doc.uploadedAt).toLocaleDateString()}
+                    </small>
                   </div>
-                  <a href={`${import.meta.env.VITE_API_URL}/api/documents/${doc.id}/download`} className={styles.downloadBtn}><FiDownload /></a>
+                  <a
+                    href={`${import.meta.env.VITE_API_URL}/api/documents/${doc.id}/download`}
+                    className={styles.downloadBtn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FiDownload />
+                  </a>
                 </div>
               ))
-            ) : (<p className={styles.noDocs}>{t("project_details.no_documents")}</p>)}
+            ) : (
+              <p className={styles.noDocs}>
+                {t("project_details.no_documents")}
+              </p>
+            )}
           </div>
         ) : (
           <div className={styles.lockedDocs}>
