@@ -212,3 +212,48 @@
   color: #666 !important;
   border: 2px dashed #ccc !important;
 }
+.certifiedBadge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: #FFC107;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: badgePop 0.4s ease-out;
+}
+
+@keyframes badgePop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.certifiedBadge::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-25deg);
+  animation: shine 4s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  15% { left: 150%; }
+  100% { left: 150%; }
+}
+
+.checkIcon {
+  font-size: 1rem;
+}

@@ -1,283 +1,184 @@
-/* src/components/Investissement/InvestForm/InvestForm.module.css */
-/* VERSION 100% CORRIGÉE — TOUT FONCTIONNE PARFAITEMENT */
+/* ============================================================
+   FEUILLE DE STYLE : INVESTFORM (VERSION FINALE - GROWZAPP)
+   ============================================================ */
 
 .card {
   background: white;
   border-radius: 24px;
   padding: 2.5rem;
-  box-shadow: 
-    0 15px 50px rgba(255, 193, 7, 0.15),
-    0 0 0 1px rgba(255, 193, 7, 0.1);
+  box-shadow: 0 15px 50px rgba(27, 94, 32, 0.08);
   max-width: 500px;
-  margin: 2rem auto;
+  margin: 1rem auto;
   border: 3px solid #FFF8E1;
+  position: relative;
+  overflow: hidden;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #1B5E20;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.info {
-  background: #f8fcf8;
-  padding: 1.5rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  border-left: 5px solid #4CAF50;
-  font-size: 1.1rem;
-}
-
-.inputGroup {
-  margin: 2rem 0;
-}
-
-.inputGroup label {
-  display: block;
-  margin-bottom: 0.8rem;
-  font-weight: 700;
-  color: #1B5E20;
-  font-size: 1.2rem;
-}
-
-.inputGroup input {
-  width: 100%;
-  padding: 1.2rem;
-  border: 2px solid #ddd;
-  border-radius: 16px;
-  font-size: 1.4rem;
-  text-align: center;
-  background: white;
-}
-
-.inputGroup input:focus {
-  outline: none;
-  border-color: #FFC107;
-  box-shadow: 0 0 0 5px rgba(255,193,7,0.2);
-}
-
-/* MONTANT SUR FOND VERT */
-.totalBox {
-  background: linear-gradient(135deg, #1B5E20, #2E7D32);
-  color: white;
-  padding: 2rem;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin: 2rem 0;
-  box-shadow: 0 10px 30px rgba(27,94,32,0.3);
-}
-
-.lockIcon {
-  font-size: 2.5rem;
-}
-
-.totalLabel {
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
-
-.totalAmount {
-  font-size: 2.4rem;
-  font-weight: 900;
-}
-
-/* MÉTHODES DE PAIEMENT — TOUT EST PARFAIT */
-.paymentMethods {
-  margin: 2rem 0;
-}
-
-.method {
-  width: 100%;
-  padding: 1.4rem;
-  border: 2px solid #ddd;
-  border-radius: 18px;
-  background: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-  text-align: left;
-  position: relative;
-}
-
-.method:hover:not(.disabled) {
-  border-color: #1B5E20;
-  background: #f8fcf8;
-  transform: translateY(-3px);
-}
-
-.method.active {
-  border-color: #1B5E20;
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-  box-shadow: 0 0 0 4px rgba(27,94,32,0.1);
-}
-
-.method.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: #f9f9f9;
-}
-
-.method svg {
-  font-size: 2rem;
-  color: #4CAF50;
-}
-
-.methodText {
-  flex: 1;
-}
-
-.check {
-  margin-left: auto;
-  color: #1B5E20;
   font-size: 1.8rem;
-}
-
-/* BOUTON JAUNE DOUX */
-.submitBtn {
-  width: 100%;
-  padding: 1.6rem;
-  background: linear-gradient(135deg, #FFC107, #FFB300);
-  color: #1B5E20;
-  border: none;
-  border-radius: 20px;
-  font-size: 1.4rem;
-  font-weight: 900;
-  cursor: pointer;
-  margin-top: 1rem;
-  box-shadow: 0 12px 35px rgba(255,193,7,0.4);
-  transition: all 0.4s ease;
-}
-
-.submitBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FFB300, #FF8F00);
-  transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(255,193,7,0.6);
-}
-
-.submitBtn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.hint {
+  font-weight: 800;
+  color: #1B5E20; /* Ton vert signature */
   text-align: center;
-  color: #2d6a2f;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f8fcf8;
-  border-radius: 16px;
-  border: 1px dashed #4CAF50;
+  margin-bottom: 2rem;
 }
 
-.submitBtn {
-  width: 100%;
-  padding: 1.6rem;
-  background: linear-gradient(135deg, #FFC107, #FFB300) !important; /* Force le jaune */
-  color: #1B5E20;
-  border: none;
-  border-radius: 20px;
-  font-size: 1.4rem;
-  font-weight: 900;
-  cursor: pointer;
-  margin-top: 1rem;
-  box-shadow: 0 12px 35px rgba(255,193,7,0.4);
-  transition: all 0.4s ease;
-}
-
-.submitBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FFB300, #FF8F00) !important;
-  transform: translateY(-5px);
-  box-shadow: 0 20px 50px rgba(255,193,7,0.6);
-}
-
-.submitBtn:disabled {
-  background: #ffa000 !important; /* Jaune plus foncé au lieu de gris */
-  opacity: 0.8;
-  cursor: not-allowed;
-  transform: none;
-}
-
-
-.card {
-  position: relative;
-  overflow: hidden;
-  /* Important pour que le flou ne déborde pas */
-}
-
-.lockedCard {
-  border: 2px solid #fee2e2;
-}
-
-/* L'effet de flou appliqué au conteneur interne */
-.blurOverlay {
-  filter: blur(5px);
-  pointer-events: none;
-  user-select: none;
-  opacity: 0.6;
-  transition: all 0.4s ease;
-}
-
-/* Style de la bannière d'alerte (doit rester nette) */
+/* --- BANNIÈRE KYC --- */
 .kycWarning {
-  position: relative;
-  z-index: 10;
-  /* Pour passer au dessus du flou */
   display: flex;
   gap: 15px;
-  background: #fff7ed;
-  border: 1px solid #ffedd5;
+  background: #FFF7ED;
+  border: 1px solid #FFEDD5;
   padding: 1.2rem;
-  border-radius: 12px;
+  border-radius: 16px;
   margin-bottom: 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.warningIcon {
-  font-size: 2rem;
-  color: #ea580c;
-  flex-shrink: 0;
-}
-
-.warningText strong {
-  display: block;
-  color: #9a3412;
-  margin-bottom: 4px;
-}
-
-.warningText p {
-  font-size: 0.9rem;
-  color: #c2410c;
-  margin-bottom: 10px;
-}
+.warningIcon { font-size: 2rem; color: #EA580C; flex-shrink: 0; }
+.warningText strong { display: block; color: #9A3412; margin-bottom: 4px; }
+.warningText p { font-size: 0.9rem; color: #C2410C; margin-bottom: 10px; }
 
 .kycLink {
   display: inline-block;
-  background: #ea580c;
+  background: #EA580C;
   color: white !important;
   padding: 6px 16px;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.85rem;
-  transition: 0.2s;
 }
 
-.kycLink:hover {
-  background: #c2410c;
-  transform: scale(1.05);
+.blurOverlay {
+  filter: blur(5px);
+  pointer-events: none;
+  opacity: 0.5;
 }
 
-.btnDisabled {
-  background: #94a3b8 !important;
+/* --- FORMULAIRE --- */
+.info {
+  background: #F1F8E9;
+  padding: 1.2rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  border-left: 5px solid #4CAF50;
 }
+
+.inputGroup { margin-bottom: 1.5rem; }
+.inputGroup label { display: block; margin-bottom: 0.5rem; font-weight: 700; color: #1B5E20; }
+.inputGroup input {
+  width: 100%; padding: 1rem; border: 2px solid #E2E8F0;
+  border-radius: 12px; font-size: 1.2rem; text-align: center;
+}
+
+.totalBox {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white; padding: 1.5rem; border-radius: 16px;
+  display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+}
+
+.lockIcon { font-size: 2rem; }
+.totalAmount { font-size: 1.8rem; font-weight: 900; }
+
+/* --- MÉTHODES DE PAIEMENT --- */
+.paymentMethods { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+
+.method {
+  display: flex; align-items: center; gap: 12px; padding: 1rem;
+  border: 2px solid #E2E8F0; border-radius: 14px; background: white;
+  cursor: pointer; transition: all 0.2s; text-align: left;
+}
+
+.method.active { border-color: #1B5E20; background: #F1F8E9; }
+
+.submitBtn {
+  width: 100%; padding: 1.2rem;
+  background: linear-gradient(135deg, #FFC107, #FFB300); /* Ton Jaune Or */
+  color: #1B5E20; border: none; border-radius: 16px;
+  font-size: 1.2rem; font-weight: 800; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+}
+
+/* ========================================== */
+/* MODAL DE CONSENTEMENT (CORRIGÉ CHARTE)     */
+/* ========================================== */
+
+.modalOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(27, 94, 32, 0.8); /* Vert sombre transparent */
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(8px);
+  padding: 20px;
+}
+
+.modalCard {
+  background: white;
+  width: 100%; max-width: 550px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  border: 4px solid #FFF8E1;
+  animation: modalIn 0.3s ease-out;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modalHeader {
+  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  color: white; padding: 30px; text-align: center; position: relative;
+}
+
+.closeBtn {
+  position: absolute; top: 15px; right: 15px;
+  background: rgba(255,255,255,0.1); border: none;
+  border-radius: 50%; width: 30px; height: 30px;
+  color: white; cursor: pointer;
+}
+
+.shieldIcon { font-size: 2.5rem; color: #FFC107; margin-bottom: 10px; }
+
+.modalBody { padding: 30px; }
+
+.summaryRow {
+  background: #F1F8E9; padding: 15px 20px;
+  border-radius: 14px; display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 25px;
+  border: 1px solid #C8E6C9;
+}
+
+.summaryRow strong { color: #1B5E20; font-size: 1.4rem; font-weight: 900; }
+
+.legalChecklist { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
+
+.checkItem { display: flex; gap: 15px; align-items: flex-start; cursor: pointer; }
+
+.checkItem input[type="checkbox"] {
+  width: 22px; height: 22px; accent-color: #1B5E20; cursor: pointer;
+}
+
+.checkItem label { font-size: 0.95rem; line-height: 1.5; color: #374151; }
+
+.auditNote {
+  background: #FFFDE7; padding: 15px; border-radius: 12px;
+  display: flex; gap: 10px; align-items: center;
+  font-size: 0.85rem; color: #856404; border: 1px solid #FFF9C4;
+}
+
+.modalFooter { display: flex; padding: 20px 30px 30px; gap: 15px; }
+
+.btnBack {
+  flex: 1; padding: 1rem; border-radius: 12px;
+  border: 1px solid #CBD5E1; background: white; cursor: pointer;
+}
+
+.btnConfirm {
+  flex: 2; padding: 1rem; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, #FFC107, #FFB300);
+  color: #1B5E20; font-weight: 900; cursor: pointer;
+}
+
+.btnConfirm:disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; }
