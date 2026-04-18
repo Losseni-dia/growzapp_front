@@ -11,6 +11,8 @@ import CrispUserHandler from "./components/Crips-ChatBox/CrispUserHandler";
 // === PROVIDERS ===
 import { CurrencyProvider } from "./components/Context/CurrencyContext";
 
+import { HelmetProvider } from "react-helmet-async";
+
 // Pages publiques
 import HomePage from "./pages/HomePage/HomePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
@@ -87,141 +89,160 @@ function App() {
   }, [location]);
 
   return (
-    <CurrencyProvider>
-      <Header />
-      {/* Gère l'identification du nom et de l'email de l'investisseur */}
-      <CrispUserHandler />
-      <GrowzToaster />
+    <HelmetProvider>
+      <CurrencyProvider>
+        <Header />
+        {/* Gère l'identification du nom et de l'email de l'investisseur */}
+        <CrispUserHandler />
+        <GrowzToaster />
 
-      <main style={{ minHeight: "80vh" }}>
-        <Routes>
-          {/* ==================== ROUTES PUBLIQUES ==================== */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/projets" element={<ProjetsPage />} />
-          <Route path="/projet/:id" element={<ProjetDetailsPage />} />
-          <Route path="/verifier-contrat" element={<VerifierContrat />} />
-          <Route path="/verifier-contrat/:code" element={<VerifierContrat />} />
-          <Route path="/news" element={<NewsPage />} />
-          <Route path="/news/:id" element={<NewsDetail />} />
-          <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
-
-          {/* Étape 1 : Demander le reset */}
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          {/* Étape 2 : Changer le mdp (Lien reçu par email) */}
-          <Route path="/reset-password" element={<ResetPassword />} />
-
-          {/* Routes Légales */}
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="/cgu" element={<CGU />} />
-          <Route path="/rgpd" element={<RGPD />} />
-          <Route path="/cgv" element={<CGV />} />
-
-          {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/mon-espace" element={<Dashboard />} />
-            <Route path="/profile/edit" element={<ProfileUpdateForm />} />
-            <Route path="/profile/kyc" element={<KYCUploadForm />} />
-            <Route path="/projet/creer" element={<ProjectForm />} />
-            <Route path="/projet/edit/:id" element={<ProjectForm />} />
-            <Route path="/wallet" element={<WalletPage />} />
-            <Route path="/depot" element={<DepotPage />} />
-            <Route path="/retrait" element={<RetraitPage />} />
-            <Route path="/depot/success" element={<DepositSuccess />} />
-            <Route path="/depot/cancel" element={<DepositCancel />} />
-            <Route path="/retrait/success" element={<WithdrawSuccessPage />} />
-            <Route path="/retrait/cancel" element={<WithdrawCancelPage />} />
+        <main style={{ minHeight: "80vh" }}>
+          <Routes>
+            {/* ==================== ROUTES PUBLIQUES ==================== */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/projets" element={<ProjetsPage />} />
+            <Route path="/projet/:id" element={<ProjetDetailsPage />} />
+            <Route path="/verifier-contrat" element={<VerifierContrat />} />
             <Route
-              path="/mes-investissements"
-              element={<MesInvestissementsPage />}
+              path="/verifier-contrat/:code"
+              element={<VerifierContrat />}
             />
-            <Route path="/mes-projets" element={<MesProjetsPage />} />
-            <Route path="/mes-dividendes" element={<MesDividendesPage />} />
-            <Route path="/contrat/:numero" element={<ContratPage />} />
-            <Route path="/contrat/:numero/viewer" element={<ContratViewer />} />
-            <Route path="/projets/proximite" element={<ProjetsProches />} />
-          </Route>
+            <Route path="/news" element={<NewsPage />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route
+              path="/oauth2/redirect"
+              element={<OAuth2RedirectHandler />}
+            />
 
-          {/* ==================== ROUTES ADMIN ==================== */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AdminRoute />}>
+            {/* Étape 1 : Demander le reset */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            {/* Étape 2 : Changer le mdp (Lien reçu par email) */}
+            <Route path="/reset-password" element={<ResetPassword />} />
+
+            {/* Routes Légales */}
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/cgu" element={<CGU />} />
+            <Route path="/rgpd" element={<RGPD />} />
+            <Route path="/cgv" element={<CGV />} />
+
+            {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/mon-espace" element={<Dashboard />} />
+              <Route path="/profile/edit" element={<ProfileUpdateForm />} />
+              <Route path="/profile/kyc" element={<KYCUploadForm />} />
+              <Route path="/projet/creer" element={<ProjectForm />} />
+              <Route path="/projet/edit/:id" element={<ProjectForm />} />
+              <Route path="/wallet" element={<WalletPage />} />
+              <Route path="/depot" element={<DepotPage />} />
+              <Route path="/retrait" element={<RetraitPage />} />
+              <Route path="/depot/success" element={<DepositSuccess />} />
+              <Route path="/depot/cancel" element={<DepositCancel />} />
               <Route
-                path="/admin/settings"
-                element={<ProjectSettingsPanel />}
+                path="/retrait/success"
+                element={<WithdrawSuccessPage />}
               />
-              <Route path="/admin" element={<DashboardAdmin />} />
-              <Route path="/admin/users" element={<UsersAdminPage />} />
-              <Route path="/admin/kyc" element={<KycAdminPanel />} />
-              <Route path="/admin/projets" element={<ProjetsPage />} />
-              <Route path="/admin/contrats" element={<ContratsAdmin />} />
+              <Route path="/retrait/cancel" element={<WithdrawCancelPage />} />
               <Route
-                path="/admin/investissements"
-                element={<InvestissementsAdminPage />}
+                path="/mes-investissements"
+                element={<MesInvestissementsPage />}
               />
+              <Route path="/mes-projets" element={<MesProjetsPage />} />
+              <Route path="/mes-dividendes" element={<MesDividendesPage />} />
+              <Route path="/contrat/:numero" element={<ContratPage />} />
               <Route
-                path="/admin/project-wallets"
-                element={<ProjectWalletsAdminPage />}
+                path="/contrat/:numero/viewer"
+                element={<ContratViewer />}
               />
-              <Route
-                path="/admin/project-wallets/:projetId"
-                element={<ProjectWalletDetailPage />}
-              />
-              <Route
-                path="/admin/retraits"
-                element={<AdminWithdrawalsPage />}
-              />
-              <Route
-                path="/admin/projets/edit/:id"
-                element={<EditProjetPage />}
-              />
-              <Route
-                path="/admin/projets/:id"
-                element={<ProjetAdminDetail />}
-              />
-              <Route
-                path="/admin/projets/detail/:id"
-                element={<ProjetAdminDetail />}
-              />
-              <Route path="/admin/projetsList" element={<AdminProjetsList />} />
+              <Route path="/projets/proximite" element={<ProjetsProches />} />
             </Route>
-          </Route>
 
-          {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
-          {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
-          <Route
-            element={<ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />}
-          >
-            <Route path="/admin/news/new" element={<NewsForm />} />
-            <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
-          </Route>
+            {/* ==================== ROUTES ADMIN ==================== */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AdminRoute />}>
+                <Route
+                  path="/admin/settings"
+                  element={<ProjectSettingsPanel />}
+                />
+                <Route path="/admin" element={<DashboardAdmin />} />
+                <Route path="/admin/users" element={<UsersAdminPage />} />
+                <Route path="/admin/kyc" element={<KycAdminPanel />} />
+                <Route path="/admin/projets" element={<ProjetsPage />} />
+                <Route path="/admin/contrats" element={<ContratsAdmin />} />
+                <Route
+                  path="/admin/investissements"
+                  element={<InvestissementsAdminPage />}
+                />
+                <Route
+                  path="/admin/project-wallets"
+                  element={<ProjectWalletsAdminPage />}
+                />
+                <Route
+                  path="/admin/project-wallets/:projetId"
+                  element={<ProjectWalletDetailPage />}
+                />
+                <Route
+                  path="/admin/retraits"
+                  element={<AdminWithdrawalsPage />}
+                />
+                <Route
+                  path="/admin/projets/edit/:id"
+                  element={<EditProjetPage />}
+                />
+                <Route
+                  path="/admin/projets/:id"
+                  element={<ProjetAdminDetail />}
+                />
+                <Route
+                  path="/admin/projets/detail/:id"
+                  element={<ProjetAdminDetail />}
+                />
+                <Route
+                  path="/admin/projetsList"
+                  element={<AdminProjetsList />}
+                />
+              </Route>
+            </Route>
 
-          {/* ==================== REDIRECTIONS ==================== */}
-          <Route path="/home" element={<Navigate to="/" replace />} />
-          <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
+            {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
+            {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />
+              }
+            >
+              <Route path="/admin/news/new" element={<NewsForm />} />
+              <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
+            </Route>
 
-          {/* ==================== 404 ==================== */}
-          <Route
-            path="*"
-            element={
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "100px",
-                  fontSize: "2rem",
-                  color: "#666",
-                }}
-              >
-                404 – Page non trouvée
-              </div>
-            }
-          />
-        </Routes>
-      </main>
+            {/* ==================== REDIRECTIONS ==================== */}
+            <Route path="/home" element={<Navigate to="/" replace />} />
+            <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
 
-      <Footer />
-    </CurrencyProvider>
+            {/* ==================== 404 ==================== */}
+            <Route
+              path="*"
+              element={
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "100px",
+                    fontSize: "2rem",
+                    color: "#666",
+                  }}
+                >
+                  404 – Page non trouvée
+                </div>
+              }
+            />
+          </Routes>
+        </main>
+
+        <Footer />
+      </CurrencyProvider>
+    </HelmetProvider>
   );
 }
 
