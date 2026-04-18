@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /projets
+Allow: /projet/*
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /wallet
+Disallow: /profile/edit
+
+Sitemap: https://growzapp.com/sitemap.xml
