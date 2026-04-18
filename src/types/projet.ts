@@ -6,6 +6,7 @@ import type { InvestissementDTO } from "./investissement";
 
 export interface ProjetDTO {
   id: number;
+  slug: string;
   poster?: string;
   reference?: number;
   libelle: string;
@@ -18,8 +19,8 @@ export interface ProjetDTO {
   objectifFinancement: number;
   montantCollecte: number;
 
-  // NOUVEAU CHAMP : Indispensable pour la conversion automatique
   currencyCode: string;
+  certifiedAt?: string;
 
   dateDebut?: string;
   dateFin?: string;
@@ -47,6 +48,7 @@ export interface ProjetDTO {
 // Optionnel : Mise à jour du résumé si tu l'utilises
 export interface ProjetSummary {
   id: number;
+  slug: string;
   poster?: string;
   libelle: string;
   description?: string;
@@ -62,6 +64,7 @@ export interface ProjetSummary {
   paysNom: string;
   secteurNom?: string;
   siteNom?: string;
+  certifiedAt?: string;
 }
 
 // Pour créer/éditer un projet
@@ -78,4 +81,5 @@ export interface ProjetCreateRequest {
   dateFin?: string;
   siteId?: number;
   secteurId?: number;
+  certifiedAt?: string;
 }
