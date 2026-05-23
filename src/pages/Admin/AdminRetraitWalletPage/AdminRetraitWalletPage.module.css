@@ -13,13 +13,13 @@
 .title {
   font-size: 2.8rem;
   font-weight: 800;
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
   font-size: 1.3rem;
-  color: #27ae60;
+  color: var(--growz-green-500);
   font-weight: 600;
 }
 
@@ -27,8 +27,8 @@
   background: white;
   border-radius: 1.5rem;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.1);
-  border: 2px solid #e8f5e9;
+  box-shadow: 0 20px 40px var(--growz-veil-10);
+  border: 2px solid var(--growz-mint-50);
 }
 
 .table {
@@ -37,7 +37,7 @@
 }
 
 .table th {
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   padding: 1.2rem;
   text-align: left;
@@ -59,14 +59,14 @@
 }
 
 .login {
-  color: #27ae60;
+  color: var(--growz-green-500);
   font-weight: 500;
 }
 
 .amount {
   font-weight: 700;
   font-size: 1.2rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 .status {
@@ -95,12 +95,12 @@
 }
 
 .btnValidate {
-  background: #27ae60;
+  background: var(--growz-green-500);
   color: white;
 }
 
 .btnValidate:hover {
-  background: #219653;
+  background: var(--growz-green-700);
   transform: translateY(-2px);
 }
 
@@ -141,7 +141,7 @@
 }
 
 .modal h2 {
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin-bottom: 1rem;
 }
 
@@ -188,5 +188,5 @@
   text-align: center;
   padding: 4rem;
   font-size: 1.5rem;
-  color: #27ae60;
+  color: var(--growz-green-500);
 }

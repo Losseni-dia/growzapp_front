@@ -13,7 +13,7 @@
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 2rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 700;
   text-decoration: none;
   padding: 0.7rem 1.2rem;
@@ -24,19 +24,19 @@
 }
 
 .backLink:hover {
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: #ffffff;
   transform: translateX(-4px);
 }
 
 /* --- TITRE --- */
 .title {
-  color: #4CAF50;
+  color: var(--growz-green-500);
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 3rem;
   letter-spacing: -0.5px;
-  border-left: 8px solid #FFC107;
+  border-left: 8px solid var(--growz-gold);
   padding-left: 1.5rem;
 }
 
@@ -94,11 +94,11 @@
   padding: 3rem;
   margin-bottom: 4rem;
   border: 1px solid #e0eadd;
-  box-shadow: 0 4px 20px rgba(27, 94, 32, 0.05);
+  box-shadow: 0 4px 20px var(--growz-veil-05);
 }
 
 .actionSection h2 {
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 1.5rem;
   font-weight: 800;
   margin-bottom: 2rem;
@@ -120,9 +120,9 @@
 
 .input:focus {
   outline: none;
-  border-color: #1B5E20;
+  border-color: var(--growz-primary);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(27, 94, 32, 0.1);
+  box-shadow: 0 0 0 4px var(--growz-veil-10);
 }
 
 .btnDividende {
@@ -133,8 +133,8 @@
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  background: #1B5E20;
-  color: #FFC107;
+  background: var(--growz-primary);
+  color: var(--growz-gold);
   /* Texte jaune sur fond vert */
   transition: all 0.2s ease;
   margin-top: 1rem;
@@ -231,13 +231,13 @@
 }
 
 .valide {
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: #ffffff;
 }
 
 .en_attente {
-  background: #FFC107;
-  color: #1B5E20;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
 }
 
 .center {
@@ -252,5 +252,5 @@
   min-height: 100vh;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }

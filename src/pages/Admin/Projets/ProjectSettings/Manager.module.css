@@ -6,7 +6,7 @@
 }
 
 .statsHeader {
-    background: linear-gradient(135deg, #1B5E20, #2E7D32);
+    background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-700));
     color: white;
     padding: 1.2rem 2rem;
     border-radius: 16px;
@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 8px 20px rgba(27, 94, 32, 0.2);
+    box-shadow: 0 8px 20px var(--growz-veil-20);
 }
 
 /* Forms */
@@ -25,7 +25,7 @@
     background: #ffffff;
     padding: 1.5rem;
     border-radius: 20px;
-    border: 1px solid rgba(27, 94, 32, 0.1);
+    border: 1px solid var(--growz-veil-10);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
 }
 
@@ -69,13 +69,13 @@ select {
 
 input:focus,
 select:focus {
-    border-color: #1B5E20;
+    border-color: var(--growz-primary);
     background: #fff;
 }
 
 .btnAdd,
 .btnSave {
-    background: linear-gradient(135deg, #1B5E20, #2E7D32);
+    background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-700));
     color: white;
     border: none;
     padding: 12px 24px;
@@ -115,7 +115,7 @@ select:focus {
 
 .itemCard:hover {
     transform: translateY(-5px);
-    border-color: #4CAF50;
+    border-color: var(--growz-green-500);
 }
 
 .itemMain {
@@ -131,8 +131,8 @@ select:focus {
 }
 
 .itemBadge {
-    background: #E8F5E9;
-    color: #1B5E20;
+    background: var(--growz-mint-50);
+    color: var(--growz-primary);
     padding: 4px 12px;
     border-radius: 50px;
     font-size: 0.8rem;
