@@ -7,6 +7,7 @@ import type { InvestissementDTO } from "./investissement";
 export interface ProjetDTO {
   id: number;
   slug: string;
+  porteurNom?: string;
   poster?: string;
   reference?: number;
   libelle: string;
@@ -29,7 +30,6 @@ export interface ProjetDTO {
   createdAt: string;
 
   porteurId?: number;
-  porteurNom?: string;
 
   siteId?: number;
   siteNom?: string;
@@ -39,7 +39,7 @@ export interface ProjetDTO {
   localiteNom?: string;
   paysId?: number;
   paysNom?: string;
-  googleMapsLink?: string;
+  googleMapsUrl?: string;
 
   documents: DocumentDTO[];
   investissements: InvestissementDTO[];

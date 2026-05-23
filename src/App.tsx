@@ -96,7 +96,7 @@ function App() {
         <CrispUserHandler />
         <GrowzToaster />
 
-        <main style={{ minHeight: "80vh" }}>
+        <main className="growzAppMain">
           <Routes>
             {/* ==================== ROUTES PUBLIQUES ==================== */}
             <Route path="/" element={<HomePage />} />
@@ -162,19 +162,37 @@ function App() {
             {/* ==================== ROUTES ADMIN ==================== */}
             <Route element={<ProtectedRoute />}>
               <Route element={<AdminRoute />}>
-                <Route
-                  path="/admin/settings"
-                  element={<ProjectSettingsPanel />}
-                />
+                {/* 1. LE HUB : Statistiques et KPIs */}
                 <Route path="/admin" element={<DashboardAdmin />} />
+
+                {/* 2. GESTION DES PROJETS : La nouvelle vue avec Tabs et Recherche */}
+                {/* On utilise AdminProjetsList comme page principale de gestion */}
+                <Route path="/admin/projets" element={<AdminProjetsList />} />
+
+                {/* Sous-pages de gestion des projets */}
+                <Route
+                  path="/admin/projets/detail/:id"
+                  element={<ProjetAdminDetail />}
+                />
+                <Route
+                  path="/admin/projets/edit/:id"
+                  element={<EditProjetPage />}
+                />
+
+                {/* 3. AUTRES MODULES DE GESTION */}
                 <Route path="/admin/users" element={<UsersAdminPage />} />
                 <Route path="/admin/kyc" element={<KycAdminPanel />} />
-                <Route path="/admin/projets" element={<ProjetsPage />} />
                 <Route path="/admin/contrats" element={<ContratsAdmin />} />
                 <Route
                   path="/admin/investissements"
                   element={<InvestissementsAdminPage />}
                 />
+                <Route
+                  path="/admin/retraits"
+                  element={<AdminWithdrawalsPage />}
+                />
+
+                {/* 4. WALLETS ET TRÉSORERIE */}
                 <Route
                   path="/admin/project-wallets"
                   element={<ProjectWalletsAdminPage />}
@@ -183,26 +201,15 @@ function App() {
                   path="/admin/project-wallets/:projetId"
                   element={<ProjectWalletDetailPage />}
                 />
+
+                {/* 5. CONFIGURATION */}
                 <Route
-                  path="/admin/retraits"
-                  element={<AdminWithdrawalsPage />}
+                  path="/admin/settings"
+                  element={<ProjectSettingsPanel />}
                 />
-                <Route
-                  path="/admin/projets/edit/:id"
-                  element={<EditProjetPage />}
-                />
-                <Route
-                  path="/admin/projets/:id"
-                  element={<ProjetAdminDetail />}
-                />
-                <Route
-                  path="/admin/projets/detail/:id"
-                  element={<ProjetAdminDetail />}
-                />
-                <Route
-                  path="/admin/projetsList"
-                  element={<AdminProjetsList />}
-                />
+
+                {/* --- NETTOYAGE --- */}
+                {/* J'ai supprimé /admin/projetsList car /admin/projets fait maintenant le travail proprement */}
               </Route>
             </Route>
 
@@ -225,15 +232,9 @@ function App() {
             <Route
               path="*"
               element={
-                <div
-                  style={{
-                    textAlign: "center",
-                    padding: "100px",
-                    fontSize: "2rem",
-                    color: "#666",
-                  }}
-                >
-                  404 – Page non trouvée
+                <div className="growzNotFound">
+                  <strong>404</strong>
+                  <span>Page non trouvée</span>
                 </div>
               }
             />

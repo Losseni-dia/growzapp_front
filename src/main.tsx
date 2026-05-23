@@ -16,16 +16,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 // Petit composant de chargement le temps que la langue arrive
 const Loading = () => (
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-    }}
-  >
-    Chargement de GrowzApp...
-  </div>
+  <div className="growzLoadingRoot">Chargement de GrowzApp…</div>
 );
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
