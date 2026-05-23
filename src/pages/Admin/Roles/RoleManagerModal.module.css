@@ -4,8 +4,8 @@
   background        : white;
   padding            : 2rem;
   border-radius      : 16px;
-  box-shadow         : 0 15px 40px rgba(27, 94, 32, 0.2);
-  border             : 2px solid #E8F5E9;
+  box-shadow         : 0 15px 40px var(--growz-veil-20);
+  border             : 2px solid var(--growz-mint-50);
   max-width          : 460px;
   width              : 100%;
   margin             : 0 auto;
@@ -13,7 +13,7 @@
 
 .title {
   margin             : 0 0 1.8rem 0;
-  color              : #1B5E20;
+  color              : var(--growz-primary);
   font-size          : 1.7rem;
   font-weight        : 700;
   text-align         : center;
@@ -43,8 +43,8 @@
 }
 
 .roleItemChecked {
-  background         : #E8F5E9;
-  border             : 2px solid #1B5E20;
+  background         : var(--growz-mint-50);
+  border             : 2px solid var(--growz-primary);
 }
 
 .roleItemChecked:hover {
@@ -55,7 +55,7 @@
   width              : 20px;
   height             : 20px;
   cursor             : pointer;
-  accent-color       : #1B5E20;
+  accent-color       : var(--growz-primary);
 }
 
 .roleLabel {
@@ -67,7 +67,7 @@
 
 .roleLabelChecked {
   font-weight        : 700;
-  color              : #1B5E20;
+  color              : var(--growz-primary);
 }
 
 .loadingText {
@@ -101,13 +101,13 @@
 
 .btnSave {
   padding            : 11px 32px;
-  background         : #1B5E20;
+  background         : var(--growz-primary);
   color              : white;
   border             : none;
   border-radius      : 10px;
   font-weight        : 700;
   cursor             : pointer;
-  box-shadow         : 0 4px 15px rgba(27, 94, 32, 0.3);
+  box-shadow         : 0 4px 15px var(--growz-veil-30);
   transition         : all 0.2s;
 }
 

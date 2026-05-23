@@ -23,7 +23,7 @@
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-  border-color: #1b5e20;
+  border-color: var(--growz-primary);
 }
 
 /* IMAGE */
@@ -64,7 +64,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-.statutBadge:global(.VALIDE), .statutBadge:global(.EN_COURS) { background: #2e7d32; }
+.statutBadge:global(.VALIDE), .statutBadge:global(.EN_COURS) { background: var(--growz-green-700); }
 .statutBadge:global(.SOUMIS), .statutBadge:global(.EN_ATTENTE) { background: #f57c00; }
 .statutBadge:global(.REJETE) { background: #d32f2f; }
 .statutBadge:global(.TERMINE) { background: #7b1fa2; }
@@ -82,7 +82,7 @@
 .projectTitle {
   font-size: 1.3rem;
   font-weight: 800;
-  color: #1b5e20;
+  color: var(--growz-primary);
   margin: 0;
   line-height: 1.4;
 }
@@ -99,7 +99,7 @@
   align-items: center;
   gap: 12px;
   font-weight: bold;
-  color: #1b5e20;
+  color: var(--growz-primary);
   margin-top: 0.5rem;
 }
 
@@ -113,7 +113,7 @@
 
 .progressFill {
   height: 100%;
-  background: #1b5e20;
+  background: var(--growz-primary);
 }
 
 /* --- BOUTONS (Zone critique) --- */
@@ -144,7 +144,7 @@
 }
 
 /* Couleurs vives pour être sûr de les voir */
-.btnDetail { background: #1B5E20; }
+.btnDetail { background: var(--growz-primary); }
 .btnDetail:hover { background: #144a17; }
 
 .btnEdit { background: #1976d2; }
@@ -160,7 +160,7 @@
   margin-top: 10px;
 }
 
-.btnValider { background: #2e7d32; }
+.btnValider { background: var(--growz-green-700); }
 .btnRejeter { background: #c62828; }
 
 .btnPublic {
@@ -171,3 +171,113 @@
   width: 100%;
 }
 .btnPublic:hover { background: #f5f5f5; color: #333 !important; }
+
+/* --- NOUVEAUX STYLES POUR LA GESTION --- */
+
+.headerManagement {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* --- SECTION RECHERCHE CORRIGÉE --- */
+
+.searchContainer {
+  position: relative;
+  width: 450px;
+  max-width: 100%;
+  display: flex; /* Force le comportement de bloc interne */
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 18px; /* Un peu plus d'espace depuis le bord gauche */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--growz-primary);
+  font-size: 1.2rem;
+  z-index: 2; /* S'assure de passer devant le champ de saisie */
+  pointer-events: none; /* L'icône devient "transparente" au clic */
+}
+
+.searchInput {
+  width: 100%;
+  height: 48px; /* Hauteur fixe pour un alignement parfait */
+  padding: 0 15px 0 50px; /* Padding gauche de 50px pour laisser place à l'icône */
+  border-radius: 50px;
+  border: 2px solid #e0e0e0;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  background: white;
+}
+
+.searchInput:focus {
+  border-color: var(--growz-primary);
+  box-shadow: 0 8px 20px var(--growz-veil-15);
+}
+
+.tabsWrapper {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #eee;
+  overflow-x: auto;
+}
+
+.tabButton {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #f0f0f0;
+  color: #666;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.activeTab {
+  background: var(--growz-primary) !important;
+  color: white !important;
+}
+
+.countBadge {
+  background: rgba(0,0,0,0.1);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.activeTab .countBadge {
+  background: rgba(255,255,255,0.2);
+}
+
+.location {
+  font-size: 0.85rem;
+  color: #777;
+  font-style: italic;
+}
+
+.financeValues {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 5rem;
+  font-size: 1.2rem;
+  color: #999;
+  font-weight: 600;
+}

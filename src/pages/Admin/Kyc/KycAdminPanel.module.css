@@ -12,7 +12,7 @@
 }
 
 .headerIcon {
-    color: #27ae60;
+    color: var(--growz-green-500);
 }
 
 .title {
@@ -126,8 +126,8 @@
 }
 
 .docBtn:hover {
-    border-color: #27ae60;
-    color: #27ae60;
+    border-color: var(--growz-green-500);
+    color: var(--growz-green-500);
     background: #f0faf4;
 }
 
@@ -157,12 +157,12 @@
 }
 
 .btnApprove {
-    background: #27ae60;
+    background: var(--growz-green-500);
     color: white;
 }
 
 .btnApprove:hover {
-    background: #219653;
+    background: var(--growz-green-700);
     transform: translateY(-2px);
 }
 

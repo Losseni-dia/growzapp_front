@@ -45,7 +45,7 @@
 
 .card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 25px 50px -12px rgba(27, 94, 32, 0.15);
+    box-shadow: 0 25px 50px -12px var(--growz-veil-15);
     border-color: rgba(76, 175, 80, 0.3);
 }
 
@@ -70,10 +70,10 @@
 .icon {
     font-size: 1.8rem;
     color: #ffffff;
-    background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%);
+    background: linear-gradient(135deg, var(--growz-primary) 0%, var(--growz-green-500) 100%);
     padding: 20px;
     border-radius: 22px;
-    box-shadow: 0 10px 20px rgba(27, 94, 32, 0.2);
+    box-shadow: 0 10px 20px var(--growz-veil-20);
 }
 
 .icon.gold {
@@ -157,8 +157,8 @@
 
 .btnExport {
     background: #ffffff;
-    color: #1B5E20;
-    border: 2px solid #1B5E20;
+    color: var(--growz-primary);
+    border: 2px solid var(--growz-primary);
     padding: 10px 20px;
     border-radius: 12px;
     font-weight: 700;
@@ -167,11 +167,11 @@
     align-items: center;
     gap: 8px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(27, 94, 32, 0.1);
+    box-shadow: 0 4px 12px var(--growz-veil-10);
 }
 
 .btnExport:hover {
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: #ffffff;
     transform: translateY(-2px);
 }

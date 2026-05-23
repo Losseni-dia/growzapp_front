@@ -8,7 +8,7 @@
 }
 
 .title {
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 2.4rem;
   font-weight: 800;
   margin-bottom: 3rem;
@@ -20,7 +20,7 @@
   display: block;
   width: 80px;
   height: 6px;
-  background: #FFC107;
+  background: var(--growz-gold);
   /* Accent jaune */
   border-radius: 10px;
   margin-top: 0.8rem;
@@ -36,8 +36,8 @@
   background: white;
   border-radius: 24px;
   padding: 2rem;
-  box-shadow: 0 10px 25px rgba(27, 94, 32, 0.08);
-  border: 1px solid #E8F5E9;
+  box-shadow: 0 10px 25px var(--growz-veil-08);
+  border: 1px solid var(--growz-mint-50);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -45,8 +45,8 @@
 
 .card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(27, 94, 32, 0.15);
-  border-color: #FFC107;
+  box-shadow: 0 15px 35px var(--growz-veil-15);
+  border-color: var(--growz-gold);
 }
 
 .header {
@@ -58,7 +58,7 @@
 
 .header h3 {
   margin: 0;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 1.3rem;
   font-weight: 700;
 }
@@ -72,8 +72,8 @@
 }
 
 .statut.valide {
-  background: #E8F5E9;
-  color: #1B5E20;
+  background: var(--growz-mint-50);
+  color: var(--growz-primary);
 }
 
 .statut.en_cours {
@@ -98,7 +98,7 @@
 .solde strong {
   display: block;
   font-size: 1.8rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 800;
 }
 
@@ -130,18 +130,18 @@
 }
 
 .btnDetail {
-  background: #E8F5E9;
-  color: #1B5E20;
+  background: var(--growz-mint-50);
+  color: var(--growz-primary);
 }
 
 .btnDetail:hover {
-  background: #C8E6C9;
+  background: var(--growz-mint-100);
 }
 
 .btnVerser {
-  background: #FFC107;
+  background: var(--growz-gold);
   /* Jaune principal */
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 .btnVerser:hover:not(:disabled) {
@@ -160,7 +160,7 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(27, 94, 32, 0.4);
+  background: var(--growz-veil-40);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -178,7 +178,7 @@
 }
 
 .modal h2 {
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin-bottom: 1.5rem;
   font-weight: 800;
 }
@@ -194,7 +194,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #FFC107;
+  border-color: var(--growz-gold);
   box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.15);
 }
 
@@ -206,7 +206,7 @@
 
 .btnConfirm {
   flex: 2;
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   padding: 1rem;
   border-radius: 12px;

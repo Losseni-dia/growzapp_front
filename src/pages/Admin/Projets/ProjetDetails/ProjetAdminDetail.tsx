@@ -102,9 +102,9 @@ export default function ProjetAdminDetail() {
         return <FiFileText color="#d32f2f" size={28} />;
       case "EXCEL":
       case "CSV":
-        return <FiFile color="#1B5E20" size={28} />; // Icône fichier générique (parfaite)
+        return <FiFile color="var(--growz-hex-primary, #1b5e20)" size={28} />; // Icône fichier générique (parfaite)
       default:
-        return <FiImage color="#1B5E20" size={28} />;
+        return <FiImage color="var(--growz-hex-primary, #1b5e20)" size={28} />;
     }
   };
 

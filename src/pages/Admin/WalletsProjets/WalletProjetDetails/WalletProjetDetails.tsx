@@ -98,11 +98,11 @@ export default function ProjectWalletDetails() {
 
       {/* CARTES DE SOLDES (VUE DOUBLE) */}
       <div className={styles.summaryGrid}>
-        <div className={styles.summaryCard} style={{ borderColor: "#1B5E20" }}>
+        <div className={styles.summaryCard} style={{ borderColor: "var(--growz-primary)" }}>
           <h3>
             <FiPieChart /> Solde Collecté (Public)
           </h3>
-          <div className={styles.bigAmount} style={{ color: "#1B5E20" }}>
+          <div className={styles.bigAmount} style={{ color: "var(--growz-primary)" }}>
             {format(report?.montantCollectePublic || 0, "XOF")}
           </div>
           <small>Visible par les investisseurs sur la carte</small>

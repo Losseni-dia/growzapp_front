@@ -1,455 +1,137 @@
-/* src/pages/Admin/Projets/EditProjetsPage.module.css */
-
 .container {
-  max-width: 1100px;
-  margin: 3rem auto;
-  padding: 3rem 2.5rem;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-  border: 4px solid #E8F5E9;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-.title {
-  text-align: center;
-  color: #1B5E20;
-  font-size: 2.8rem;
-  margin-bottom: 3rem;
-  font-weight: 700;
-  border-bottom: 5px solid #FFC107;
-  padding-bottom: 1rem;
-  letter-spacing: 1px;
-}
-
-/* ====================== PHOTO + CROP ====================== */
-.photoSection {
+.header {
   display: flex;
-  justify-content: center;
-  margin-bottom: 4rem;
-}
-
-.photoUpload {
-  position: relative;
-  width: 100%;
-  max-width: 700px;
-  height: 380px;
-  border-radius: 20px;
-  border: 5px dashed #1B5E20;
-  cursor: pointer;
-  background: #f8f9fa;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.photoUpload:hover {
-  border-color: #27ae60;
-  background: #f0f8f0;
-  transform: translateY(-5px);
-}
-
-.preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-.placeholder {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  color: #1B5E20;
-  font-weight: 700;
-  font-size: 1.6rem;
-  text-align: center;
-  padding: 2rem;
+  border-bottom: 3px solid #f0f0f0;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.placeholder p {
-  margin: 1rem 0 0;
-  font-size: 1.3rem;
-  font-weight: normal;
-}
+.title span { color: var(--growz-primary); font-weight: 800; }
 
-.removeBtn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(0,0,0,0.75);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  transition: all 0.2s;
-}
-
-.removeBtn:hover {
-  background: #e74c3c;
-  transform: scale(1.1);
-}
-
-/* Cropper */
-.cropContainer {
-  position: relative;
-  width: 100%;
-  max-width: 900px;
-  height: 500px;
-  background: #000;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 0 auto 2rem auto;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-}
-
-.cropControls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1.5rem;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  backdrop-filter: blur(5px);
-}
-
-.cropBtn, .cancelBtn {
-  padding: 1rem 3rem;
-  border: none;
-  border-radius: 50px;
-  font-weight: bold;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.cropBtn {
-  background: #27ae60;
-  color: white;
-}
-
-.cropBtn:hover {
-  background: #219653;
-  transform: translateY(-3px);
-}
-
-.cancelBtn {
-  background: #e74c3c;
-  color: white;
-}
-
-.cancelBtn:hover {
-  background: #c0392b;
-}
-
-/* ====================== FORMULAIRE ====================== */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-}
-
-/* Champ avec label au-dessus */
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
-
-.field label {
-  font-weight: 600;
-  color: #1B5E20;
-  font-size: 1.15rem;
-  padding-left: 0.5rem;
-}
-
-/* Grille 2 colonnes */
-.grid {
+.mainGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 350px 1fr;
   gap: 2.5rem;
-  margin-bottom: 1rem;
 }
 
-@media (max-width: 992px) {
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
-/* Inputs, selects, textarea */
-input, textarea, select {
-  width: 100%;
-  padding: 1.3rem 1.6rem;
-  border: 3px solid #E8F5E9;
-  border-radius: 16px;
-  font-size: 1.1rem;
-  background: #fafafa;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-  font-family: inherit;
-}
-
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  border-color: #1B5E20;
+.section {
   background: white;
-  box-shadow: 0 0 0 6px rgba(27,94,32,0.15);
-  transform: translateY(-2px);
-}
-
-select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231B5E20'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1.5rem center;
-  background-size: 12px;
-}
-
-textarea {
-  min-height: 220px;
-  resize: vertical;
-}
-
-/* ====================== BOUTONS ====================== */
-.actions {
-  text-align: center;
-  margin-top: 4rem;
-}
-
-.saveBtn {
-  background: linear-gradient(135deg, #1B5E20, #2E7D32);
-  color: white;
-  border: none;
-  padding: 1.4rem 5rem;
-  font-size: 1.6rem;
-  font-weight: bold;
-  border-radius: 60px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: 0 10px 30px rgba(27,94,32,0.4);
-  transition: all 0.4s ease;
-}
-
-.saveBtn:hover:not(:disabled) {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(27,94,32,0.5);
-  background: linear-gradient(135deg, #2E7D32, #388E3C);
-}
-
-.saveBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Loading */
-.loading {
-  text-align: center;
-  font-size: 1.5rem;
-  color: #1B5E20;
-  padding: 4rem;
-}
-
-/* Cache l'input file natif */
-input[type="file"] {
-  display: none !important;
-}
-
-/* ====================== UPLOAD DOCUMENTS ====================== */
-.documentUploadSection {
-  background: linear-gradient(135deg, #f8fff8 0%, #e8f5e9 100%);
-  padding: 3rem;
-  border-radius: 20px;
-  border: 4px solid #1B5E20;
-  margin: 4rem 0;
-  text-align: center;
-  box-shadow: 0 15px 40px rgba(27,94,32,0.12);
-}
-
-.sectionTitle {
-  color: #1B5E20;
-  font-size: 2rem;
-  margin: 0 0 2.5rem 0;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  border-bottom: 4px solid #FFC107;
-  padding-bottom: 1rem;
-}
-
-.docDropZone {
-  border: 4px dashed #1B5E20;
-  border-radius: 20px;
-  padding: 4rem;
-  background: #f8fff8;
-  cursor: pointer;
-  transition: all 0.4s ease;
-}
-
-.docDropZone:hover, .dragging {
-  background: #d0e8d1;
-  border-color: #FFC107;
-  transform: translateY(-5px);
-}
-
-.docDropZone p {
-  margin: 1.5rem 0;
-  font-size: 1.4rem;
-  color: #1B5E20;
-  font-weight: 600;
-}
-
-.docPreview {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 18px;
-  border: 3px solid #1B5E20;
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.docFileInfo {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  color: #1B5E20;
-  font-size: 1.3rem;
-}
-
-.docNomInput {
-  width: 100%;
-  padding: 1.3rem;
-  border: 3px solid #E8F5E9;
+  padding: 1.5rem;
   border-radius: 16px;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+  border: 1px solid #eee;
 }
 
-.docNomInput:focus {
-  border-color: #1B5E20;
-  outline: none;
-  box-shadow: 0 0 0 6px rgba(27,94,32,0.15);
-}
-
-.docActions {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-}
-
-.docCancelBtn, .docUploadBtn {
-  padding: 1.1rem 2.5rem;
-  border: none;
-  border-radius: 50px;
-  font-weight: bold;
-  font-size: 1.1rem;
-  cursor: pointer;
+.section h3 {
+  font-size: 1rem;
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.3s;
+  color: var(--growz-primary);
+  margin-bottom: 1.2rem;
 }
 
-.docCancelBtn {
-  background: #fff;
-  color: #e74c3c;
-  border: 3px solid #e74c3c;
-}
-
-.docCancelBtn:hover {
-  background: #e74c3c;
-  color: white;
-}
-
-.docUploadBtn {
-  background: linear-gradient(135deg, #1B5E20, #2e7d32);
-  color: white;
-  box-shadow: 0 10px 30px rgba(27,94,32,0.4);
-}
-
-.docUploadBtn:hover:not(:disabled) {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(27,94,32,0.5);
-}
-
-.docUploadBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.inputWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #1B5E20; /* Ton vert Growzapp */
-  margin-left: 5px;
-}
-
-/* Conteneur spécial pour le pourcentage */
-.percentageInputWrapper {
+/* POSTER */
+.posterBox {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #f8f9fa;
+  border-radius: 12px;
+  overflow: hidden;
   position: relative;
+  cursor: pointer;
+}
+
+.posterBox img { width: 100%; height: 100%; object-fit: cover; }
+
+.overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+  color: white; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: 0.3s;
+}
+
+.posterBox:hover .overlay { opacity: 1; }
+
+/* FORMULAIRE TECHNIQUE */
+.form {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.fieldGroup { margin-bottom: 2.5rem; }
+.fieldGroup h4 { color: #666; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem; }
+
+.field label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 6px; font-weight: 600; }
+
+.field input, .field select {
+  width: 100%; padding: 0.8rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;
+}
+
+.field input:focus { border-color: var(--growz-primary); outline: none; }
+
+.btnSave {
+  width: 100%; padding: 1.2rem; background: var(--growz-gold); color: var(--growz-primary);
+  border: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: 0.2s;
+}
+
+.btnSave:hover { background: #FFB300; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,193,7,0.3); }
+
+/* Champ de calcul automatique */
+.autoCalculatedField {
   display: flex;
   align-items: center;
+  gap: 12px;
+  background: #F8F9FA; /* Fond gris très léger */
+  border: 2px dashed #CBD5E0; /* Bordure pointillée pour montrer que c'est "calculé" */
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  color: #2D3748;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
 }
 
-.percentageInput {
-  width: 100% !important;
-  padding-right: 30px !important; /* Laisse de la place pour le % */
+/* On change la couleur quand on survole l'analyse financière */
+.fieldGroup:hover .autoCalculatedField {
+  background: #EBF8FF; /* Devient bleu très clair */
+  border-color: #4299E1;
 }
 
-.inputUnit {
-  position: absolute;
-  right: 12px;
-  color: #64748b;
-  font-weight: bold;
-  pointer-events: none;
+/* Style de l'icône Info */
+.autoCalculatedField svg {
+  color: #4299E1;
+  font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
-/* Responsive mobile */
-@media (max-width: 768px) {
-  .container {
-    margin: 1rem;
-    padding: 2rem 1.5rem;
-    border-radius: 16px;
-  }
-  .title {
-    font-size: 2.2rem;
-  }
-  .photoUpload {
-    height: 280px;
-  }
-  .cropContainer {
-    height: 350px;
-  }
-  .saveBtn {
-    width: 100%;
-    justify-content: center;
-    font-size: 1.4rem;
-    padding: 1.3rem;
-  }
+/* Mise en avant des chiffres (le nombre de parts et le prix) */
+.autoCalculatedField strong {
+  color: var(--growz-primary); /* Vert Growzapp */
+  font-size: 1.1rem;
+  font-weight: 800;
+  background: var(--growz-mint-50);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
+
+/* STATUS BADGES */
+.statusBadge {
+  padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem;
+}
+.VALIDE { background: var(--growz-mint-50); color: var(--growz-green-700); }
+.SOUMIS { background: #FFF3E0; color: #EF6C00; }
+.REJETE { background: #FFEBEE; color: #C62828; }

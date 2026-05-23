@@ -1,4 +1,3 @@
-// src/pages/Admin/Projets/EditProjetPage.tsx
 import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
@@ -8,6 +7,12 @@ import {
   FiSave,
   FiUpload,
   FiX,
+  FiMapPin,
+  FiDollarSign,
+  FiClock,
+  FiTrendingUp,
+  FiCamera,
+  FiInfo,
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../../service/Api";
@@ -25,7 +30,7 @@ export default function EditProjetPage() {
   const [saving, setSaving] = useState(false);
   const [projet, setProjet] = useState<any>(null);
 
-  // POSTER + CROPPER
+  // --- ÉTATS POSTER + CROPPER ---
   const [preview, setPreview] = useState<string | null>(null);
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [showCropper, setShowCropper] = useState(false);
@@ -34,33 +39,22 @@ export default function EditProjetPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // === UPLOAD DOCUMENTS ===
-  const [dragging, setDragging] = useState(false);
+  // --- ÉTATS DOCUMENTS ---
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<File | null>(null);
   const [docNom, setDocNom] = useState("");
   const docInputRef = useRef<HTMLInputElement>(null);
 
-  // CHARGEMENT DU PROJET
+  // --- CHARGEMENT INITIAL ---
   useEffect(() => {
     const fetchProjet = async () => {
       if (!id) return;
-
-      const token = localStorage.getItem("access_token") || "";
-      const headers: HeadersInit = token
-        ? { Authorization: `Bearer ${token}` }
-        : {};
-
       try {
-        const res = await fetch(
-          `http://localhost:8080/api/admin/projets/${id}`,
-          { headers },
-        );
-        if (!res.ok) throw new Error("Projet non trouvé");
-        const data = (await res.json()).data || (await res.json());
+        const res = await api.get<{ data: any }>(`/api/admin/projets/${id}`);
+        const data = res.data;
         setProjet(data);
         setPreview(data.poster || null);
-      } catch {
+      } catch (err) {
         toast.error("Impossible de charger le projet");
         navigate("/admin/projets");
       } finally {
@@ -70,12 +64,25 @@ export default function EditProjetPage() {
     fetchProjet();
   }, [id, navigate]);
 
-  // === GESTION POSTER (inchangée) ===
+  // --- LOGIQUE DE CALCUL AUTOMATIQUE ---
+  const updateFinances = (field: string, value: number) => {
+    let newObjectif = field === "objectif" ? value : projet.objectifFinancement;
+    let newPrixPart = field === "prix" ? value : projet.prixUnePart;
+
+    // Calcul automatique des parts (Objectif / Prix)
+    let newParts = newPrixPart > 0 ? Math.floor(newObjectif / newPrixPart) : 0;
+
+    setProjet({
+      ...projet,
+      [field === "objectif" ? "objectifFinancement" : "prixUnePart"]: value,
+      partsDisponible: newParts,
+    });
+  };
+
+  // --- LOGIQUE POSTER ---
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 Mo");
-
     const reader = new FileReader();
     reader.onload = () => {
       setPreview(reader.result as string);
@@ -84,56 +91,20 @@ export default function EditProjetPage() {
     reader.readAsDataURL(file);
   };
 
-  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
-
   const createCroppedImage = async () => {
     if (!preview || !croppedAreaPixels) return;
     try {
       const cropped = await getCroppedImg(preview, croppedAreaPixels);
       setPreview(cropped);
-      setPosterFile(dataURLtoFile(cropped, "poster.jpg"));
+      setPosterFile(dataURLtoFile(cropped, `update_poster_${id}.jpg`));
       setShowCropper(false);
-      toast.success("Poster recadré !");
+      toast.success("Nouveau poster prêt !");
     } catch {
-      toast.error("Erreur recadrage");
+      toast.error("Erreur de recadrage");
     }
   };
 
-  const removePhoto = () => {
-    setPreview(null);
-    setPosterFile(null);
-    setShowCropper(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  // === UPLOAD DOCUMENT ===
-  const handleDocDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(true);
-  };
-
-  const handleDocDragLeave = () => setDragging(false);
-
-  const handleDocDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (
-      file &&
-      (file.type.includes("pdf") ||
-        file.type.includes("excel") ||
-        file.type.includes("csv") ||
-        file.type.includes("image"))
-    ) {
-      setSelectedDoc(file);
-      setDocNom(file.name.split(".").slice(0, -1).join("."));
-    } else {
-      toast.error("PDF, Excel, CSV ou Image uniquement");
-    }
-  };
-
+  // --- LOGIQUE DOCUMENTS ---
   const handleDocSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -143,393 +114,332 @@ export default function EditProjetPage() {
   };
 
   const uploadDocument = async () => {
-    if (!selectedDoc || !docNom.trim()) {
-      toast.error("Nom du document requis");
-      return;
-    }
-
+    if (!selectedDoc || !docNom.trim()) return toast.error("Nom requis");
     setUploadingDoc(true);
     const formData = new FormData();
     formData.append("file", selectedDoc);
     formData.append("nom", docNom.trim());
-    formData.append("type", getDocType(selectedDoc));
+    formData.append("type", selectedDoc.type.includes("pdf") ? "PDF" : "IMAGE");
 
     try {
-      await api.post(`/api/documents/projet/${id}`, formData, true);
-      toast.success("Document ajouté avec succès !");
+      await api.post(`/api/documents/projet/${id}`, formData);
+      toast.success("Document ajouté !");
       setSelectedDoc(null);
       setDocNom("");
-      if (docInputRef.current) docInputRef.current.value = "";
-    } catch (err: any) {
-      toast.error(err.message || "Échec de l'ajout");
+    } catch {
+      toast.error("Échec de l'upload");
     } finally {
       setUploadingDoc(false);
     }
   };
 
-  const getDocType = (file: File) => {
-    if (file.type.includes("pdf")) return "PDF";
-    if (file.type.includes("excel") || file.type.includes("spreadsheet"))
-      return "EXCEL";
-    if (file.type.includes("csv")) return "CSV";
-    return "IMAGE";
-  };
+  // --- SAUVEGARDE FINALE ---
+  // Dans EditProjetsPage.tsx
 
-  const cancelDoc = () => {
-    setSelectedDoc(null);
-    setDocNom("");
-    if (docInputRef.current) docInputRef.current.value = "";
-  };
-
-  // SAUVEGARDE DU PROJET
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projet) return;
 
     setSaving(true);
-    const token = localStorage.getItem("access_token") || "";
-    if (!token) {
-      toast.error("Session expirée");
-      navigate("/login");
-      return;
-    }
-
-    const formData = new FormData();
-    const updateData = {
-      libelle: projet.libelle?.trim(),
-      description: projet.description?.trim(),
-      secteurNom: projet.secteurNom?.trim(),
-      localiteNom: projet.localiteNom?.trim(),
-      paysNom: projet.paysNom?.trim() || null,
-      objectifFinancement: projet.objectifFinancement || 0,
-      prixUnePart: projet.prixUnePart || 0,
-      partsDisponible: projet.partsDisponible || 0,
-      roiProjete: projet.roiProjete || 0,
-      valeurTotalePartsEnPourcent: projet.valeurTotalePartsEnPourcent || 0,
-      statutProjet: projet.statutProjet,
-      dateDebut: projet.dateDebut || null,
-      dateFin: projet.dateFin || null,
-    };
-
-    formData.append(
-      "projet",
-      new Blob([JSON.stringify(updateData)], { type: "application/json" }),
-    );
-    if (posterFile) formData.append("poster", posterFile);
 
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/admin/projets/${id}`,
-        {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
-          credentials: "include",
-          body: formData,
-        },
-      );
+      const formData = new FormData();
 
-      if (!response.ok) throw new Error(await response.text());
-      toast.success("Projet mis à jour avec succès !");
+      const updateData = {
+        ...projet,
+        // On s'assure que les dates sont bien formatées ou nulles
+        dateDebut: projet.dateDebut || null,
+        dateFin: projet.dateFin || null,
+        dureeMois: projet.dureeMois || 36,
+      };
+
+      // --- LA CORRECTION EST ICI ---
+      // On emballe le JSON dans un Blob pour forcer le Content-Type de cette PARTIE
+      const projetBlob = new Blob([JSON.stringify(updateData)], {
+        type: "application/json",
+      });
+
+      formData.append("projet", projetBlob);
+
+      if (posterFile) {
+        formData.append("poster", posterFile);
+      }
+
+      // On utilise ton utilitaire api.put avec le flag isFormData = true
+      await api.put(`/api/admin/projets/${id}`, formData, true);
+
+      toast.success("Expertise technique enregistrée !");
       navigate("/admin/projets");
     } catch (err: any) {
-      toast.error(err.message || "Échec de la sauvegarde");
+      console.error("Erreur lors de la soumission :", err);
+      toast.error("Erreur : " + err.message);
     } finally {
       setSaving(false);
     }
   };
 
   if (loading)
-    return <div className={styles.loading}>Chargement du projet...</div>;
-  if (!projet) return <div className={styles.error}>Projet non trouvé</div>;
+    return <div className={styles.loader}>Analyse du dossier en cours...</div>;
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Modifier : {projet.libelle}</h1>
+      <header className={styles.header}>
+        <h1 className={styles.title}>
+          Expertise Technique : <span>{projet.libelle}</span>
+        </h1>
+        <div className={`${styles.statusBadge} ${styles[projet.statutProjet]}`}>
+          {projet.statutProjet}
+        </div>
+      </header>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        {/* === POSTER === */}
-        <div className={styles.photoSection}>
-          {!showCropper ? (
+      <div className={styles.mainGrid}>
+        <aside className={styles.sidebar}>
+          <section className={styles.section}>
+            <h3>
+              <FiCamera /> Poster Officiel
+            </h3>
             <div
-              className={styles.photoUpload}
+              className={styles.posterBox}
               onClick={() => fileInputRef.current?.click()}
             >
               {preview ? (
-                <img src={preview} alt="Poster" className={styles.preview} />
+                <img src={preview} alt="Aperçu" />
               ) : (
-                <div className={styles.placeholder}>
-                  <span role="img" aria-label="camera">
-                    Camera
-                  </span>
-                  <p>Changer le poster (16:9 recommandé)</p>
-                </div>
+                <div className={styles.noImg}>Aucun poster</div>
               )}
-              {preview && (
-                <button
-                  type="button"
-                  className={styles.removeBtn}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removePhoto();
-                  }}
-                >
-                  ×
-                </button>
-              )}
+              <div className={styles.overlay}>
+                <FiUpload /> Modifier
+              </div>
             </div>
-          ) : (
-            <div className={styles.cropContainer}>
-              {preview && (
+            <input
+              ref={fileInputRef}
+              type="file"
+              hidden
+              onChange={handlePhotoChange}
+            />
+            {showCropper && (
+              <div className={styles.miniCropper}>
                 <Cropper
-                  image={preview}
+                  image={preview!}
                   crop={crop}
                   zoom={zoom}
                   aspect={16 / 9}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
-                  onCropComplete={onCropComplete}
+                  onCropComplete={(_, p) => setCroppedAreaPixels(p)}
                 />
-              )}
-              <div className={styles.cropControls}>
                 <button
                   type="button"
                   onClick={createCroppedImage}
-                  className={styles.cropBtn}
+                  className={styles.btnApply}
                 >
-                  Valider
-                </button>
-                <button
-                  type="button"
-                  onClick={removePhoto}
-                  className={styles.cancelBtn}
-                >
-                  Annuler
+                  Appliquer
                 </button>
               </div>
-            </div>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            hidden
-          />
-        </div>
+            )}
+          </section>
 
-        {/* === AJOUT DE DOCUMENTS === */}
-        <div className={styles.documentUploadSection}>
-          <h2 className={styles.sectionTitle}>
-            <FiUpload /> Ajouter des documents au projet
-          </h2>
-
-          {!selectedDoc ? (
-            <div
-              className={`${styles.docDropZone} ${
-                dragging ? styles.dragging : ""
-              }`}
-              onDragOver={handleDocDragOver}
-              onDragLeave={handleDocDragLeave}
-              onDrop={handleDocDrop}
-              onClick={() => docInputRef.current?.click()}
-            >
-              <FiFileText size={56} color="#1B5E20" />
-              <p>Déposez vos fichiers ici ou cliquez pour sélectionner</p>
-              <small>PDF • Excel • CSV • Images • Max 20 Mo</small>
+          <section className={styles.section}>
+            <h3>
+              <FiFileText /> Pièces Jointes
+            </h3>
+            <div className={styles.docUploadZone}>
               <input
                 ref={docInputRef}
                 type="file"
-                accept=".pdf,.xlsx,.xls,.csv,.jpg,.jpeg,.png"
-                onChange={handleDocSelect}
                 hidden
+                onChange={handleDocSelect}
               />
+              {!selectedDoc ? (
+                <button
+                  type="button"
+                  onClick={() => docInputRef.current?.click()}
+                  className={styles.btnAddDoc}
+                >
+                  <FiUpload /> Choisir un document
+                </button>
+              ) : (
+                <div className={styles.selectedDoc}>
+                  <input
+                    type="text"
+                    value={docNom}
+                    onChange={(e) => setDocNom(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={uploadDocument}
+                    disabled={uploadingDoc}
+                    className={styles.btnConfirmDoc}
+                  >
+                    {uploadingDoc ? "..." : "OK"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDoc(null)}
+                    className={styles.btnCancelDoc}
+                  >
+                    <FiX />
+                  </button>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className={styles.docPreview}>
-              <div className={styles.docFileInfo}>
-                <FiCheckCircle size={40} color="#1B5E20" />
-                <div>
-                  <strong>{selectedDoc.name}</strong>
-                  <br />
-                  <small>
-                    {(selectedDoc.size / 1024 / 1024).toFixed(2)} Mo
-                  </small>
+          </section>
+        </aside>
+
+        <main className={styles.content}>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.fieldGroup}>
+              <h4>1. Informations de base</h4>
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Libellé</label>
+                  <input
+                    type="text"
+                    value={projet.libelle}
+                    onChange={(e) =>
+                      setProjet({ ...projet, libelle: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Secteur</label>
+                  <input
+                    type="text"
+                    value={projet.secteurNom}
+                    onChange={(e) =>
+                      setProjet({ ...projet, secteurNom: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <h4>2. Analyse Financière</h4>
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Objectif Financement (CFA)</label>
+                  <input
+                    type="number"
+                    value={projet.objectifFinancement}
+                    onChange={(e) =>
+                      updateFinances("objectif", Number(e.target.value))
+                    }
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Prix de la Part (CFA)</label>
+                  <input
+                    type="number"
+                    value={projet.prixUnePart}
+                    onChange={(e) =>
+                      updateFinances("prix", Number(e.target.value))
+                    }
+                  />
                 </div>
               </div>
 
-              <input
-                type="text"
-                placeholder="Nom du document (ex: Bilan financier 2024)"
-                value={docNom}
-                onChange={(e) => setDocNom(e.target.value)}
-                className={styles.docNomInput}
-              />
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Parts totales (Calculé automatiquement)</label>
+                  <div className={styles.autoCalculatedField}>
+                    <FiInfo /> {projet.partsDisponible} parts de{" "}
+                    {projet.prixUnePart} FCFA
+                  </div>
+                </div>
+                <div className={styles.field}>
+                  <label>ROI (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={projet.roiProjete}
+                    onChange={(e) =>
+                      setProjet({
+                        ...projet,
+                        roiProjete: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+              </div>
 
-              <div className={styles.docActions}>
-                <button
-                  type="button"
-                  onClick={cancelDoc}
-                  className={styles.docCancelBtn}
-                >
-                  <FiX /> Annuler
-                </button>
-                <button
-                  type="button"
-                  onClick={uploadDocument}
-                  disabled={uploadingDoc}
-                  className={styles.docUploadBtn}
-                >
-                  {uploadingDoc ? "Envoi en cours..." : "Ajouter le document"}
-                </button>
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Parts à lever (%)</label>
+                  <input
+                    type="number"
+                    value={projet.valeurTotalePartsEnPourcent}
+                    onChange={(e) =>
+                      setProjet({
+                        ...projet,
+                        valeurTotalePartsEnPourcent: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Valorisation Totale (CFA)</label>
+                  <input
+                    type="number"
+                    value={projet.valuation}
+                    onChange={(e) =>
+                      setProjet({
+                        ...projet,
+                        valuation: Number(e.target.value),
+                      })
+                    }
+                  />
+                </div>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* === CHAMPS CLASSIQUES === */}
-        <div className={styles.grid}>
-          <input
-            type="text"
-            value={projet.libelle || ""}
-            onChange={(e) => setProjet({ ...projet, libelle: e.target.value })}
-            placeholder="Nom du projet *"
-            required
-          />
-          <input
-            type="text"
-            value={projet.secteurNom || ""}
-            onChange={(e) =>
-              setProjet({ ...projet, secteurNom: e.target.value })
-            }
-            placeholder="Secteur d'activité"
-          />
-          <input
-            type="text"
-            value={projet.localiteNom || ""}
-            onChange={(e) =>
-              setProjet({ ...projet, localiteNom: e.target.value })
-            }
-            placeholder="Localité"
-          />
-          <input
-            type="text"
-            value={projet.paysNom || ""}
-            onChange={(e) => setProjet({ ...projet, paysNom: e.target.value })}
-            placeholder="Pays"
-          />
-          <input
-            type="number"
-            step="0.01"
-            value={projet.objectifFinancement || ""}
-            onChange={(e) =>
-              setProjet({
-                ...projet,
-                objectifFinancement: Number(e.target.value) || 0,
-              })
-            }
-            placeholder="Objectif de financement (CFA)"
-          />
-          <input
-            type="number"
-            step="0.01"
-            value={projet.prixUnePart || ""}
-            onChange={(e) =>
-              setProjet({ ...projet, prixUnePart: Number(e.target.value) || 0 })
-            }
-            placeholder="Prix d'une part (CFA)"
-          />
-          <input
-            type="number"
-            value={projet.partsDisponible || ""}
-            onChange={(e) =>
-              setProjet({
-                ...projet,
-                partsDisponible: Number(e.target.value) || 0,
-              })
-            }
-            placeholder="Parts disponibles"
-          />
-          <input
-            type="number"
-            step="0.01"
-            value={projet.roiProjete || ""}
-            onChange={(e) =>
-              setProjet({ ...projet, roiProjete: Number(e.target.value) || 0 })
-            }
-            placeholder="ROI projeté (%)"
-          />
-          <div className={styles.inputWrapper}>
-            <label className={styles.label}>Parts à lever (%)</label>
-            <div className={styles.percentageInputWrapper}>
-              <input
-                type="number"
-                step="0.01"
-                value={projet.valeurTotalePartsEnPourcent || ""}
-                onChange={(e) =>
-                  setProjet({
-                    ...projet,
-                    valeurTotalePartsEnPourcent: Number(e.target.value) || 0,
-                  })
-                }
-                placeholder="Ex: 20 %"
-                className={styles.percentageInput}
-                
-              />
-             
+            <div className={styles.fieldGroup}>
+              <h4>3. Publication</h4>
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Date Début</label>
+                  <input
+                    type="date"
+                    value={projet.dateDebut?.split("T")[0] || ""}
+                    onChange={(e) =>
+                      setProjet({ ...projet, dateDebut: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Date Fin</label>
+                  <input
+                    type="date"
+                    value={projet.dateFin?.split("T")[0] || ""}
+                    onChange={(e) =>
+                      setProjet({ ...projet, dateFin: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <div className={styles.field}>
+                <label>Statut</label>
+                <select
+                  value={projet.statutProjet}
+                  onChange={(e) =>
+                    setProjet({ ...projet, statutProjet: e.target.value })
+                  }
+                >
+                  <option value="SOUMIS">🟠 Soumis</option>
+                  <option value="VALIDE">🟢 Validé</option>
+                  <option value="EN_COURS">🔵 En cours</option>
+                  <option value="TERMINE">🏁 Terminé</option>
+                  <option value="REJETE">🔴 Rejeté</option>
+                </select>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <textarea
-          value={projet.description || ""}
-          onChange={(e) =>
-            setProjet({ ...projet, description: e.target.value })
-          }
-          placeholder="Description complète *"
-          rows={8}
-          required
-        />
-
-        <select
-          value={projet.statutProjet || ""}
-          onChange={(e) =>
-            setProjet({ ...projet, statutProjet: e.target.value })
-          }
-        >
-          <option value="">Statut</option>
-          <option value="SOUMIS">Soumis</option>
-          <option value="VALIDE">Validé</option>
-          <option value="EN_COURS">En cours</option>
-          <option value="TERMINE">Terminé</option>
-          <option value="REJETE">Rejeté</option>
-        </select>
-
-        <div className={styles.grid}>
-          <input
-            type="date"
-            value={projet.dateDebut?.split("T")[0] || ""}
-            onChange={(e) =>
-              setProjet({ ...projet, dateDebut: e.target.value || null })
-            }
-            placeholder="Date de début"
-          />
-          <input
-            type="date"
-            value={projet.dateFin?.split("T")[0] || ""}
-            onChange={(e) =>
-              setProjet({ ...projet, dateFin: e.target.value || null })
-            }
-            placeholder="Date de fin"
-          />
-        </div>
-
-        <div className={styles.actions}>
-          <button type="submit" disabled={saving} className={styles.saveBtn}>
-            <FiSave style={{ marginRight: 8 }} />
-            {saving ? "Sauvegarde..." : "Enregistrer toutes les modifications"}
-          </button>
-        </div>
-      </form>
+            <button type="submit" className={styles.btnSave} disabled={saving}>
+              <FiSave /> {saving ? "Sauvegarde..." : "Enregistrer l'expertise"}
+            </button>
+          </form>
+        </main>
+      </div>
     </div>
   );
 }
