@@ -8,13 +8,13 @@
 .card {
     background: white;
     padding: 2.5rem;
-    border: 3px solid #1B5E20;
+    border: 3px solid var(--growz-primary);
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .card h2 {
-    color: #1B5E20;
+    color: var(--growz-primary);
     margin-bottom: 2rem;
     font-weight: 800;
 }
@@ -28,13 +28,13 @@
 
 .inputGroup label {
     font-weight: 700;
-    color: #1B5E20;
+    color: var(--growz-primary);
 }
 
 .inputGroup input,
 .inputGroup select {
     padding: 0.8rem;
-    border: 2px solid #E8F5E9;
+    border: 2px solid var(--growz-mint-50);
     border-radius: 10px;
     outline: none;
     transition: 0.3s;
@@ -45,14 +45,14 @@
 .urlInputWrapper {
     display: flex;
     align-items: center;
-    border: 2px solid #E8F5E9;
+    border: 2px solid var(--growz-mint-50);
     border-radius: 10px;
     padding: 0 0.8rem;
     transition: 0.3s;
 }
 
 .urlInputWrapper:focus-within {
-    border-color: #1B5E20;
+    border-color: var(--growz-primary);
 }
 
 .urlInputWrapper input {
@@ -61,7 +61,7 @@
 }
 
 .inputIcon {
-    color: #1B5E20;
+    color: var(--growz-primary);
     margin-right: 0.5rem;
 }
 
@@ -70,12 +70,12 @@
     background: white;
     border-radius: 10px;
     overflow: hidden;
-    border: 2px solid #E8F5E9;
+    border: 2px solid var(--growz-mint-50);
 }
 
 :global(.ql-toolbar.ql-snow) {
     border: none !important;
-    border-bottom: 2px solid #E8F5E9 !important;
+    border-bottom: 2px solid var(--growz-mint-50) !important;
     background-color: #f9fbf9;
 }
 
@@ -92,13 +92,13 @@
 
 .inputGroup input:focus,
 .inputGroup select:focus {
-    border-color: #1B5E20;
+    border-color: var(--growz-primary);
 }
 
 .submitBtn {
     width: 100%;
     padding: 1rem;
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: white;
     border: none;
     border-radius: 12px;
@@ -113,8 +113,8 @@
 }
 
 .submitBtn:hover:not(:disabled) {
-    background: #FFC107;
-    color: #1B5E20;
+    background: var(--growz-gold);
+    color: var(--growz-primary);
 }
 
 .submitBtn:disabled {
@@ -133,8 +133,8 @@
 }
 
 .alert.success {
-    color: #2e7d32;
-    background: #e8f5e9;
+    color: var(--growz-green-700);
+    background: var(--growz-mint-50);
 }
 
 .alert.error {
@@ -149,7 +149,7 @@
     gap: 1rem;
     background: #fcfdfc;
     padding: 1.2rem;
-    border: 2px dashed #E8F5E9;
+    border: 2px dashed var(--growz-mint-50);
     border-radius: 15px;
 }
 
@@ -160,7 +160,7 @@
 }
 
 .uploadBtn {
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: white;
     padding: 0.8rem 1.5rem;
     border: none;
@@ -174,8 +174,8 @@
 }
 
 .uploadBtn:hover {
-    background: #FFC107;
-    color: #1B5E20;
+    background: var(--growz-gold);
+    color: var(--growz-primary);
 }
 
 .previewContainer {
@@ -184,7 +184,7 @@
     height: 200px;
     border-radius: 10px;
     overflow: hidden;
-    border: 2px solid #1B5E20;
+    border: 2px solid var(--growz-primary);
 }
 
 .previewImg {
