@@ -1,9 +1,13 @@
-/* src/pages/HomePage/HomePage.module.css */
-/* AUCUN STYLE — JUSTE UN CONTENEUR TRANSPARENT */
-
+/* Fond d’accueil — même contenu (liste projets), enveloppe raffinée */
 .home {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: #f8f9fa;
+  background: linear-gradient(
+    180deg,
+    var(--growz-slate-50) 0%,
+    var(--growz-mint-50) 22%,
+    var(--growz-bg) 55%,
+    var(--growz-slate-50) 100%
+  );
 }

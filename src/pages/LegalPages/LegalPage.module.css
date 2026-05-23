@@ -10,7 +10,7 @@
 }
 
 .header {
-    background: linear-gradient(135deg, #1B5E20 0%, #4CAF50 100%);
+    background: linear-gradient(135deg, var(--growz-primary) 0%, var(--growz-green-500) 100%);
     padding: 3rem;
     text-align: center;
     color: white;
@@ -44,10 +44,10 @@
 }
 
 .sectionCard h2 {
-    color: #1B5E20;
+    color: var(--growz-primary);
     margin-top: 0;
     font-size: 1.3rem;
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid var(--growz-green-500);
     padding-left: 15px;
 }
 
