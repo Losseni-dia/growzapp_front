@@ -1,0 +1,66 @@
+/* Growz — charte : vert forêt + or accent (inchangé sémantiquement) */
+:root {
+  /* Marque */
+  --growz-primary: #1b5e20;
+  --growz-primary-dark: #0d3d10;
+  --growz-primary-pressed: #173d17;
+  --growz-green-800: #1b5e20;
+  --growz-green-700: #2e7d32;
+  --growz-green-600: #388e3c;
+  --growz-green-500: #4caf50;
+  --growz-green-400: #66bb6a;
+  --growz-mint-50: #e8f5e9;
+  --growz-mint-100: #c8e6c9;
+  --growz-gold: #ffc107;
+  --growz-gold-dark: #ffb300;
+
+  /* Surfaces & texte */
+  --growz-bg: #f2f6f3;
+  --growz-bg-elevated: #ffffff;
+  --growz-elevated: #ffffff;
+  --growz-surface: #ffffff;
+  --growz-slate-50: #f8fafc;
+  --growz-slate-200: #e2e8f0;
+  --growz-slate-500: #64748b;
+  --growz-slate-600: #475569;
+  --growz-slate-700: #334155;
+  --growz-ink: #0f172a;
+  --growz-text: #1e293b;
+  --growz-text-muted: #64748b;
+
+  /* Overlays (identiques aux anciens rgba) */
+  --growz-rgb: 27, 94, 32;
+  --growz-veil-04: rgba(27, 94, 32, 0.04);
+  --growz-veil-05: rgba(27, 94, 32, 0.05);
+  --growz-veil-08: rgba(27, 94, 32, 0.08);
+  --growz-veil-10: rgba(27, 94, 32, 0.1);
+  --growz-veil-12: rgba(27, 94, 32, 0.12);
+  --growz-veil-15: rgba(27, 94, 32, 0.15);
+  --growz-veil-18: rgba(27, 94, 32, 0.18);
+  --growz-veil-20: rgba(27, 94, 32, 0.2);
+  --growz-veil-25: rgba(27, 94, 32, 0.25);
+  --growz-veil-30: rgba(27, 94, 32, 0.3);
+  --growz-veil-40: rgba(27, 94, 32, 0.4);
+  --growz-veil-50: rgba(27, 94, 32, 0.5);
+  /* Pour SVG / canvas qui exigent un hex (fallback charte) */
+  --growz-hex-primary: #1b5e20;
+  --growz-hex-mint: #4caf50;
+  --growz-veil-100: #1b5e20;
+
+  /* Bordures & formes */
+  --growz-border: rgba(27, 94, 32, 0.12);
+  --growz-border-subtle: #e2e8f0;
+  --growz-radius-sm: 8px;
+  --growz-radius: 12px;
+  --growz-radius-md: 14px;
+  --growz-radius-lg: 18px;
+  --growz-radius-xl: 24px;
+  --growz-radius-pill: 9999px;
+  --growz-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --growz-shadow: 0 4px 24px var(--growz-veil-12);
+  --growz-shadow-md: 0 12px 40px var(--growz-veil-12);
+  --growz-shadow-lg: 0 24px 60px -12px var(--growz-veil-18);
+  --growz-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Hauteur utile header fixe (alignée au padding body) */
+  --growz-header-offset: 100px;
+}
