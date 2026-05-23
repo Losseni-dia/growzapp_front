@@ -3,7 +3,7 @@
 
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+  background: linear-gradient(135deg, #f8fff9 0%, var(--growz-mint-50) 100%);
   padding: 2rem 1rem;
   display: flex;
   align-items: center;
@@ -15,10 +15,10 @@
   max-width: 540px;
   width: 100%;
   border-radius: 1.8rem;
-  box-shadow: 0 20px 50px rgba(27, 94, 32, 0.15);
+  box-shadow: 0 20px 50px var(--growz-veil-15);
   padding: 3rem 2.5rem;
   position: relative;
-  border: 3px solid #e8f5e9;
+  border: 3px solid var(--growz-mint-50);
 }
 
 .backBtn {
@@ -28,7 +28,7 @@
   background: none;
   border: none;
   font-size: 1.8rem;
-  color: #27ae60;
+  color: var(--growz-green-500);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
@@ -36,7 +36,7 @@
 }
 
 .backBtn:hover {
-  background: #e8f5e9;
+  background: var(--growz-mint-50);
   transform: scale(1.1);
 }
 
@@ -44,14 +44,14 @@
   font-size: 2.5rem;
   font-weight: 900;
   text-align: center;
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
   text-align: center;
   font-size: 1.2rem;
-  color: #27ae60;
+  color: var(--growz-green-500);
   margin-bottom: 2.5rem;
   font-weight: 500;
 }
@@ -64,7 +64,7 @@
 .inputGroup label {
   display: block;
   font-weight: 600;
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin-bottom: 0.8rem;
   font-size: 1.1rem;
 }
@@ -80,7 +80,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #27ae60;
+  border-color: var(--growz-green-500);
   box-shadow: 0 0 0 5px rgba(39, 174, 96, 0.15);
 }
 
@@ -121,14 +121,14 @@
 }
 
 .method input:checked + .methodLabel {
-  background: #e8f5e9;
-  border-color: #27ae60;
+  background: var(--growz-mint-50);
+  border-color: var(--growz-green-500);
   transform: translateY(-5px);
   box-shadow: 0 12px 25px rgba(39, 174, 96, 0.18);
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, #27ae60, #219653);
+  background: linear-gradient(135deg, var(--growz-green-500), var(--growz-green-700));
   color: white;
   border: none;
   padding: 1.4rem;
@@ -192,7 +192,7 @@
 .modal h2 {
   font-size: 2.2rem;
   font-weight: 900;
-  color: #1B5E20;
+  color: var(--growz-primary);
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -200,7 +200,7 @@
 .modal p {
   text-align: center;
   font-size: 1.3rem;
-  color: #27ae60;
+  color: var(--growz-green-500);
   font-weight: 600;
   margin-bottom: 2rem;
 }
@@ -229,7 +229,7 @@
 }
 
 .confirmBtn {
-  background: linear-gradient(135deg, #27ae60, #219653);
+  background: linear-gradient(135deg, var(--growz-green-500), var(--growz-green-700));
   color: white;
   border: none;
   padding: 1rem 2.5rem;
@@ -271,8 +271,8 @@
 .redirectLoader {
   width: 80px;
   height: 80px;
-  border: 6px solid #e8f5e9;
-  border-top: 6px solid #27ae60;
+  border: 6px solid var(--growz-mint-50);
+  border-top: 6px solid var(--growz-green-500);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 2rem;
