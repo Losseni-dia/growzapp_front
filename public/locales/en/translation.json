@@ -103,9 +103,15 @@
     "collected": "raised",
     "dates": "From {{start}} to {{end}}",
     "btn_view": "View",
-    "btn_invest": "Invest"
+    "btn_invest": "Invest",
+    "certified": "Certified"
+  },
+  "common": {
+    "anonymous": "Anonymous"
   },
   "project_details": {
+    "owner": "Project Owner",
+    "view_on_maps": "View on maps",
     "equity_to_raise": "Equity to raise",
     "loading": "Loading project...",
     "error_not_found": "Project not found",

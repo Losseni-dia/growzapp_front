@@ -103,9 +103,15 @@
     "collected": "collectés",
     "dates": "Du {{start}} au {{end}}",
     "btn_view": "Voir",
-    "btn_invest": "Investir"
+    "btn_invest": "Investir",
+    "certified": "Certifié"
+  },
+  "common": {
+    "anonymous": "Inconnu"
   },
   "project_details": {
+    "owner": "Porteur du projet",
+    "view_on_maps": "Voir sur la carte",
     "equity_to_raise": "Parts à lever",
     "loading": "Chargement du projet...",
     "error_not_found": "Projet introuvable",
