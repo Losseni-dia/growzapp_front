@@ -104,7 +104,8 @@
     "collected": "recaudados",
     "dates": "Del {{start}} al {{end}}",
     "btn_view": "Ver",
-    "btn_invest": "Invertir"
+    "btn_invest": "Invertir",
+    "certified": "Certificado"
   },
  "project_details": {
   "equity_to_raise": "Acciones a captar",
