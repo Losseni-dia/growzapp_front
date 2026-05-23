@@ -107,7 +107,7 @@ export default function MesInvestissementsPage() {
       case "VALIDE":
         return {
           icon: FiCheckCircle,
-          color: "#1b5e20",
+          color: "var(--growz-primary)",
           bg: "#e8f5e9",
           label: t("user_investments.status.validated"),
         };

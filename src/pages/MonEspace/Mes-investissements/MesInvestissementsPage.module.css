@@ -13,7 +13,7 @@
 }
 
 .header h1 {
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
@@ -44,7 +44,7 @@
 
 .card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.15);
+  box-shadow: 0 20px 40px var(--growz-veil-15);
 }
 
 /* ZONE IMAGE ET BADGE */
@@ -114,7 +114,7 @@
 .montantInvesti strong {
   display: block;
   font-size: 1.5rem;
-  color: #1b5e20;
+  color: var(--growz-primary);
 }
 
 /* === ZONE DES ACTIONS (LA BARRE DE BOUTONS) === */
@@ -148,14 +148,14 @@
 
 .btnAction:hover:not(:disabled) {
   background: #e2e8f0;
-  color: #1b5e20;
+  color: var(--growz-primary);
 }
 
 /* Bouton Voir Projet (Le plus large) */
 .btnVoirProjet {
   flex-grow: 1;
   /* Prend l'espace disponible au centre */
-  background: #1b5e20;
+  background: var(--growz-primary);
   color: white;
   padding: 10px;
   border-radius: 10px;
@@ -172,8 +172,8 @@
 
 /* Bouton GPS (Le bouton jaune) */
 .btnGPS {
-  background: #ffc107;
-  color: #1b5e20;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
   width: 40px;
   height: 40px;
   border-radius: 10px;
@@ -187,7 +187,7 @@
 }
 
 .btnGPS:hover {
-  background: #ffb300;
+  background: var(--growz-gold-dark);
   transform: scale(1.05);
 }
 
@@ -204,8 +204,8 @@
 
 .btnInvestir {
   margin-top: 1.5rem;
-  background: #ffc107;
-  color: #1b5e20;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
   padding: 12px 24px;
   border-radius: 12px;
   text-decoration: none;

@@ -17,15 +17,15 @@
   background: white;
   padding: 1.5rem 2rem;
   border-radius: 20px;
-  border: 3px solid #E8F5E9; /* IDENTIQUE AU LOGIN */
-  box-shadow: 0 8px 25px rgba(27, 94, 32, 0.08);
+  border: 3px solid var(--growz-mint-50); /* IDENTIQUE AU LOGIN */
+  box-shadow: 0 8px 25px var(--growz-veil-08);
 }
 
 .headerRow h1 {
   margin: 0;
   font-size: 2rem;
   font-weight: 800;
-  color: #1B5E20; /* VERT APP */
+  color: var(--growz-primary); /* VERT APP */
   display: flex;
   align-items: center;
   gap: 12px;
@@ -34,8 +34,8 @@
 /* Bouton Actualiser (Style Secondaire) */
 .refreshBtn {
   background: white;
-  color: #1B5E20;
-  border: 2.5px solid #E8F5E9;
+  color: var(--growz-primary);
+  border: 2.5px solid var(--growz-mint-50);
   padding: 0.8rem 1.5rem;
   border-radius: 14px; /* IDENTIQUE LOGIN */
   font-weight: 700;
@@ -48,7 +48,7 @@
 }
 
 .refreshBtn:hover {
-  border-color: #1B5E20;
+  border-color: var(--growz-primary);
   background: #f1f8f3;
   transform: translateY(-2px);
 }
@@ -65,7 +65,7 @@
   background: white;
   padding: 2rem;
   border-radius: 20px;
-  border: 3px solid #E8F5E9; /* IDENTIQUE LOGIN */
+  border: 3px solid var(--growz-mint-50); /* IDENTIQUE LOGIN */
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
@@ -77,8 +77,8 @@
 
 .card:hover {
   transform: translateY(-8px);
-  border-color: #FFC107; /* LE JAUNE AU SURVOL */
-  box-shadow: 0 15px 40px rgba(27, 94, 32, 0.12);
+  border-color: var(--growz-gold); /* LE JAUNE AU SURVOL */
+  box-shadow: 0 15px 40px var(--growz-veil-12);
 }
 
 /* Icones avec dégradés respectant la charte */
@@ -94,8 +94,8 @@
 }
 
 .iconSuccess {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  color: #1B5E20;
+  background: linear-gradient(135deg, var(--growz-mint-50) 0%, var(--growz-mint-100) 100%);
+  color: var(--growz-primary);
 }
 
 .iconPending {
@@ -104,8 +104,8 @@
 }
 
 .iconTotal {
-  background: linear-gradient(135deg, #1B5E20 0%, #2e7d32 100%);
-  color: #FFC107; /* Jaune sur Vert */
+  background: linear-gradient(135deg, var(--growz-primary) 0%, var(--growz-green-700) 100%);
+  color: var(--growz-gold); /* Jaune sur Vert */
 }
 
 .card div span {
@@ -122,14 +122,14 @@
   display: block;
   font-size: 2.2rem;
   font-weight: 800;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 /* --- TABLEAU (Style Pro) --- */
 .tableWrapper {
   background: white;
   border-radius: 20px;
-  border: 3px solid #E8F5E9; /* IDENTIQUE LOGIN */
+  border: 3px solid var(--growz-mint-50); /* IDENTIQUE LOGIN */
   box-shadow: 0 12px 40px rgba(0,0,0,0.06);
   overflow: hidden; /* Pour que le header ne dépasse pas */
 }
@@ -140,7 +140,7 @@
 }
 
 .table thead {
-  background: #1B5E20; /* FOND VERT IDENTIQUE TITRE LOGIN */
+  background: var(--growz-primary); /* FOND VERT IDENTIQUE TITRE LOGIN */
 }
 
 .table th {
@@ -175,7 +175,7 @@
 /* Typographie spécifique dans le tableau */
 .projectName {
   font-weight: 700;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 .montant {
@@ -186,13 +186,13 @@
 
 /* --- BADGES (Statuts) --- */
 .badgePaye {
-  background-color: #E8F5E9;
-  color: #1B5E20;
+  background-color: var(--growz-mint-50);
+  color: var(--growz-primary);
   padding: 6px 14px;
   border-radius: 30px;
   font-size: 0.85rem;
   font-weight: 800;
-  border: 1px solid #c8e6c9;
+  border: 1px solid var(--growz-mint-100);
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -200,7 +200,7 @@
 
 .badgePaye::before {
   content: "●";
-  color: #27ae60;
+  color: var(--growz-green-500);
   font-size: 0.8rem;
 }
 
@@ -216,8 +216,8 @@
 
 /* --- BOUTON TELECHARGER (Style "Star" ⭐) --- */
 .downloadBtn {
-  background: #FFC107; /* LE JAUNE */
-  color: #1B5E20;      /* LE VERT */
+  background: var(--growz-gold); /* LE JAUNE */
+  color: var(--growz-primary);      /* LE VERT */
   border: none;
   padding: 0.7rem 1.2rem;
   border-radius: 12px;
@@ -247,7 +247,7 @@
   padding: 5rem;
   background: white;
   border-radius: 20px;
-  border: 3px solid #E8F5E9;
+  border: 3px solid var(--growz-mint-50);
   color: #888;
   font-size: 1.2rem;
 }
@@ -256,7 +256,7 @@
   text-align: center;
   margin-top: 5rem;
   font-size: 1.5rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: bold;
 }
 

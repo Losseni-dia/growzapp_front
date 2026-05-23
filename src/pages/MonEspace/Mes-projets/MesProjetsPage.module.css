@@ -11,7 +11,7 @@
 }
 
 .header h1 {
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-size: 3rem;
   font-weight: 900;
   display: flex;
@@ -37,14 +37,14 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
-  border: 3px solid #e8f5e9;
+  border: 3px solid var(--growz-mint-50);
   transition: all 0.4s ease;
 }
 
 .card:hover {
   transform: translateY(-15px);
-  box-shadow: 0 30px 60px rgba(27, 94, 32, 0.25);
-  border-color: #ffc107;
+  box-shadow: 0 30px 60px var(--growz-veil-25);
+  border-color: var(--growz-gold);
 }
 
 .poster {
@@ -70,7 +70,7 @@
   border: 2px solid currentColor;
 }
 
-.statutEnCours { background: #e8f5e9; color: #1b5e20; }
+.statutEnCours { background: var(--growz-mint-50); color: var(--growz-primary); }
 .statutTermine { background: #f3e8ff; color: #6d28d9; }
 .statutSoumis { background: #fff3e0; color: #e67e22; }
 .statutRejete { background: #ffebee; color: #c62828; }
@@ -83,7 +83,7 @@
 .title {
   margin: 0 0 1.2rem 0;
   font-size: 1.6rem;
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-weight: 700;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .icon {
-  color: #ffc107;
+  color: var(--growz-gold);
 }
 
 .progressContainer {
@@ -114,7 +114,7 @@
   justify-content: space-between;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #1b5e20;
+  color: var(--growz-primary);
 }
 
 .progressBar {
@@ -126,7 +126,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #ffc107, #ffb300);
+  background: linear-gradient(90deg, var(--growz-gold), var(--growz-gold-dark));
   transition: width 0.8s ease;
 }
 
@@ -141,7 +141,7 @@
   display: block;
   margin: 1.5rem auto 0;
   padding: 1rem 2rem;
-  background: #1b5e20;
+  background: var(--growz-primary);
   color: white;
   text-align: center;
   border-radius: 50px;
@@ -152,7 +152,7 @@
 }
 
 .btnVoir:hover {
-  background: #173d17;
+  background: var(--growz-primary-pressed);
   transform: translateY(-3px);
 }
 
@@ -172,8 +172,8 @@
   display: inline-block;
   margin-top: 2rem;
   padding: 1.4rem 3.5rem;
-  background: #ffc107;
-  color: #1b5e20;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
   font-weight: 900;
   font-size: 1.3rem;
   border-radius: 50px;
@@ -182,7 +182,7 @@
 }
 
 .btnCreer:hover {
-  background: #ffb300;
+  background: var(--growz-gold-dark);
   transform: translateY(-5px);
 }
 
@@ -222,9 +222,9 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #FFC107;
+  background: var(--growz-gold);
   /* Jaune Growzapp */
-  color: #1B5E20;
+  color: var(--growz-primary);
   /* Vert Growzapp */
   padding: 10px;
   border-radius: 10px;
