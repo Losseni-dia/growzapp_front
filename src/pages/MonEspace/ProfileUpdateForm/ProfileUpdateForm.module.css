@@ -19,7 +19,7 @@
 
 .form h2 {
   text-align: center;
-  color: #1b5e20;
+  color: var(--growz-primary);
   margin-bottom: 2rem;
   font-size: 2rem;
   font-weight: 800;
@@ -50,7 +50,7 @@
 }
 
 .photoUpload:hover {
-  border-color: #27ae60;
+  border-color: var(--growz-green-500);
   background: #f0fff4;
   transform: scale(1.02);
 }
@@ -105,10 +105,10 @@
   min-height: 58px; padding: 0.6rem 1.2rem; border: 2px solid #e2e8f0; border-radius: 0.8rem;
   background: #f8fafc; display: flex; justify-content: space-between; align-items: center; cursor: pointer;
 }
-.languesSelectBox.open { border-color: #27ae60; background: white; }
+.languesSelectBox.open { border-color: var(--growz-green-500); background: white; }
 .selectedTags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .tag {
-  background: #f0fff4; color: #1b5e20; border: 1px solid #c6f6d5;
+  background: #f0fff4; color: var(--growz-primary); border: 1px solid #c6f6d5;
   padding: 4px 12px; border-radius: 50px; font-size: 0.85rem; font-weight: 700;
   display: flex; align-items: center; gap: 6px;
 }
@@ -130,14 +130,14 @@
 .langueOption:hover { background: #f8fafc; }
 .selectedOption { background: #f0fff4; }
 .checkboxCustom { width: 20px; height: 20px; border: 2px solid #e2e8f0; border-radius: 6px; display: flex; justify-content: center; align-items: center; color: white; }
-.selectedOption .checkboxCustom { background: #27ae60; border-color: #27ae60; }
+.selectedOption .checkboxCustom { background: var(--growz-green-500); border-color: var(--growz-green-500); }
 
 /* --- BOUTONS --- */
 .submitBtn {
   width: 100%; padding: 1.2rem; background: #e2b607; color: #1a1a1a; border: none; border-radius: 1rem;
   font-size: 1.1rem; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s;
 }
-.submitBtn:hover:not(:disabled) { background: #27ae60; color: white; transform: translateY(-2px); }
+.submitBtn:hover:not(:disabled) { background: var(--growz-green-500); color: white; transform: translateY(-2px); }
 
 /* --- CROPPER --- */
 .cropContainer {
@@ -163,7 +163,7 @@
 .cropBtn {
   flex: 2;
   padding: 0.8rem;
-  background: #27ae60;
+  background: var(--growz-green-500);
   color: white;
   border: none;
   border-radius: 0.6rem;
