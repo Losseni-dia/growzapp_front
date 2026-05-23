@@ -193,12 +193,32 @@ export default function ProjetDetailsPage() {
         <div className={styles.info}>
           <h1>{projet.libelle}</h1>
           <p>
+            <p>
+              <strong>{t("project_details.owner")} :</strong>{" "}
+              {projet.porteurNom || t("common.anonymous")}
+            </p>
             <strong>{t("project_details.sector")} :</strong>{" "}
             {translateData("sectors", projet.secteurNom)}
           </p>
           <p>
             <strong>{t("project_details.location")} :</strong> {projet.siteNom},{" "}
             {translateData("cities", projet.localiteNom)}
+          </p>
+          <p>
+            <strong>{t("project_details.location")} :</strong> {projet.siteNom},{" "}
+            {translateData("cities", projet.localiteNom)}
+            {/* AJOUT DU LIEN GOOGLE MAPS S'IL EXISTE */}
+            {projet.googleMapsUrl && (
+              <a
+                href={projet.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.mapsLink}
+                title="Ouvrir dans Google Maps"
+              >
+                📍 {t("project_details.view_on_maps") || "Voir sur la carte"}
+              </a>
+            )}
           </p>
           <div className={styles.roiBadge}>
             {t("project_details.roi_projected")} : {projet.roiProjete}%
@@ -259,7 +279,7 @@ export default function ProjetDetailsPage() {
             {documents.length > 0 ? (
               documents.map((doc) => (
                 <div key={doc.id} className={styles.docCard}>
-                  <FiFileText size={24} color="#1B5E20" />
+                  <FiFileText size={24} color="var(--growz-hex-primary, #1b5e20)" />
                   <div className={styles.docInfo}>
                     <strong>{doc.nom}</strong>
                     <small>

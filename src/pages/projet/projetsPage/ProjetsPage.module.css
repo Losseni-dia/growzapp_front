@@ -4,7 +4,12 @@
 .pageContainer {
   position: relative;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fcf8 0%, #f0f8f0 100%);
+  background: linear-gradient(
+    160deg,
+    var(--growz-slate-50) 0%,
+    var(--growz-mint-50) 35%,
+    var(--growz-bg) 100%
+  );
   overflow-x: hidden;
 }
 
@@ -20,9 +25,9 @@
   /* Hauteur calculée pour ne pas dépasser de l'écran */
   height: calc(100vh - 100px);
   
-  background: white;
-  border-right: 1px solid #e0e0e0;
-  box-shadow: 8px 0 30px rgba(0,0,0,0.08);
+  background: var(--growz-elevated);
+  border-right: 1px solid var(--growz-border-subtle);
+  box-shadow: 8px 0 32px var(--growz-veil-08);
   
   /* Z-INDEX : 900 (Sous le Header qui est à 1000) */
   z-index: 900; 
@@ -49,7 +54,7 @@
 .sidebarTitle {
   font-size: 2.1rem;
   font-weight: 800;
-  color: #1B5E20;
+  color: var(--growz-primary);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -59,7 +64,7 @@
 .toggleBtn {
   background: none;
   border: none;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 1.8rem;
   cursor: pointer;
   padding: 0.5rem;
@@ -68,7 +73,7 @@
 }
 
 .toggleBtn:hover {
-  background: #e8f5e9;
+  background: var(--growz-mint-50);
 }
 
 .sidebarContent {
@@ -77,26 +82,26 @@
 
 /* --- FILTRES & INPUTS --- */
 .filterGroup { margin-bottom: 2.4rem; }
-.filterGroup label { display: block; margin-bottom: 0.9rem; font-weight: 700; color: #2d6a2f; font-size: 1.1rem; }
+.filterGroup label { display: block; margin-bottom: 0.9rem; font-weight: 700; color: var(--growz-primary); font-size: 1.05rem; letter-spacing: 0.01em; }
 
 .searchWrapper { position: relative; margin-bottom: 2rem; }
-.searchIcon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #4CAF50; font-size: 1.6rem; pointer-events: none; }
-.searchInput { width: 100%; padding: 1.2rem 1.4rem 1.2rem 4.2rem; border: 2px solid #ddd; border-radius: 18px; font-size: 1.1rem; background: #f9f9f9; transition: all 0.3s; }
-.searchInput:focus { outline: none; border-color: #1B5E20; background: white; box-shadow: 0 0 0 5px rgba(27,94,32,0.15); }
+.searchIcon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--growz-green-500); font-size: 1.6rem; pointer-events: none; }
+.searchInput { width: 100%; padding: 1.2rem 1.4rem 1.2rem 4.2rem; border: 1.5px solid var(--growz-border-subtle); border-radius: var(--growz-radius-lg); font-size: 1.05rem; background: var(--growz-slate-50); transition: border 0.25s var(--growz-ease), box-shadow 0.25s var(--growz-ease), background 0.25s var(--growz-ease); }
+.searchInput:focus { outline: none; border-color: var(--growz-green-500); background: var(--growz-elevated); box-shadow: 0 0 0 4px var(--growz-veil-10); }
 
-.select, .priceInput { width: 100%; padding: 1.1rem 1.4rem; border: 2px solid #ddd; border-radius: 16px; background: white; font-size: 1.05rem; }
+.select, .priceInput { width: 100%; padding: 1.1rem 1.4rem; border: 1.5px solid var(--growz-border-subtle); border-radius: var(--growz-radius); background: var(--growz-elevated); font-size: 1.05rem; }
 .priceRange { display: flex; align-items: center; gap: 12px; }
 
 .resultsCount {
   margin-top: 3rem;
   padding: 1.4rem;
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  background: linear-gradient(135deg, var(--growz-mint-50), var(--growz-mint-100));
   border-radius: 16px;
   text-align: center;
   font-weight: bold;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 1.2rem;
-  box-shadow: 0 4px 15px rgba(27,94,32,0.1);
+  box-shadow: 0 4px 15px var(--growz-veil-10);
 }
 
 /* --- ZONE PRINCIPALE (PROJETS) --- */
@@ -120,9 +125,9 @@
   margin: 0 auto;
 }
 
-.empty, .loading { text-align: center; padding: 10rem 2rem; color: #666; }
-.empty h3 { font-size: 2.5rem; color: #1B5E20; margin-bottom: 1rem; }
-.loading { font-size: 2.5rem; color: #1B5E20; }
+.empty, .loading { text-align: center; padding: 10rem 2rem; color: var(--growz-text-muted); }
+.empty h3 { font-size: 2.5rem; color: var(--growz-primary); margin-bottom: 1rem; }
+.loading { font-size: 2.5rem; color: var(--growz-primary); }
 
 /* --- LE BOUTON ROND (FAB) --- */
 .mobileToggle {
@@ -140,7 +145,7 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   border: 2px solid white; /* Petite bordure blanche pour bien le voir */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
