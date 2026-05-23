@@ -164,7 +164,7 @@ export default function VerifierContrat() {
                     <p><strong>{t("verify_contract.label_date")}</strong> {format(new Date(result.date), "dd MMMM yyyy", { locale: currentLocale })}</p>
                   </div>
                   <div className={styles.qr}>
-                    <QRCodeSVG value={window.location.href} size={180} fgColor="#1B5E20" />
+                    <QRCodeSVG value={window.location.href} size={180} fgColor="#1b5e20" />
                     <small>{t("verify_contract.qr_hint")}</small>
                   </div>
                 </div>

@@ -8,16 +8,16 @@
   justify-content: center;
   text-align: center;
   padding: 3rem 1rem;
-  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+  background: linear-gradient(135deg, #f8fff9 0%, var(--growz-mint-50) 100%);
   font-family: inherit;
 }
 
 .message h2 {
   font-size: 3rem;
   font-weight: 900;
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin-bottom: 1.5rem;
-  text-shadow: 0 4px 15px rgba(27,94,32,0.1);
+  text-shadow: 0 4px 15px var(--growz-veil-10);
 }
 
 .message p {
@@ -31,8 +31,8 @@
 .loader {
   width: 80px;
   height: 80px;
-  border: 8px solid #e8f5e9;
-  border-top: 8px solid #1B5E20;
+  border: 8px solid var(--growz-mint-50);
+  border-top: 8px solid var(--growz-primary);
   border-radius: 50%;
   animation: spin 1.2s linear infinite;
   margin-bottom: 2rem;
@@ -48,18 +48,18 @@
   align-items: center;
   gap: 0.8rem;
   padding: 1.2rem 2.8rem;
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   border-radius: 50px;
   text-decoration: none;
   font-weight: 700;
   font-size: 1.2rem;
   transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(27,94,32,0.3);
+  box-shadow: 0 10px 30px var(--growz-veil-30);
 }
 
 .backLink:hover {
-  background: #2E7D32;
+  background: var(--growz-green-700);
   transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(27,94,32,0.4);
+  box-shadow: 0 20px 40px var(--growz-veil-40);
 }
