@@ -13,7 +13,7 @@
     align-items: center;
     gap: 1.5rem;
     margin-bottom: 3rem;
-    color: #1B5E20;
+    color: var(--growz-primary);
 }
 
 .titleArea {
@@ -29,15 +29,15 @@
 }
 
 .icon {
-    color: #FFC107;
+    color: var(--growz-gold);
 }
 
 .adminBtn {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    background: #FFC107;
-    color: #1B5E20;
+    background: var(--growz-gold);
+    color: var(--growz-primary);
     padding: 0.8rem 1.4rem;
     border-radius: 12px;
     font-weight: 700;
@@ -48,10 +48,10 @@
 }
 
 .adminBtn:hover {
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: #ffffff;
     transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(27, 94, 32, 0.2);
+    box-shadow: 0 6px 15px var(--growz-veil-20);
 }
 
 .grid {
@@ -63,7 +63,7 @@
 
 .card {
     background: white;
-    border: 3px solid #E8F5E9;
+    border: 3px solid var(--growz-mint-50);
     border-radius: 20px;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -74,8 +74,8 @@
 
 .card:hover {
     transform: translateY(-8px);
-    border-color: #1B5E20;
-    box-shadow: 0 15px 40px rgba(27, 94, 32, 0.15);
+    border-color: var(--growz-primary);
+    box-shadow: 0 15px 40px var(--growz-veil-15);
 }
 
 .imageWrapper {
@@ -106,8 +106,8 @@
 
 .badge {
     align-self: flex-start;
-    background: #E8F5E9;
-    color: #1B5E20;
+    background: var(--growz-mint-50);
+    color: var(--growz-primary);
     padding: 0.4rem 1rem;
     border-radius: 10px;
     font-size: 0.75rem;
@@ -115,12 +115,12 @@
     text-transform: uppercase;
     margin-bottom: 1.2rem;
     letter-spacing: 0.5px;
-    border: 1px solid #1B5E20;
+    border: 1px solid var(--growz-primary);
 }
 
 .content h2 {
     font-size: 1.4rem;
-    color: #1B5E20;
+    color: var(--growz-primary);
     margin-bottom: 1rem;
     font-weight: 700;
     line-height: 1.3;
@@ -143,7 +143,7 @@
 
 .readMore {
     display: block;
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: #ffffff !important;
     padding: 0.8rem 1.5rem;
     border-radius: 12px;
@@ -156,14 +156,14 @@
 }
 
 .readMore:hover {
-    background: #FFC107;
-    color: #1B5E20 !important;
+    background: var(--growz-gold);
+    color: var(--growz-primary) !important;
 }
 
 .loader {
     text-align: center;
     padding: 5rem;
-    color: #1B5E20;
+    color: var(--growz-primary);
     font-weight: 600;
     font-size: 1.2rem;
 }
@@ -173,14 +173,14 @@
     gap: 0.8rem;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #E8F5E9;
+    border-top: 1px solid var(--growz-mint-50);
 }
 
 .editBtn {
     flex: 1;
     text-align: center;
-    background: #E8F5E9;
-    color: #1B5E20;
+    background: var(--growz-mint-50);
+    color: var(--growz-primary);
     padding: 0.6rem;
     border-radius: 8px;
     font-weight: 600;
@@ -201,7 +201,7 @@
 }
 
 .editBtn:hover {
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: white;
 }
 

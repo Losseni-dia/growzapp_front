@@ -26,8 +26,8 @@
 .header { padding: 40px; }
 
 .categoryBadge { 
-    background: #FFC107; 
-    color: #1B5E20; 
+    background: var(--growz-gold); 
+    color: var(--growz-primary); 
     padding: 5px 12px; 
     border-radius: 6px; 
     font-weight: 800; 
@@ -36,7 +36,7 @@
 
 .mainTitle { 
     font-size: 2.5rem; 
-    color: #1B5E20; 
+    color: var(--growz-primary); 
     margin: 20px 0; 
     font-weight: 800; 
 }
@@ -90,11 +90,11 @@
 
 /* --- BOUTONS ET CHARGEMENT --- */
 .backBtn {
-    background: #1B5E20; color: white; border: none;
+    background: var(--growz-primary); color: white; border: none;
     padding: 10px 20px; border-radius: 10px;
     cursor: pointer; margin-bottom: 20px; font-weight: 600;
 }
 
 .loaderContainer { display: flex; justify-content: center; padding: 100px; }
-.spinner { animation: spin 1s linear infinite; color: #1B5E20; }
+.spinner { animation: spin 1s linear infinite; color: var(--growz-primary); }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

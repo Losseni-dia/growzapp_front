@@ -10,11 +10,11 @@
   padding: 8px;
   border-radius: 50%;
   transition: background 0.3s ease;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 .bellIconBox:hover {
-  background: rgba(27, 94, 32, 0.1);
+  background: var(--growz-veil-10);
 }
 
 .badge {
@@ -58,13 +58,13 @@
 .dropdownHeader h3 {
   margin: 0;
   font-size: 1rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 700;
 }
 
 .unreadTag {
-  background: #E8F5E9;
-  color: #1B5E20;
+  background: var(--growz-mint-50);
+  color: var(--growz-primary);
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 10px;
@@ -89,7 +89,7 @@
 
 .unread {
   background: #f1f8e9;
-  border-left: 4px solid #FFC107;
+  border-left: 4px solid var(--growz-gold);
 }
 
 .notifTop {
@@ -108,7 +108,7 @@
 .unreadDot {
   width: 8px;
   height: 8px;
-  background: #FFC107;
+  background: var(--growz-gold);
   border-radius: 50%;
 }
 
@@ -133,7 +133,7 @@
 .dropdownFooter button {
   background: none;
   border: none;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 600;
   font-size: 0.8rem;
   cursor: pointer;
@@ -171,7 +171,7 @@
 
 /* Petit texte discret "Voir le projet" */
 .clickHint {
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 700;
   font-size: 0.7rem;
   opacity: 0.8;
