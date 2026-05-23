@@ -2,22 +2,41 @@
   position: fixed;
   top: 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(27, 94, 32, 0.1);
+  /* Fallback + verre mat moderne */
+  background: rgba(255, 255, 255, 0.94);
+  background: color-mix(in srgb, var(--growz-elevated) 92%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border-bottom: 1px solid var(--growz-border);
   padding: 0.8rem 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 1000;
-  transition: all 0.3s ease;
+  transition: background 0.3s var(--growz-ease), box-shadow 0.3s var(--growz-ease), padding 0.3s var(--growz-ease);
+  box-shadow: var(--growz-shadow-sm);
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--growz-primary) 0%,
+    var(--growz-green-500) 40%,
+    var(--growz-gold) 100%
+  );
+  pointer-events: none;
 }
 
 .scrolled {
   padding: 0.5rem 3rem;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  background: var(--growz-elevated);
+  box-shadow: var(--growz-shadow);
 }
 
 .logo {
@@ -31,7 +50,7 @@
   margin: 0;
   font-size: 1.8rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #1B5E20, #4CAF50);
+  background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-500));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -50,7 +69,7 @@
 }
 
 .navLink {
-  color: #334155;
+  color: var(--growz-slate-700);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
@@ -63,8 +82,8 @@
 }
 
 .navLink:hover {
-  background: rgba(27, 94, 32, 0.05);
-  color: #1B5E20;
+  background: var(--growz-veil-05);
+  color: var(--growz-primary);
 }
 
 /* --- ACTIONS DIRECTES DROITE --- */
@@ -79,9 +98,9 @@
 }
 
 .directActionBtn {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  color: #64748b;
+  background: var(--growz-slate-50);
+  border: 1px solid var(--growz-border-subtle);
+  color: var(--growz-slate-500);
   padding: 8px 12px;
   border-radius: 12px;
   display: flex;
@@ -93,8 +112,8 @@
 }
 
 .directActionBtn:hover {
-  border-color: #1B5E20;
-  color: #1B5E20;
+  border-color: var(--growz-primary);
+  color: var(--growz-primary);
   background: white;
 }
 
@@ -139,7 +158,7 @@
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  color: #334155;
+  color: var(--growz-slate-700);
   font-weight: 700;
   padding-right: 10px;
 }
@@ -148,11 +167,11 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid #4CAF50;
+  border: 2px solid var(--growz-green-500);
 }
 
 .loginBtn {
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   padding: 0.6rem 1.2rem;
   border-radius: 12px;
@@ -169,7 +188,7 @@
 }
 
 .adminBtn {
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -235,7 +254,7 @@
 /* --- STYLE SPÉCIFIQUE POUR LE LIEN GÉO --- */
 
 .proximityLink {
-  color: #1B5E20 !important;
+  color: var(--growz-primary) !important;
   /* Force le vert Growzapp */
   background: rgba(255, 193, 7, 0.15);
   /* Fond jaune très léger */
@@ -247,16 +266,16 @@
 }
 
 .proximityLink svg {
-  color: #FFC107;
+  color: var(--growz-gold);
   /* Icône en Jaune Growzapp */
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.1));
 }
 
 .proximityLink:hover {
-  background: #FFC107 !important;
+  background: var(--growz-gold) !important;
   /* Devient jaune au survol */
-  color: #1B5E20 !important;
-  border-color: #1B5E20;
+  color: var(--growz-primary) !important;
+  border-color: var(--growz-primary);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
 }
@@ -267,7 +286,7 @@
   position: absolute;
   width: 6px;
   height: 6px;
-  background: #FFC107;
+  background: var(--growz-gold);
   border-radius: 50%;
   top: 8px;
   right: 8px;
@@ -285,12 +304,12 @@
 
 /* On s'assure que les icônes de la cloche ont le même style que tes autres icônes */
 .userSection :global(.lucide-bell) {
-  color: #64748b; /* Couleur grise comme tes boutons directActionBtn */
+  color: var(--growz-slate-500);
   transition: color 0.2s;
 }
 
 .userSection :global(.lucide-bell):hover {
-  color: #1B5E20; /* Vert au survol */
+  color: var(--growz-primary); /* Vert au survol */
 }
 
 /* Pour le responsive mobile */

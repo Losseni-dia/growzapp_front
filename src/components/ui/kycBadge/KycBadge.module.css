@@ -18,8 +18,8 @@
 /* Couleurs selon l'état */
 .valid {
     background-color: #e6f7ed;
-    color: #27ae60;
-    border: 1px solid #27ae60;
+    color: var(--growz-green-500);
+    border: 1px solid var(--growz-green-500);
 }
 
 .pending {

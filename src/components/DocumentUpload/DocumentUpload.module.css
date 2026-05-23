@@ -4,39 +4,39 @@
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  border: 3px solid #E8F5E9;
+  border: 3px solid var(--growz-mint-50);
   margin-bottom: 2rem;
 }
 
 .title {
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 3px solid #FFC107;
+  border-bottom: 3px solid var(--growz-gold);
   padding-bottom: 0.5rem;
 }
 
 .dropZone {
-  border: 3px dashed #1B5E20;
+  border: 3px dashed var(--growz-primary);
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: #E8F5E9;
+  background: var(--growz-mint-50);
 }
 
 .dropZone:hover, .dragging {
   background: #d0e8d1;
-  border-color: #FFC107;
+  border-color: var(--growz-gold);
 }
 
 .dropZone p {
   margin: 1rem 0;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 600;
 }
 
@@ -44,7 +44,7 @@
   padding: 1.5rem;
   background: #f9fff9;
   border-radius: 12px;
-  border: 2px solid #1B5E20;
+  border: 2px solid var(--growz-primary);
 }
 
 .fileInfo {
@@ -52,13 +52,13 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 .nomInput {
   width: 100%;
   padding: 0.8rem;
-  border: 2px solid #1B5E20;
+  border: 2px solid var(--growz-primary);
   border-radius: 8px;
   font-size: 1rem;
   margin-bottom: 1rem;
@@ -88,7 +88,7 @@
 }
 
 .uploadBtn {
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
 }
 

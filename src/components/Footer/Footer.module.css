@@ -1,14 +1,34 @@
 .footer {
-    background: #0f172a;
-    /* Bleu nuit profond */
+    background: linear-gradient(165deg, #071208 0%, #0f2014 45%, #0a1810 100%);
     color: #94a3b8;
-    padding: 3rem 1rem 1.5rem 1rem;
-    font-family: 'Inter', sans-serif;
+    padding: 3.25rem 1.25rem 1.5rem 1.25rem;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        var(--growz-primary) 0%,
+        var(--growz-green-500) 50%,
+        var(--growz-gold) 100%
+    );
+    opacity: 0.9;
+    pointer-events: none;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .topSection {
@@ -24,7 +44,7 @@
 
 /* --- BRAND & SOCIALS --- */
 .brand .logoText {
-    color: #4CAF50;
+    color: var(--growz-green-500);
     font-size: 1.5rem;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -56,7 +76,7 @@
 }
 
 .socialIcon:hover {
-    background: #4CAF50;
+    background: var(--growz-green-500);
     color: white;
     transform: translateY(-3px);
 }
@@ -98,7 +118,7 @@
 }
 
 .link:hover {
-    color: #4CAF50;
+    color: var(--growz-green-500);
 }
 
 /* --- BOTTOM SECTION --- */
@@ -113,7 +133,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #4CAF50;
+    color: var(--growz-green-500);
     font-weight: 600;
 }
 
@@ -122,8 +142,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #1B5E20; /* Vert Growzapp */
-    background: #E8F5E9;
+    color: var(--growz-primary); /* Vert Growzapp */
+    background: var(--growz-mint-50);
     padding: 10px;
     border-radius: 50%;
     transition: all 0.3s ease;
@@ -131,8 +151,8 @@
 }
 
 .rssLink:hover {
-    background: #FFC107; /* Jaune Growzapp */
-    color: #1B5E20;
+    background: var(--growz-gold); /* Jaune Growzapp */
+    color: var(--growz-primary);
     transform: translateY(-3px);
 }
 
@@ -142,7 +162,7 @@
     bottom: 125%;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    background: #1B5E20;
+    background: var(--growz-primary);
     color: white;
     padding: 5px 12px;
     border-radius: 6px;
@@ -162,7 +182,7 @@
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-top-color: #1B5E20;
+    border-top-color: var(--growz-primary);
 }
 
 .rssLink:hover .tooltip {

@@ -1,103 +1,54 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
-  FiAlertTriangle,
   FiCamera,
-  FiCheck,
   FiDollarSign,
   FiPieChart,
   FiSend,
   FiShield,
-  FiTrendingUp
+  FiAlertTriangle,
+  FiCheck,
+  FiMapPin,
+  FiTag,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { dataURLtoFile, getCroppedImg } from "../../../types/utils/CropImage";
-import { useAuth } from "../../Context/AuthContext";
 import styles from "./ProjetForm.module.css";
 
-interface Secteur {
-  id: number;
-  nom: string;
-}
-interface Localite {
-  id: number;
-  nom: string;
-}
-
 export default function ProjectForm() {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- ÉTATS FORMULAIRE (IDENTITÉ) ---
+  // ÉTATS
   const [libelle, setLibelle] = useState("");
   const [description, setDescription] = useState("");
   const [secteurNom, setSecteurNom] = useState("");
   const [localiteNom, setLocaliteNom] = useState("");
   const [paysNom, setPaysNom] = useState("Côte d'Ivoire");
-
-  // --- ÉTATS FORMULAIRE (FINANCIER - INDISPENSABLE POUR LE DTO) ---
   const [objectif, setObjectif] = useState<number>(0);
-  const [prixPart, setPrixPart] = useState<number>(0);
-  const [totalParts, setTotalParts] = useState<number>(0);
-  const [roi, setRoi] = useState<number>(0);
-  const [valuation, setValuation] = useState<number>(0);
+  const [prixPart, setPrixPart] = useState<number>(10000);
 
-  // --- MODAL ANTI-FRAUDE ---
+  // CALCUL AUTO
+  const totalParts = prixPart > 0 ? Math.floor(objectif / prixPart) : 0;
+
+  const [loading, setLoading] = useState(false);
   const [showLegalModal, setShowLegalModal] = useState(false);
   const [isCertified, setIsCertified] = useState(false);
   const [agreedToMonitoring, setAgreedToMonitoring] = useState(false);
 
-  // --- POSTER + CROPPER ---
+  // IMAGE & CROP
   const [preview, setPreview] = useState<string | null>(null);
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [loading, setLoading] = useState(false);
-  const [secteurs, setSecteurs] = useState<Secteur[]>([]);
-  const [localites, setLocalites] = useState<Localite[]>([]);
-
-  useEffect(() => {
-    const loadReferences = async () => {
-      try {
-        const token = localStorage.getItem("access_token") || "";
-        const headers: HeadersInit = token
-          ? { Authorization: `Bearer ${token}` }
-          : {};
-        const [sectRes, locRes] = await Promise.all([
-          fetch("http://localhost:8080/api/secteurs", { headers }),
-          fetch("http://localhost:8080/api/localites", { headers }),
-        ]);
-        const sectData = await sectRes.json();
-        const locData = await locRes.json();
-        setSecteurs(sectData.data || []);
-        setLocalites(locData.data || []);
-      } catch {
-        /* Fail silencieux */
-      }
-    };
-    loadReferences();
-  }, []);
-
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreview(reader.result as string);
-      setShowCropper(true);
-    };
-    reader.readAsDataURL(file);
-  };
 
   const onCropComplete = useCallback(
-    (_: any, pixels: any) => setCroppedAreaPixels(pixels),
+    (_: any, p: any) => setCroppedAreaPixels(p),
     [],
   );
 
@@ -106,33 +57,18 @@ export default function ProjectForm() {
     try {
       const cropped = await getCroppedImg(preview, croppedAreaPixels);
       setPreview(cropped);
-      setPosterFile(dataURLtoFile(cropped, "poster.jpg"));
+      setPosterFile(dataURLtoFile(cropped, `pitch_${Date.now()}.jpg`));
       setShowCropper(false);
+      toast.success("Image recadrée !");
     } catch {
       toast.error("Erreur de recadrage");
     }
   };
 
-  // ÉTAPE 1 : Validation locale et ouverture du modal
-  const handlePreSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!libelle || !description || objectif <= 0 || prixPart <= 0) {
-      return toast.error(
-        "Veuillez remplir les informations financières obligatoires.",
-      );
-    }
-    setShowLegalModal(true);
-  };
-
-  // ÉTAPE 2 : Envoi final au Backend
   const handleFinalSubmit = async () => {
     if (!isCertified || !agreedToMonitoring) return;
     setLoading(true);
-    setShowLegalModal(false);
-
     const formData = new FormData();
-
-    // CONSTRUCTION DE L'OBJET MATCHANT LE RECORD PROJETDTO.JAVA
     const projetJson = {
       libelle,
       description,
@@ -142,11 +78,12 @@ export default function ProjectForm() {
       objectifFinancement: objectif,
       prixUnePart: prixPart,
       partsDisponible: totalParts,
-      roiProjete: roi,
-      valuation: valuation,
+      roiProjete: 0,
+      valuation: objectif,
+      dureeMois: 36,
       currencyCode: "XOF",
-      certifiedAt: new Date().toISOString(),
       statutProjet: "SOUMIS",
+      certifiedAt: new Date().toISOString(),
     };
 
     formData.append(
@@ -155,21 +92,18 @@ export default function ProjectForm() {
     );
     if (posterFile) formData.append("poster", posterFile);
 
-    const token = localStorage.getItem("access_token") || "";
-
     try {
-      const response = await fetch("http://localhost:8080/api/projets", {
+      const token = localStorage.getItem("access_token");
+      const res = await fetch("http://localhost:8080/api/projets", {
         method: "POST",
         body: formData,
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-
-      if (!response.ok) throw new Error("Erreur lors de la création");
-
+      if (!res.ok) throw new Error();
       toast.success("Projet soumis avec succès !");
       navigate("/mes-projets");
-    } catch (err) {
-      toast.error("Le serveur n'a pas pu enregistrer le projet.");
+    } catch {
+      toast.error("Erreur de connexion au serveur.");
     } finally {
       setLoading(false);
     }
@@ -177,10 +111,19 @@ export default function ProjectForm() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Créer un nouveau projet</h1>
+      <h1 className={styles.title}>Lancer mon projet</h1>
+      <p className={styles.subtitle}>
+        Présentez votre idée en quelques étapes simples.
+      </p>
 
-      <form onSubmit={handlePreSubmit} className={styles.form}>
-        {/* SECTION PHOTO */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setShowLegalModal(true);
+        }}
+        className={styles.form}
+      >
+        {/* SECTION PHOTO : STUDIO DE RECADRAGE LARGE */}
         <div className={styles.photoSection}>
           {!showCropper ? (
             <div
@@ -188,32 +131,42 @@ export default function ProjectForm() {
               onClick={() => fileInputRef.current?.click()}
             >
               {preview ? (
-                <img src={preview} alt="Aperçu" className={styles.preview} />
+                <img src={preview} className={styles.preview} alt="Aperçu" />
               ) : (
                 <div className={styles.placeholder}>
-                  <FiCamera size={40} />
-                  <p>Ajouter une image de couverture</p>
+                  <FiCamera size={48} />
+                  <p>Cliquez pour ajouter une photo de couverture</p>
+                  <span>Format 16:9 recommandé</span>
                 </div>
               )}
             </div>
           ) : (
-            <div className={styles.cropContainer}>
-              <Cropper
-                image={preview!}
-                crop={crop}
-                zoom={zoom}
-                aspect={16 / 9}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={onCropComplete}
-              />
+            <div className={styles.cropWrapper}>
+              <div className={styles.cropContainer}>
+                <Cropper
+                  image={preview!}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={16 / 9}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+              </div>
               <div className={styles.cropControls}>
+                <button
+                  type="button"
+                  onClick={() => setShowCropper(false)}
+                  className={styles.cancelBtn}
+                >
+                  Annuler
+                </button>
                 <button
                   type="button"
                   onClick={createCroppedImage}
                   className={styles.cropBtn}
                 >
-                  Valider
+                  Valider l'image
                 </button>
               </div>
             </div>
@@ -221,40 +174,52 @@ export default function ProjectForm() {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
             hidden
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  setPreview(reader.result as string);
+                  setShowCropper(true);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
           />
         </div>
 
-        {/* SECTION IDENTITÉ */}
+        {/* CHAMPS DE TEXTE */}
         <div className={styles.inputGroup}>
-          <label>Titre du projet</label>
+          <label>
+            <FiTag /> Titre du projet
+          </label>
           <input
             type="text"
+            placeholder="Ex: Ferme de Korhogo"
             value={libelle}
             onChange={(e) => setLibelle(e.target.value)}
             required
-            placeholder="Ex: Ferme Piscicole de Korhogo"
           />
         </div>
 
         <div className={styles.inputGroup}>
-          <label>Description détaillée</label>
+          <label>Pitch & Besoins</label>
           <textarea
+            rows={4}
+            placeholder="Décrivez votre projet..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
-            rows={5}
-            placeholder="Décrivez votre projet et son impact..."
           />
         </div>
 
-        {/* SECTION FINANCIÈRE (GRILLE) */}
+        {/* GRILLE FINANCIÈRE AVEC CALCUL AUTO */}
         <div className={styles.financeGrid}>
           <div className={styles.inputGroup}>
             <label>
-              <FiDollarSign /> Objectif (FCFA)
+              <FiDollarSign /> Budget global (CFA)
             </label>
             <input
               type="number"
@@ -265,7 +230,7 @@ export default function ProjectForm() {
           </div>
           <div className={styles.inputGroup}>
             <label>
-              <FiPieChart /> Prix d'une part
+              <FiPieChart /> Prix d'une part souhaité
             </label>
             <input
               type="number"
@@ -274,100 +239,105 @@ export default function ProjectForm() {
               required
             />
           </div>
-          <div className={styles.inputGroup}>
-            <label>
-              <FiCheck /> Parts totales
-            </label>
-            <input
-              type="number"
-              value={totalParts}
-              onChange={(e) => setTotalParts(Number(e.target.value))}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>
-              <FiTrendingUp /> ROI attendu (%)
-            </label>
-            <input
-              type="number"
-              value={roi}
-              onChange={(e) => setRoi(Number(e.target.value))}
-              required
-            />
-          </div>
         </div>
 
-        {/* LOCALISATION & SECTEUR */}
+        {/* INFO PARTS CALCULÉES */}
+        <div className={styles.autoCalcInfo}>
+          <FiCheck /> Votre projet sera divisé en{" "}
+          <strong>{totalParts} parts</strong> de {prixPart} FCFA.
+        </div>
+
         <div className={styles.locationGrid}>
-          <input
-            type="text"
-            placeholder="Secteur d'activité"
-            value={secteurNom}
-            onChange={(e) => setSecteurNom(e.target.value)}
-            list="secteurs-list"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Ville / Localité"
-            value={localiteNom}
-            onChange={(e) => setLocaliteNom(e.target.value)}
-            list="localites-list"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Pays"
-            value={paysNom}
-            onChange={(e) => setPaysNom(e.target.value)}
-          />
+          <div className={styles.inputGroup}>
+            <label>
+              <FiMapPin /> Secteur
+            </label>
+            <input
+              type="text"
+              placeholder="Agriculture, Tech..."
+              value={secteurNom}
+              onChange={(e) => setSecteurNom(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>
+              <FiMapPin /> Ville
+            </label>
+            <input
+              type="text"
+              placeholder="Yamoussoukro"
+              value={localiteNom}
+              onChange={(e) => setLocaliteNom(e.target.value)}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>
+              <FiMapPin /> Pays
+            </label>
+            <input
+              type="text"
+              placeholder="Côte d'Ivoire"
+              value={paysNom}
+              onChange={(e) => setPaysNom(e.target.value)}
+              required
+            />
+          </div>
         </div>
 
-        <button type="submit" disabled={loading} className={styles.saveBtn}>
-          <FiSend /> {loading ? "Envoi en cours..." : "Soumettre mon projet"}
+        <button type="submit" className={styles.saveBtn} disabled={loading}>
+          <FiSend /> {loading ? "Traitement..." : "Soumettre aux experts"}
         </button>
       </form>
 
-      {/* MODAL ANTI-FRAUDE */}
       {showLegalModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalCard}>
+            {/* HEADER : VERT INSTITUTIONNEL */}
             <header className={styles.modalHeader}>
               <FiShield className={styles.shieldIcon} />
-              <h2>Certification du Porteur</h2>
+              <h2>Engagement & Certification</h2>
             </header>
+
             <div className={styles.modalBody}>
-              <div className={styles.fraudWarning}>
+              {/* ALERTE : ROUGE DOUX MAIS VISIBLE */}
+              <div className={styles.alertBox}>
                 <FiAlertTriangle className={styles.alertIcon} />
                 <p>
-                  La falsification de documents est passible de poursuites
-                  pénales.
+                  Attention : toute fausse déclaration ou falsification de
+                  documents est passible de poursuites pénales.
                 </p>
               </div>
-              <label className={styles.checkItem}>
-                <input
-                  type="checkbox"
-                  checked={isCertified}
-                  onChange={(e) => setIsCertified(e.target.checked)}
-                />
-                <span>
-                  Je certifie que ces informations sont{" "}
-                  <strong>vraies et vérifiables</strong>.
-                </span>
-              </label>
-              <label className={styles.checkItem}>
-                <input
-                  type="checkbox"
-                  checked={agreedToMonitoring}
-                  onChange={(e) => setAgreedToMonitoring(e.target.checked)}
-                />
-                <span>
-                  J'accepte le <strong>monitoring de terrain</strong> par
-                  Growzapp.
-                </span>
-              </label>
+
+              {/* LISTE DE CHECK : ALIGNEMENT PARFAIT */}
+              <div className={styles.legalList}>
+                <label className={styles.checkItem}>
+                  <input
+                    type="checkbox"
+                    checked={isCertified}
+                    onChange={(e) => setIsCertified(e.target.checked)}
+                  />
+                  <span className={styles.checkText}>
+                    Je certifie sur l'honneur que toutes les informations
+                    fournies sont <strong>vraies et vérifiables</strong>.
+                  </span>
+                </label>
+
+                <label className={styles.checkItem}>
+                  <input
+                    type="checkbox"
+                    checked={agreedToMonitoring}
+                    onChange={(e) => setAgreedToMonitoring(e.target.checked)}
+                  />
+                  <span className={styles.checkText}>
+                    J'accepte le <strong>monitoring de terrain</strong> et les
+                    audits réguliers par les experts Growzapp.
+                  </span>
+                </label>
+              </div>
             </div>
+
             <footer className={styles.modalFooter}>
               <button
                 className={styles.btnBack}
@@ -380,7 +350,7 @@ export default function ProjectForm() {
                 disabled={!isCertified || !agreedToMonitoring}
                 onClick={handleFinalSubmit}
               >
-                Certifier et Publier
+                Confirmer et Publier le projet
               </button>
             </footer>
           </div>
@@ -389,3 +359,4 @@ export default function ProjectForm() {
     </div>
   );
 }
+

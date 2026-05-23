@@ -106,7 +106,7 @@ export default function DocumentUpload({
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
         >
-          <FiFileText size={48} color="#1B5E20" />
+          <FiFileText size={48} color="var(--growz-hex-primary, #1b5e20)" />
           <p>Déposez votre fichier ici ou cliquez pour sélectionner</p>
           <small>PDF, Excel, CSV, Images • Max 20 Mo</small>
           <input
@@ -120,7 +120,7 @@ export default function DocumentUpload({
       ) : (
         <div className={styles.preview}>
           <div className={styles.fileInfo}>
-            <FiCheckCircle color="#1B5E20" size={32} />
+            <FiCheckCircle color="var(--growz-hex-primary, #1b5e20)" size={32} />
             <div>
               <strong>{file.name}</strong>
               <br />

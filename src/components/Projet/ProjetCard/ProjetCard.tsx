@@ -101,10 +101,16 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
       <div className={styles.content}>
         <h3 className={styles.title}>{projet.libelle}</h3>
-        <p className={styles.location}>
-          <FiMapPin /> {translateData("cities", projet.localiteNom ?? "")},{" "}
-          {translateData("countries", projet.paysNom ?? "")}
-        </p>
+        <div className={styles.location}>
+          <FiMapPin />
+          <span>{translateData("cities", projet.localiteNom ?? "")}</span>
+          {projet.paysNom && (
+            <>
+              <span>, </span>
+              <span>{translateData("countries", projet.paysNom)}</span>
+            </>
+          )}
+        </div>
         <p className={styles.sector}>
           <strong>{t("project_details.sector")} :</strong>{" "}
           {translateData("sectors", projet.secteurNom ?? "")}

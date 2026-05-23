@@ -1,18 +1,18 @@
 /* src/components/Projet/ProjectCard/ProjectCard.module.css */
 
 .card {
-  background: white;
-  border-radius: 16px;
+  background: var(--growz-elevated);
+  border-radius: var(--growz-radius-lg);
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 3px solid #e8f5e9;
+  box-shadow: var(--growz-shadow);
+  transition: transform 0.32s var(--growz-ease), box-shadow 0.32s var(--growz-ease), border-color 0.32s var(--growz-ease);
+  border: 1.5px solid var(--growz-mint-50);
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(27, 94, 32, 0.2);
-  border-color: #ffc107;
+  transform: translateY(-6px);
+  box-shadow: var(--growz-shadow-lg);
+  border-color: var(--growz-veil-20);
 }
 
 .posterWrapper {
@@ -34,24 +34,26 @@
   border-radius: 25px;
   font-size: 0.78rem;
   font-weight: bold;
-  color: #1b5e20;
+  color: var(--growz-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   z-index: 10;
   min-width: 130px;
   text-align: center;
-  border: 2px solid #ffc107;
+  border: 2px solid var(--growz-gold);
 }
 
 /* Badge par défaut (autres statuts : SOUMIS, REJETE, etc.) */
 .badgeDefault {
-  background: #1b5e20;
+  background: var(--growz-primary);
 }
 
 /* Financement en cours → quand VALIDÉ */
 .badgeEnCours {
-  background:  #ffc107;
-  box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
+  background: var(--growz-gold);
+  box-shadow: 0 0 12px var(--growz-veil-20);
+  color: var(--growz-primary) !important;
+  border-color: var(--growz-gold-dark) !important;
 }
 
 /* Financement terminé → quand TERMINÉ ou objectif atteint */
@@ -67,13 +69,13 @@
 
 .title {
   margin: 0 0 0.5rem 0;
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-size: 1.4rem;
   font-weight: 700;
 }
 
 .location {
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-weight: bold;
   margin: 0.5rem 0;
   display: flex;
@@ -98,7 +100,7 @@
 .infoItem {
   text-align: center;
   padding: 0.8rem;
-  background: #e8f5e9;
+  background: var(--growz-mint-50);
   border-radius: 12px;
   display: flex;
   /* Optionnel : pour aligner label et valeur */
@@ -107,13 +109,13 @@
 }
 
 .equityValue {
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-weight: bold;
   font-size: 1.1rem;
 }
 
 .highlight {
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-size: 1.3rem;
   font-weight: bold;
   display: flex;
@@ -132,7 +134,7 @@
   justify-content: space-between;
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: #1b5e20;
+  color: var(--growz-primary);
 }
 
 .progressBar {
@@ -144,7 +146,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #ffc107, #ffb300);
+  background: linear-gradient(90deg, var(--growz-gold), var(--growz-gold-dark));
   transition: width 0.8s ease;
 }
 
@@ -186,21 +188,21 @@
 }
 
 .btnView {
-  background: #1b5e20;
+  background: var(--growz-primary);
   color: white;
 }
 
 .btnView:hover:not(.btnDisabled) {
-  background: #173d17;
+  background: var(--growz-primary-pressed);
 }
 
 .btnInvest {
-  background: #ffc107;
-  color: #1b5e20;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
 }
 
 .btnInvest:hover:not(.btnDisabled) {
-  background: #ffb300;
+  background: var(--growz-gold-dark);
 }
 
 /* Boutons désactivés → quand financement terminé */
@@ -220,8 +222,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #1B5E20, #2E7D32);
-  color: #FFC107;
+  background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-700));
+  color: var(--growz-gold);
   padding: 5px 12px;
   border-radius: 50px;
   font-size: 0.75rem;
@@ -256,4 +258,18 @@
 
 .checkIcon {
   font-size: 1rem;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 8px; /* Remplace la marge naturelle du <p> */
+}
+
+.sector {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
 }
