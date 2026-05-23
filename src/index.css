@@ -1,54 +1,149 @@
-/* --- 1. RESET DE BASE --- */
-html, #root {
+@import url("./styles/theme.css");
+
+/* Reset */
+html,
+#root {
   margin: 0;
   padding: 0;
   width: 100%;
-  /* height: 100%;  <-- Optionnel mais aide souvent */
 }
 
-/* --- 2. CORRECTION POUR LE HEADER FIXE --- */
 body {
   margin: 0;
   width: 100%;
   overflow-x: hidden;
-  
-  /* --- CORRECTION MAJEURE --- */
-  /* 1. Padding-top : Pour que le contenu ne passe pas sous le Header fixe */
-  padding-top: 130px; 
-  
-  /* 2. Padding côtés : ON MET 0 ICI. */
-  /* C'est crucial pour que ta Sidebar puisse toucher le bord gauche */
-  padding-left: 0;
-  padding-right: 0;
-  padding-bottom: 0;
-  
-  background-color: #f8fafc;
-  font-family: 'Helvetica', 'Arial', sans-serif;
-  -webkit-font-smoothing: antialiased; /* Rend la police plus nette sur Mac */
+  min-height: 100vh;
+  /* Espace pour le header fixe — ne pas couper le contenu */
+  /* ~130px : aligné header fixe + bandeau dégradé */
+  padding: calc(var(--growz-header-offset) + 1.75rem) 0 0 0;
+  background: var(--growz-bg);
+  background-image: radial-gradient(
+    ellipse 120% 80% at 50% -20%,
+    var(--growz-mint-50) 0%,
+    transparent 55%
+  );
+  color: var(--growz-text);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* --- 3. RESTES DE TON CSS --- */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-svg {
-  vertical-align: middle;
+a {
+  color: var(--growz-primary);
+  transition: color 0.2s var(--growz-ease);
 }
 
+a:hover {
+  color: var(--growz-green-700);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+svg {
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+::selection {
+  background: var(--growz-mint-100);
+  color: var(--growz-ink);
+}
+
+/* Shell global */
+.growzAppMain {
+  min-height: 80vh;
+  width: 100%;
+}
+
+.growzLoadingRoot {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 100vh;
+  background: var(--growz-bg);
+  color: var(--growz-text-muted);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.growzLoadingRoot::before {
+  content: "";
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid var(--growz-mint-50);
+  border-top-color: var(--growz-primary);
+  border-radius: 50%;
+  animation: growzSpin 0.8s linear infinite;
+}
+
+@keyframes growzSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.growzNotFound {
+  text-align: center;
+  padding: clamp(4rem, 12vw, 7rem) 1.5rem;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.growzNotFound strong {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--growz-primary);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.growzNotFound span {
+  font-size: 1rem;
+  color: var(--growz-text-muted);
+}
+
+/* Bouton utilitaire global (inchangé côté usage) */
 .btnWithIcon {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1rem;
-  background: #3498db;
-  color: white;
+  padding: 0.65rem 1.15rem;
+  background: linear-gradient(
+    135deg,
+    var(--growz-primary) 0%,
+    var(--growz-green-700) 100%
+  );
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--growz-radius);
   cursor: pointer;
   font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  box-shadow: var(--growz-shadow);
+  transition: transform 0.2s var(--growz-ease), box-shadow 0.2s var(--growz-ease);
+}
+
+.btnWithIcon:hover {
+  box-shadow: var(--growz-shadow-md);
+  transform: translateY(-1px);
 }
 
 .btnWithIcon svg {
