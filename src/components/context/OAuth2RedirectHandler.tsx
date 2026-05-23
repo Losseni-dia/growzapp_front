@@ -58,7 +58,7 @@ useEffect(() => {
       }}
     >
       <div className="loader"></div> {/* Ajoute ton loader CSS ici */}
-      <p style={{ color: "#1B5E20", marginTop: "1rem", fontWeight: "bold" }}>
+      <p style={{ color: "var(--growz-primary)", marginTop: "1rem", fontWeight: "bold" }}>
         Finalisation de la connexion sécurisée...
       </p>
     </div>

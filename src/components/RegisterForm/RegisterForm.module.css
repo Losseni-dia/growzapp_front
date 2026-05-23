@@ -7,20 +7,20 @@
   background: white;
   border-radius: 20px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  border: 3px solid #E8F5E9;
+  border: 3px solid var(--growz-mint-50);
 }
 
 /* TITRE BLANC SUR FOND VERT */
 .form h2 {
   text-align: center;
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white !important;
   padding: 1.2rem 2rem;
   border-radius: 16px;
   margin: -3rem -2.8rem 2.8rem -2.8rem;   
   font-size: 2.1rem;
   font-weight: 700;
-  box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+  box-shadow: 0 4px 15px var(--growz-veil-30);
   position: relative;
   z-index: 1;
 }
@@ -37,14 +37,14 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 4px dashed #1B5E20;
+  border: 4px dashed var(--growz-primary);
   cursor: pointer;
   background: #f8f9fa;
   transition: 0.3s;
 }
 
 .photoUpload:hover {
-  border-color: #27ae60;
+  border-color: var(--growz-green-500);
   background: #f0f8f0;
 }
 
@@ -56,7 +56,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 600;
 }
 
@@ -93,7 +93,7 @@ input {
   display: block;
   width: 100%;
   padding: 1.1rem 1.2rem;
-  border: 2.5px solid #1B5E20;
+  border: 2.5px solid var(--growz-primary);
   border-radius: 14px;
   font-size: 1.1rem;
   background: white;
@@ -108,7 +108,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #27ae60;
+  border-color: var(--growz-green-500);
   box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
 }
 
@@ -119,7 +119,7 @@ input:focus {
   gap: 3.5rem;
   margin: 0 0 2.4rem 0; 
   font-size: 1.12rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 500;
 }
 
@@ -137,7 +137,7 @@ input:focus {
   width: 100%;
   height: 58px;
   padding: 1.1rem 3rem 1.1rem 1.2rem;
-  border: 2.5px solid #1B5E20;
+  border: 2.5px solid var(--growz-primary);
   border-radius: 14px;
   font-size: 1.1rem;
   background-color: white;
@@ -157,13 +157,13 @@ input:focus {
   background-size: 0.8rem auto;
 
   /* Texte Vert (quand une option est choisie) */
-  color: #1B5E20; 
+  color: var(--growz-primary); 
   font-weight: 500;
 }
 
 .select:focus {
   outline: none;
-  border-color: #27ae60;
+  border-color: var(--growz-green-500);
   box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.18);
 }
 
@@ -180,7 +180,7 @@ input:focus {
 
 /* Style des options normales */
 .select option {
-  color: #1B5E20;
+  color: var(--growz-primary);
   background: white;
   padding: 10px;
 }
@@ -189,8 +189,8 @@ input:focus {
 .submitBtn {
   width: 100%;
   padding: 1.3rem;
-  background: #FFC107;
-  color: #1B5E20;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
   font-weight: bold;
   font-size: 1.3rem;
   border: none;
@@ -216,24 +216,24 @@ input:focus {
   margin-top: 3rem;
   text-align: center;
   font-size: 1.12rem;
-  color: #2e7d32;
+  color: var(--growz-green-700);
 }
 
 .loginLink a {
-  color: #1b5e20;
+  color: var(--growz-primary);
   font-weight: 700;
   text-decoration: underline;
   font-size: 1.18rem;
 }
 
 .loginLink a:hover {
-  color: #FFC107;
+  color: var(--growz-gold);
 }
 
 /* LANGUES */
 .languesDropdown {
   padding: 1.1rem 1.2rem;
-  border: 2.5px solid #1B5E20;
+  border: 2.5px solid var(--growz-primary);
   border-radius: 14px;
   background: white;
   cursor: pointer;
@@ -257,12 +257,12 @@ input:focus {
   top: 50%;
   transform: translateY(-50%);
   font-size: 1rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   pointer-events: none;
 }
 
 .languesDropdown:hover {
-  border-color: #27ae60;
+  border-color: var(--growz-green-500);
   background: #f8fff8;
 }
 
@@ -273,7 +273,7 @@ input:focus {
 
 /* PANEL LANGUES */
 .languesPanel {
-  border: 2.5px solid #1B5E20;
+  border: 2.5px solid var(--growz-primary);
   border-radius: 14px;
   padding: 1.2rem;
   background: white;
@@ -302,7 +302,7 @@ input:focus {
 .langueItem input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  accent-color: #27ae60;
+  accent-color: var(--growz-green-500);
   cursor: pointer;
   margin-bottom: 0; 
 }
@@ -344,5 +344,5 @@ input:focus {
   font-size: 1rem;
 }
 
-.cropBtn { background: #27ae60; color: white; }
+.cropBtn { background: var(--growz-green-500); color: white; }
 .cancelBtn { background: #e74c3c; color: white; }

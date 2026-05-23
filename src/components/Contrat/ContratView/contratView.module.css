@@ -2,7 +2,7 @@
 
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);
+  background: linear-gradient(135deg, #f8fff9 0%, var(--growz-mint-50) 100%);
   padding: 3rem 1rem;
 }
 
@@ -13,12 +13,12 @@
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-  border: 4px solid #E8F5E9;
+  border: 4px solid var(--growz-mint-50);
 }
 
 /* EN-TÊTE */
 .header {
-  background: linear-gradient(135deg, #1B5E20, #2E7D32);
+  background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-700));
   color: white;
   text-align: center;
   padding: 3rem 2rem;
@@ -49,7 +49,7 @@
 /* RÉCAPITULATIF */
 .recap {
   background: #f8fff9;
-  border: 3px solid #E8F5E9;
+  border: 3px solid var(--growz-mint-50);
   border-radius: 20px;
   padding: 2.2rem;
   margin-bottom: 3rem;
@@ -57,12 +57,12 @@
 
 .recapTitle {
   text-align: center;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 2.2rem;
   font-weight: 800;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 4px double #1B5E20;
+  border-bottom: 4px double var(--growz-primary);
 }
 
 .recapGrid {
@@ -75,12 +75,12 @@
   background: white;
   padding: 1.5rem;
   border-radius: 14px;
-  border-left: 6px solid #4CAF50;
-  box-shadow: 0 6px 18px rgba(27,94,32,0.08);
+  border-left: 6px solid var(--growz-green-500);
+  box-shadow: 0 6px 18px var(--growz-veil-08);
 }
 
 .recapItem strong {
-  color: #1B5E20;
+  color: var(--growz-primary);
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 700;
@@ -89,13 +89,13 @@
 .montant {
   font-size: 2.6rem !important;
   font-weight: 900;
-  color: #1B5E20;
+  color: var(--growz-primary);
 }
 
 .pourcentage {
   font-size: 2.8rem !important;
   font-weight: 900;
-  color: #FFC107;
+  color: var(--growz-gold);
 }
 
 /* ARTICLES */
@@ -103,18 +103,18 @@
   background: white;
   padding: 2.5rem;
   border-radius: 20px;
-  border: 2px solid #E8F5E9;
+  border: 2px solid var(--growz-mint-50);
   margin-bottom: 2.8rem;
   line-height: 1.7;
 }
 
 .articles h2 {
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 2.1rem;
   text-align: center;
   margin-bottom: 2.2rem;
   padding-bottom: 0.8rem;
-  border-bottom: 4px double #1B5E20;
+  border-bottom: 4px double var(--growz-primary);
 }
 
 .articles ol {
@@ -142,7 +142,7 @@
   top: 0;
   width: 4.8rem;
   font-weight: 900;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 1.05rem;
   text-align: right;
   white-space: nowrap;
@@ -155,7 +155,7 @@
   background: #f8fff9;
   padding: 2.5rem 2rem;
   border-radius: 24px;
-  border: 5px dashed #1B5E20;
+  border: 5px dashed var(--growz-primary);
   margin: 2.5rem 0;
   display: flex;
   flex-direction: column;
@@ -163,7 +163,7 @@
 }
 
 .qrSection h3 {
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-size: 1.9rem;
   font-weight: 900;
   margin: 0 0 2rem 0;
@@ -188,7 +188,7 @@
   background: white;
   border-radius: 20px;
   box-shadow: 0 12px 35px rgba(0,0,0,0.12);
-  border: 3px solid #E8F5E9;
+  border: 3px solid var(--growz-mint-50);
 }
 
 /* SIGNATURES */
@@ -201,7 +201,7 @@
 
 .signatureBox {
   background: white;
-  border: 3px solid #E8F5E9;
+  border: 3px solid var(--growz-mint-50);
   border-radius: 20px;
   padding: 2.5rem 2rem;
   text-align: center;
@@ -210,13 +210,13 @@
 
 .signatureTitle {
   font-size: 1.4rem;
-  color: #1B5E20;
+  color: var(--growz-primary);
   font-weight: 700;
   margin-bottom: 1.5rem;
 }
 
 .signatureLine {
-  border-top: 4px dashed #1B5E20;
+  border-top: 4px dashed var(--growz-primary);
   margin: 2.5rem 0;
   height: 100px;
 }
@@ -224,12 +224,12 @@
 .signatureName {
   font-size: 1.6rem;
   font-weight: 900;
-  color: #1B5E20;
+  color: var(--growz-primary);
   margin: 1rem 0;
 }
 
 .signatureNote {
-  color: #4CAF50;
+  color: var(--growz-green-500);
   font-weight: 700;
   font-size: 1.05rem;
 }
@@ -241,8 +241,8 @@
 }
 
 .downloadBtn {
-  background: linear-gradient(135deg, #FFC107, #FFB300);
-  color: #1B5E20;
+  background: linear-gradient(135deg, var(--growz-gold), #FFB300);
+  color: var(--growz-primary);
   border: none;
   padding: 1.3rem 3rem;
   border-radius: 50px;
@@ -262,14 +262,14 @@
 .footer {
   text-align: center;
   padding: 2.5rem 2rem;
-  background: #1B5E20;
+  background: var(--growz-primary);
   color: white;
   font-size: 1rem;
   border-radius: 0 0 20px 20px;
 }
 
 .footer strong {
-  color: #FFC107;
+  color: var(--growz-gold);
   font-size: 1.4rem;
   font-weight: 900;
 }

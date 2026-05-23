@@ -12,37 +12,37 @@ export default function GrowzToaster() {
 
         // Style global
         style: {
-          background: "#1B5E20",
+          background: "var(--growz-primary, #1B5E20)",
           color: "white",
           fontWeight: "bold",
           fontSize: "1rem",
           borderRadius: "12px",
           padding: "16px 24px",
-          boxShadow: "0 8px 25px rgba(27, 94, 32, 0.4)",
-          border: "3px solid #FFC107",
+          boxShadow: "0 8px 25px var(--growz-veil-30, rgba(27, 94, 32, 0.4))",
+          border: "2px solid var(--growz-gold, #FFC107)",
         },
 
         // Style spécifique pour les succès
         success: {
           iconTheme: {
-            primary: "#FFC107",
-            secondary: "#1B5E20",
+            primary: "var(--growz-gold, #FFC107)",
+            secondary: "var(--growz-primary, #1B5E20)",
           },
         },
 
         // Style spécifique pour les erreurs
         error: {
           style: {
-            background: "#C62828",
-            border: "3px solid #FF5252",
+            background: "#b71c1c",
+            border: "2px solid #ef9a9a",
           },
         },
 
         // Optionnel : style pour les loading (spinner)
         loading: {
           style: {
-            background: "#1565C0",
-            border: "3px solid #42A5F5",
+            background: "#0d47a1",
+            border: "2px solid #64b5f6",
           },
         },
 
