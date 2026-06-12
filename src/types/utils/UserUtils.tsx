@@ -1,7 +1,7 @@
 export const getAvatarUrl = (imageName: string | null | undefined): string => {
   // 1. Si pas d'image, avatar par défaut
   if (!imageName || imageName.trim() === "") {
-    return "/default-avatar.png";
+    return "/default-avatar.svg";
   }
 
   // 2. Si c'est une URL Google/OAuth2, on la prend telle quelle

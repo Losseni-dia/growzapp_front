@@ -187,9 +187,7 @@ export default function Header() {
                     src={getAvatarUrl(user.image)}
                     alt={user.prenom}
                     className={styles.userAvatar}
-                    onError={(e) =>
-                      (e.currentTarget.src = "/default-avatar.png")
-                    }
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/default-avatar.svg"; }}
                   />
                   <span className={styles.userName}>{user.prenom}</span>
                 </Link>
