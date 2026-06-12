@@ -82,7 +82,7 @@ export default function UsersAdminPage() {
                     src={getAvatarUrl(u.image)}
                     alt=""
                     className={styles.avatar}
-                    onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/default-avatar.svg"; }}
                   />
                 </td>
                 <td className={styles.fullName}>{u.prenom} {u.nom}</td>
@@ -147,7 +147,7 @@ export default function UsersAdminPage() {
                 src={getAvatarUrl(selectedUser.image)}
                 className={styles.modalAvatar}
                 alt="User"
-                onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/default-avatar.svg"; }}
               />
               <div>
                 <h2>{selectedUser.prenom} {selectedUser.nom}</h2>

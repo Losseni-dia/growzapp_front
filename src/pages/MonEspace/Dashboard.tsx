@@ -217,7 +217,7 @@ export default function Dashboard() {
             src={getAvatarUrl(user.image)}
             alt="Profil"
             className={styles.avatar}
-            onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/default-avatar.svg"; }}
           />
 
           <div className={styles.info}>
