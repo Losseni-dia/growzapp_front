@@ -1,238 +1,120 @@
-/* GRILLE */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
-  padding-bottom: 3rem;
+/* ═══════════════════════════════════════════════════════
+   AdminProjetsList.module.css — GrowzApp Admin
+   ═══════════════════════════════════════════════════════ */
+
+.container {
+  padding: 2rem 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* CARTE */
-.card {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-  border: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  min-height: 520px; /* IMPORTANT : Hauteur minimale pour laisser la place aux boutons */
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-  border-color: var(--growz-primary);
-}
-
-/* IMAGE */
-.posterWrapper {
-  height: 220px;
-  background-color: #f5f5f5;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.poster {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.noPoster {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-weight: 600;
-}
-
-/* BADGES STATUT */
-.statutBadge {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.statutBadge:global(.VALIDE), .statutBadge:global(.EN_COURS) { background: var(--growz-green-700); }
-.statutBadge:global(.SOUMIS), .statutBadge:global(.EN_ATTENTE) { background: #f57c00; }
-.statutBadge:global(.REJETE) { background: #d32f2f; }
-.statutBadge:global(.TERMINE) { background: #7b1fa2; }
-.badgeDefault { background: #607d8b; }
-
-/* CONTENU TEXTE */
-.content {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  gap: 0.8rem;
-}
-
-.projectTitle {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--growz-primary);
-  margin: 0;
-  line-height: 1.4;
-}
-
-.porteur {
-  font-size: 0.95rem;
-  color: #555;
-  margin: 0;
-}
-
-/* BARRE DE PROGRESSION */
-.progress {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-weight: bold;
-  color: var(--growz-primary);
-  margin-top: 0.5rem;
-}
-
-.progressBar {
-  flex-grow: 1;
-  height: 10px;
-  background: #e0e0e0;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  background: var(--growz-primary);
-}
-
-/* --- BOUTONS (Zone critique) --- */
-.actions {
-  margin-top: auto; /* Pousse vers le bas */
-  padding-top: 1.5rem;
-  border-top: 1px solid #eee;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* 3 colonnes strictes */
-  gap: 10px;
-}
-
-/* Style des boutons */
-.btnDetail, .btnEdit, .btnDelete, .btnValider, .btnRejeter, .btnPublic {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  text-decoration: none;
-  color: white !important; /* Force le texte blanc */
-  transition: all 0.2s;
-  height: 40px;
-}
-
-/* Couleurs vives pour être sûr de les voir */
-.btnDetail { background: var(--growz-primary); }
-.btnDetail:hover { background: #144a17; }
-
-.btnEdit { background: #1976d2; }
-.btnEdit:hover { background: #1565c0; }
-
-.btnDelete { background: #d32f2f; }
-.btnDelete:hover { background: #b71c1c; }
-
-.statusActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.btnValider { background: var(--growz-green-700); }
-.btnRejeter { background: #c62828; }
-
-.btnPublic {
-  margin-top: 10px;
-  background: white;
-  border: 2px solid #ccc;
-  color: #555 !important;
-  width: 100%;
-}
-.btnPublic:hover { background: #f5f5f5; color: #333 !important; }
-
-/* --- NOUVEAUX STYLES POUR LA GESTION --- */
-
+/* ── HEADER ─────────────────────────────────────────────── */
 .headerManagement {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
-/* --- SECTION RECHERCHE CORRIGÉE --- */
+.title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--growz-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
+.totalCount {
+  background: var(--growz-primary);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ── RECHERCHE ──────────────────────────────────────────── */
 .searchContainer {
   position: relative;
-  width: 450px;
+  width: 380px;
   max-width: 100%;
-  display: flex; /* Force le comportement de bloc interne */
+  display: flex;
   align-items: center;
 }
 
 .searchIcon {
   position: absolute;
-  left: 18px; /* Un peu plus d'espace depuis le bord gauche */
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--growz-primary);
-  font-size: 1.2rem;
-  z-index: 2; /* S'assure de passer devant le champ de saisie */
-  pointer-events: none; /* L'icône devient "transparente" au clic */
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 2;
+  display: flex;
+  align-items: center;
 }
 
 .searchInput {
   width: 100%;
-  height: 48px; /* Hauteur fixe pour un alignement parfait */
-  padding: 0 15px 0 50px; /* Padding gauche de 50px pour laisser place à l'icône */
+  height: 44px;
+  padding: 0 40px 0 44px;
   border-radius: 50px;
   border: 2px solid #e0e0e0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   outline: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: all 0.3s;
   background: white;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .searchInput:focus {
   border-color: var(--growz-primary);
-  box-shadow: 0 8px 20px var(--growz-veil-15);
+  box-shadow: 0 4px 16px rgba(26, 107, 60, 0.1);
+}
+
+.clearSearch {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 4px;
+  line-height: 1;
+}
+
+.clearSearch:hover { color: #555; }
+
+/* ── FILTRES BAR ────────────────────────────────────────── */
+.filtersBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .tabsWrapper {
   display: flex;
-  gap: 10px;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #eee;
-  overflow-x: auto;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tabButton {
-  padding: 10px 20px;
+  padding: 8px 18px;
   border-radius: 10px;
   border: none;
   background: #f0f0f0;
@@ -241,10 +123,13 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  transition: all 0.3s;
+  gap: 8px;
+  transition: all 0.2s;
+  font-size: 0.88rem;
   white-space: nowrap;
 }
+
+.tabButton:hover { background: #e0e0e0; }
 
 .activeTab {
   background: var(--growz-primary) !important;
@@ -252,32 +137,305 @@
 }
 
 .countBadge {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.12);
   padding: 2px 8px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .activeTab .countBadge {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ── TRI & SECTEUR ──────────────────────────────────────── */
+.sortBar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.select {
+  padding: 8px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #444;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.select:focus { border-color: var(--growz-primary); }
+
+/* ── GRILLE ─────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+/* ── CARTE ──────────────────────────────────────────────── */
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  border-color: var(--growz-primary);
+}
+
+/* ── IMAGE ──────────────────────────────────────────────── */
+.posterWrapper {
+  height: 200px;
+  background: #f5f5f5;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.noPoster {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* ── BADGES ─────────────────────────────────────────────── */
+.statutBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.badgeValide   { background: #2E7D4F; }
+.badgeSoumis   { background: #F57C00; }
+.badgeRejete   { background: #C62828; }
+.badgeTermine  { background: #6A1B9A; }
+.badgeEnCours  { background: #1565C0; }
+.badgeDefault  { background: #607D8B; }
+
+.dateBadge {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* ── CONTENU ────────────────────────────────────────────── */
+.content {
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.6rem;
+}
+
+.projectTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--growz-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.secteurTag {
+  background: var(--growz-mint, #E8F5EE);
+  color: var(--growz-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 20px;
 }
 
 .location {
-  font-size: 0.85rem;
-  color: #777;
+  font-size: 0.83rem;
+  color: #888;
   font-style: italic;
+  margin: 0;
+}
+
+/* ── PROGRESSION ─────────────────────────────────────────── */
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.progressBar {
+  flex-grow: 1;
+  height: 8px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--growz-primary), #4CAF76);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.progressPct {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  min-width: 36px;
+  text-align: right;
 }
 
 .financeValues {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-  color: #333;
+  font-size: 0.9rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+.separator {
+  color: #bbb;
+}
+
+/* ── ACTIONS ────────────────────────────────────────────── */
+.actions {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+.btnDetail, .btnEdit, .btnDelete, .btnValider, .btnRejeter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  color: white;
+  transition: all 0.2s;
+  height: 38px;
+}
+
+.btnDetail { background: var(--growz-primary); }
+.btnDetail:hover { background: #155c30; }
+
+.btnEdit { background: #1976D2; }
+.btnEdit:hover { background: #1565C0; }
+
+.btnDelete { background: #D32F2F; }
+.btnDelete:hover { background: #B71C1C; }
+
+.statusActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btnValider {
+  background: #2E7D4F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btnRejeter {
+  background: #C62828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* ── ÉTAT VIDE & LOADING ─────────────────────────────────── */
 .emptyState {
   text-align: center;
-  padding: 5rem;
-  font-size: 1.2rem;
+  padding: 5rem 2rem;
+  font-size: 1.1rem;
   color: #999;
   font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: var(--growz-primary);
+  font-weight: 600;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .headerManagement { flex-direction: column; align-items: stretch; }
+  .searchContainer  { width: 100%; }
+  .filtersBar       { flex-direction: column; align-items: stretch; }
+  .sortBar          { flex-direction: column; }
+  .select           { width: 100%; }
+  .grid             { grid-template-columns: 1fr; }
 }
