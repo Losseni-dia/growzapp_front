@@ -1,9 +1,14 @@
+/* ═══════════════════════════════════════════════════════
+   EditProjetsPage.module.css — GrowzApp Admin
+   ═══════════════════════════════════════════════════════ */
+
 .container {
   max-width: 1200px;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
 }
 
+/* ── HEADER ─────────────────────────────────────────────── */
 .header {
   display: flex;
   justify-content: space-between;
@@ -13,125 +18,399 @@
   margin-bottom: 2rem;
 }
 
-.title span { color: var(--growz-primary); font-weight: 800; }
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
 
+.title span {
+  color: var(--growz-primary);
+  font-weight: 800;
+}
+
+.statusBadge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.VALIDE    { background: #e8f5ee; color: #1a6b3c; }
+.SOUMIS    { background: #fff3e0; color: #e65100; }
+.REJETE    { background: #ffebee; color: #c62828; }
+.EN_COURS  { background: #e3f2fd; color: #1565c0; }
+.TERMINE   { background: #f3e5f5; color: #6a1b9a; }
+
+/* ── GRILLE PRINCIPALE sidebar + content ───────────────── */
 .mainGrid {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 2.5rem;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .section {
   background: white;
   padding: 1.5rem;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   border: 1px solid #eee;
 }
 
 .section h3 {
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: var(--growz-primary);
-  margin-bottom: 1.2rem;
+  margin: 0 0 1.2rem 0;
 }
 
-/* POSTER */
+/* ── POSTER ─────────────────────────────────────────────── */
 .posterBox {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
   background: #f8f9fa;
   border-radius: 12px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
+  border: 2px dashed #cbd5e0;
+  transition: border-color 0.2s;
 }
 
-.posterBox img { width: 100%; height: 100%; object-fit: cover; }
+.posterBox:hover {
+  border-color: var(--growz-primary);
+}
+
+.posterBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.noImg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.9rem;
+  flex-direction: column;
+  gap: 8px;
+}
 
 .overlay {
-  position: absolute; inset: 0; background: rgba(0,0,0,0.5);
-  color: white; display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: 0.3s;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.25s;
+  font-size: 0.95rem;
 }
 
-.posterBox:hover .overlay { opacity: 1; }
+.posterBox:hover .overlay {
+  opacity: 1;
+}
 
-/* FORMULAIRE TECHNIQUE */
+.posterReady {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--growz-primary);
+  font-weight: 600;
+  text-align: center;
+  padding: 4px 8px;
+  background: #e8f5ee;
+  border-radius: 6px;
+}
+
+/* ── CROPPER ────────────────────────────────────────────── */
+.cropWrapper {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--growz-primary);
+}
+
+.cropContainer {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: #111;
+}
+
+.cropControls {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: #1a1a1a;
+}
+
+.btnCancel {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s;
+}
+
+.btnCancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btnApply {
+  flex: 2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--growz-primary);
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.88rem;
+  transition: background 0.2s;
+}
+
+.btnApply:hover {
+  background: #155c30;
+}
+
+/* ── DOCUMENTS ──────────────────────────────────────────── */
+.docUploadZone {
+  min-height: 60px;
+}
+
+.btnAddDoc {
+  width: 100%;
+  padding: 0.85rem;
+  border: 2px dashed #cbd5e0;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #64748b;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btnAddDoc:hover {
+  border-color: var(--growz-primary);
+  color: var(--growz-primary);
+  background: #e8f5ee;
+}
+
+.selectedDoc {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.selectedDoc input {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.selectedDoc input:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+}
+
+.btnConfirmDoc {
+  padding: 0.6rem 1rem;
+  background: var(--growz-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.btnCancelDoc {
+  padding: 0.6rem 0.7rem;
+  background: #fee2e2;
+  color: #c62828;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+/* ── FORMULAIRE PRINCIPAL ───────────────────────────────── */
+.content {}
+
 .form {
   background: white;
   padding: 2rem;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  border: 1px solid #eee;
 }
 
-.fieldGroup { margin-bottom: 2.5rem; }
-.fieldGroup h4 { color: #666; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
-
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem; }
-
-.field label { display: block; font-size: 0.85rem; color: #555; margin-bottom: 6px; font-weight: 600; }
-
-.field input, .field select {
-  width: 100%; padding: 0.8rem; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem;
+.fieldGroup {
+  margin-bottom: 2.5rem;
 }
 
-.field input:focus { border-color: var(--growz-primary); outline: none; }
-
-.btnSave {
-  width: 100%; padding: 1.2rem; background: var(--growz-gold); color: var(--growz-primary);
-  border: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-  transition: 0.2s;
+.fieldGroup h4 {
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 1.2rem 0;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid #f0f0f0;
 }
 
-.btnSave:hover { background: #FFB300; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,193,7,0.3); }
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
 
-/* Champ de calcul automatique */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+  box-shadow: 0 0 0 3px rgba(26, 107, 60, 0.08);
+}
+
+/* ── CHAMP AUTO-CALCULÉ ─────────────────────────────────── */
 .autoCalculatedField {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #F8F9FA; /* Fond gris très léger */
-  border: 2px dashed #CBD5E0; /* Bordure pointillée pour montrer que c'est "calculé" */
-  padding: 0.8rem 1.2rem;
-  border-radius: 12px;
-  color: #2D3748;
+  gap: 10px;
+  background: #f8faff;
+  border: 2px dashed #cbd5e0;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: #2d3748;
   font-weight: 600;
-  font-size: 1.05rem;
-  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  min-height: 46px;
+  transition: all 0.3s;
 }
 
-/* On change la couleur quand on survole l'analyse financière */
-.fieldGroup:hover .autoCalculatedField {
-  background: #EBF8FF; /* Devient bleu très clair */
-  border-color: #4299E1;
+.autoCalculatedField:hover {
+  background: #ebf8ff;
+  border-color: #4299e1;
 }
 
-/* Style de l'icône Info */
 .autoCalculatedField svg {
-  color: #4299E1;
-  font-size: 1.2rem;
+  color: #4299e1;
+  font-size: 1.1rem;
   flex-shrink: 0;
 }
 
-/* Mise en avant des chiffres (le nombre de parts et le prix) */
-.autoCalculatedField strong {
-  color: var(--growz-primary); /* Vert Growzapp */
+/* ── BOUTON SAVE ─────────────────────────────────────────── */
+.btnSave {
+  width: 100%;
+  padding: 1.1rem;
+  background: var(--growz-gold, #FFC107);
+  color: var(--growz-primary, #1a6b3c);
+  border: none;
+  border-radius: 12px;
+  font-weight: 900;
   font-size: 1.1rem;
-  font-weight: 800;
-  background: var(--growz-mint-50);
-  padding: 2px 6px;
-  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
 }
 
-/* STATUS BADGES */
-.statusBadge {
-  padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 0.85rem;
+.btnSave:hover:not(:disabled) {
+  background: #ffb300;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 193, 7, 0.35);
 }
-.VALIDE { background: var(--growz-mint-50); color: var(--growz-green-700); }
-.SOUMIS { background: #FFF3E0; color: #EF6C00; }
-.REJETE { background: #FFEBEE; color: #C62828; }
+
+.btnSave:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── LOADER ──────────────────────────────────────────────── */
+.loader {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: var(--growz-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
