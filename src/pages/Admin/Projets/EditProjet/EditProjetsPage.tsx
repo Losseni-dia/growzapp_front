@@ -2,15 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import {
-  FiCheckCircle,
   FiFileText,
   FiSave,
   FiUpload,
   FiX,
-  FiMapPin,
-  FiDollarSign,
-  FiClock,
-  FiTrendingUp,
   FiCamera,
   FiInfo,
 } from "react-icons/fi";
@@ -22,6 +17,19 @@ import {
 } from "../../../../types/utils/CropImage";
 import styles from "./EditProjetsPage.module.css";
 
+function toDisplay(val: number | null | undefined): string {
+  if (val === null || val === undefined || val === 0) return "";
+  return String(val);
+}
+function parseNum(raw: string): number {
+  const n = parseFloat(raw.replace(/[^0-9.]/g, ""));
+  return isNaN(n) ? 0 : n;
+}
+function parseInt_(raw: string): number {
+  const cleaned = raw.replace(/[^0-9]/g, "");
+  return cleaned === "" ? 0 : parseInt(cleaned, 10);
+}
+
 export default function EditProjetPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -30,8 +38,9 @@ export default function EditProjetPage() {
   const [saving, setSaving] = useState(false);
   const [projet, setProjet] = useState<any>(null);
 
-  // --- ÉTATS POSTER + CROPPER ---
+  // ── IMAGE ─────────────────────────────────────────────────────────────────
   const [preview, setPreview] = useState<string | null>(null);
+  const [rawPreview, setRawPreview] = useState<string | null>(null);
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [showCropper, setShowCropper] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -39,72 +48,139 @@ export default function EditProjetPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- ÉTATS DOCUMENTS ---
+  // ── DOCUMENTS ─────────────────────────────────────────────────────────────
   const [uploadingDoc, setUploadingDoc] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<File | null>(null);
   const [docNom, setDocNom] = useState("");
   const docInputRef = useRef<HTMLInputElement>(null);
 
-  // --- CHARGEMENT INITIAL ---
+  // ── DISPLAYS NUMÉRIQUES ───────────────────────────────────────────────────
+  const [objectifDisplay, setObjectifDisplay] = useState("");
+  const [prixPartDisplay, setPrixPartDisplay] = useState("");
+  const [roiDisplay, setRoiDisplay] = useState("");
+  const [partsDisponibleDisplay, setPartsDisponibleDisplay] = useState("");
+  const [partsALeverDisplay, setPartsALeverDisplay] = useState("");
+  const [valuationDisplay, setValuationDisplay] = useState("");
+
+  // ── CHARGEMENT ────────────────────────────────────────────────────────────
   useEffect(() => {
-    const fetchProjet = async () => {
-      if (!id) return;
-      try {
-        const res = await api.get<{ data: any }>(`/api/admin/projets/${id}`);
+    if (!id) return;
+    api
+      .get<{ data: any }>(`/api/projets/slug/${id}`)
+      .then((res) => {
         const data = res.data;
-        setProjet(data);
+
+        // Recalcul au chargement — on ne fait pas confiance aux valeurs stockées
+        const objectif = Number(data.objectifFinancement || 0);
+        const prixPart = Number(data.prixUnePart || 0);
+        const valuation = Number(data.valuation || 0);
+        const parts = prixPart > 0 ? Math.floor(objectif / prixPart) : 0;
+        const pct =
+          valuation > 0 ? Math.round((objectif / valuation) * 100) : 0;
+
+        const dataCalc = {
+          ...data,
+          partsDisponible: parts,
+          valeurTotalePartsEnPourcent: pct,
+        };
+        setProjet(dataCalc);
         setPreview(data.poster || null);
-      } catch (err) {
+        setObjectifDisplay(toDisplay(objectif));
+        setPrixPartDisplay(toDisplay(prixPart));
+        setRoiDisplay(toDisplay(data.roiProjete));
+        setPartsDisponibleDisplay(toDisplay(parts));
+        setPartsALeverDisplay(toDisplay(pct));
+        setValuationDisplay(toDisplay(valuation));
+      })
+      .catch(() => {
         toast.error("Impossible de charger le projet");
         navigate("/admin/projets");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProjet();
+      })
+      .finally(() => setLoading(false));
   }, [id, navigate]);
 
-  // --- LOGIQUE DE CALCUL AUTOMATIQUE ---
-  const updateFinances = (field: string, value: number) => {
-    let newObjectif = field === "objectif" ? value : projet.objectifFinancement;
-    let newPrixPart = field === "prix" ? value : projet.prixUnePart;
+  // ── CALCUL AUTO ───────────────────────────────────────────────────────────
+  const updateFinances = (field: "objectif" | "prix", raw: string) => {
+    const value = parseInt_(raw);
+    const newObjectif =
+      field === "objectif" ? value : projet.objectifFinancement;
+    const newPrix = field === "prix" ? value : projet.prixUnePart;
+    const newParts = newPrix > 0 ? Math.floor(newObjectif / newPrix) : 0;
+    const newPct =
+      (projet.valuation || 0) > 0
+        ? Math.round((newObjectif / projet.valuation) * 100)
+        : 0;
 
-    // Calcul automatique des parts (Objectif / Prix)
-    let newParts = newPrixPart > 0 ? Math.floor(newObjectif / newPrixPart) : 0;
+    if (field === "objectif") setObjectifDisplay(raw.replace(/[^0-9]/g, ""));
+    else setPrixPartDisplay(raw.replace(/[^0-9]/g, ""));
 
+    setPartsDisponibleDisplay(toDisplay(newParts));
+    setPartsALeverDisplay(toDisplay(newPct));
     setProjet({
       ...projet,
-      [field === "objectif" ? "objectifFinancement" : "prixUnePart"]: value,
+      objectifFinancement:
+        field === "objectif" ? value : projet.objectifFinancement,
+      prixUnePart: field === "prix" ? value : projet.prixUnePart,
       partsDisponible: newParts,
+      valeurTotalePartsEnPourcent: newPct,
     });
   };
 
-  // --- LOGIQUE POSTER ---
+  const updateValuation = (raw: string) => {
+    const value = parseInt_(raw);
+    const objectif = projet.objectifFinancement || 0;
+    const newPct = value > 0 ? Math.round((objectif / value) * 100) : 0;
+    setValuationDisplay(raw.replace(/[^0-9]/g, ""));
+    setPartsALeverDisplay(toDisplay(newPct));
+    setProjet({
+      ...projet,
+      valuation: value,
+      valeurTotalePartsEnPourcent: newPct,
+    });
+  };
+
+  // ── IMAGE ─────────────────────────────────────────────────────────────────
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = "";
     const reader = new FileReader();
     reader.onload = () => {
-      setPreview(reader.result as string);
+      setRawPreview(reader.result as string);
       setShowCropper(true);
     };
     reader.readAsDataURL(file);
   };
 
-  const createCroppedImage = async () => {
-    if (!preview || !croppedAreaPixels) return;
+  const onCropComplete = useCallback(
+    (_: any, p: any) => setCroppedAreaPixels(p),
+    [],
+  );
+
+  const confirmCrop = async () => {
+    if (!rawPreview || !croppedAreaPixels) return;
     try {
-      const cropped = await getCroppedImg(preview, croppedAreaPixels);
+      const cropped = await getCroppedImg(rawPreview, croppedAreaPixels);
       setPreview(cropped);
+      setRawPreview(null);
       setPosterFile(dataURLtoFile(cropped, `update_poster_${id}.jpg`));
       setShowCropper(false);
-      toast.success("Nouveau poster prêt !");
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      toast.success("Poster mis à jour !");
     } catch {
       toast.error("Erreur de recadrage");
     }
   };
 
-  // --- LOGIQUE DOCUMENTS ---
+  const cancelCrop = () => {
+    setShowCropper(false);
+    setRawPreview(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+  };
+
+  // ── DOCUMENTS ─────────────────────────────────────────────────────────────
   const handleDocSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -120,7 +196,6 @@ export default function EditProjetPage() {
     formData.append("file", selectedDoc);
     formData.append("nom", docNom.trim());
     formData.append("type", selectedDoc.type.includes("pdf") ? "PDF" : "IMAGE");
-
     try {
       await api.post(`/api/documents/projet/${id}`, formData);
       toast.success("Document ajouté !");
@@ -133,56 +208,140 @@ export default function EditProjetPage() {
     }
   };
 
-  // --- SAUVEGARDE FINALE ---
-  // Dans EditProjetsPage.tsx
-
+  // ── SAUVEGARDE ────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projet) return;
-
     setSaving(true);
-
     try {
       const formData = new FormData();
-
-      const updateData = {
-        ...projet,
-        // On s'assure que les dates sont bien formatées ou nulles
-        dateDebut: projet.dateDebut || null,
-        dateFin: projet.dateFin || null,
-        dureeMois: projet.dureeMois || 36,
-      };
-
-      // --- LA CORRECTION EST ICI ---
-      // On emballe le JSON dans un Blob pour forcer le Content-Type de cette PARTIE
-      const projetBlob = new Blob([JSON.stringify(updateData)], {
-        type: "application/json",
-      });
-
-      formData.append("projet", projetBlob);
-
-      if (posterFile) {
-        formData.append("poster", posterFile);
-      }
-
-      // On utilise ton utilitaire api.put avec le flag isFormData = true
-      await api.put(`/api/admin/projets/${id}`, formData, true);
-
-      toast.success("Expertise technique enregistrée !");
+      formData.append(
+        "projet",
+        new Blob(
+          [
+            JSON.stringify({
+              ...projet,
+              dateDebut: projet.dateDebut || null,
+              dateFin: projet.dateFin || null,
+              dureeMois: projet.dureeMois || 36,
+            }),
+          ],
+          { type: "application/json" },
+        ),
+      );
+      if (posterFile) formData.append("poster", posterFile);
+      await api.put(`/api/admin/projets/${projet.id}`, formData, true);
+      toast.success("Projet enregistré !");
       navigate("/admin/projets");
     } catch (err: any) {
-      console.error("Erreur lors de la soumission :", err);
       toast.error("Erreur : " + err.message);
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading)
-    return <div className={styles.loader}>Analyse du dossier en cours...</div>;
+  if (loading) return <div className={styles.loader}>Chargement...</div>;
 
   return (
     <div className={styles.container}>
+      {/* ── MODAL CROPPER PLEIN ÉCRAN ────────────────────────────────────── */}
+      {showCropper && rawPreview && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "#000",
+            zIndex: 9999,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* Zone crop — hauteur calculée = 100vh - hauteur barre boutons (80px) */}
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "calc(100vh - 80px)",
+            }}
+          >
+            <Cropper
+              image={rawPreview}
+              crop={crop}
+              zoom={zoom}
+              aspect={16 / 9}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+              minZoom={0.1}
+              objectFit="horizontal-cover"
+              style={{
+                containerStyle: {
+                  width: "100%",
+                  height: "100%",
+                  background: "#000",
+                },
+                cropAreaStyle: {
+                  border: "3px solid #4CAF76",
+                  boxShadow: "0 0 0 9999px rgba(0,0,0,0.6)",
+                },
+                mediaStyle: {
+                  maxHeight: "none",
+                },
+              }}
+            />
+          </div>
+          {/* Barre boutons — hauteur fixe 80px */}
+          <div
+            style={{
+              height: 80,
+              background: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 16,
+              flexShrink: 0,
+              borderTop: "1px solid #e2e8f0",
+            }}
+          >
+            <button
+              type="button"
+              onClick={cancelCrop}
+              style={{
+                padding: "10px 28px",
+                borderRadius: 50,
+                border: "2px solid #e2e8f0",
+                background: "white",
+                color: "#64748b",
+                fontWeight: 700,
+                cursor: "pointer",
+                fontSize: "0.95rem",
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              type="button"
+              onClick={confirmCrop}
+              style={{
+                padding: "10px 32px",
+                borderRadius: 50,
+                border: "none",
+                background: "#1A6B3C",
+                color: "white",
+                fontWeight: 800,
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}
+            >
+              ✓ Valider l'image
+            </button>
+          </div>
+        </div>
+      )}
+
       <header className={styles.header}>
         <h1 className={styles.title}>
           Expertise Technique : <span>{projet.libelle}</span>
@@ -193,7 +352,9 @@ export default function EditProjetPage() {
       </header>
 
       <div className={styles.mainGrid}>
+        {/* ── SIDEBAR ────────────────────────────────────────────────────── */}
         <aside className={styles.sidebar}>
+          {/* POSTER */}
           <section className={styles.section}>
             <h3>
               <FiCamera /> Poster Officiel
@@ -211,34 +372,19 @@ export default function EditProjetPage() {
                 <FiUpload /> Modifier
               </div>
             </div>
+            {posterFile && (
+              <p className={styles.posterReady}>✓ Nouveau poster prêt</p>
+            )}
             <input
               ref={fileInputRef}
               type="file"
-              hidden
+              style={{ display: "none" }}
+              accept="image/*"
               onChange={handlePhotoChange}
             />
-            {showCropper && (
-              <div className={styles.miniCropper}>
-                <Cropper
-                  image={preview!}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={16 / 9}
-                  onCropChange={setCrop}
-                  onZoomChange={setZoom}
-                  onCropComplete={(_, p) => setCroppedAreaPixels(p)}
-                />
-                <button
-                  type="button"
-                  onClick={createCroppedImage}
-                  className={styles.btnApply}
-                >
-                  Appliquer
-                </button>
-              </div>
-            )}
           </section>
 
+          {/* DOCUMENTS */}
           <section className={styles.section}>
             <h3>
               <FiFileText /> Pièces Jointes
@@ -247,7 +393,7 @@ export default function EditProjetPage() {
               <input
                 ref={docInputRef}
                 type="file"
-                hidden
+                style={{ display: "none" }}
                 onChange={handleDocSelect}
               />
               {!selectedDoc ? (
@@ -264,6 +410,7 @@ export default function EditProjetPage() {
                     type="text"
                     value={docNom}
                     onChange={(e) => setDocNom(e.target.value)}
+                    placeholder="Nom"
                   />
                   <button
                     type="button"
@@ -286,8 +433,10 @@ export default function EditProjetPage() {
           </section>
         </aside>
 
+        {/* ── FORMULAIRE ─────────────────────────────────────────────────── */}
         <main className={styles.content}>
           <form onSubmit={handleSubmit} className={styles.form}>
+            {/* 1. Infos de base */}
             <div className={styles.fieldGroup}>
               <h4>1. Informations de base</h4>
               <div className={styles.row}>
@@ -314,85 +463,84 @@ export default function EditProjetPage() {
               </div>
             </div>
 
+            {/* 2. Analyse financière */}
             <div className={styles.fieldGroup}>
               <h4>2. Analyse Financière</h4>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Objectif Financement (CFA)</label>
+                  <label>Objectif Financement (FCFA)</label>
                   <input
-                    type="number"
-                    value={projet.objectifFinancement}
-                    onChange={(e) =>
-                      updateFinances("objectif", Number(e.target.value))
-                    }
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Ex : 5000000"
+                    value={objectifDisplay}
+                    onChange={(e) => updateFinances("objectif", e.target.value)}
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>Prix de la Part (CFA)</label>
+                  <label>Prix de la Part (FCFA)</label>
                   <input
-                    type="number"
-                    value={projet.prixUnePart}
-                    onChange={(e) =>
-                      updateFinances("prix", Number(e.target.value))
-                    }
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Ex : 10000"
+                    value={prixPartDisplay}
+                    onChange={(e) => updateFinances("prix", e.target.value)}
                   />
                 </div>
               </div>
 
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Parts totales (Calculé automatiquement)</label>
-                  <div className={styles.autoCalculatedField}>
-                    <FiInfo /> {projet.partsDisponible} parts de{" "}
-                    {projet.prixUnePart} FCFA
-                  </div>
+                  <label>Valorisation Totale (FCFA)</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Ex : 25000000"
+                    value={valuationDisplay}
+                    onChange={(e) => updateValuation(e.target.value)}
+                  />
                 </div>
                 <div className={styles.field}>
                   <label>ROI (%)</label>
                   <input
-                    type="number"
-                    step="0.1"
-                    value={projet.roiProjete}
-                    onChange={(e) =>
-                      setProjet({
-                        ...projet,
-                        roiProjete: Number(e.target.value),
-                      })
-                    }
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Ex : 15"
+                    value={roiDisplay}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9.]/g, "");
+                      setRoiDisplay(raw);
+                      setProjet({ ...projet, roiProjete: parseNum(raw) });
+                    }}
                   />
                 </div>
               </div>
 
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Parts à lever (%)</label>
-                  <input
-                    type="number"
-                    value={projet.valeurTotalePartsEnPourcent}
-                    onChange={(e) =>
-                      setProjet({
-                        ...projet,
-                        valeurTotalePartsEnPourcent: Number(e.target.value),
-                      })
-                    }
-                  />
+                  <label>Parts totales (auto)</label>
+                  <div className={styles.autoCalculatedField}>
+                    <FiInfo />
+                    {partsDisponibleDisplay
+                      ? Number(partsDisponibleDisplay).toLocaleString("fr-FR")
+                      : "0"}{" "}
+                    parts de {projet.prixUnePart?.toLocaleString("fr-FR") ?? 0}{" "}
+                    FCFA
+                  </div>
                 </div>
                 <div className={styles.field}>
-                  <label>Valorisation Totale (CFA)</label>
-                  <input
-                    type="number"
-                    value={projet.valuation}
-                    onChange={(e) =>
-                      setProjet({
-                        ...projet,
-                        valuation: Number(e.target.value),
-                      })
-                    }
-                  />
+                  <label>Parts à lever (%) — auto</label>
+                  <div className={styles.autoCalculatedField}>
+                    <FiInfo />
+                    {partsALeverDisplay
+                      ? `${partsALeverDisplay}%`
+                      : "Saisir objectif et valorisation"}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* 3. Publication */}
             <div className={styles.fieldGroup}>
               <h4>3. Publication</h4>
               <div className={styles.row}>
@@ -401,6 +549,7 @@ export default function EditProjetPage() {
                   <input
                     type="date"
                     value={projet.dateDebut?.split("T")[0] || ""}
+                    min={new Date().toISOString().split("T")[0]}
                     onChange={(e) =>
                       setProjet({ ...projet, dateDebut: e.target.value })
                     }
@@ -411,6 +560,7 @@ export default function EditProjetPage() {
                   <input
                     type="date"
                     value={projet.dateFin?.split("T")[0] || ""}
+                    min={projet.dateDebut?.split("T")[0] || undefined}
                     onChange={(e) =>
                       setProjet({ ...projet, dateFin: e.target.value })
                     }
@@ -435,7 +585,7 @@ export default function EditProjetPage() {
             </div>
 
             <button type="submit" className={styles.btnSave} disabled={saving}>
-              <FiSave /> {saving ? "Sauvegarde..." : "Enregistrer l'expertise"}
+              <FiSave /> {saving ? "Sauvegarde..." : "Enregistrer"}
             </button>
           </form>
         </main>
