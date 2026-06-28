@@ -1,0 +1,143 @@
+/* src/components/ui/ComboBox/ComboBox.module.css */
+
+.wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--growz-primary);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.inputWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1rem; /* espace pour le chevron */
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background: white;
+  color: #1a1a1a;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+  box-shadow: 0 0 0 4px var(--growz-veil-10, rgba(26, 107, 60, 0.08));
+}
+
+.input:disabled {
+  background: #f7f7f7;
+  cursor: not-allowed;
+  color: #999;
+}
+
+.chevron {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--growz-primary);
+  font-size: 0.7rem;
+  padding: 4px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.chevron:hover {
+  opacity: 1;
+}
+
+/* DROPDOWN */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid var(--growz-primary);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 999;
+  max-height: 220px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  animation: dropDown 0.15s ease-out;
+}
+
+@keyframes dropDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.option {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #2d2d2d;
+  transition: background 0.15s;
+}
+
+.option:hover {
+  background: var(--growz-veil-10, rgba(26, 107, 60, 0.07));
+  color: var(--growz-primary);
+}
+
+.selected {
+  background: var(--growz-veil-10, rgba(26, 107, 60, 0.08));
+  color: var(--growz-primary);
+  font-weight: 600;
+}
+
+.check {
+  color: var(--growz-primary);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.info {
+  padding: 0.75rem 1rem;
+  color: #888;
+  font-size: 0.88rem;
+  font-style: italic;
+}
+
+/* Scrollbar fine */
+.dropdown::-webkit-scrollbar { width: 4px; }
+.dropdown::-webkit-scrollbar-track { background: transparent; }
+.dropdown::-webkit-scrollbar-thumb { background: var(--growz-primary); border-radius: 4px; }
+
+/* Nouvelle valeur saisie librement */
+.infoNew {
+  padding: 0.75rem 1rem;
+  color: var(--growz-primary, #1A6B3C);
+  font-size: 0.88rem;
+  background: var(--growz-veil-10, rgba(26, 107, 60, 0.06));
+  border-radius: 8px;
+  margin: 2px;
+}
