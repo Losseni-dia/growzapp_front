@@ -7,8 +7,8 @@ import {
   FiChevronLeft,
   FiFilter,
   FiSearch,
-  FiSliders, // <--- NOUVELLE ICÔNE POUR LE BOUTON ROND
-  FiX
+  FiSliders,
+  FiX,
 } from "react-icons/fi";
 import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
 import { api } from "../../../service/Api";
@@ -21,13 +21,21 @@ interface ApiResponse<T> {
   data: T;
 }
 
+// ─── Normalisation : retire accents + met en minuscule ────────────────────────
+// "Côte d'Ivoire" == "cote d'ivoire" == "COTE D'IVOIRE" == "Senegal" == "Sénégal"
+const normalize = (str: string): string =>
+  (str || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function ProjetsPage() {
   const { t } = useTranslation();
 
   const [projects, setProjects] = useState<ProjetDTO[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Par défaut true sur Desktop, mais le CSS gère le masquage sur mobile initialement
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -42,9 +50,8 @@ export default function ProjetsPage() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response = await api.get<ApiResponse<ProjetDTO[]>>(
-          "/api/projets"
-        );
+        const response =
+          await api.get<ApiResponse<ProjetDTO[]>>("/api/projets");
         setProjects(response.data || []);
       } catch (err: any) {
         toast.error(t("projects_page.toast_error"));
@@ -65,39 +72,47 @@ export default function ProjetsPage() {
   const filteredProjects = useMemo(() => {
     let filtered = projects;
 
+    // ── Recherche insensible aux accents et à la casse ──────────────────────
     if (search.trim()) {
-      const term = search.toLowerCase();
+      const term = normalize(search);
       filtered = filtered.filter(
         (p) =>
-          p.libelle.toLowerCase().includes(term) ||
-          p.description?.toLowerCase().includes(term) ||
-          p.paysNom?.toLowerCase().includes(term) ||
-          p.localiteNom?.toLowerCase().includes(term) ||
-          p.secteurNom?.toLowerCase().includes(term)
+          normalize(p.libelle).includes(term) ||
+          normalize(p.description || "").includes(term) ||
+          normalize(p.paysNom || "").includes(term) ||
+          normalize(p.localiteNom || "").includes(term) ||
+          normalize(p.secteurNom || "").includes(term),
       );
     }
 
+    // ── Filtre secteur insensible aux accents ────────────────────────────────
     if (secteurFilter)
-      filtered = filtered.filter((p) => p.secteurNom === secteurFilter);
+      filtered = filtered.filter(
+        (p) => normalize(p.secteurNom || "") === normalize(secteurFilter),
+      );
+
+    // ── Filtre prix ──────────────────────────────────────────────────────────
     if (prixMin)
       filtered = filtered.filter((p) => p.prixUnePart >= Number(prixMin));
     if (prixMax)
       filtered = filtered.filter((p) => p.prixUnePart <= Number(prixMax));
 
+    // ── Tri ──────────────────────────────────────────────────────────────────
     return [...filtered].sort((a, b) => {
       switch (sortBy) {
         case "recent":
           return (
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
-        case "financement":
-          const percentA = a.objectifFinancement
+        case "financement": {
+          const pA = a.objectifFinancement
             ? a.montantCollecte / a.objectifFinancement
             : 0;
-          const percentB = b.objectifFinancement
+          const pB = b.objectifFinancement
             ? b.montantCollecte / b.objectifFinancement
             : 0;
-          return percentB - percentA;
+          return pB - pA;
+        }
         case "prixAsc":
           return a.prixUnePart - b.prixUnePart;
         case "prixDesc":
@@ -113,8 +128,7 @@ export default function ProjetsPage() {
 
   return (
     <div className={styles.pageContainer}>
-      {/* 1. NOUVEAU BOUTON MOBILE (FAB) */}
-      {/* Il est toujours dans le DOM, le CSS gère l'affichage (display: none sur PC) */}
+      {/* ── BOUTON MOBILE (FAB) ─────────────────────────────────────────── */}
       <button
         className={styles.mobileToggle}
         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -123,20 +137,17 @@ export default function ProjetsPage() {
         {sidebarOpen ? <FiX size={24} /> : <FiSliders size={24} />}
       </button>
 
-      {/* 2. OVERLAY (Fond noir) pour fermer sur mobile */}
+      {/* ── OVERLAY MOBILE ──────────────────────────────────────────────── */}
       {sidebarOpen && (
         <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* 3. SIDEBAR */}
-      {/* On applique la classe .open si le state est true */}
+      {/* ── SIDEBAR ─────────────────────────────────────────────────────── */}
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : ""}`}>
         <div className={styles.sidebarHeader}>
           <h2 className={styles.sidebarTitle}>
             <FiFilter /> {t("projects_page.filters.title")}
           </h2>
-
-          {/* Bouton de collapse pour Desktop (Optionnel, tu peux le garder ou l'enlever) */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className={styles.toggleBtn}
@@ -145,12 +156,11 @@ export default function ProjetsPage() {
           </button>
         </div>
 
-        {/* Contenu de la sidebar */}
         <div className={styles.sidebarContent}>
+          {/* Recherche */}
           <div className={styles.filterGroup}>
             <label>{t("projects_page.filters.search_label")}</label>
             <div className={styles.searchWrapper}>
-              <FiSearch className={styles.searchIcon} />
               <input
                 type="text"
                 placeholder={t("projects_page.filters.search_placeholder")}
@@ -158,9 +168,18 @@ export default function ProjetsPage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className={styles.searchInput}
               />
+              {search && (
+                <button
+                  className={styles.clearBtn}
+                  onClick={() => setSearch("")}
+                >
+                  <FiX size={14} />
+                </button>
+              )}
             </div>
           </div>
 
+          {/* Secteur */}
           <div className={styles.filterGroup}>
             <label>{t("projects_page.filters.sector_label")}</label>
             <select
@@ -177,27 +196,35 @@ export default function ProjetsPage() {
             </select>
           </div>
 
+          {/* Prix */}
           <div className={styles.filterGroup}>
             <label>{t("projects_page.filters.price_label")}</label>
             <div className={styles.priceRange}>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder={t("projects_page.filters.price_min")}
                 value={prixMin}
-                onChange={(e) => setPrixMin(e.target.value)}
+                onChange={(e) =>
+                  setPrixMin(e.target.value.replace(/[^0-9]/g, ""))
+                }
                 className={styles.priceInput}
               />
               <span>{t("projects_page.filters.to")}</span>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder={t("projects_page.filters.price_max")}
                 value={prixMax}
-                onChange={(e) => setPrixMax(e.target.value)}
+                onChange={(e) =>
+                  setPrixMax(e.target.value.replace(/[^0-9]/g, ""))
+                }
                 className={styles.priceInput}
               />
             </div>
           </div>
 
+          {/* Tri */}
           <div className={styles.filterGroup}>
             <label>{t("projects_page.filters.sort_label")}</label>
             <select
@@ -226,7 +253,7 @@ export default function ProjetsPage() {
         </div>
       </aside>
 
-      {/* 4. MAIN CONTENT */}
+      {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
       <main className={styles.main}>
         {filteredProjects.length === 0 ? (
           <div className={styles.empty}>

@@ -1,6 +1,5 @@
 /* src/pages/ProjetsPage/ProjetsPage.module.css */
 
-/* --- CONTENEUR PRINCIPAL --- */
 .pageContainer {
   position: relative;
   min-height: 100vh;
@@ -13,32 +12,23 @@
   overflow-x: hidden;
 }
 
-/* --- SIDEBAR (Barre latérale) --- */
+/* ── SIDEBAR ─────────────────────────────────────────────── */
 .sidebar {
   position: fixed;
   left: 0;
-  
-  /* Se place sous le header fixe (100px approx) */
-  top: 100px; 
-  
+  top: 100px;
   width: 360px;
-  /* Hauteur calculée pour ne pas dépasser de l'écran */
   height: calc(100vh - 100px);
-  
   background: var(--growz-elevated);
   border-right: 1px solid var(--growz-border-subtle);
   box-shadow: 8px 0 32px var(--growz-veil-08);
-  
-  /* Z-INDEX : 900 (Sous le Header qui est à 1000) */
-  z-index: 900; 
-  
+  z-index: 900;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateX(0); /* Visible par défaut sur PC */
+  transform: translateX(0);
   padding: 2rem 0;
-  overflow-y: auto; /* Scroll si trop de filtres */
+  overflow-y: auto;
 }
 
-/* État fermé (caché à gauche) */
 .sidebar:not(.open) {
   transform: translateX(-100%);
 }
@@ -60,7 +50,6 @@
   gap: 14px;
 }
 
-/* Bouton Toggle (Desktop - flèche dans la sidebar) */
 .toggleBtn {
   background: none;
   border: none;
@@ -70,27 +59,103 @@
   padding: 0.5rem;
   border-radius: 50%;
   transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.toggleBtn:hover {
-  background: var(--growz-mint-50);
-}
+.toggleBtn:hover { background: var(--growz-mint-50); }
 
-.sidebarContent {
-  padding: 0 2.5rem;
-}
+.sidebarContent { padding: 0 2.5rem; }
 
-/* --- FILTRES & INPUTS --- */
+/* ── FILTRES ─────────────────────────────────────────────── */
 .filterGroup { margin-bottom: 2.4rem; }
-.filterGroup label { display: block; margin-bottom: 0.9rem; font-weight: 700; color: var(--growz-primary); font-size: 1.05rem; letter-spacing: 0.01em; }
 
-.searchWrapper { position: relative; margin-bottom: 2rem; }
-.searchIcon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--growz-green-500); font-size: 1.6rem; pointer-events: none; }
-.searchInput { width: 100%; padding: 1.2rem 1.4rem 1.2rem 4.2rem; border: 1.5px solid var(--growz-border-subtle); border-radius: var(--growz-radius-lg); font-size: 1.05rem; background: var(--growz-slate-50); transition: border 0.25s var(--growz-ease), box-shadow 0.25s var(--growz-ease), background 0.25s var(--growz-ease); }
-.searchInput:focus { outline: none; border-color: var(--growz-green-500); background: var(--growz-elevated); box-shadow: 0 0 0 4px var(--growz-veil-10); }
+.filterGroup label {
+  display: block;
+  margin-bottom: 0.9rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  font-size: 1.05rem;
+}
 
-.select, .priceInput { width: 100%; padding: 1.1rem 1.4rem; border: 1.5px solid var(--growz-border-subtle); border-radius: var(--growz-radius); background: var(--growz-elevated); font-size: 1.05rem; }
-.priceRange { display: flex; align-items: center; gap: 12px; }
+/* ── RECHERCHE — icône bien positionnée ──────────────────── */
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIconWrap {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--growz-green-500);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 1.2rem 3rem 1.2rem 3.2rem;
+  border: 1.5px solid var(--growz-border-subtle);
+  border-radius: var(--growz-radius-lg);
+  font-size: 1.05rem;
+  background: var(--growz-slate-50);
+  transition: border 0.25s, box-shadow 0.25s, background 0.25s;
+  box-sizing: border-box;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--growz-green-500);
+  background: var(--growz-elevated);
+  box-shadow: 0 0 0 4px var(--growz-veil-10);
+}
+
+.clearBtn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  z-index: 2;
+}
+
+.clearBtn:hover { color: #555; }
+
+/* ── SELECT & PRIX ───────────────────────────────────────── */
+.select, .priceInput {
+  width: 100%;
+  padding: 1.1rem 1.4rem;
+  border: 1.5px solid var(--growz-border-subtle);
+  border-radius: var(--growz-radius);
+  background: var(--growz-elevated);
+  font-size: 1.05rem;
+  box-sizing: border-box;
+}
+
+.select:focus, .priceInput:focus {
+  outline: none;
+  border-color: var(--growz-green-500);
+}
+
+.priceRange {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.priceRange span { color: var(--growz-text-muted); font-weight: 600; }
 
 .resultsCount {
   margin-top: 3rem;
@@ -104,15 +169,14 @@
   box-shadow: 0 4px 15px var(--growz-veil-10);
 }
 
-/* --- ZONE PRINCIPALE (PROJETS) --- */
+/* ── MAIN ────────────────────────────────────────────────── */
 .main {
-  margin-left: 360px; /* Espace pour la sidebar */
-  padding: 3rem 4rem; /* Padding standard */
+  margin-left: 360px;
+  padding: 3rem 4rem;
   min-height: 100vh;
   transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Quand la sidebar est fermée, le contenu prend toute la largeur */
 .sidebar:not(.open) ~ .main {
   margin-left: 0;
 }
@@ -125,29 +189,33 @@
   margin: 0 auto;
 }
 
-.empty, .loading { text-align: center; padding: 10rem 2rem; color: var(--growz-text-muted); }
-.empty h3 { font-size: 2.5rem; color: var(--growz-primary); margin-bottom: 1rem; }
+.empty, .loading {
+  text-align: center;
+  padding: 10rem 2rem;
+  color: var(--growz-text-muted);
+}
+
+.empty h3 {
+  font-size: 2.5rem;
+  color: var(--growz-primary);
+  margin-bottom: 1rem;
+}
+
 .loading { font-size: 2.5rem; color: var(--growz-primary); }
 
-/* --- LE BOUTON ROND (FAB) --- */
+/* ── FAB MOBILE ──────────────────────────────────────────── */
 .mobileToggle {
-  /* CORRECTION : On l'affiche par défaut en Flex (plus de display: none) */
-  display: flex; 
+  display: flex;
   position: fixed;
-  
-  /* On le descend un peu plus pour être sûr qu'il ne touche pas le header */
-  top: 130px; 
+  top: 130px;
   left: 20px;
-  
-  /* CORRECTION : Z-Index SUPÉRIEUR à tout (Header = 1000, Sidebar = 900) */
-  z-index: 9999; 
-  
+  z-index: 9999;
   width: 45px;
   height: 45px;
   border-radius: 50%;
   background: var(--growz-primary);
   color: white;
-  border: 2px solid white; /* Petite bordure blanche pour bien le voir */
+  border: 2px solid white;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   align-items: center;
   justify-content: center;
@@ -155,24 +223,11 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mobileToggle:hover {
-  transform: scale(1.1);
-  background: #144418;
-}
+.mobileToggle:hover { transform: scale(1.1); background: #144418; }
+.mobileToggle:active { transform: scale(0.9); }
 
-.mobileToggle:active {
-  transform: scale(0.9);
-}
-
-/* --- LOGIQUE D'AFFICHAGE --- */
-
-/* Sur PC (> 992px), on cache le bouton SI la sidebar est déjà ouverte */
-/* (C'est géré côté React, voir étape 2) */
-
-
-/* --- RESPONSIVE --- */
+/* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 992px) {
-  /* Sur mobile, le contenu prend toute la largeur */
   .main {
     margin-left: 0 !important;
     padding: 130px 1.5rem 3rem 1.5rem;
@@ -180,24 +235,23 @@
 
   .sidebar {
     width: 300px;
-    transform: translateX(-100%); /* Cachée par défaut */
+    transform: translateX(-100%);
   }
-  
+
   .sidebar.open {
-    transform: translateX(0); /* Visible si open */
-    box-shadow: 10px 0 100px rgba(0,0,0,0.5); /* Grosse ombre */
-    z-index: 10000; /* Au-dessus de tout sur mobile */
+    transform: translateX(0);
+    box-shadow: 10px 0 100px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
   }
-  
-  /* L'overlay (fond noir) */
+
   .overlay {
     display: block;
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
-    z-index: 9998; /* Juste sous la sidebar */
+    z-index: 9998;
     animation: fadeIn 0.3s;
   }
 }
