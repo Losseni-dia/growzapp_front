@@ -13,7 +13,14 @@ import { News, newsService } from "../../../service/newsService";
 import { useAuth } from "../../../components/Context/AuthContext";
 import styles from "./NewsPage.module.css";
 
-// ─── Catégories avec icônes emoji illustratifs ────────────────────────────────
+// ─── Image URL — gère chemins relatifs via proxy Vite ────────────────────────
+const getImageUrl = (url: string): string => {
+  if (!url) return "/placeholder-news.jpg";
+  if (url.startsWith("http") || url.startsWith("/")) return url;
+  return "/" + url;
+};
+
+// ─── Catégories ───────────────────────────────────────────────────────────────
 const CATEGORIES = [
   { key: "", label: "Tout", icon: "🌍", color: "#1A6B3C", bg: "#E8F5EE" },
   {
@@ -53,23 +60,19 @@ const CATEGORIES = [
   },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 const getPlainText = (html: string): string => {
   const tmp = document.createElement("DIV");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
 };
 
-const readingTime = (html: string): number => {
-  const words = getPlainText(html).split(/\s+/).length;
-  return Math.max(1, Math.ceil(words / 200));
-};
+const readingTime = (html: string): number =>
+  Math.max(1, Math.ceil(getPlainText(html).split(/\s+/).length / 200));
 
 const formatDate = (dateStr: string): string => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diff = Math.floor((Date.now() - date.getTime()) / 1000);
   if (diff < 60) return "À l'instant";
   if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
   if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
@@ -84,7 +87,6 @@ const formatDate = (dateStr: string): string => {
 const getCategoryMeta = (key: string) =>
   CATEGORIES.find((c) => c.key === key) || CATEGORIES[0];
 
-// ─── Skeleton card ────────────────────────────────────────────────────────────
 const SkeletonCard = () => (
   <div className={styles.skeletonCard}>
     <div className={styles.skeletonImg} />
@@ -97,8 +99,6 @@ const SkeletonCard = () => (
     </div>
   </div>
 );
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 const NewsPage = () => {
   const [articles, setArticles] = useState<News[]>([]);
@@ -118,15 +118,22 @@ const NewsPage = () => {
   useEffect(() => {
     newsService
       .getAll()
-      .then(setArticles)
+      .then((res: any) => {
+        console.log("NEWS RAW:", JSON.stringify(res)?.substring(0, 300));
+        const data = Array.isArray(res) ? res : (res?.data ?? []);
+        console.log(
+          "NEWS articles:",
+          data.length,
+          "| hero imageUrl:",
+          data[0]?.imageUrl,
+        );
+        setArticles(data);
+      })
       .finally(() => setLoading(false));
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (
-      !window.confirm("Supprimer cet article ? Cette action est irréversible.")
-    )
-      return;
+    if (!window.confirm("Supprimer cet article ?")) return;
     try {
       await newsService.delete(id);
       setArticles((prev) => prev.filter((a) => a.id !== id));
@@ -135,7 +142,6 @@ const NewsPage = () => {
     }
   };
 
-  // Comptage par catégorie
   const countByCategory = useMemo(() => {
     const counts: Record<string, number> = { "": articles.length };
     articles.forEach((a) => {
@@ -144,7 +150,6 @@ const NewsPage = () => {
     return counts;
   }, [articles]);
 
-  // Filtrage
   const filtered = useMemo(() => {
     let list = articles;
     if (activeCategory)
@@ -164,14 +169,13 @@ const NewsPage = () => {
 
   return (
     <div className={styles.container}>
-      {/* ── HEADER ──────────────────────────────────────────────────────── */}
+      {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.titleArea}>
           <Newspaper size={32} className={styles.icon} />
           <h1>Actualités & Opportunités</h1>
         </div>
         <div className={styles.headerRight}>
-          {/* Recherche */}
           <div className={styles.searchBox}>
             <Search size={16} className={styles.searchIcon} />
             <input
@@ -198,7 +202,7 @@ const NewsPage = () => {
         </div>
       </header>
 
-      {/* ── CATÉGORIES ──────────────────────────────────────────────────── */}
+      {/* CATÉGORIES */}
       <div className={styles.categoriesGrid}>
         {CATEGORIES.map((cat) => {
           const count = countByCategory[cat.key] ?? 0;
@@ -223,7 +227,7 @@ const NewsPage = () => {
         })}
       </div>
 
-      {/* ── CONTENU ─────────────────────────────────────────────────────── */}
+      {/* CONTENU */}
       {loading ? (
         <div className={styles.grid}>
           {[1, 2, 3].map((i) => (
@@ -238,14 +242,35 @@ const NewsPage = () => {
         </div>
       ) : (
         <>
-          {/* ── ARTICLE HERO (premier) ──────────────────────────────────── */}
+          {/* HERO */}
           {hero && !search && (
             <article className={styles.hero}>
               <div className={styles.heroImg}>
-                <img
-                  src={hero.imageUrl || "/placeholder-news.jpg"}
-                  alt={hero.title}
-                />
+                {hero.imageUrl ? (
+                  <img
+                    src={getImageUrl(hero.imageUrl)}
+                    alt={hero.title}
+                    onError={(e) => {
+                      console.log("Hero image error:", hero.imageUrl);
+                      (e.target as HTMLImageElement).src =
+                        "/placeholder-news.jpg";
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      background: "#e8f5ee",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "4rem",
+                    }}
+                  >
+                    📰
+                  </div>
+                )}
                 <div className={styles.heroOverlay} />
                 {(() => {
                   const meta = getCategoryMeta(hero.category);
@@ -302,7 +327,7 @@ const NewsPage = () => {
             </article>
           )}
 
-          {/* ── GRILLE ARTICLES ─────────────────────────────────────────── */}
+          {/* GRILLE */}
           <div className={styles.grid}>
             {(search ? filtered : rest).map((article) => {
               const meta = getCategoryMeta(article.category);
@@ -310,8 +335,12 @@ const NewsPage = () => {
                 <article key={article.id} className={styles.card}>
                   <div className={styles.imageWrapper}>
                     <img
-                      src={article.imageUrl || "/placeholder-news.jpg"}
+                      src={getImageUrl(article.imageUrl)}
                       alt={article.title}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/placeholder-news.jpg";
+                      }}
                     />
                     <span
                       className={styles.cardBadge}
@@ -320,7 +349,6 @@ const NewsPage = () => {
                       {meta.icon} {meta.label}
                     </span>
                   </div>
-
                   <div className={styles.content}>
                     <div className={styles.cardMeta}>
                       <span>
@@ -331,17 +359,14 @@ const NewsPage = () => {
                         <Clock size={11} /> {readingTime(article.content)} min
                       </span>
                     </div>
-
                     <h2>{article.title}</h2>
                     <p>{getPlainText(article.content).substring(0, 130)}...</p>
-
                     <Link
                       to={`/news/${article.id}`}
                       className={styles.readMore}
                     >
                       Lire la suite
                     </Link>
-
                     {(canEdit || canDelete) && (
                       <div className={styles.adminActions}>
                         {canEdit && (
