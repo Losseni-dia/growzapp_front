@@ -4,7 +4,7 @@ import {
   FiDollarSign,
   FiEye,
   FiMapPin,
-  FiTrendingUp
+  FiTrendingUp,
 } from "react-icons/fi";
 import { BsShieldCheck } from "react-icons/bs";
 import { Link } from "react-router-dom";
@@ -39,6 +39,19 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
 
+  // ── Parts à lever : valeur BDD ou calcul à la volée ──────────────────────
+  // Si valeurTotalePartsEnPourcent est 0 ou null (ancien projet),
+  // on calcule depuis objectifFinancement / valuation
+  const partsALever =
+    projet.valeurTotalePartsEnPourcent > 0
+      ? projet.valeurTotalePartsEnPourcent
+      : projet.valuation > 0
+        ? Math.round(
+            (Number(projet.objectifFinancement) / Number(projet.valuation)) *
+              100,
+          )
+        : 0;
+
   const getBadgeText = () => {
     if (financementTermine) return t("project_card.status.finished");
     if (!projet?.statutProjet) return "Statut inconnu";
@@ -63,7 +76,6 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.posterWrapper}>
-        {/* --- BADGE CERTIFIÉ (S'affiche si certifiedAt existe) --- */}
         {projet.certifiedAt && (
           <div
             className={styles.certifiedBadge}
@@ -130,9 +142,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
           <div className={styles.infoItem}>
             <strong>{t("project_details.equity_to_raise")} </strong>
-            <span className={styles.equityValue}>
-              {projet.valeurTotalePartsEnPourcent || 0}%
-            </span>
+            <span className={styles.equityValue}>{partsALever}%</span>
           </div>
 
           <div className={styles.infoItem}>
