@@ -2,7 +2,7 @@
 import React, { useState, useRef } from "react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-import { newsService } from "../../../service/newsService";
+import { newsService, NEWS_CATEGORIES } from "../../../service/newsService";
 import styles from "./NewsForm.module.css";
 import { Send, Image as ImageIcon, AlertCircle, Upload, X } from "lucide-react";
 
@@ -14,18 +14,11 @@ const NewsForm = () => {
     category: "PLATFORM_UPDATE",
   });
 
+  const [customCategory, setCustomCategory] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const categories = [
-    "PLATFORM_UPDATE",
-    "INVESTMENT_OPPORTUNITY",
-    "PERFORMANCE_REPORT",
-    "EDUCATION",
-    "SECURITY",
-  ];
 
   const modules = {
     toolbar: [
@@ -39,22 +32,15 @@ const NewsForm = () => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const data = new FormData();
-    data.append("file", file); // Le nom "file" correspond au @RequestParam du backend Java
-
+    data.append("file", file);
     setUploading(true);
     setMessage({ type: "", text: "" });
-
     try {
-      // Utilisation du mode isFormData = true défini dans newsService
       const response = await newsService.uploadImage(data);
-
-      // On récupère l'URL renvoyée par FileStorageService (ex: /uploads/posters/...)
       setFormData({ ...formData, imageUrl: response.url });
       setMessage({ type: "success", text: "Image chargée avec succès !" });
     } catch (err: any) {
-      console.error("Erreur upload:", err);
       setMessage({
         type: "error",
         text: "Erreur lors de l'upload de l'image.",
@@ -68,25 +54,23 @@ const NewsForm = () => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: "", text: "" });
-
     try {
       await newsService.create(formData);
       setMessage({
         type: "success",
         text: "L'actualité a été publiée avec succès !",
       });
-      // Réinitialisation après succès
       setFormData({
         title: "",
         content: "",
         imageUrl: "",
         category: "PLATFORM_UPDATE",
       });
+      setCustomCategory(false);
     } catch (err: any) {
-      console.error("Erreur publication:", err);
       setMessage({
         type: "error",
-        text: "Une erreur est survenue lors de la publication de l'article.",
+        text: "Une erreur est survenue lors de la publication.",
       });
     } finally {
       setLoading(false);
@@ -117,25 +101,72 @@ const NewsForm = () => {
             />
           </div>
 
-          {/* CATÉGORIE */}
+          {/* CATÉGORIE — liste prédéfinie + saisie libre */}
           <div className={styles.inputGroup}>
             <label htmlFor="category">Catégorie</label>
-            <select
-              id="category"
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat.replace("_", " ")}
-                </option>
-              ))}
-            </select>
+            {!customCategory ? (
+              <div className={styles.categoryRow}>
+                <select
+                  id="category"
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className={styles.categorySelect}
+                >
+                  {NEWS_CATEGORIES.map((cat) => (
+                    <option key={cat.key} value={cat.key}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className={styles.newCatBtn}
+                  onClick={() => {
+                    setCustomCategory(true);
+                    setFormData({ ...formData, category: "" });
+                  }}
+                >
+                  + Nouvelle catégorie
+                </button>
+              </div>
+            ) : (
+              <div className={styles.categoryRow}>
+                <input
+                  type="text"
+                  placeholder="Ex : PARTENARIAT, EVENEMENT..."
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      category: e.target.value.toUpperCase().replace(/ /g, "_"),
+                    })
+                  }
+                  className={styles.categoryInput}
+                  required
+                />
+                <button
+                  type="button"
+                  className={styles.newCatBtn}
+                  onClick={() => {
+                    setCustomCategory(false);
+                    setFormData({ ...formData, category: "PLATFORM_UPDATE" });
+                  }}
+                >
+                  ← Choisir dans la liste
+                </button>
+              </div>
+            )}
+            {customCategory && (
+              <span className={styles.categoryHint}>
+                La catégorie sera automatiquement mise en majuscules avec
+                underscores
+              </span>
+            )}
           </div>
 
-          {/* IMAGE (UPLOAD + URL) */}
+          {/* IMAGE */}
           <div className={styles.inputGroup}>
             <label>Image d'illustration</label>
             <div className={styles.uploadArea}>
@@ -173,28 +204,27 @@ const NewsForm = () => {
                       "Traitement en cours..."
                     ) : (
                       <>
-                        <Upload size={20} /> Charger une image locale
+                        <Upload size={20} /> Charger une image
                       </>
                     )}
                   </button>
                 </div>
               )}
-
               <div className={styles.urlInputWrapper}>
                 <ImageIcon size={18} className={styles.inputIcon} />
                 <input
-                  type="text" // Changé de "url" à "text" pour accepter les deux formats (/uploads/ ou http://)
+                  type="text"
                   value={formData.imageUrl}
                   onChange={(e) =>
                     setFormData({ ...formData, imageUrl: e.target.value })
                   }
-                  placeholder="Collez une URL externe ou utilisez le bouton charger"
+                  placeholder="Ou collez une URL d'image externe"
                 />
               </div>
             </div>
           </div>
 
-          {/* ÉDITEUR RICHE */}
+          {/* ÉDITEUR */}
           <div className={styles.inputGroup}>
             <label>Corps de l'article</label>
             <div className={styles.editorContainer}>
@@ -208,14 +238,13 @@ const NewsForm = () => {
             </div>
           </div>
 
-          {/* MESSAGES D'ALERTE */}
+          {/* MESSAGES */}
           {message.text && (
             <div className={`${styles.alert} ${styles[message.type]}`}>
               <AlertCircle size={18} /> {message.text}
             </div>
           )}
 
-          {/* VALIDATION */}
           <button
             type="submit"
             className={styles.submitBtn}
