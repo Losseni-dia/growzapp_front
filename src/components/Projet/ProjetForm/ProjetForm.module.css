@@ -1,5 +1,9 @@
+/* ═══════════════════════════════════════════════════════
+   ProjetForm.module.css — GrowzApp
+   ═══════════════════════════════════════════════════════ */
+
 .container {
-  max-width: 850px;
+  max-width: 750px;
   margin: 3rem auto;
   padding: 0 1rem;
 }
@@ -7,7 +11,7 @@
 .title {
   text-align: center;
   color: var(--growz-primary);
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
 }
@@ -15,26 +19,28 @@
 .subtitle {
   text-align: center;
   color: #666;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 }
 
+/* ── FORMULAIRE ─────────────────────────────────────── */
 .form {
   background: white;
   padding: 2.5rem;
   border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
   border: 1px solid #eee;
 }
 
-/* IMAGE & CROPPER STUDIO */
+/* ── PHOTO UPLOAD ───────────────────────────────────── */
 .photoSection {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .photoUpload {
   width: 100%;
-  aspect-ratio: 16/9;
-  border: 3px dashed var(--growz-mint-100);
+  min-height: 240px;
+  aspect-ratio: 16 / 9;
+  border: 3px dashed #A8D5B8;
   border-radius: 18px;
   background: #f9fbf9;
   display: flex;
@@ -42,101 +48,201 @@
   justify-content: center;
   cursor: pointer;
   overflow: hidden;
-  transition: 0.3s;
+  transition: border-color 0.3s, background 0.3s;
+  box-sizing: border-box;
 }
 
-.photoUpload:hover { border-color: var(--growz-primary); background: #f1f8f1; }
+.photoUpload:hover {
+  border-color: var(--growz-primary);
+  background: #f1f8f1;
+}
 
-.placeholder { text-align: center; color: var(--growz-primary); }
-.placeholder p { margin: 10px 0 5px; font-weight: 700; }
-.placeholder span { font-size: 0.85rem; color: #888; }
+.placeholder {
+  text-align: center;
+  color: var(--growz-primary);
+  padding: 2rem;
+}
 
-.preview { width: 100%; height: 100%; object-fit: cover; }
+.placeholder p {
+  margin: 12px 0 6px;
+  font-weight: 700;
+  font-size: 1rem;
+}
 
-/* LE CROPPER LARGE */
+.placeholder span {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── CROPPER ────────────────────────────────────────── */
 .cropWrapper {
   position: relative;
   width: 100%;
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border: 2px solid #A8D5B8;
 }
 
 .cropContainer {
   position: relative;
   width: 100%;
-  height: 480px; /* Grande hauteur pour un ajustement précis */
-  background: #333;
+  height: 440px;
+  background: #1a1a1a;
 }
 
 .cropControls {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 1.5rem;
-  background: linear-gradient(transparent, rgba(0,0,0,0.8));
   display: flex;
   justify-content: center;
-  gap: 15px;
-  z-index: 10;
+  gap: 12px;
+  padding: 14px 16px;
+  background: white;
+  border-top: 1px solid #E2E8F0;
 }
 
 .cropBtn {
-  background: var(--growz-green-500); color: white; padding: 0.8rem 2rem;
-  border: none; border-radius: 50px; font-weight: 800; cursor: pointer;
+  background: var(--growz-primary);
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.cropBtn:hover {
+  background: #155c30;
 }
 
 .cancelBtn {
-  background: rgba(255,255,255,0.2); color: white; padding: 0.8rem 1.5rem;
-  border: 1px solid rgba(255,255,255,0.4); border-radius: 50px; cursor: pointer;
+  background: white;
+  color: #64748B;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #E2E8F0;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s;
 }
 
-/* GRILLES & INPUTS */
-.inputGroup { margin-bottom: 1.5rem; }
-.inputGroup label { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--growz-primary); margin-bottom: 8px; }
-
-input, textarea {
-  width: 100%; padding: 1rem; border: 2px solid #E2E8F0; border-radius: 14px;
-  font-size: 1rem; transition: 0.3s;
+.cancelBtn:hover {
+  border-color: #cbd5e0;
+  background: #f8f9fa;
 }
 
-input:focus, textarea:focus { outline: none; border-color: var(--growz-primary); box-shadow: 0 0 0 4px var(--growz-veil-10); }
-
-.financeGrid, .locationGrid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 1rem;
+/* ── INPUTS & LABELS ────────────────────────────────── */
+.inputGroup {
+  margin-bottom: 1.4rem;
 }
 
-/* INFO CALCUL AUTO */
+.inputGroup label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--growz-primary);
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+/* Scoped inputs — ne touche QUE les inputs dans .inputGroup */
+.inputGroup input,
+.inputGroup textarea {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 2px solid #E2E8F0;
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+  background: white;
+  color: #1a1a1a;
+  font-family: inherit;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+  box-shadow: 0 0 0 4px rgba(26, 107, 60, 0.08);
+}
+
+/* ── GRILLES ────────────────────────────────────────── */
+.financeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 1rem;
+}
+
+.locationGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 1rem;
+}
+
+/* ── CALCUL AUTO ────────────────────────────────────── */
 .autoCalcInfo {
-  background: #F1F8E9; border: 1px solid var(--growz-mint-100); padding: 1rem;
-  border-radius: 12px; color: var(--growz-primary); font-weight: 600; margin-bottom: 2rem;
-  display: flex; align-items: center; gap: 10px;
+  background: #F1F8E9;
+  border: 1px solid #A8D5B8;
+  padding: 1rem 1.2rem;
+  border-radius: 12px;
+  color: var(--growz-primary);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
-.autoCalcInfo strong { color: var(--growz-green-700); font-size: 1.1rem; }
+.autoCalcInfo strong {
+  color: var(--growz-primary);
+  font-size: 1rem;
+}
 
+/* ── BOUTON SUBMIT ──────────────────────────────────── */
 .saveBtn {
-  width: 100%; padding: 1.2rem; background: var(--growz-gold); color: var(--growz-primary);
-  border: none; border-radius: 16px; font-weight: 900; font-size: 1.2rem;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
-  transition: 0.3s;
+  width: 100%;
+  padding: 1.1rem;
+  background: var(--growz-gold, #FFC107);
+  color: var(--growz-primary);
+  border: none;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s;
+  margin-top: 0.5rem;
 }
 
-.saveBtn:hover { background: #FFB300; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255,193,7,0.4); }
+.saveBtn:hover:not(:disabled) {
+  background: #FFB300;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 193, 7, 0.35);
+}
 
-/* MODAL */
-.modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.modalCard { background: white; width: 500px; border-radius: 28px; overflow: hidden; }
-.modalHeader { background: var(--growz-primary); color: white; padding: 2rem; text-align: center; }
-.shieldIcon { font-size: 3rem; color: var(--growz-gold); margin-bottom: 10px; }
-.modalBody { padding: 2rem; }
-.alertBox { background: #FFF5F5; border: 1px solid #FEB2B2; padding: 1rem; border-radius: 12px; color: #C53030; display: flex; gap: 10px; margin-bottom: 1.5rem; font-size: 0.9rem; }
-.checkItem { display: flex; gap: 12px; margin-bottom: 12px; cursor: pointer; color: #4A5568; }
-.modalFooter { padding: 0 2rem 2rem; display: flex; gap: 15px; }
-.btnBack { flex: 1; padding: 1rem; border-radius: 12px; border: 2px solid #E2E8F0; background: white; font-weight: 700; }
-.btnFinalSubmit { flex: 2; background: var(--growz-gold); border: none; padding: 1rem; border-radius: 12px; font-weight: 900; color: var(--growz-primary); }
-.btnFinalSubmit:disabled { opacity: 0.5; }
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-/* OVERLAY : SOMBRE AVEC BLUR */
+/* ── MODAL ──────────────────────────────────────────── */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -155,47 +261,72 @@ input:focus, textarea:focus { outline: none; border-color: var(--growz-primary);
   max-width: 500px;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   animation: modalScale 0.3s ease-out;
 }
 
 @keyframes modalScale {
   from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  to   { transform: scale(1);    opacity: 1; }
 }
 
 .modalHeader {
-  background: var(--growz-primary); /* Vert Growzapp */
+  background: var(--growz-primary);
   color: white;
-  padding: 30px;
+  padding: 28px 30px;
   text-align: center;
 }
 
-.shieldIcon { font-size: 3rem; color: var(--growz-gold); margin-bottom: 10px; }
-.modalHeader h2 { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.shieldIcon {
+  font-size: 2.8rem;
+  color: var(--growz-gold, #FFC107);
+  margin-bottom: 8px;
+  display: block;
+}
 
-.modalBody { padding: 30px; }
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
 
-/* BOITE D'ALERTE */
+.modalBody {
+  padding: 28px 30px;
+}
+
 .alertBox {
   background: #FFF5F5;
   border: 1px solid #FEB2B2;
   border-radius: 12px;
-  padding: 15px;
+  padding: 14px;
   display: flex;
   gap: 12px;
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
-.alertIcon { color: #E53E3E; font-size: 1.5rem; flex-shrink: 0; }
-.alertBox p { color: #9B2C2C; font-size: 0.9rem; margin: 0; line-height: 1.4; }
+.alertIcon {
+  color: #E53E3E;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
 
-/* ALIGNEMENT DES CHECKBOXES */
-.legalList { display: flex; flex-direction: column; gap: 20px; }
+.alertBox p {
+  color: #9B2C2C;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.legalList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
 .checkItem {
   display: flex;
-  align-items: flex-start; /* Aligne la case en haut du texte */
+  align-items: flex-start;
   gap: 12px;
   cursor: pointer;
 }
@@ -203,18 +334,22 @@ input:focus, textarea:focus { outline: none; border-color: var(--growz-primary);
 .checkItem input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  margin-top: 3px;
+  min-width: 20px;
+  margin-top: 2px;
   accent-color: var(--growz-primary);
-  flex-shrink: 0; /* Empêche la case de s'écraser */
+  cursor: pointer;
 }
 
-.checkText { color: #4A5568; font-size: 0.95rem; line-height: 1.5; }
+.checkText {
+  color: #4A5568;
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
 
-/* FOOTER & BOUTONS */
 .modalFooter {
-  padding: 0 30px 30px;
+  padding: 0 30px 28px;
   display: flex;
-  gap: 15px;
+  gap: 12px;
 }
 
 .btnBack {
@@ -227,6 +362,11 @@ input:focus, textarea:focus { outline: none; border-color: var(--growz-primary);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.btnBack:hover {
+  background: #f8f9fa;
 }
 
 .btnFinalSubmit {
@@ -234,11 +374,12 @@ input:focus, textarea:focus { outline: none; border-color: var(--growz-primary);
   padding: 12px;
   border-radius: 12px;
   border: none;
-  background: var(--growz-gold);
-  color: var(--growz-primary); /* Meilleur contraste */
+  background: var(--growz-gold, #FFC107);
+  color: var(--growz-primary);
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.95rem;
 }
 
 .btnFinalSubmit:disabled {
@@ -249,5 +390,28 @@ input:focus, textarea:focus { outline: none; border-color: var(--growz-primary);
 
 .btnFinalSubmit:hover:not(:disabled) {
   background: #FFB300;
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .form {
+    padding: 1.5rem;
+  }
+
+  .financeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .locationGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .photoUpload {
+    min-height: 180px;
+  }
+
+  .cropContainer {
+    height: 280px;
+  }
 }
