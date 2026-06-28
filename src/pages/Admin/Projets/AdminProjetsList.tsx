@@ -15,9 +15,9 @@ import { api } from "../../../service/Api";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import styles from "./AdminProjetsList.module.css";
 
-// Interface étendue pour inclure les champs de recherche du DTO
 interface ProjetAdmin {
   id: number;
+  slug: string; // ← ajouté pour navigation edit
   libelle: string;
   statutProjet: string;
   porteurPrenom?: string;
@@ -25,9 +25,9 @@ interface ProjetAdmin {
   poster?: string;
   montantCollecte: number;
   objectifFinancement: number;
-  secteurNom?: string; // Ajouté pour la recherche
-  localiteNom?: string; // Ajouté pour la recherche
-  createdAt?: string; // Ajouté pour la recherche
+  secteurNom?: string;
+  localiteNom?: string;
+  createdAt?: string;
 }
 
 export default function AdminProjetsList() {
@@ -35,9 +35,8 @@ export default function AdminProjetsList() {
   const { format } = useCurrency();
   const queryClient = useQueryClient();
 
-  // --- ÉTATS DE FILTRAGE ---
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("TOUS"); // TOUS, SOUMIS, VALIDE, REJETE
+  const [activeTab, setActiveTab] = useState("TOUS");
 
   const { data: projetsData, isLoading } = useQuery({
     queryKey: ["admin-projets"],
@@ -46,24 +45,16 @@ export default function AdminProjetsList() {
 
   const projets = projetsData?.data || [];
 
-  // --- LOGIQUE DE FILTRAGE "INTELLIGENTE" ---
-  // --- LOGIQUE DE FILTRAGE "SÉCURISÉE" ---
   const filteredProjets = useMemo(() => {
     return projets.filter((p) => {
-      // 1. Filtre par Onglet (Statut)
       const matchesTab = activeTab === "TOUS" || p.statutProjet === activeTab;
-
-      // 2. Filtre par Recherche (Multi-critères avec protection contre les valeurs nulles)
       const search = searchTerm.toLowerCase();
-
-      // On transforme chaque champ en string vide s'il est null/undefined avant le toLowerCase()
       const libelle = (p.libelle || "").toLowerCase();
       const porteurNom = (p.porteurNom || "").toLowerCase();
       const porteurPrenom = (p.porteurPrenom || "").toLowerCase();
       const secteurNom = (p.secteurNom || "").toLowerCase();
       const localiteNom = (p.localiteNom || "").toLowerCase();
       const dateCreation = p.createdAt || "";
-
       const matchesSearch =
         libelle.includes(search) ||
         porteurNom.includes(search) ||
@@ -71,12 +62,10 @@ export default function AdminProjetsList() {
         secteurNom.includes(search) ||
         localiteNom.includes(search) ||
         dateCreation.includes(search);
-
       return matchesTab && matchesSearch;
     });
   }, [projets, searchTerm, activeTab]);
 
-  // --- MUTATIONS (Gardées de ton code) ---
   const validerMutation = useMutation({
     mutationFn: (id: number) => api.patch(`/api/admin/projets/${id}/valider`),
     onSuccess: () => {
@@ -112,12 +101,10 @@ export default function AdminProjetsList() {
 
   return (
     <div className={styles.container}>
-      {/* HEADER AVEC BARRE DE RECHERCHE */}
       <div className={styles.headerManagement}>
         <h1 className={styles.title}>
           {t("admin.dashboard.see_projects")} ({filteredProjets.length})
         </h1>
-
         <div className={styles.searchContainer}>
           <FiSearch className={styles.searchIcon} />
           <input
@@ -130,7 +117,6 @@ export default function AdminProjetsList() {
         </div>
       </div>
 
-      {/* SYSTÈME D'ONGLETS */}
       <div className={styles.tabsWrapper}>
         {["TOUS", "SOUMIS", "VALIDE", "REJETE"].map((tab) => (
           <button
@@ -149,7 +135,6 @@ export default function AdminProjetsList() {
         ))}
       </div>
 
-      {/* GRILLE DE CARTES */}
       <div className={styles.grid}>
         {filteredProjets.map((p) => {
           const progression =
@@ -181,9 +166,8 @@ export default function AdminProjetsList() {
               <div className={styles.content}>
                 <h3 className={styles.projectTitle}>{p.libelle}</h3>
                 <p className={styles.porteur}>
-                  {t("admin.projects.by")} {p.porteurNom} 
+                  {t("admin.projects.by")} {p.porteurNom}
                 </p>
-                {/* Petit rappel de la localité pour l'admin */}
                 <p className={styles.location}>
                   📍 {p.localiteNom || "Non spécifié"}
                 </p>
@@ -210,12 +194,15 @@ export default function AdminProjetsList() {
                   >
                     <FiEye />
                   </Link>
+
+                  {/* ← CORRIGÉ : utilise le slug au lieu de l'ID */}
                   <Link
-                    to={`/admin/projets/edit/${p.id}`}
+                    to={`/admin/projets/edit/${p.slug || p.id}`}
                     className={styles.btnEdit}
                   >
                     <FiEdit />
                   </Link>
+
                   <button
                     onClick={() => handleSupprimer(p.id, p.libelle)}
                     className={styles.btnDelete}
