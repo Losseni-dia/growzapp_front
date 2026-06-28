@@ -1,100 +1,320 @@
 /* NewsDetail.module.css */
 
-.pageWrapper { 
-    background-color: #f8faf8; 
-    min-height: 100vh; 
-    padding: 40px 0; 
+.pageWrapper {
+  background-color: #f8faf8;
+  min-height: 100vh;
+  padding: 40px 0;
 }
 
-.container { 
-    max-width: 800px; 
-    margin: 0 auto; 
-    padding: 0 20px;
-    box-sizing: border-box;
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
+/* ── BOUTON RETOUR ───────────────────────────────────────── */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--growz-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.backBtn:hover { background: #155c30; }
+
+/* ── CARTE ARTICLE ───────────────────────────────────────── */
 .articleCard {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    overflow: hidden; /* Empêche tout ce qui dépasse d'être visible */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
-.header { padding: 40px; }
+/* ── HEADER ──────────────────────────────────────────────── */
+.header { padding: 40px 40px 24px; }
 
-.categoryBadge { 
-    background: var(--growz-gold); 
-    color: var(--growz-primary); 
-    padding: 5px 12px; 
-    border-radius: 6px; 
-    font-weight: 800; 
-    font-size: 0.8rem; 
+.categoryBadge {
+  display: inline-block;
+  background: var(--growz-gold, #FFC107);
+  color: var(--growz-primary, #1A6B3C);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.mainTitle { 
-    font-size: 2.5rem; 
-    color: var(--growz-primary); 
-    margin: 20px 0; 
-    font-weight: 800; 
+.mainTitle {
+  font-size: 2.2rem;
+  color: var(--growz-primary, #1A6B3C);
+  margin: 20px 0 16px;
+  font-weight: 800;
+  line-height: 1.25;
 }
 
-.imageContainer { width: 100%; height: 400px; }
-.fullImage { width: 100%; height: 100%; object-fit: cover; }
-
-/* --- PROTECTION ANTI-DÉBORDEMENT --- */
-.contentSection { 
-    padding: 40px; 
-    width: 100%;
-    max-width: 100%; /* Limite stricte */
-    box-sizing: border-box;
-    overflow-x: hidden; /* Bloque le scroll horizontal interne */
+.metaData {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #888;
+  font-size: 0.88rem;
 }
 
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── IMAGE ───────────────────────────────────────────────── */
+.imageContainer {
+  width: 100%;
+  height: 420px;
+  overflow: hidden;
+}
+
+.fullImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── CONTENU RICHE ───────────────────────────────────────── */
+.contentSection {
+  padding: 40px;
+}
+
+/*
+  Styles du contenu généré par Quill (dangerouslySetInnerHTML)
+  On ne force PAS word-break — ça coupe les mots
+  On utilise overflow-wrap: break-word uniquement pour les URLs très longues
+*/
 .richContent {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-wrap: break-word !important; /* Force la coupure des mots longs */
-    word-wrap: break-word !important;
-    word-break: break-word !important;
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: #2d2d2d;
+  overflow-wrap: break-word;
 }
 
-/* On force tous les éléments enfants à ne jamais dépasser 100% */
-.richContent * {
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    overflow-wrap: break-word !important;
-}
-
+/* Paragraphes */
 .richContent p {
-    margin-bottom: 20px;
-    line-height: 1.8;
-    font-size: 1.2rem;
-    color: #333;
-    /* Empêche le texte de rester sur une seule ligne */
-    white-space: normal !important; 
+  margin: 0 0 1.4rem 0;
+  line-height: 1.85;
+  font-size: 1.1rem;
+  color: #333;
 }
 
-.richContent ul {
-    padding-left: 25px;
-    margin-bottom: 20px;
-    list-style-type: disc !important;
+/* Titres Quill (h1, h2, h3) */
+.richContent h1 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--growz-primary, #1A6B3C);
+  margin: 2rem 0 1rem;
+  line-height: 1.2;
 }
+
+.richContent h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--growz-primary, #1A6B3C);
+  margin: 1.8rem 0 0.8rem;
+  line-height: 1.25;
+}
+
+.richContent h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 1.5rem 0 0.6rem;
+}
+
+/* Gras et italique */
+.richContent strong { font-weight: 700; color: #111; }
+.richContent em     { font-style: italic; }
+.richContent u      { text-decoration: underline; }
+.richContent s      { text-decoration: line-through; color: #888; }
+
+/* Listes */
+.richContent ul,
+.richContent ol {
+  padding-left: 2rem;
+  margin: 0 0 1.4rem 0;
+}
+
+.richContent ul { list-style-type: disc; }
+.richContent ol { list-style-type: decimal; }
 
 .richContent li {
-    margin-bottom: 10px;
-    display: list-item !important;
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+  display: list-item;
 }
 
-/* --- BOUTONS ET CHARGEMENT --- */
-.backBtn {
-    background: var(--growz-primary); color: white; border: none;
-    padding: 10px 20px; border-radius: 10px;
-    cursor: pointer; margin-bottom: 20px; font-weight: 600;
+/* Liens */
+.richContent a {
+  color: var(--growz-primary, #1A6B3C);
+  text-decoration: underline;
+  font-weight: 600;
 }
 
-.loaderContainer { display: flex; justify-content: center; padding: 100px; }
-.spinner { animation: spin 1s linear infinite; color: var(--growz-primary); }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.richContent a:hover { color: var(--growz-gold, #FFC107); }
+
+/* Blockquote */
+.richContent blockquote {
+  border-left: 4px solid var(--growz-primary, #1A6B3C);
+  background: #f8fdf8;
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-radius: 0 12px 12px 0;
+  color: #444;
+  font-style: italic;
+}
+
+/* Code inline */
+.richContent code {
+  background: #f4f4f4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #c62828;
+}
+
+/* Images dans le contenu */
+.richContent img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1rem 0;
+  display: block;
+}
+
+/* Séparateur */
+.richContent hr {
+  border: none;
+  border-top: 2px solid #f0f0f0;
+  margin: 2rem 0;
+}
+
+/* ── LOADER & ERREUR ─────────────────────────────────────── */
+.loaderContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 100px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--growz-primary, #1A6B3C);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 5rem;
+  color: var(--growz-primary, #1A6B3C);
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .header          { padding: 24px; }
+  .contentSection  { padding: 24px; }
+  .mainTitle       { font-size: 1.6rem; }
+  .imageContainer  { height: 240px; }
+  .richContent     { font-size: 1rem; }
+  .richContent h1  { font-size: 1.5rem; }
+  .richContent h2  { font-size: 1.2rem; }
+}
+
+/* ── IMAGE OVERLAY ───────────────────────────────────────── */
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.15));
+}
+
+.imageContainer {
+  position: relative;
+}
+
+/* ── META ────────────────────────────────────────────────── */
+.metaDot {
+  color: #ccc;
+  font-size: 1rem;
+}
+
+/* ── FOOTER ARTICLE ──────────────────────────────────────── */
+.articleFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+  border-top: 2px solid #f0f0f0;
+  margin-top: 0;
+}
+
+.backBtnFooter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 2px solid var(--growz-primary, #1A6B3C);
+  color: var(--growz-primary, #1A6B3C);
+  padding: 8px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.backBtnFooter:hover {
+  background: var(--growz-primary, #1A6B3C);
+  color: white;
+}
+
+.footerCategory {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── ERROR ───────────────────────────────────────────────── */
+.errorContainer {
+  text-align: center;
+  padding: 5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--growz-primary, #1A6B3C);
+}
+
+.errorContainer h2 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .articleFooter { padding: 20px 24px; flex-direction: column; gap: 12px; }
+}
