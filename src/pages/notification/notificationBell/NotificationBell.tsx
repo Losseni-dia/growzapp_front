@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"; // AJOUT : pour la redirection
 import { notificationService } from "../../../service/notificationService";
 import { Notification } from "../../../types/notification";
 import styles from "./NotificationBell.module.css";
+import { api } from "../../../service/Api";
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -30,7 +31,7 @@ const NotificationBell = () => {
 
   useEffect(() => {
     loadNotifications();
-    const interval = setInterval(loadNotifications, 60000);
+    const interval = setInterval(loadNotifications, 15000);
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -48,7 +49,6 @@ const NotificationBell = () => {
 
   // FONCTION DE CLIC SUR LA NOTIFICATION
   const handleNotifClick = async (n: Notification) => {
-    // 1. Marquer comme lue si ce n'est pas déjà fait
     if (!n.read) {
       try {
         await notificationService.markAsRead(n.id);
@@ -63,11 +63,21 @@ const NotificationBell = () => {
       }
     }
 
-    // 2. Rediriger si un projetId est présent (à adapter selon le nom de ton champ backend)
-    // On suppose ici que ton objet Notification a un champ 'projetId' ou 'targetId'
-    if (n.projetId) {
-      navigate(`/projet/${n.projetId}`);
-      setIsOpen(false); // Fermer le menu après redirection
+    // Utiliser projetSlug en priorité, sinon fallback sur /projets
+    if (n.projetSlug) {
+      navigate(`/projet/${n.projetSlug}`);
+      setIsOpen(false);
+    } else if (n.projetId) {
+      // Ancien comportement — récupérer le slug via l'API
+      try {
+        const res = await api.get<{ data: { slug: string } }>(
+          `/api/projets/${n.projetId}`,
+        );
+        navigate(`/projet/${res.data.slug}`);
+      } catch {
+        navigate("/projets");
+      }
+      setIsOpen(false);
     }
   };
 
