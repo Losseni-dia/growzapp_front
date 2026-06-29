@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
   FiDollarSign,
-  FiSmartphone,
   FiCreditCard,
   FiCheckCircle,
   FiLock,
@@ -13,6 +12,11 @@ import {
   FiShield,
   FiInfo,
   FiX,
+  FiArrowRight,
+  FiArrowLeft,
+  FiSmartphone,
+  FiMinus,
+  FiPlus,
 } from "react-icons/fi";
 import styles from "./InvestForm.module.css";
 import { api } from "../../../service/Api";
@@ -33,38 +37,37 @@ interface InvestFormProps {
   onSuccess?: () => void;
 }
 
+type Step = "parts" | "payment" | "confirm";
+type Method = "wallet" | "mobile" | "card";
+
 export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
   const { user } = useAuth();
   const { t } = useTranslation();
   const { format } = useCurrency();
 
-  // --- ÉTATS FORMULAIRE ---
+  const [step, setStep] = useState<Step>("parts");
   const [parts, setParts] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<
-    "wallet" | "mobile" | "card"
-  >("wallet");
+  const [selectedMethod, setSelectedMethod] = useState<Method>("wallet");
   const [soldeDisponible, setSoldeDisponible] = useState(0);
   const [loadingSolde, setLoadingSolde] = useState(true);
-
-  // --- ÉTATS MODAL CONSENTEMENT ---
-  const [showModal, setShowModal] = useState(false);
   const [consentRisks, setConsentRisks] = useState(false);
   const [consentInsurance, setConsentInsurance] = useState(false);
+  const [mobilePhone, setMobilePhone] = useState("");
+  const [mobileOperator, setMobileOperator] = useState<
+    "orange" | "mtn" | "wave"
+  >("orange");
 
-  // --- CONTRAINTE KYC ---
   const isKycVerified = user?.kycStatus === "VALIDE";
-  const maxParts = projet.partsDisponible - projet.partsPrises;
+  const maxParts = Math.max(0, projet.partsDisponible - projet.partsPrises);
   const total = parts * projet.prixUnePart;
+  const currency = projet.currencyCode || "XOF";
 
-  // Récupération du solde wallet
   useEffect(() => {
     if (!user || !isKycVerified) {
       setLoadingSolde(false);
       return;
     }
-
-    setLoadingSolde(true);
     api
       .get<any>(`${BACKEND_URL}/api/wallets/solde`)
       .then((data) => {
@@ -74,301 +77,408 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
             : (data ?? 0);
         setSoldeDisponible(Number(solde));
       })
-      .catch(() => {
-        toast.error(t("invest_form.messages.error_balance"));
-        setSoldeDisponible(0);
-      })
+      .catch(() => setSoldeDisponible(0))
       .finally(() => setLoadingSolde(false));
-  }, [user, t, isKycVerified]);
+  }, [user, isKycVerified]);
 
-  /**
-   * ÉTAPE 1 : Déclenchement du processus
-   * Vérifie les pré-requis avant d'ouvrir le modal légal
-   */
-  const handleInitiatePayment = () => {
+  const handleNextToPayment = () => {
     if (!isKycVerified) {
-      toast.error(
-        t("kyc.error_investment_blocked") || "Vérification KYC requise",
-      );
+      toast.error("Vérification KYC requise");
       return;
     }
-
     if (parts < 1 || parts > maxParts) {
-      toast.error(t("invest_form.messages.invalid_shares"));
+      toast.error("Nombre de parts invalide");
       return;
     }
-
-    if (selectedMethod === "wallet" && total > soldeDisponible) {
-      toast.error(t("invest_form.messages.insufficient_balance"));
-      return;
-    }
-
-    // Si tout est OK, on demande le consentement légal
-    setShowModal(true);
+    setStep("payment");
   };
 
-  /**
-   * ÉTAPE 2 : Validation finale avec signature électronique (Timestamps)
-   * Appelée uniquement depuis le Modal
-   */
-  const handleFinalConfirm = async () => {
-    if (!consentRisks || !consentInsurance) {
-      toast.error("Veuillez accepter les conditions de risque et d'assurance.");
+  const handleNextToConfirm = () => {
+    if (selectedMethod === "wallet" && total > soldeDisponible) {
+      toast.error("Solde insuffisant");
       return;
     }
+    if (selectedMethod === "mobile" && !mobilePhone.trim()) {
+      toast.error("Veuillez saisir votre numéro Mobile Money");
+      return;
+    }
+    setStep("confirm");
+  };
 
+  const handleFinalConfirm = async () => {
+    if (!consentRisks || !consentInsurance) {
+      toast.error("Veuillez accepter les deux conditions.");
+      return;
+    }
     setLoading(true);
-    setShowModal(false); // On ferme le modal pour montrer le loading sur le bouton principal
-
-    // Génération de la preuve de consentement
     const consentDate = new Date().toISOString();
-
     const payload = {
       nombrePartsPris: parts,
-      riskWarningAcceptedAt: consentDate, // Piste d'audit
-      insuranceTermsAcceptedAt: consentDate, // Piste d'audit
+      riskWarningAcceptedAt: consentDate,
+      insuranceTermsAcceptedAt: consentDate,
       method: selectedMethod,
     };
 
     try {
-      // 1. PAIEMENT VIA WALLET INTERNE
       if (selectedMethod === "wallet") {
         await api.post(
           `${BACKEND_URL}/api/projets/${projet.id}/investir`,
           payload,
         );
-        toast.success(t("invest_form.messages.success_wallet"));
+        toast.success("Investissement validé ! Contrat envoyé par email.");
         onSuccess?.();
-      }
-
-      // 2. PAIEMENT VIA MOBILE MONEY (Dev en cours)
-      else if (selectedMethod === "mobile") {
-        toast.error(t("invest_form.messages.mobile_dev"));
-      }
-
-      // 3. PAIEMENT VIA CARTE (STRIPE)
-      else if (selectedMethod === "card") {
-        toast.loading(t("invest_form.messages.stripe_redirect"));
+      } else if (selectedMethod === "mobile") {
+        toast.loading("Redirection vers PayDunya...");
+        const response = await api.post<{ redirectUrl: string }>(
+          `${BACKEND_URL}/api/projets/${projet.id}/investir-mobile`,
+          {
+            nombreParts: parts,
+            phoneNumber: mobilePhone,
+            operator: mobileOperator,
+          },
+        );
+        if (response.redirectUrl) window.location.href = response.redirectUrl;
+        else toast.error("Erreur de redirection Mobile Money");
+      } else if (selectedMethod === "card") {
+        toast.loading("Redirection vers Stripe...");
         const response = await api.post<{ redirectUrl: string }>(
           `${BACKEND_URL}/api/projets/${projet.id}/investir-carte`,
           { ...payload, nombreParts: parts },
         );
-
-        if (response.redirectUrl) {
-          window.location.href = response.redirectUrl;
-        } else {
-          toast.error(t("invest_form.messages.error_url"));
-        }
+        if (response.redirectUrl) window.location.href = response.redirectUrl;
+        else toast.error("Erreur de redirection Stripe");
       }
     } catch (err: any) {
-      toast.error(err.message || t("invest_form.errors.generic"));
+      toast.error(err.message || "Une erreur est survenue");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div
-      className={`${styles.card} ${!isKycVerified ? styles.lockedCard : ""}`}
-    >
-      <h3 className={styles.title}>
-        {t("invest_form.invest_in", { name: projet.libelle })}
-      </h3>
+  // ── BLOC KYC ──────────────────────────────────────────────────────────────
+  if (!isKycVerified) {
+    return (
+      <div className={styles.kycBlock}>
+        <FiAlertTriangle size={32} className={styles.kycIcon} />
+        <div>
+          <strong>KYC requis pour investir</strong>
+          <p>{t("kyc.pending_action_hint")}</p>
+          <Link to="/profile/kyc" className={styles.kycLink}>
+            Compléter mon KYC →
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
-      {/* --- BANNIÈRE KYC --- */}
-      {!isKycVerified && (
-        <div className={styles.kycWarning}>
-          <FiAlertTriangle className={styles.warningIcon} />
-          <div className={styles.warningText}>
-            <strong>
-              {t("kyc.investment_blocked_title") || "Action requise"}
-            </strong>
-            <p>{t("kyc.pending_action_hint")}</p>
-            <Link to="/profile/kyc" className={styles.kycLink}>
-              {t("kyc.btn_submit")}
-            </Link>
+  if (maxParts === 0) {
+    return (
+      <div className={styles.soldOut}>
+        <FiCheckCircle size={28} /> Toutes les parts ont été vendues
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.wrapper}>
+      {/* ── STEPPER ───────────────────────────────────────────── */}
+      <div className={styles.stepper}>
+        {(["parts", "payment", "confirm"] as Step[]).map((s, i) => (
+          <div
+            key={s}
+            className={`${styles.stepItem} ${step === s ? styles.stepActive : ""} ${
+              (step === "payment" && i === 0) || (step === "confirm" && i < 2)
+                ? styles.stepDone
+                : ""
+            }`}
+          >
+            <div className={styles.stepDot}>{i + 1}</div>
+            <span>
+              {s === "parts"
+                ? "Parts"
+                : s === "payment"
+                  ? "Paiement"
+                  : "Confirmer"}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* ══════════ ÉTAPE 1 — PARTS ══════════════════════════════ */}
+      {step === "parts" && (
+        <div className={styles.stepContent}>
+          <h3 className={styles.stepTitle}>
+            Combien de parts souhaitez-vous ?
+          </h3>
+
+          <div className={styles.priceTag}>
+            <span>Prix unitaire</span>
+            <strong>{format(projet.prixUnePart, currency)}</strong>
+          </div>
+
+          <div className={styles.partsSelector}>
+            <button
+              type="button"
+              className={styles.partsBtn}
+              onClick={() => setParts((p) => Math.max(1, p - 1))}
+              disabled={parts <= 1}
+            >
+              <FiMinus />
+            </button>
+            <input
+              type="number"
+              min={1}
+              max={maxParts}
+              value={parts}
+              onChange={(e) =>
+                setParts(
+                  Math.max(
+                    1,
+                    Math.min(maxParts, parseInt(e.target.value) || 1),
+                  ),
+                )
+              }
+              className={styles.partsInput}
+            />
+            <button
+              type="button"
+              className={styles.partsBtn}
+              onClick={() => setParts((p) => Math.min(maxParts, p + 1))}
+              disabled={parts >= maxParts}
+            >
+              <FiPlus />
+            </button>
+          </div>
+
+          <p className={styles.partsAvail}>{maxParts} parts disponibles</p>
+
+          <div className={styles.totalBox}>
+            <FiLock />
+            <div>
+              <span>Montant total</span>
+              <strong>{format(total, currency)}</strong>
+            </div>
+          </div>
+
+          <button className={styles.btnNext} onClick={handleNextToPayment}>
+            Choisir le moyen de paiement <FiArrowRight />
+          </button>
+        </div>
+      )}
+
+      {/* ══════════ ÉTAPE 2 — PAIEMENT ═══════════════════════════ */}
+      {step === "payment" && (
+        <div className={styles.stepContent}>
+          <h3 className={styles.stepTitle}>
+            Choisissez votre moyen de paiement
+          </h3>
+
+          <div className={styles.recap}>
+            <span>
+              {parts} part{parts > 1 ? "s" : ""} ×{" "}
+              {format(projet.prixUnePart, currency)}
+            </span>
+            <strong>{format(total, currency)}</strong>
+          </div>
+
+          <div className={styles.methods}>
+            {/* WALLET */}
+            <button
+              type="button"
+              onClick={() => setSelectedMethod("wallet")}
+              className={`${styles.method} ${selectedMethod === "wallet" ? styles.methodActive : ""}`}
+            >
+              <div
+                className={styles.methodIcon}
+                style={{ background: "#e8f5e9" }}
+              >
+                <FiDollarSign color="#1B5E20" size={22} />
+              </div>
+              <div className={styles.methodInfo}>
+                <strong>Portefeuille GrowzApp</strong>
+                <span>
+                  {loadingSolde
+                    ? "Chargement..."
+                    : `${format(soldeDisponible, "XOF")} disponible`}
+                  {!loadingSolde && total > soldeDisponible && (
+                    <em className={styles.insufficient}>
+                      {" "}
+                      — Solde insuffisant
+                    </em>
+                  )}
+                </span>
+              </div>
+              {selectedMethod === "wallet" && (
+                <FiCheckCircle className={styles.methodCheck} />
+              )}
+            </button>
+
+            {/* MOBILE MONEY */}
+            <button
+              type="button"
+              onClick={() => setSelectedMethod("mobile")}
+              className={`${styles.method} ${selectedMethod === "mobile" ? styles.methodActive : ""}`}
+            >
+              <div
+                className={styles.methodIcon}
+                style={{ background: "#fff3e0" }}
+              >
+                <FiSmartphone color="#e65100" size={22} />
+              </div>
+              <div className={styles.methodInfo}>
+                <strong>Mobile Money</strong>
+                <span>Orange Money · MTN MoMo · Wave</span>
+              </div>
+              {selectedMethod === "mobile" && (
+                <FiCheckCircle className={styles.methodCheck} />
+              )}
+            </button>
+
+            {/* Mobile Money détails */}
+            {selectedMethod === "mobile" && (
+              <div className={styles.mobileDetails}>
+                <div className={styles.operatorRow}>
+                  {(
+                    [
+                      { key: "orange", label: "🟠 Orange Money" },
+                      { key: "mtn", label: "🟡 MTN MoMo" },
+                      { key: "wave", label: "🔵 Wave" },
+                    ] as const
+                  ).map((op) => (
+                    <button
+                      key={op.key}
+                      type="button"
+                      onClick={() => setMobileOperator(op.key)}
+                      className={`${styles.operatorBtn} ${mobileOperator === op.key ? styles.operatorActive : ""}`}
+                    >
+                      {op.label}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="tel"
+                  placeholder="Ex : +225 07 00 00 00 00"
+                  value={mobilePhone}
+                  onChange={(e) => setMobilePhone(e.target.value)}
+                  className={styles.phoneInput}
+                />
+              </div>
+            )}
+
+            {/* CARTE BANCAIRE */}
+            <button
+              type="button"
+              onClick={() => setSelectedMethod("card")}
+              className={`${styles.method} ${selectedMethod === "card" ? styles.methodActive : ""}`}
+            >
+              <div
+                className={styles.methodIcon}
+                style={{ background: "#e3f2fd" }}
+              >
+                <FiCreditCard color="#1565c0" size={22} />
+              </div>
+              <div className={styles.methodInfo}>
+                <strong>Carte bancaire</strong>
+                <span>Visa · Mastercard — via Stripe</span>
+              </div>
+              {selectedMethod === "card" && (
+                <FiCheckCircle className={styles.methodCheck} />
+              )}
+            </button>
+          </div>
+
+          <div className={styles.btnRow}>
+            <button className={styles.btnBack} onClick={() => setStep("parts")}>
+              <FiArrowLeft /> Retour
+            </button>
+            <button className={styles.btnNext} onClick={handleNextToConfirm}>
+              Continuer <FiArrowRight />
+            </button>
           </div>
         </div>
       )}
 
-      {/* --- FORMULAIRE --- */}
-      <div className={!isKycVerified ? styles.blurOverlay : ""}>
-        <div className={styles.info}>
-          <p>
-            {t("invest_form.price_per_share")} :{" "}
-            <strong>
-              {format(projet.prixUnePart, projet.currencyCode || "XOF")}
-            </strong>
-          </p>
-          <p>
-            {t("invest_form.available_shares")} : <strong>{maxParts}</strong>
-          </p>
-        </div>
+      {/* ══════════ ÉTAPE 3 — CONFIRMATION ═══════════════════════ */}
+      {step === "confirm" && (
+        <div className={styles.stepContent}>
+          <div className={styles.confirmHeader}>
+            <FiShield size={32} className={styles.shieldIcon} />
+            <h3>Confirmation de l'investissement</h3>
+          </div>
 
-        <div className={styles.inputGroup}>
-          <label>{t("invest_form.number_of_shares")}</label>
-          <input
-            type="number"
-            min="1"
-            max={maxParts}
-            value={parts}
-            onChange={(e) =>
-              setParts(
-                Math.max(1, Math.min(maxParts, parseInt(e.target.value) || 1)),
-              )
-            }
-            disabled={loading || !isKycVerified}
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.totalBox}>
-          <FiLock className={styles.lockIcon} />
-          <div>
-            <div className={styles.totalLabel}>
-              {t("invest_form.locked_amount")}
+          <div className={styles.confirmSummary}>
+            <div className={styles.confirmRow}>
+              <span>Projet</span>
+              <strong>{projet.libelle}</strong>
             </div>
-            <div className={styles.totalAmount}>
-              {format(total, projet.currencyCode || "XOF")}
+            <div className={styles.confirmRow}>
+              <span>Parts</span>
+              <strong>{parts}</strong>
+            </div>
+            <div className={styles.confirmRow}>
+              <span>Moyen de paiement</span>
+              <strong>
+                {selectedMethod === "wallet"
+                  ? "Portefeuille GrowzApp"
+                  : selectedMethod === "mobile"
+                    ? `Mobile Money (${mobileOperator === "orange" ? "Orange Money" : mobileOperator === "mtn" ? "MTN MoMo" : "Wave"})`
+                    : "Carte bancaire (Stripe)"}
+              </strong>
+            </div>
+            <div className={`${styles.confirmRow} ${styles.confirmTotal}`}>
+              <span>Total</span>
+              <strong>{format(total, currency)}</strong>
             </div>
           </div>
-        </div>
 
-        {/* --- MÉTHODES DE PAIEMENT --- */}
-        <div className={styles.paymentMethods}>
-          <button
-            type="button"
-            disabled={!isKycVerified}
-            onClick={() => setSelectedMethod("wallet")}
-            className={`${styles.method} ${selectedMethod === "wallet" ? styles.active : ""}`}
-          >
-            <FiDollarSign />
-            <div className={styles.methodText}>
-              <strong>{t("invest_form.methods.wallet_title")}</strong>
-              <small>
-                {loadingSolde
-                  ? "..."
-                  : t("invest_form.methods.wallet_available", {
-                      amount: format(soldeDisponible, "XOF"),
-                    })}
-              </small>
-            </div>
-            {selectedMethod === "wallet" && (
-              <FiCheckCircle className={styles.check} />
-            )}
-          </button>
+          <div className={styles.checklist}>
+            <label className={styles.checkItem}>
+              <input
+                type="checkbox"
+                checked={consentRisks}
+                onChange={(e) => setConsentRisks(e.target.checked)}
+              />
+              <span>
+                J'ai pris connaissance des{" "}
+                <strong>risques de perte en capital</strong> et d'illiquidité
+                liés à cet investissement.
+              </span>
+            </label>
+            <label className={styles.checkItem}>
+              <input
+                type="checkbox"
+                checked={consentInsurance}
+                onChange={(e) => setConsentInsurance(e.target.checked)}
+              />
+              <span>
+                Je reconnais bénéficier du <strong>monitoring GrowzApp</strong>{" "}
+                et de la garantie assurantielle partielle selon les CGV.
+              </span>
+            </label>
+          </div>
 
-          <button
-            type="button"
-            disabled={!isKycVerified}
-            onClick={() => setSelectedMethod("card")}
-            className={`${styles.method} ${selectedMethod === "card" ? styles.active : ""}`}
-          >
-            <FiCreditCard />
-            <div className={styles.methodText}>
-              <strong>{t("invest_form.methods.card_title")}</strong>
-              <small>{t("invest_form.methods.card_subtitle")}</small>
-            </div>
-            {selectedMethod === "card" && (
-              <FiCheckCircle className={styles.check} />
-            )}
-          </button>
-        </div>
+          <div className={styles.auditNote}>
+            <FiInfo size={16} />
+            <span>
+              Une signature électronique horodatée sera générée. Votre contrat
+              vous sera envoyé par email.
+            </span>
+          </div>
 
-        {/* BOUTON DÉCLENCHEUR MODAL */}
-        <button
-          onClick={handleInitiatePayment}
-          disabled={loading || maxParts <= 0 || !isKycVerified}
-          className={`${styles.submitBtn} ${!isKycVerified ? styles.btnDisabled : ""}`}
-        >
-          {loading
-            ? t("invest_form.buttons.processing")
-            : t(`invest_form.buttons.pay_${selectedMethod}`)}
-        </button>
-
-        <p className={styles.hint}>{t("invest_form.hint")}</p>
-      </div>
-
-      {/* ========================================== */}
-      {/* MODAL DE CONSENTEMENT ÉCLAIRÉ              */}
-      {/* ========================================== */}
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalCard}>
+          <div className={styles.btnRow}>
             <button
-              className={styles.closeBtn}
-              onClick={() => setShowModal(false)}
+              className={styles.btnBack}
+              onClick={() => setStep("payment")}
             >
-              <FiX />
+              <FiArrowLeft /> Retour
             </button>
-
-            <header className={styles.modalHeader}>
-              <FiShield className={styles.shieldIcon} />
-              <h2>Validation de l'investissement</h2>
-              <p>{projet.libelle}</p>
-            </header>
-
-            <div className={styles.modalBody}>
-              <div className={styles.summaryRow}>
-                <span>Montant à engager :</span>
-                <strong>{format(total, projet.currencyCode || "XOF")}</strong>
-              </div>
-
-              <div className={styles.legalChecklist}>
-                <div className={styles.checkItem}>
-                  <input
-                    type="checkbox"
-                    id="chkRisks"
-                    checked={consentRisks}
-                    onChange={(e) => setConsentRisks(e.target.checked)}
-                  />
-                  <label htmlFor="chkRisks">
-                    Je déclare avoir pris connaissance des{" "}
-                    <strong>risques de perte en capital</strong> et
-                    d'illiquidité liés à cet investissement.
-                  </label>
-                </div>
-
-                <div className={styles.checkItem}>
-                  <input
-                    type="checkbox"
-                    id="chkInsu"
-                    checked={consentInsurance}
-                    onChange={(e) => setConsentInsurance(e.target.checked)}
-                  />
-                  <label htmlFor="chkInsu">
-                    Je reconnais bénéficier du{" "}
-                    <strong>monitoring Growzapp</strong> et de la{" "}
-                    <strong>garantie assurantielle</strong> partielle telle que
-                    décrite dans les CGV.
-                  </label>
-                </div>
-              </div>
-
-              <div className={styles.auditNote}>
-                <FiInfo />
-                <span>
-                  En confirmant, une signature électronique horodatée sera liée
-                  à votre compte pour ce contrat.
-                </span>
-              </div>
-            </div>
-
-            <footer className={styles.modalFooter}>
-              <button
-                className={styles.btnBack}
-                onClick={() => setShowModal(false)}
-              >
-                Retour
-              </button>
-              <button
-                className={styles.btnConfirm}
-                disabled={!consentRisks || !consentInsurance}
-                onClick={handleFinalConfirm}
-              >
-                Confirmer l'investissement
-              </button>
-            </footer>
+            <button
+              className={styles.btnConfirm}
+              disabled={!consentRisks || !consentInsurance || loading}
+              onClick={handleFinalConfirm}
+            >
+              {loading ? "Traitement..." : "Confirmer l'investissement"}
+            </button>
           </div>
         </div>
       )}
