@@ -13,6 +13,7 @@ import {
   FiCheck,
   FiMapPin,
   FiTag,
+  FiClock,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { dataURLtoFile, getCroppedImg } from "../../../types/utils/CropImage";
@@ -70,6 +71,8 @@ export default function ProjectForm() {
 
   const [roi, setRoi] = useState<number>(0);
   const [roiDisplay, setRoiDisplay] = useState<string>("");
+
+  const [dureeMois, setDureeMois] = useState<number | null>(null); // null = durée indéterminée
 
   // Calculs automatiques
   const totalParts = prixPart > 0 ? Math.floor(objectif / prixPart) : 0;
@@ -149,6 +152,11 @@ export default function ProjectForm() {
     setRoi(raw === "" ? 0 : parseFloat(raw));
   };
 
+  const handleDureeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^0-9]/g, "");
+    setDureeMois(val === "" ? null : parseInt(val, 10));
+  };
+
   const handleValuationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digitsOnly = e.target.value.replace(/[^0-9]/g, "");
     setValuationDisplay(digitsOnly);
@@ -202,7 +210,7 @@ export default function ProjectForm() {
       valeurTotalePartsEnPourcent: partsEnPourcent,
       roiProjete: roi,
       valuation: valuation,
-      dureeMois: 36,
+      dureeMois: dureeMois ?? null, // null = durée indéterminée
       currencyCode: "XOF",
       statutProjet: "SOUMIS",
       certifiedAt: new Date().toISOString(),
@@ -412,6 +420,39 @@ export default function ProjectForm() {
             onChange={handleRoiChange}
             required
           />
+        </div>
+
+        {/* ── DURÉE DU PROJET ─────────────────────────────────────────── */}
+        <div className={styles.inputGroup}>
+          <label>
+            <FiClock /> Durée du projet (en mois)
+          </label>
+          <input
+            type="text"
+            inputMode="numeric"
+            placeholder="Ex : 24 — laisser vide si durée indéterminée"
+            value={dureeMois ?? ""}
+            onChange={handleDureeChange}
+          />
+          {dureeMois === null && (
+            <span className={styles.durationHint}>
+              ⏳ Durée indéterminée (renouvelable)
+            </span>
+          )}
+          {dureeMois !== null && dureeMois > 0 && (
+            <span className={styles.durationHint}>
+              📅 {dureeMois} mois
+              {dureeMois === 12
+                ? " (1 an)"
+                : dureeMois === 24
+                  ? " (2 ans)"
+                  : dureeMois === 36
+                    ? " (3 ans)"
+                    : dureeMois % 12 === 0
+                      ? ` (${dureeMois / 12} ans)`
+                      : ""}
+            </span>
+          )}
         </div>
 
         {/* ── RÉSULTATS CALCULÉS AUTO ──────────────────────────────────────── */}

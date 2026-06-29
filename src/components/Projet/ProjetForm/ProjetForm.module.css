@@ -415,3 +415,12 @@
     height: 280px;
   }
 }
+
+/* ── DURÉE HINT ──────────────────────────────────────────── */
+.durationHint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--growz-primary);
+  font-weight: 600;
+}
