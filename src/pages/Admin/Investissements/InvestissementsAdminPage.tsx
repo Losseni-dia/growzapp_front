@@ -1,20 +1,21 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { format } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
   FiCheckCircle,
   FiClock,
   FiMail,
-  FiPhone,
   FiSend,
   FiTrendingUp,
   FiUser,
+  FiX,
+  FiFilter,
 } from "react-icons/fi";
 import { api } from "../../../service/Api";
 import styles from "./InvestissementsAdminPage.module.css";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface InvestissementAdmin {
   id: number;
@@ -26,164 +27,346 @@ interface InvestissementAdmin {
   projetLibelle: string;
   nombrePartsPris: number;
   prixUnePart: number;
+  montantInvesti?: number;
   statutPartInvestissement: "EN_ATTENTE" | "VALIDE" | "ANNULE";
   numeroContrat?: string;
-  pourcentage: number;
-  lienVerification?: string;
+  pourcentage?: number;
 }
 
-interface MutationResponse {
-  numeroContrat: string;
-  lienVerification: string;
-}
+type Filtre = "TOUS" | "EN_ATTENTE" | "VALIDE" | "ANNULE";
 
 export default function InvestissementsAdminPage() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
-  const [investissements, setInvestissements] = useState<InvestissementAdmin[]>(
-    []
-  );
-  const [loading, setLoading] = useState(true);
+  const [filtre, setFiltre] = useState<Filtre>("EN_ATTENTE");
+  const [loadingId, setLoadingId] = useState<number | null>(null);
+  const [refusModal, setRefusModal] = useState<{
+    inv: InvestissementAdmin;
+  } | null>(null);
+  const [motifRefus, setMotifRefus] = useState("");
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
-  useEffect(() => {
-    api
-      .get<{ data: InvestissementAdmin[] }>("/api/admin/investissements")
-      .then((res) => setInvestissements(res.data || []))
-      .catch(() => toast.error(t("admin.withdrawals.toast.error")))
-      .finally(() => setLoading(false));
-  }, [t]);
-
-  const validerEtEnvoyer = useMutation<
-    MutationResponse,
-    Error,
-    InvestissementAdmin
+  const { data: investissements = [], isLoading } = useQuery<
+    InvestissementAdmin[]
   >({
-    mutationFn: async (inv) => {
-      return api.post<MutationResponse>(
-        `http://localhost:8080/api/admin/investissements/${inv.id}/valider-et-envoyer`
+    queryKey: ["admin-investissements"],
+    queryFn: async () => {
+      const res = await api.get<{ data: InvestissementAdmin[] }>(
+        "/api/admin/investissements",
       );
+      return res.data || [];
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-investissements"] });
-      toast.success(
-        t("admin.investments.sent", { number: data.numeroContrat }),
-        { duration: 6000 }
-      );
-    },
-    onError: (err) => {
-      toast.error(err.message || t("admin.withdrawals.toast.error"));
-    },
+    refetchInterval: 30000,
   });
 
-  if (loading)
-    return <div className={styles.loading}>{t("dashboard.loading")}</div>;
+  const enAttente = investissements.filter(
+    (i) => i.statutPartInvestissement === "EN_ATTENTE",
+  );
+  const valides = investissements.filter(
+    (i) => i.statutPartInvestissement === "VALIDE",
+  );
+  const annules = investissements.filter(
+    (i) => i.statutPartInvestissement === "ANNULE",
+  );
+
+  const filtered =
+    filtre === "TOUS"
+      ? investissements
+      : investissements.filter((i) => i.statutPartInvestissement === filtre);
+
+  // ── Valider ────────────────────────────────────────────────────────────────
+  const valider = async (inv: InvestissementAdmin) => {
+    setLoadingId(inv.id);
+    try {
+      const data = await api.post<{ numeroContrat: string }>(
+        `http://localhost:8080/api/admin/investissements/${inv.id}/valider-et-envoyer`,
+      );
+      toast.success(`✅ Contrat ${data.numeroContrat} envoyé`, {
+        duration: 6000,
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-investissements"] });
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de la validation");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  // ── Ouvrir modal refus ─────────────────────────────────────────────────────
+  const ouvrirRefusModal = (inv: InvestissementAdmin) => {
+    setMotifRefus("");
+    setRefusModal({ inv });
+  };
+
+  // ── Confirmer refus avec motif ─────────────────────────────────────────────
+  const confirmerRefus = async () => {
+    if (!refusModal) return;
+    if (!motifRefus.trim()) {
+      toast.error("Veuillez saisir le motif du refus");
+      return;
+    }
+    const inv = refusModal.inv;
+    setRefusModal(null);
+    setLoadingId(inv.id);
+    try {
+      await api.post(
+        `http://localhost:8080/api/admin/investissements/${inv.id}/annuler`,
+        { motif: motifRefus.trim() },
+      );
+      toast.success(
+        "Investissement refusé — fonds restitués et investisseur notifié",
+      );
+      queryClient.invalidateQueries({ queryKey: ["admin-investissements"] });
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors du refus");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
+  if (isLoading) return <div className={styles.loading}>Chargement...</div>;
 
   return (
     <div className={styles.container}>
+      {/* ── HEADER ────────────────────────────────────────────────── */}
       <div className={styles.header}>
-        <h1>
-          <FiTrendingUp size={40} /> {t("admin.investments.title")}
-        </h1>
-        <p>
-          {t("admin.investments.subtitle", { count: investissements.length })}
-        </p>
+        <div>
+          <h1>
+            <FiTrendingUp /> {t("admin.investments.title")}
+          </h1>
+          <p>{investissements.length} investissement(s) au total</p>
+        </div>
+        <div className={styles.headerStats}>
+          <div className={`${styles.stat} ${styles.statPending}`}>
+            <span className={styles.statCount}>{enAttente.length}</span>
+            <span className={styles.statLabel}>En attente</span>
+          </div>
+          <div className={`${styles.stat} ${styles.statValid}`}>
+            <span className={styles.statCount}>{valides.length}</span>
+            <span className={styles.statLabel}>Validés</span>
+          </div>
+          <div className={`${styles.stat} ${styles.statCancelled}`}>
+            <span className={styles.statCount}>{annules.length}</span>
+            <span className={styles.statLabel}>Annulés</span>
+          </div>
+        </div>
       </div>
 
-      <div className={styles.grid}>
-        {investissements.map((inv) => {
-          const montant = inv.nombrePartsPris * inv.prixUnePart;
-          return (
-            <div key={inv.id} className={styles.card}>
-              <div className={styles.statut}>
-                {inv.statutPartInvestissement === "EN_ATTENTE" && (
-                  <span className={styles.pending}>
-                    <FiClock /> {t("admin.investments.status.pending")}
-                  </span>
-                )}
-                {inv.statutPartInvestissement === "VALIDE" && (
-                  <span className={styles.valide}>
-                    <FiCheckCircle /> {t("admin.investments.status.validated")}
-                  </span>
-                )}
-                {inv.statutPartInvestissement === "ANNULE" && (
-                  <span className={styles.annule}>
-                    {t("admin.investments.status.cancelled")}
-                  </span>
-                )}
-              </div>
+      {/* ── FILTRES ───────────────────────────────────────────────── */}
+      <div className={styles.filtres}>
+        <FiFilter size={16} />
+        {(["EN_ATTENTE", "TOUS", "VALIDE", "ANNULE"] as Filtre[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFiltre(f)}
+            className={`${styles.filtreBtn} ${filtre === f ? styles.filtreActif : ""}`}
+          >
+            {f === "EN_ATTENTE"
+              ? `⏳ En attente (${enAttente.length})`
+              : f === "VALIDE"
+                ? `✅ Validés (${valides.length})`
+                : f === "ANNULE"
+                  ? `❌ Annulés (${annules.length})`
+                  : `Tous (${investissements.length})`}
+          </button>
+        ))}
+      </div>
 
-              <div className={styles.investisseur}>
-                <div className={styles.avatar}>
-                  <FiUser size={40} />
-                </div>
-                <div>
-                  <h3>
-                    {inv.investisseurPrenom || ""} {inv.investisseurNom}
-                  </h3>
-                  {inv.investisseurEmail && (
-                    <p>
-                      <FiMail /> {inv.investisseurEmail}
-                    </p>
+      {/* ── LISTE ─────────────────────────────────────────────────── */}
+      {filtered.length === 0 ? (
+        <div className={styles.empty}>
+          <FiClock size={40} />
+          <p>
+            Aucun investissement {filtre === "EN_ATTENTE" ? "en attente" : ""}
+          </p>
+        </div>
+      ) : (
+        <div className={styles.grid}>
+          {filtered.map((inv) => {
+            const montant =
+              inv.montantInvesti ?? inv.nombrePartsPris * inv.prixUnePart;
+            const isProcessing = loadingId === inv.id;
+
+            return (
+              <div
+                key={inv.id}
+                className={`${styles.card} ${
+                  inv.statutPartInvestissement === "EN_ATTENTE"
+                    ? styles.cardPending
+                    : inv.statutPartInvestissement === "VALIDE"
+                      ? styles.cardValid
+                      : styles.cardCancelled
+                }`}
+              >
+                <div className={styles.statut}>
+                  {inv.statutPartInvestissement === "EN_ATTENTE" && (
+                    <span className={styles.badgePending}>
+                      <FiClock /> En attente
+                    </span>
                   )}
-                  {inv.investisseurTelephone && (
-                    <p>
-                      <FiPhone /> {inv.investisseurTelephone}
-                    </p>
+                  {inv.statutPartInvestissement === "VALIDE" && (
+                    <span className={styles.badgeValid}>
+                      <FiCheckCircle /> Validé
+                    </span>
                   )}
+                  {inv.statutPartInvestissement === "ANNULE" && (
+                    <span className={styles.badgeCancelled}>
+                      <FiX /> Annulé
+                    </span>
+                  )}
+                  <span className={styles.invId}>#{inv.id}</span>
                 </div>
-              </div>
 
-              <div className={styles.projet}>
-                <h4>{inv.projetLibelle}</h4>
-                <p>
-                  {format(new Date(inv.date), "dd MMM yyyy", {
-                    locale: currentLocale,
-                  })}
-                </p>
-              </div>
-
-              <div className={styles.montant}>
-                <div>
-                  <strong>{inv.nombrePartsPris}</strong> parts
-                </div>
-                <div className={styles.prixTotal}>
-                  {montant.toLocaleString(i18n.language)} FCFA
-                </div>
-              </div>
-
-              <div className={styles.actions}>
-                {inv.statutPartInvestissement === "EN_ATTENTE" && (
-                  <button
-                    onClick={() => validerEtEnvoyer.mutate(inv)}
-                    disabled={validerEtEnvoyer.isPending}
-                    className={styles.btnValider}
-                  >
-                    {validerEtEnvoyer.isPending ? (
-                      t("dashboard.loading")
-                    ) : (
-                      <>
-                        {t("admin.investments.btn_validate")} <FiSend />
-                      </>
+                <div className={styles.investisseur}>
+                  <div className={styles.avatar}>
+                    <FiUser size={24} />
+                  </div>
+                  <div>
+                    <h3>
+                      {inv.investisseurPrenom} {inv.investisseurNom}
+                    </h3>
+                    {inv.investisseurEmail && (
+                      <p>
+                        <FiMail size={13} /> {inv.investisseurEmail}
+                      </p>
                     )}
-                  </button>
-                )}
+                    {inv.investisseurTelephone && (
+                      <p>📱 {inv.investisseurTelephone}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.details}>
+                  <div className={styles.projet}>
+                    <strong>{inv.projetLibelle}</strong>
+                    <span>
+                      {format(new Date(inv.date), "dd MMM yyyy", {
+                        locale: currentLocale,
+                      })}
+                    </span>
+                  </div>
+                  <div className={styles.montant}>
+                    <span>
+                      {inv.nombrePartsPris} part
+                      {inv.nombrePartsPris > 1 ? "s" : ""}
+                    </span>
+                    <strong>{montant.toLocaleString("fr-FR")} FCFA</strong>
+                  </div>
+                </div>
+
                 {inv.statutPartInvestissement === "VALIDE" &&
                   inv.numeroContrat && (
-                    <div className={styles.dejaValide}>
-                      <FiCheckCircle />{" "}
-                      {t("admin.investments.sent", {
-                        number: inv.numeroContrat,
-                      })}
+                    <div className={styles.contratInfo}>
+                      <FiCheckCircle /> Contrat {inv.numeroContrat}
                     </div>
                   )}
+
+                {inv.statutPartInvestissement === "EN_ATTENTE" && (
+                  <div className={styles.actions}>
+                    <button
+                      onClick={() => valider(inv)}
+                      disabled={isProcessing}
+                      className={styles.btnValider}
+                    >
+                      {isProcessing ? (
+                        "Traitement..."
+                      ) : (
+                        <>
+                          <FiSend /> Valider et envoyer contrat
+                        </>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => ouvrirRefusModal(inv)}
+                      disabled={isProcessing}
+                      className={styles.btnAnnuler}
+                    >
+                      <FiX /> Refuser
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── MODAL MOTIF REFUS ─────────────────────────────────────── */}
+      {refusModal && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setRefusModal(null)}
+        >
+          <div
+            className={styles.modalRefus}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalRefusHeader}>
+              <h3>❌ Refuser l'investissement</h3>
+              <button
+                className={styles.modalClose}
+                onClick={() => setRefusModal(null)}
+              >
+                <FiX />
+              </button>
+            </div>
+
+            <div className={styles.modalRefusInfo}>
+              <div>
+                <FiUser size={14} />{" "}
+                <strong>
+                  {refusModal.inv.investisseurPrenom}{" "}
+                  {refusModal.inv.investisseurNom}
+                </strong>
+              </div>
+              <div>📁 {refusModal.inv.projetLibelle}</div>
+              <div>
+                💰{" "}
+                <strong>
+                  {(
+                    refusModal.inv.montantInvesti ??
+                    refusModal.inv.nombrePartsPris * refusModal.inv.prixUnePart
+                  ).toLocaleString("fr-FR")}{" "}
+                  FCFA
+                </strong>
               </div>
             </div>
-          );
-        })}
-      </div>
+
+            <label className={styles.motifLabel}>
+              Motif du refus <span style={{ color: "#c62828" }}>*</span>
+            </label>
+            <textarea
+              value={motifRefus}
+              onChange={(e) => setMotifRefus(e.target.value)}
+              placeholder="Ex : Documents KYC insuffisants, projet non conforme, investisseur non éligible..."
+              rows={4}
+              className={styles.motifTextarea}
+              autoFocus
+            />
+            <p className={styles.motifHint}>
+              Ce motif sera envoyé à l'investisseur par notification.
+            </p>
+
+            <div className={styles.modalRefusActions}>
+              <button
+                className={styles.btnBackModal}
+                onClick={() => setRefusModal(null)}
+              >
+                Annuler
+              </button>
+              <button
+                className={styles.btnConfirmRefus}
+                onClick={confirmerRefus}
+                disabled={!motifRefus.trim()}
+              >
+                Confirmer le refus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
