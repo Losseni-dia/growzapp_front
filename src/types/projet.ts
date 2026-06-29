@@ -25,6 +25,7 @@ export interface ProjetDTO {
 
   dateDebut?: string;
   dateFin?: string;
+  dureeMois?: number;
   valeurTotalePartsEnPourcent: number;
   statutProjet: StatutProjet;
   createdAt: string;
@@ -79,6 +80,7 @@ export interface ProjetCreateRequest {
   currencyCode: string; // Ajouté pour permettre le choix à la création
   dateDebut?: string;
   dateFin?: string;
+  dureeMois?: number;
   siteId?: number;
   secteurId?: number;
   certifiedAt?: string;
