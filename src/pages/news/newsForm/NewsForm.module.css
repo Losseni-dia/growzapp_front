@@ -222,3 +222,32 @@
     color: #666;
     font-size: 0.9rem;
 }
+
+.categoryRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.categorySelect, .categoryInput {
+  flex: 1;
+  padding: 0.8rem;
+  border: 2px solid var(--growz-mint-50);
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+}
+.categoryInput { border-color: var(--growz-primary); }
+.newCatBtn {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #555;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.newCatBtn:hover { border-color: var(--growz-primary); color: var(--growz-primary); }
+.categoryHint { font-size: 0.78rem; color: #888; font-style: italic; margin-top: 4px; }

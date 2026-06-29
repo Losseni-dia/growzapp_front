@@ -177,7 +177,6 @@ const NewsPage = () => {
         </div>
         <div className={styles.headerRight}>
           <div className={styles.searchBox}>
-            <Search size={16} className={styles.searchIcon} />
             <input
               type="text"
               placeholder="Rechercher un article..."
