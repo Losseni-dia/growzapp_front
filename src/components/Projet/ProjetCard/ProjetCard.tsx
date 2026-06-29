@@ -178,6 +178,10 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
+          <div className={styles.partsInfo}>
+            <span>{projet.partsPrises ?? 0} parts prises</span>
+            <span>{projet.partsDisponible ?? 0} parts disponibles</span>
+          </div>
         </div>
 
         <p className={styles.dates}>
