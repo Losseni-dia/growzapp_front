@@ -8,4 +8,5 @@ export interface Notification {
   read: boolean;
   projetId?: number;
   projetSlug?: string; 
+  motif?: string; 
 }
