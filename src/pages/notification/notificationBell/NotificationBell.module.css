@@ -186,6 +186,124 @@
   transition: all 0.2s ease;
 }
 
+
+/* ── POPUP NOTIFICATION MOTIF ──────────────────────────── */
+.popupOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.15s ease;
+}
+
+.popupBox {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  overflow: hidden;
+  animation: slideUp 0.2s ease;
+}
+
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  background: #fff5f5;
+  border-bottom: 1px solid #fce4e4;
+}
+
+.popupHeader h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #c62828;
+}
+
+.popupClose {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.popupContent {
+  padding: 1rem 1.5rem 0.5rem;
+  color: #444;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.popupMotif {
+  margin: 0.5rem 1.5rem 0;
+  padding: 12px;
+  background: #fff5f5;
+  border-left: 4px solid #c62828;
+  border-radius: 0 8px 8px 0;
+}
+
+.popupMotif strong {
+  display: block;
+  color: #c62828;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.popupMotif p {
+  margin: 0;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.popupFooter {
+  display: flex;
+  gap: 10px;
+  padding: 1.2rem 1.5rem;
+}
+
+.popupBtnClose {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  color: #666;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.popupBtnProjet {
+  flex: 2;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #1B5E20;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.popupBtnProjet:hover { background: #2e7d32; }
+
+
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
