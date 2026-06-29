@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async"; // SEO
+import { Helmet } from "react-helmet-async";
 import { api } from "../../../service/Api";
 import { ProjetDTO } from "../../../types/projet";
 import { DocumentDTO } from "../../../types/document";
@@ -11,15 +11,28 @@ import { ApiResponse } from "../../../types/common";
 import { useAuth } from "../../../components/Context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { FiDownload, FiFileText, FiLock, FiArrowLeft } from "react-icons/fi";
+import {
+  FiDownload,
+  FiFileText,
+  FiLock,
+  FiArrowLeft,
+  FiMapPin,
+  FiTrendingUp,
+  FiCalendar,
+  FiUsers,
+  FiDollarSign,
+  FiClock,
+  FiX,
+  FiShield,
+} from "react-icons/fi";
+import { BsShieldCheck } from "react-icons/bs";
 
 export default function ProjetDetailsPage() {
-  // L'ID dans l'URL correspond désormais au SLUG pour le SEO
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const isInvestMode = searchParams.get("action") === "invest";
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { format } = useCurrency();
   const { user } = useAuth();
 
@@ -27,43 +40,51 @@ export default function ProjetDetailsPage() {
   const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [canSeeDocs, setCanSeeDocs] = useState(true);
+  const [showInvestModal, setShowInvestModal] = useState(false);
 
   const translateData = (
     category: "sectors" | "countries" | "cities",
     value?: string,
   ) => {
     if (!value) return "---";
-    const searchKey = value.trim().toUpperCase();
-    return t(`data.${category}.${searchKey}`, { defaultValue: value });
+    return t(`data.${category}.${value.trim().toUpperCase()}`, {
+      defaultValue: value,
+    });
   };
 
-  const loadProjetAndDocuments = async () => {
+  const formatDate = (dateStr?: string) =>
+    dateStr
+      ? new Date(dateStr).toLocaleDateString(i18n.language, {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : "Indéterminée";
+
+  const loadProjet = async () => {
     if (!id) return;
     try {
       setLoading(true);
-      // APPEL API VIA LE SLUG POUR LE RÉFÉRENCEMENT
       const projetRes = await api.get<ApiResponse<ProjetDTO>>(
         `api/projets/slug/${id}`,
       );
       const projetData = projetRes.data;
       setProjet(projetData);
 
-      // CHARGEMENT DES DOCUMENTS VIA L'ID NUMÉRIQUE DU PROJET RÉCUPÉRÉ
       try {
         const docsRes = await api.get<ApiResponse<DocumentDTO[]>>(
           `api/documents/projet/${projetData.id}`,
         );
-        if (docsRes && docsRes.data) {
+        if (docsRes?.data) {
           setDocuments(docsRes.data);
           setCanSeeDocs(true);
         }
-      } catch (docErr: any) {
-        if (docErr.message?.includes("403") || docErr.status === 403) {
+      } catch (e: any) {
+        if (e.message?.includes("403") || e.status === 403) {
           setCanSeeDocs(false);
-          setDocuments([]);
         }
       }
-    } catch (err: any) {
+    } catch {
       toast.error(t("project_details.error_not_found"));
     } finally {
       setLoading(false);
@@ -71,247 +92,340 @@ export default function ProjetDetailsPage() {
   };
 
   useEffect(() => {
-    loadProjetAndDocuments();
-  }, [id, t]);
+    loadProjet();
+  }, [id]);
+
+  // Ouvrir modal si ?action=invest
+  useEffect(() => {
+    if (isInvestMode) setShowInvestModal(true);
+  }, [isInvestMode]);
 
   if (loading)
-    return <p className={styles.loading}>{t("project_details.loading")}</p>;
+    return (
+      <div className={styles.loadingState}>
+        <div className={styles.spinner} />
+      </div>
+    );
   if (!projet)
     return (
       <p className={styles.error}>{t("project_details.error_not_found")}</p>
     );
 
   const progress =
-    projet?.objectifFinancement > 0
+    projet.objectifFinancement > 0
       ? (Number(projet.montantCollecte || 0) /
           Number(projet.objectifFinancement)) *
         100
       : 0;
 
-  // ==========================================
-  // RENDU 1 : MODE INVESTIR (Checkout)
-  // ==========================================
-  if (isInvestMode) {
-    return (
-      <div className={styles.container}>
-        <Helmet>
-          <title>
-            {t("project_details.invest_in_title")} {projet.libelle} | Growzapp
-          </title>
-        </Helmet>
+  const partsALever =
+    projet.valeurTotalePartsEnPourcent > 0
+      ? projet.valeurTotalePartsEnPourcent
+      : projet.valuation > 0
+        ? Math.round(
+            (Number(projet.objectifFinancement) / Number(projet.valuation)) *
+              100,
+          )
+        : 0;
 
-        <div className={styles.checkoutHeader}>
-          <Link to={`/projet/${projet.slug}`} className={styles.backBtn}>
-            <FiArrowLeft />{" "}
-            {t("project_details.back_to_details") || "Retour au projet"}
-          </Link>
-          <h1 className={styles.checkoutTitle}>
-            {t("project_details.invest_in_title") || "Investir dans"}{" "}
-            <span>{projet.libelle}</span>
-          </h1>
-          <div className={styles.priceRecall}>
-            {t("project_card.price_per_share")} :{" "}
-            <strong>
-              {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
-            </strong>
-          </div>
-        </div>
+  const dureeTexte = projet.dureeMois
+    ? `${projet.dureeMois} mois`
+    : "Durée indéterminée";
 
-        <div className={styles.checkoutFormWrapper}>
-          <InvestForm
-            projet={projet}
-            onSuccess={() => loadProjetAndDocuments()}
-          />
-        </div>
-      </div>
-    );
-  }
+  const financementTermine =
+    progress >= 100 || projet.statutProjet === "TERMINE";
 
-  // Préparation du JSON-LD pour Google
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "InvestmentOrQuote",
-    name: projet.libelle,
-    description: projet.description,
-    image: projet.poster,
-    offers: {
-      "@type": "Offer",
-      price: projet.prixUnePart,
-      priceCurrency: projet.currencyCode,
-      availability:
-        projet.partsDisponible > 0
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
-    },
-    provider: {
-      "@type": "Organization",
-      name: "Growzapp",
-      url: "https://growzapp.com",
-    },
-  };
-
-  // ==========================================
-  // RENDU 2 : MODE COMPLET (Détails)
-  // ==========================================
   return (
     <div className={styles.container}>
-      {/* CONFIGURATION SEO DYNAMIQUE */}
       <Helmet>
-        <title>
-          {projet.libelle} | {t("project_details.invest_title")} Growzapp
-        </title>
+        <title>{projet.libelle} | GrowzApp</title>
         <meta
           name="description"
           content={projet.description?.substring(0, 160)}
         />
-
-        {/* --- DONNÉES STRUCTURÉES (JSON-LD) --- */}
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-
-        {/* Balises Open Graph pour les partages (WhatsApp, LinkedIn, etc.) */}
         <meta
           property="og:title"
-          content={`${projet.libelle} - Investissement Growzapp`}
-        />
-        <meta
-          property="og:description"
-          content={projet.description?.substring(0, 160)}
+          content={`${projet.libelle} - Investissement GrowzApp`}
         />
         <meta property="og:image" content={projet.poster} />
-        <meta property="og:url" content={window.location.href} />
-        <meta property="og:type" content="website" />
       </Helmet>
 
-      <div className={styles.header}>
+      {/* ── HERO ───────────────────────────────────────────── */}
+      <div className={styles.hero}>
         {projet.poster && (
           <img
             src={projet.poster}
             alt={projet.libelle}
-            className={styles.poster}
+            className={styles.heroPoster}
           />
         )}
-        <div className={styles.info}>
-          <h1>{projet.libelle}</h1>
-          <p>
-            <p>
-              <strong>{t("project_details.owner")} :</strong>{" "}
-              {projet.porteurNom || t("common.anonymous")}
-            </p>
-            <strong>{t("project_details.sector")} :</strong>{" "}
-            {translateData("sectors", projet.secteurNom)}
-          </p>
-          <p>
-            <strong>{t("project_details.location")} :</strong> {projet.siteNom},{" "}
-            {translateData("cities", projet.localiteNom)}
-          </p>
-          <p>
-            <strong>{t("project_details.location")} :</strong> {projet.siteNom},{" "}
-            {translateData("cities", projet.localiteNom)}
-            {/* AJOUT DU LIEN GOOGLE MAPS S'IL EXISTE */}
-            {projet.googleMapsUrl && (
-              <a
-                href={projet.googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.mapsLink}
-                title="Ouvrir dans Google Maps"
-              >
-                📍 {t("project_details.view_on_maps") || "Voir sur la carte"}
-              </a>
-            )}
-          </p>
-          <div className={styles.roiBadge}>
-            {t("project_details.roi_projected")} : {projet.roiProjete}%
-          </div>
-        </div>
-      </div>
+        <div className={styles.heroOverlay} />
 
-      <div className={styles.stats}>
-        <div>
-          <strong>{format(projet.montantCollecte, projet.currencyCode)}</strong>{" "}
-          {t("project_details.collected")}
-        </div>
-        <div>
-          <strong>
-            {format(projet.objectifFinancement, projet.currencyCode)}
-          </strong>{" "}
-          {t("project_details.goal")}
-        </div>
-        <div>
-          <strong>{progress.toFixed(0)}%</strong> {t("project_details.reached")}
-        </div>
-      </div>
-
-      <div className={styles.progressBar}>
-        <div
-          className={styles.progressFill}
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-
-      <div className={styles.description}>
-        <h2>{t("project_details.description_title")}</h2>
-        <p>{projet.description}</p>
-      </div>
-
-      <div className={styles.investSection}>
-        <div className={styles.sectionTitleRow}>
-          <h2>{t("project_details.invest_title")}</h2>
-          {user?.kycStatus !== "VALIDE" && (
-            <span className={styles.lockedBadge}>
-              <FiLock /> {t("kyc.status_locked")}
-            </span>
-          )}
-        </div>
-        <InvestForm
-          projet={projet}
-          onSuccess={() => loadProjetAndDocuments()}
-        />
-      </div>
-
-      <div className={styles.documentsSection}>
-        <h2>
-          <FiFileText style={{ marginRight: "10px" }} />
-          {t("project_details.documents_title")}
-        </h2>
-        {canSeeDocs ? (
-          <div className={styles.docGrid}>
-            {documents.length > 0 ? (
-              documents.map((doc) => (
-                <div key={doc.id} className={styles.docCard}>
-                  <FiFileText size={24} color="var(--growz-hex-primary, #1b5e20)" />
-                  <div className={styles.docInfo}>
-                    <strong>{doc.nom}</strong>
-                    <small>
-                      {new Date(doc.uploadedAt).toLocaleDateString()}
-                    </small>
-                  </div>
-                  <a
-                    href={`${import.meta.env.VITE_API_URL}/api/documents/${doc.id}/download`}
-                    className={styles.downloadBtn}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <FiDownload />
-                  </a>
-                </div>
-              ))
-            ) : (
-              <p className={styles.noDocs}>
-                {t("project_details.no_documents")}
-              </p>
-            )}
-          </div>
-        ) : (
-          <div className={styles.lockedDocs}>
-            <FiLock size={40} className={styles.lockIconLarge} />
-            <div className={styles.lockedText}>
-              <h3>{t("project_details.docs_restricted_title")}</h3>
-              <p>{t("project_details.docs_restricted_hint")}</p>
-            </div>
+        {projet.certifiedAt && (
+          <div className={styles.certifiedBadge}>
+            <BsShieldCheck /> Certifié GrowzApp
           </div>
         )}
+
+        <div className={styles.heroContent}>
+          <div className={styles.heroMeta}>
+            <span className={styles.sectorTag}>
+              {translateData("sectors", projet.secteurNom)}
+            </span>
+            <span
+              className={`${styles.statutTag} ${
+                financementTermine
+                  ? styles.tagTermine
+                  : projet.statutProjet === "VALIDE"
+                    ? styles.tagEnCours
+                    : styles.tagDefault
+              }`}
+            >
+              {financementTermine
+                ? "Terminé"
+                : projet.statutProjet === "VALIDE"
+                  ? "En cours"
+                  : projet.statutProjet}
+            </span>
+          </div>
+          <h1 className={styles.heroTitle}>{projet.libelle}</h1>
+          <div className={styles.heroInfos}>
+            <span>
+              <FiMapPin /> {projet.siteNom},{" "}
+              {translateData("cities", projet.localiteNom)}
+            </span>
+            <span>
+              <FiUsers /> {projet.porteurNom || "Porteur anonyme"}
+            </span>
+            <span>
+              <FiClock /> {dureeTexte}
+            </span>
+          </div>
+        </div>
       </div>
+
+      {/* ── CORPS ──────────────────────────────────────────── */}
+      <div className={styles.body}>
+        {/* COLONNE GAUCHE */}
+        <div className={styles.mainCol}>
+          {/* Progression financement */}
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>📊 Financement</h2>
+            <div className={styles.progressStats}>
+              <div className={styles.stat}>
+                <span className={styles.statValue}>
+                  {format(
+                    Number(projet.montantCollecte || 0),
+                    projet.currencyCode,
+                  )}
+                </span>
+                <span className={styles.statLabel}>Collectés</span>
+              </div>
+              <div className={styles.stat}>
+                <span className={`${styles.statValue} ${styles.statHighlight}`}>
+                  {progress.toFixed(1)}%
+                </span>
+                <span className={styles.statLabel}>Atteint</span>
+              </div>
+              <div className={styles.stat}>
+                <span className={styles.statValue}>
+                  {format(
+                    Number(projet.objectifFinancement || 0),
+                    projet.currencyCode,
+                  )}
+                </span>
+                <span className={styles.statLabel}>Objectif</span>
+              </div>
+            </div>
+            <div className={styles.progressBar}>
+              <div
+                className={`${styles.progressFill} ${progress >= 100 ? styles.progressFull : ""}`}
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
+            <div className={styles.partsRow}>
+              <span className={styles.partsPrises}>
+                {projet.partsPrises ?? 0} parts prises
+              </span>
+              <span className={styles.partsDisponibles}>
+                {projet.partsDisponible ?? 0} parts disponibles
+              </span>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>📋 Description du projet</h2>
+            <p className={styles.description}>
+              {projet.description || "Aucune description fournie."}
+            </p>
+          </div>
+
+          {/* Documents */}
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>
+              <FiFileText /> Documents
+            </h2>
+            {canSeeDocs ? (
+              documents.length > 0 ? (
+                <div className={styles.docGrid}>
+                  {documents.map((doc) => (
+                    <div key={doc.id} className={styles.docCard}>
+                      <FiFileText size={22} color="var(--growz-primary)" />
+                      <div className={styles.docInfo}>
+                        <strong>{doc.nom}</strong>
+                        <small>
+                          {new Date(doc.uploadedAt).toLocaleDateString()}
+                        </small>
+                      </div>
+                      <a
+                        href={`${import.meta.env.VITE_API_URL}/api/documents/${doc.id}/download`}
+                        className={styles.downloadBtn}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FiDownload />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.noDocs}>
+                  Aucun document publié pour ce projet.
+                </p>
+              )
+            ) : (
+              <div className={styles.lockedDocs}>
+                <FiLock size={32} />
+                <div>
+                  <strong>{t("project_details.docs_restricted_title")}</strong>
+                  <p>{t("project_details.docs_restricted_hint")}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* COLONNE DROITE — sticky */}
+        <div className={styles.sideCol}>
+          {/* Métriques clés */}
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>💡 Métriques clés</h2>
+            <div className={styles.metricsGrid}>
+              <div className={styles.metric}>
+                <FiTrendingUp className={styles.metricIcon} />
+                <span className={styles.metricValue}>
+                  {projet.roiProjete || 0}%
+                </span>
+                <span className={styles.metricLabel}>ROI projeté</span>
+              </div>
+              <div className={styles.metric}>
+                <FiDollarSign className={styles.metricIcon} />
+                <span className={styles.metricValue}>{partsALever}%</span>
+                <span className={styles.metricLabel}>Équité à lever</span>
+              </div>
+              <div className={styles.metric}>
+                <FiClock className={styles.metricIcon} />
+                <span className={styles.metricValue}>{dureeTexte}</span>
+                <span className={styles.metricLabel}>Durée</span>
+              </div>
+              <div className={styles.metric}>
+                <FiShield className={styles.metricIcon} />
+                <span className={styles.metricValue}>
+                  {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
+                </span>
+                <span className={styles.metricLabel}>Prix / part</span>
+              </div>
+            </div>
+
+            <div className={styles.detailsList}>
+              <div className={styles.detailRow}>
+                <span>Valorisation totale</span>
+                <strong>
+                  {format(Number(projet.valuation || 0), projet.currencyCode)}
+                </strong>
+              </div>
+              <div className={styles.detailRow}>
+                <span>Parts totales</span>
+                <strong>
+                  {(projet.partsPrises ?? 0) + (projet.partsDisponible ?? 0)}
+                </strong>
+              </div>
+              <div className={styles.detailRow}>
+                <span>Début</span>
+                <strong>{formatDate(projet.dateDebut)}</strong>
+              </div>
+              <div className={styles.detailRow}>
+                <span>Fin</span>
+                <strong>{formatDate(projet.dateFin)}</strong>
+              </div>
+              {projet.googleMapsUrl && (
+                <div className={styles.detailRow}>
+                  <span>Localisation</span>
+                  <a
+                    href={projet.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.mapsLink}
+                  >
+                    📍 Voir sur la carte
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Bouton investir */}
+          {!financementTermine ? (
+            <button
+              className={styles.btnInvest}
+              onClick={() => setShowInvestModal(true)}
+              disabled={user?.kycStatus !== "VALIDE"}
+            >
+              <FiDollarSign /> Investir dans ce projet
+            </button>
+          ) : (
+            <div className={styles.btnFinished}>✅ Financement terminé</div>
+          )}
+
+          {user?.kycStatus !== "VALIDE" && (
+            <div className={styles.kycWarning}>
+              <FiLock /> Votre KYC doit être validé pour investir
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── MODAL INVESTISSEMENT ────────────────────────────── */}
+      {showInvestModal && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setShowInvestModal(false)}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>
+                Investir dans <span>{projet.libelle}</span>
+              </h2>
+              <button
+                className={styles.modalClose}
+                onClick={() => setShowInvestModal(false)}
+              >
+                <FiX size={22} />
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <InvestForm
+                projet={projet}
+                onSuccess={() => {
+                  setShowInvestModal(false);
+                  loadProjet();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
