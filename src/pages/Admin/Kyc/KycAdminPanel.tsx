@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import { api, getFreshToken } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
 import toast from "react-hot-toast";
-import { Check, X, ShieldCheck, FileText, Image as ImageIcon, UserCircle, Calendar } from "lucide-react";
+import {
+  Check,
+  X,
+  ShieldCheck,
+  FileText,
+  Image as ImageIcon,
+  UserCircle,
+  Calendar,
+} from "lucide-react";
 import styles from "./KycAdminPanel.module.css";
 
 export const KycAdminPanel = () => {
@@ -27,58 +35,61 @@ export const KycAdminPanel = () => {
     fetchPending();
   }, []);
 
-  // Calcul du statut d'expiration pour le badge
   const getExpiryStatus = (dateString?: string) => {
-    if (!dateString) return { label: "SANS DATE", color: "#95a5a6" };
+    if (!dateString) return { label: "Sans date", className: styles.badgeGray };
     const expiryDate = new Date(dateString);
     const today = new Date();
-    const diffDays = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil(
+      (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
-    if (diffDays < 0) return { label: "EXPIRÉ", color: "#e74c3c" };
-    if (diffDays <= 30) return { label: `${diffDays} JOURS`, color: "#f39c12" };
-    return { label: "VALIDE", color: "#27ae60" };
+    if (diffDays < 0) return { label: "Expiré", className: styles.badgeRed };
+    if (diffDays <= 30)
+      return { label: `${diffDays} jours`, className: styles.badgeOrange };
+    return { label: "Valide", className: styles.badgeGreen };
   };
 
-const openDocument = async (userId: number, type: 'recto' | 'verso' | 'selfie') => {
-  try {
-    toast.loading("Chargement du document...");
+  const openDocument = async (
+    userId: number,
+    type: "recto" | "verso" | "selfie",
+  ) => {
+    try {
+      toast.loading("Chargement du document...");
 
-    const token = getFreshToken();
-    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
-    const url = `${baseUrl}/api/kyc/admin/document/${userId}/${type}`;
+      const token = getFreshToken();
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const url = `${baseUrl}/api/kyc/admin/document/${userId}/${type}`;
 
-    // On fait l'appel en direct sans passer par l'objet 'api' pour gérer le Blob
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/octet-stream"
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/octet-stream",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur serveur (${response.status})`);
       }
-    });
 
-    if (!response.ok) {
-      throw new Error(`Erreur serveur (${response.status})`);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank");
+
+      toast.dismiss();
+    } catch (error: any) {
+      toast.dismiss();
+      toast.error("Erreur : " + error.message);
+      console.error("Détails erreur ouverture doc:", error);
     }
-
-    // On récupère les données brutes (Blob)
-    const blob = await response.blob();
-
-    // Création de l'URL sécurisée pour le navigateur
-    const blobUrl = window.URL.createObjectURL(blob);
-    
-    // Ouverture dans un nouvel onglet
-    window.open(blobUrl, "_blank");
-    
-    toast.dismiss();
-  } catch (error: any) {
-    toast.dismiss();
-    toast.error("Erreur : " + error.message);
-    console.error("Détails erreur ouverture doc:", error);
-  }
-};
+  };
 
   const handleDecision = async (userId: number, approuve: boolean) => {
-    if (approuve && !window.confirm("Confirmer la validation de cette identité ?")) return;
+    if (
+      approuve &&
+      !window.confirm("Confirmer la validation de cette identité ?")
+    )
+      return;
 
     try {
       const queryParams = new URLSearchParams({
@@ -88,8 +99,10 @@ const openDocument = async (userId: number, type: 'recto' | 'verso' | 'selfie') 
       });
 
       await api.post(`/api/kyc/admin/decider?${queryParams.toString()}`);
-      toast.success(approuve ? "Utilisateur validé avec succès" : "Dossier rejeté");
-      
+      toast.success(
+        approuve ? "Utilisateur validé avec succès" : "Dossier rejeté",
+      );
+
       setPendingUsers(pendingUsers.filter((u) => u.id !== userId));
       setSelectedUser(null);
       setRejectionReason("");
@@ -98,21 +111,34 @@ const openDocument = async (userId: number, type: 'recto' | 'verso' | 'selfie') 
     }
   };
 
-  if (loading) return <div className={styles.loader}>Chargement des dossiers KYC...</div>;
+  if (loading) {
+    return (
+      <div className={styles.loadingScreen}>
+        <div className={styles.spinner} />
+        <p>Chargement des dossiers KYC...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <ShieldCheck size={32} className={styles.headerIcon} />
-        <div>
-          <h2 className={styles.title}>Validation des Identités</h2>
-          <p className={styles.subtitle}>{pendingUsers.length} dossier(s) en attente</p>
+    <div className={styles.page}>
+      {/* ═══════════ HEADER ═══════════ */}
+      <header className={styles.header}>
+        <div className={styles.headerIcon}>
+          <ShieldCheck size={20} />
         </div>
-      </div>
+        <div>
+          <h1 className={styles.title}>Validation des identités</h1>
+          <p className={styles.subtitle}>
+            {pendingUsers.length} dossier{pendingUsers.length > 1 ? "s" : ""} en
+            attente
+          </p>
+        </div>
+      </header>
 
       {pendingUsers.length === 0 ? (
         <div className={styles.emptyState}>
-          <ShieldCheck size={50} color="#bdc3c7" />
+          <ShieldCheck size={32} />
           <p>Tous les dossiers ont été traités.</p>
         </div>
       ) : (
@@ -122,12 +148,17 @@ const openDocument = async (userId: number, type: 'recto' | 'verso' | 'selfie') 
             return (
               <div key={u.id} className={styles.card}>
                 <div className={styles.cardHeader}>
-                  <div className={styles.avatar}>{u.prenom[0]}{u.nom[0]}</div>
+                  <div className={styles.avatar}>
+                    {u.prenom[0]}
+                    {u.nom[0]}
+                  </div>
                   <div className={styles.userInfo}>
-                    <p className={styles.userName}>{u.prenom} {u.nom}</p>
+                    <p className={styles.userName}>
+                      {u.prenom} {u.nom}
+                    </p>
                     <div className={styles.statusRow}>
                       <span className={styles.userLogin}>@{u.login}</span>
-                      <span className={styles.badge} style={{ backgroundColor: status.color }}>
+                      <span className={`${styles.badge} ${status.className}`}>
                         {status.label}
                       </span>
                     </div>
@@ -136,32 +167,53 @@ const openDocument = async (userId: number, type: 'recto' | 'verso' | 'selfie') 
 
                 <div className={styles.details}>
                   <div className={styles.detailItem}>
-                    <strong>N° Pièce:</strong> <span>{u.kycNumeroPiece || "N/A"}</span>
+                    <strong>N° Pièce :</strong>
+                    <span>{u.kycNumeroPiece || "N/A"}</span>
                   </div>
                   <div className={styles.detailItem}>
-                    <Calendar size={14} />
-                    <span>Expire le : {u.kycDateExpiration ? new Date(u.kycDateExpiration).toLocaleDateString() : "Inconnu"}</span>
+                    <Calendar size={13} />
+                    <span>
+                      Expire le{" "}
+                      {u.kycDateExpiration
+                        ? new Date(u.kycDateExpiration).toLocaleDateString()
+                        : "inconnu"}
+                    </span>
                   </div>
                 </div>
 
                 <div className={styles.docGrid}>
-                  <button onClick={() => openDocument(u.id, 'recto')} className={styles.docBtn}>
-                    <FileText size={18} /> <span>Recto</span>
+                  <button
+                    onClick={() => openDocument(u.id, "recto")}
+                    className={styles.docBtn}
+                  >
+                    <FileText size={16} /> <span>Recto</span>
                   </button>
-                  <button onClick={() => openDocument(u.id, 'verso')} className={styles.docBtn}>
-                    <ImageIcon size={18} /> <span>Verso</span>
+                  <button
+                    onClick={() => openDocument(u.id, "verso")}
+                    className={styles.docBtn}
+                  >
+                    <ImageIcon size={16} /> <span>Verso</span>
                   </button>
-                  <button onClick={() => openDocument(u.id, 'selfie')} className={styles.docBtn}>
-                    <UserCircle size={18} /> <span>Selfie</span>
+                  <button
+                    onClick={() => openDocument(u.id, "selfie")}
+                    className={styles.docBtn}
+                  >
+                    <UserCircle size={16} /> <span>Selfie</span>
                   </button>
                 </div>
 
                 <div className={styles.cardActions}>
-                  <button onClick={() => handleDecision(u.id, true)} className={styles.btnApprove}>
-                    <Check size={18} /> Approuver
+                  <button
+                    onClick={() => handleDecision(u.id, true)}
+                    className={styles.btnApprove}
+                  >
+                    <Check size={16} /> Approuver
                   </button>
-                  <button onClick={() => setSelectedUser(u)} className={styles.btnReject}>
-                    <X size={18} /> Rejeter
+                  <button
+                    onClick={() => setSelectedUser(u)}
+                    className={styles.btnReject}
+                  >
+                    <X size={16} /> Rejeter
                   </button>
                 </div>
               </div>
@@ -170,21 +222,32 @@ const openDocument = async (userId: number, type: 'recto' | 'verso' | 'selfie') 
         </div>
       )}
 
+      {/* ═══════════ MODAL REJET ═══════════ */}
       {selectedUser && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalBody}>
-            <h3>Motif du rejet</h3>
-            <p>Utilisateur : {selectedUser.prenom} {selectedUser.nom}</p>
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setSelectedUser(null)}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Motif du rejet</h3>
+            <p className={styles.modalUser}>
+              Utilisateur : {selectedUser.prenom} {selectedUser.nom}
+            </p>
             <textarea
               className={styles.modalTextarea}
-              placeholder="Ex: Photo du recto illisible, document expiré..."
+              placeholder="Ex : Photo du recto illisible, document expiré..."
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
             />
             <div className={styles.modalFooter}>
-              <button onClick={() => setSelectedUser(null)} className={styles.btnCancel}>Annuler</button>
-              <button 
-                onClick={() => handleDecision(selectedUser.id, false)} 
+              <button
+                onClick={() => setSelectedUser(null)}
+                className={styles.btnCancel}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => handleDecision(selectedUser.id, false)}
                 className={styles.btnConfirmReject}
                 disabled={!rejectionReason.trim()}
               >

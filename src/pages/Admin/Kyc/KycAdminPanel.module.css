@@ -1,239 +1,345 @@
-.container {
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN — Validation KYC
+   ═══════════════════════════════════════════════════════════════ */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   LOADING
+   ═══════════════════════════════════════════════════════════════ */
+.loadingScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 16px;
+  color: var(--growz-slate-700);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--growz-border);
+  border-top-color: var(--growz-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════ */
 .header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
 .headerIcon {
-    color: var(--growz-green-500);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--growz-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #2c3e50;
-    margin: 0;
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--growz-slate-700);
 }
 
 .subtitle {
-    color: #7f8c8d;
-    margin: 0;
-    font-weight: 500;
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--growz-slate-700);
+  opacity: 0.65;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════════ */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 60px 20px;
+  color: #b5beb8;
+}
+
+.emptyState p { margin: 0; font-size: 0.88rem; }
+
+/* ═══════════════════════════════════════════════════════════════
+   GRID / CARDS
+   ═══════════════════════════════════════════════════════════════ */
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
 }
 
 .card {
-    background: white;
-    border-radius: 18px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f0f0f0;
+  background: var(--growz-elevated);
+  border: 1px solid var(--growz-border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .cardHeader {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 1.2rem;
+  display: flex;
+  gap: 12px;
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
-    background: #f1c40f;
-    color: #2c3e50;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 1.2rem;
+  width: 44px;
+  height: 44px;
+  background: var(--growz-surface);
+  color: var(--growz-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  min-width: 0;
 }
 
 .userName {
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-    font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--growz-slate-700);
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .statusRow {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .userLogin {
-    font-size: 0.85rem;
-    color: #95a5a6;
+  font-size: 0.78rem;
+  color: var(--growz-slate-700);
+  opacity: 0.6;
 }
 
 .badge {
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
 }
 
+.badgeGreen { background: var(--growz-primary); }
+.badgeOrange { background: #c9a227; }
+.badgeRed { background: #c0392b; }
+.badgeGray { background: #9aa5a0; }
+
+/* ── Détails ── */
 .details {
-    background: #f8fafc;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 1.2rem;
-    font-size: 0.9rem;
+  background: var(--growz-surface);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
 }
 
 .detailItem {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
-    color: #34495e;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+  color: var(--growz-slate-700);
 }
 
+.detailItem:last-child { margin-bottom: 0; }
+
+/* ── Documents ── */
 .docGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
 }
 
 .docBtn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    padding: 12px 5px;
-    background: white;
-    border: 1.5px solid #edf2f7;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #4a5568;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 11px 5px;
+  background: white;
+  border: 1.5px solid var(--growz-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.15s;
+  color: var(--growz-slate-700);
 }
 
 .docBtn:hover {
-    border-color: var(--growz-green-500);
-    color: var(--growz-green-500);
-    background: #f0faf4;
+  border-color: var(--growz-green-500);
+  color: var(--growz-primary);
+  background: var(--growz-surface);
 }
 
 .docBtn span {
-    font-size: 0.7rem;
-    font-weight: 700;
+  font-size: 0.68rem;
+  font-weight: 700;
 }
 
+/* ── Actions ── */
 .cardActions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
 .btnApprove,
 .btnReject {
-    padding: 10px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: 0.3s;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: 0.15s;
 }
 
 .btnApprove {
-    background: var(--growz-green-500);
-    color: white;
+  background: var(--growz-primary);
+  color: white;
 }
 
 .btnApprove:hover {
-    background: var(--growz-green-700);
-    transform: translateY(-2px);
+  background: #164d1a;
 }
 
 .btnReject {
-    background: #fff5f5;
-    color: #e74c3c;
+  background: #fdecea;
+  color: #c0392b;
 }
 
 .btnReject:hover {
-    background: #fee2e2;
-    transform: translateY(-2px);
+  background: #f9d3cf;
 }
 
-/* MODAL */
+/* ═══════════════════════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════════════════════ */
 .modalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    backdrop-filter: blur(4px);
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 19, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
 }
 
-.modalBody {
-    background: white;
-    padding: 2rem;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 450px;
+.modal {
+  background: white;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 420px;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modalTitle {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--growz-slate-700);
+}
+
+.modalUser {
+  margin: 0 0 16px;
+  font-size: 0.84rem;
+  color: var(--growz-slate-700);
+  opacity: 0.7;
 }
 
 .modalTextarea {
-    width: 100%;
-    height: 120px;
-    margin: 1.5rem 0;
-    padding: 12px;
-    border: 2px solid #edf2f7;
-    border-radius: 12px;
-    resize: none;
+  width: 100%;
+  height: 110px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--growz-border);
+  border-radius: 10px;
+  resize: none;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modalTextarea:focus {
+  border-color: var(--growz-primary);
 }
 
 .modalFooter {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .btnCancel {
-    background: none;
-    border: none;
-    font-weight: 600;
-    color: #7f8c8d;
-    cursor: pointer;
+  background: none;
+  border: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--growz-slate-700);
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 10px 14px;
 }
 
 .btnConfirmReject {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
+  background: #c0392b;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-.loader,
-.emptyState {
-    text-align: center;
-    padding: 5rem;
-    color: #95a5a6;
-    font-weight: 600;
+.btnConfirmReject:disabled {
+  background: #e8b4ae;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .page { padding: 24px 16px 48px; }
+  .grid { grid-template-columns: 1fr; }
 }
