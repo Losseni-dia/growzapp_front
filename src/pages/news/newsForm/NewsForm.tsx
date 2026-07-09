@@ -1,5 +1,6 @@
 // src/pages/news/newsForm/NewsForm.tsx
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import { newsService, NEWS_CATEGORIES } from "../../../service/newsService";
@@ -7,6 +8,7 @@ import styles from "./NewsForm.module.css";
 import { Send, Image as ImageIcon, AlertCircle, Upload, X } from "lucide-react";
 
 const NewsForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -60,13 +62,8 @@ const NewsForm = () => {
         type: "success",
         text: "L'actualité a été publiée avec succès !",
       });
-      setFormData({
-        title: "",
-        content: "",
-        imageUrl: "",
-        category: "PLATFORM_UPDATE",
-      });
-      setCustomCategory(false);
+      // Redirection vers la liste des articles après 1 seconde
+      setTimeout(() => navigate("/news"), 1000);
     } catch (err: any) {
       setMessage({
         type: "error",
@@ -101,7 +98,7 @@ const NewsForm = () => {
             />
           </div>
 
-          {/* CATÉGORIE — liste prédéfinie + saisie libre */}
+          {/* CATÉGORIE */}
           <div className={styles.inputGroup}>
             <label htmlFor="category">Catégorie</label>
             {!customCategory ? (

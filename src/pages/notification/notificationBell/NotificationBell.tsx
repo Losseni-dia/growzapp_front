@@ -1,4 +1,4 @@
-import { Bell, Inbox, X, ExternalLink } from "lucide-react";
+import { Bell, Inbox, X, ExternalLink, Newspaper } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { notificationService } from "../../../service/notificationService";
@@ -63,21 +63,46 @@ const NotificationBell = () => {
     }
   };
 
+  const getMotifLabel = (title: string): string => {
+    const t = title.toLowerCase();
+    if (t.includes("refus")) return "Motif du refus";
+    if (t.includes("versement") || t.includes("virement"))
+      return "Motif du versement";
+    if (t.includes("retrait")) return "Motif";
+    if (t.includes("kyc")) return "Motif";
+    return "Motif";
+  };
+
+  // Détermine si c'est une notification d'actualité (projetSlug commence par /news/)
+  const isNewsNotif = (n: Notification) =>
+    n.projetSlug?.startsWith("/news/") ?? false;
+
   const handleNotifClick = async (n: Notification) => {
     await markAsRead(n);
 
-    // Si la notification a un motif → popup (ex: refus investissement)
+    // Notification avec motif → popup
     if (n.motif) {
       setIsOpen(false);
       setPopupNotif(n);
       return;
     }
 
-    // Sinon redirection vers le projet
+    // Notification actualité → /news/{id}
+    if (isNewsNotif(n)) {
+      navigate(n.projetSlug!);
+      setIsOpen(false);
+      return;
+    }
+
+    // Notification projet → /projet/{slug}
     if (n.projetSlug) {
       navigate(`/projet/${n.projetSlug}`);
       setIsOpen(false);
-    } else if (n.projetId) {
+      return;
+    }
+
+    // Fallback par ID
+    if (n.projetId) {
       try {
         const res = await api.get<{ data: { slug: string } }>(
           `/api/projets/${n.projetId}`,
@@ -90,12 +115,19 @@ const NotificationBell = () => {
     }
   };
 
-  const handlePopupProjet = async () => {
+  const handlePopupNavigation = async () => {
     if (!popupNotif) return;
     setPopupNotif(null);
+
+    if (isNewsNotif(popupNotif)) {
+      navigate(popupNotif.projetSlug!);
+      return;
+    }
     if (popupNotif.projetSlug) {
       navigate(`/projet/${popupNotif.projetSlug}`);
-    } else if (popupNotif.projetId) {
+      return;
+    }
+    if (popupNotif.projetId) {
       try {
         const res = await api.get<{ data: { slug: string } }>(
           `/api/projets/${popupNotif.projetId}`,
@@ -105,6 +137,20 @@ const NotificationBell = () => {
         navigate("/projets");
       }
     }
+  };
+
+  // Label du hint selon le type de notification
+  const getHint = (n: Notification) => {
+    if (n.motif) return "Voir le motif →";
+    if (isNewsNotif(n)) return "Lire l'article →";
+    if (n.projetId || n.projetSlug) return "Voir le projet →";
+    return null;
+  };
+
+  // Label du bouton popup
+  const getPopupBtnLabel = (n: Notification) => {
+    if (isNewsNotif(n)) return "Lire l'article";
+    return "Voir le projet";
   };
 
   return (
@@ -156,15 +202,11 @@ const NotificationBell = () => {
                             timeStyle: "short",
                           })}
                         </span>
-                        {n.motif ? (
+                        {getHint(n) && (
                           <small className={styles.clickHint}>
-                            Voir le motif →
+                            {getHint(n)}
                           </small>
-                        ) : n.projetId ? (
-                          <small className={styles.clickHint}>
-                            Voir le projet →
-                          </small>
-                        ) : null}
+                        )}
                       </div>
                     </div>
                   </div>
@@ -178,7 +220,7 @@ const NotificationBell = () => {
         )}
       </div>
 
-      {/* ── POPUP MOTIF REFUS ──────────────────────────────────── */}
+      {/* ── POPUP MOTIF ───────────────────────────────────────── */}
       {popupNotif && (
         <div
           className={styles.popupOverlay}
@@ -186,7 +228,7 @@ const NotificationBell = () => {
         >
           <div className={styles.popupBox} onClick={(e) => e.stopPropagation()}>
             <div className={styles.popupHeader}>
-              <h3>❌ {popupNotif.title}</h3>
+              <h3>{popupNotif.title}</h3>
               <button
                 className={styles.popupClose}
                 onClick={() => setPopupNotif(null)}
@@ -199,7 +241,7 @@ const NotificationBell = () => {
 
             {popupNotif.motif && (
               <div className={styles.popupMotif}>
-                <strong>Motif du refus :</strong>
+                <strong>{getMotifLabel(popupNotif.title)} :</strong>
                 <p>{popupNotif.motif}</p>
               </div>
             )}
@@ -214,9 +256,9 @@ const NotificationBell = () => {
               {(popupNotif.projetId || popupNotif.projetSlug) && (
                 <button
                   className={styles.popupBtnProjet}
-                  onClick={handlePopupProjet}
+                  onClick={handlePopupNavigation}
                 >
-                  <ExternalLink size={15} /> Voir le projet
+                  <ExternalLink size={15} /> {getPopupBtnLabel(popupNotif)}
                 </button>
               )}
             </div>
