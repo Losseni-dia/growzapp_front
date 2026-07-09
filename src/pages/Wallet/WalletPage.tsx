@@ -3,7 +3,25 @@ import { enUS, es, fr } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import {
+  Wallet as WalletIcon,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Send,
+  CreditCard,
+  Smartphone,
+  TrendingUp,
+  TrendingDown,
+  RefreshCw,
+  Gift,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Search,
+  X,
+  ChevronDown,
+  Filter,
+} from "lucide-react";
 import { useAuth } from "../../components/Context/AuthContext";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api, getFreshToken } from "../../service/Api";
@@ -13,511 +31,554 @@ import type { TransactionDTO } from "../../types/transaction";
 import type { WalletDTO } from "../../types/wallet";
 
 interface UserSearchResult {
-  id: number;
-  nomComplet: string;
-  login: string;
-  image: string | null;
+  id: number;
+  nomComplet: string;
+  login: string;
+  image: string | null;
 }
 
-// Méthodes de dépôt disponibles
-type PaymentMethod = "DEBIT_CARD" | "MOBILE_MONEY";
+type Tab = "deposit" | "withdraw" | "transfer";
+type DepositMethod = "DEBIT_CARD" | "MOBILE_MONEY";
+type WithdrawMethod = "MOBILE_MONEY"; // Stripe désactivé temporairement — voir STRIPE_PAYOUT_ROADMAP.md
+
+// Taux fixe BCEAO — identique au backend (StripeDepositService)
+const TAUX_FCFA_PAR_EUR = 655.957;
+
+// ── Config visuelle par type de transaction ─────────────────────────────────
+const TX_CONFIG: Record<string, { icon: any; label: string; outbound: boolean }> = {
+  DEPOT: { icon: ArrowDownToLine, label: "Dépôt", outbound: false },
+  RETRAIT: { icon: ArrowUpFromLine, label: "Retrait", outbound: true },
+  PAYOUT_STRIPE: { icon: ArrowUpFromLine, label: "Retrait carte", outbound: true },
+  PAYOUT_OM: { icon: ArrowUpFromLine, label: "Retrait Mobile Money", outbound: true },
+  PAYOUT_MTN: { icon: ArrowUpFromLine, label: "Retrait Mobile Money", outbound: true },
+  PAYOUT_WAVE: { icon: ArrowUpFromLine, label: "Retrait Mobile Money", outbound: true },
+  TRANSFER_IN: { icon: Send, label: "Transfert reçu", outbound: false },
+  TRANSFER_OUT: { icon: Send, label: "Transfert envoyé", outbound: true },
+  INVESTISSEMENT: { icon: TrendingUp, label: "Investissement", outbound: true },
+  REMBOURSEMENT: { icon: RefreshCw, label: "Remboursement", outbound: false },
+  DIVIDENDE: { icon: Gift, label: "Dividende", outbound: false },
+  VERSEMENT_DIVIDENDE: { icon: Gift, label: "Dividende", outbound: false },
+};
+
+function getTxConfig(type: string) {
+  const key = type.toUpperCase();
+  return TX_CONFIG[key] || { icon: WalletIcon, label: type, outbound: false };
+}
 
 export default function WalletPage() {
-  const { user } = useAuth();
-  const { t, i18n } = useTranslation();
-  const { format } = useCurrency();
+  const { user } = useAuth();
+  const { t, i18n } = useTranslation();
+  const { format } = useCurrency();
 
-  const locales: any = { fr, en: enUS, es };
-  const currentLocale = locales[i18n.language] || fr;
+  const locales: any = { fr, en: enUS, es };
+  const currentLocale = locales[i18n.language] || fr;
 
-  const [wallet, setWallet] = useState<WalletDTO | null>(null);
-  const [transactions, setTransactions] = useState<TransactionDTO[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [wallet, setWallet] = useState<WalletDTO | null>(null);
+  const [transactions, setTransactions] = useState<TransactionDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<Tab>("deposit");
 
-  // States pour Dépôt
-  const [depositMontant, setDepositMontant] = useState("");
-  const [loadingDeposit, setLoadingDeposit] = useState(false);
-  const [depositMethod, setDepositMethod] =
-    useState<PaymentMethod>("DEBIT_CARD");
+  // Historique : pagination + filtre
+  const [historyLimit, setHistoryLimit] = useState(10);
+  const [historyFilter, setHistoryFilter] = useState<"ALL" | "IN" | "OUT">("ALL");
 
-  // States pour Transfert
-  const [searchUser, setSearchUser] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
-    null
-  );
-  const [montantTransfer, setMontantTransfer] = useState("");
-  const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
-  const [transferSource, setTransferSource] = useState<
-    "DISPONIBLE" | "RETIRABLE"
-  >("DISPONIBLE");
+  const handleFilterChange = (f: "ALL" | "IN" | "OUT") => {
+    setHistoryFilter(f);
+    setHistoryLimit(10);
+  };
 
-  // States pour Retrait Admin
-  const [montantDemande, setMontantDemande] = useState("");
-  const [loadingDemande, setLoadingDemande] = useState(false);
+  // Dépôt
+  const [depositMontant, setDepositMontant] = useState("");
+  const [depositMethod, setDepositMethod] = useState<DepositMethod>("DEBIT_CARD");
+  const [loadingDeposit, setLoadingDeposit] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [walletRes, txRes] = await Promise.all([
-        api.get<WalletDTO>("/api/wallets/solde"),
-        api.get<TransactionDTO[]>("/api/transactions/mes-transactions"),
-      ]);
-      setWallet(walletRes);
-      setTransactions(txRes || []);
-    } catch (err) {
-      toast.error(t("common.server_error"));
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Retrait
+  const [withdrawMontant, setWithdrawMontant] = useState("");
+  const [withdrawMethod, setWithdrawMethod] = useState<WithdrawMethod>("MOBILE_MONEY");
+  const [withdrawPhone, setWithdrawPhone] = useState("");
+  const [loadingWithdraw, setLoadingWithdraw] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, [t]);
+  // Transfert
+  const [searchUser, setSearchUser] = useState("");
+  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(null);
+  const [montantTransfer, setMontantTransfer] = useState("");
+  const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
+  const [loadingTransfer, setLoadingTransfer] = useState(false);
 
-  // RECHERCHE UTILISATEUR
-  useEffect(() => {
-    if (searchUser.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      try {
-        const res = await api.get<UserSearchResult[]>(
-          `/api/auth/search?term=${encodeURIComponent(searchUser)}`
-        );
-        setSearchResults(res.filter((u) => u.id !== user?.id));
-      } catch (err) {
-        console.error(err);
-      }
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [searchUser, user?.id]);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [walletRes, txRes] = await Promise.all([
+        api.get<WalletDTO>("/api/wallets/solde"),
+        api.get<TransactionDTO[]>("/api/wallets/transactions"),
+      ]);
+      setWallet(walletRes);
+      setTransactions(txRes || []);
+    } catch (err) {
+      toast.error(t("common.server_error"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const sortedTransactions = useMemo(() => {
-    return [...transactions].sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [transactions]);
+  useEffect(() => {
+    fetchData();
+  }, [t]);
 
-  // ========================================================
-  // LOGIQUE DES SIGNES (FINALE)
-  // ========================================================
-  const getTransactionInfo = (tx: TransactionDTO) => {
-    const type = tx.type.toUpperCase();
+  useEffect(() => {
+    if (searchUser.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api.get<UserSearchResult[]>(
+          `/api/auth/search?term=${encodeURIComponent(searchUser)}`
+        );
+        setSearchResults(res.filter((u) => u.id !== user?.id));
+      } catch (err) {
+        console.error(err);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchUser, user?.id]);
 
-    // Tout ce qui est une dépense/sortie pour l'utilisateur
-    const isOutbound =
-      type.includes("INVESTISSEMENT") ||
-      type.includes("RETRAIT") ||
-      type.includes("TRANSFERT_OUT") ||
-      type.includes("DEBITE") ||
-      type.includes("PAYMENT");
+  const sortedTransactions = useMemo(() => {
+    const sorted = [...transactions].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    if (historyFilter === "ALL") return sorted;
+    return sorted.filter((tx) => {
+      const outbound = getTxConfig(tx.type).outbound;
+      return historyFilter === "OUT" ? outbound : !outbound;
+    });
+  }, [transactions, historyFilter]);
 
-    if (isOutbound) return { sign: "-", className: styles.amountNegative };
-    return { sign: "+", className: styles.amountPositive };
-  };
+  const visibleTransactions = useMemo(
+    () => sortedTransactions.slice(0, historyLimit),
+    [sortedTransactions, historyLimit]
+  );
 
+  const hasMore = historyLimit < sortedTransactions.length;
 
- // ========================================================
-  // HANDLERS (AVEC REDIRECTION PAYDUNYA CORRIGÉE)
-  // ========================================================
-    const handleDeposit = async () => {
-      
-     // 1. Déclarer et calculer 'montant' en premier
+  // ── HANDLERS ───────────────────────────────────────────────────────────────
+  const handleDeposit = async () => {
     const montant = parseFloat(depositMontant);
+    if (isNaN(montant)) return toast.error("Montant invalide");
+    if (depositMethod === "MOBILE_MONEY" && montant < 200)
+      return toast.error("Minimum 200 FCFA pour Mobile Money");
+    if (montant < 5) return toast.error("Montant minimum : 5 €");
 
-    // 2. Effectuer les validations APRES la déclaration
-    if (isNaN(montant)) {
-        return toast.error(t("deposit.toast.invalid_number")); 
+    setLoadingDeposit(true);
+    try {
+      const token = getFreshToken() || "";
+      const endpoint =
+        depositMethod === "DEBIT_CARD"
+          ? "http://localhost:8080/api/wallets/deposit/card"
+          : "http://localhost:8080/api/wallets/deposit/mobile-money";
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ montant }),
+      });
+
+      if (!res.ok) {
+        const errBody = await res.text();
+        let msg = errBody;
+        try { msg = JSON.parse(errBody).error || JSON.parse(errBody).message || errBody; } catch {}
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      if (data.redirectUrl?.startsWith("http")) {
+        window.location.href = data.redirectUrl;
+      } else {
+        toast.error("Échec de l'initialisation du paiement");
+        fetchData();
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erreur serveur");
+    } finally {
+      setLoadingDeposit(false);
     }
+  };
 
-    // Validation spécifique PayDunya (Mobile Money)
-    if (depositMethod === "MOBILE_MONEY" && montant < 200) {
-        return toast.error("Impossible d'initier un dépôt en dessous de 200 FCFA.");
+  const handleWithdraw = async () => {
+    const montant = parseFloat(withdrawMontant);
+    if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+    if (montant > (wallet?.soldeDisponible || 0)) return toast.error("Solde disponible insuffisant");
+    if (withdrawMethod === "MOBILE_MONEY" && !withdrawPhone.trim())
+      return toast.error("Numéro de téléphone requis");
+
+    setLoadingWithdraw(true);
+    try {
+      const token = getFreshToken() || "";
+      const res = await fetch("http://localhost:8080/api/wallets/retrait", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ montant, methode: withdrawMethod, phone: withdrawPhone }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        toast.success(data.message || "Retrait effectué avec succès !");
+      } else {
+        toast.error(data.error || "Le retrait a échoué — fonds remboursés");
+      }
+      setWithdrawMontant("");
+      setWithdrawPhone("");
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Erreur serveur");
+    } finally {
+      setLoadingWithdraw(false);
     }
-        
-    if (isNaN(montant) || montant < 5)
-      return toast.error(t("deposit.toast.min_error"));
+  };
 
-    setLoadingDeposit(true);
-    try {
-      const token = getFreshToken() || "";
+  const handleTransfer = async () => {
+    if (!selectedUser) return toast.error("Sélectionnez un destinataire");
+    const montant = parseFloat(montantTransfer);
+    if (isNaN(montant) || montant <= 0) return toast.error("Montant invalide");
+    if (montant > (wallet?.soldeDisponible || 0)) return toast.error("Solde disponible insuffisant");
 
-      let endpoint = "";
-      if (depositMethod === "DEBIT_CARD") {
-        endpoint = "http://localhost:8080/api/wallets/deposit/card";
-      } else if (depositMethod === "MOBILE_MONEY") {
-        endpoint = "http://localhost:8080/api/wallets/deposit/mobile-money";
-      } else {
-        throw new Error("Méthode de paiement non sélectionnée.");
-      }
+    setLoadingTransfer(true);
+    try {
+      const token = getFreshToken() || "";
+      const res = await fetch("http://localhost:8080/api/wallets/transfer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          destinataireUserId: selectedUser.id,
+          montant,
+          source: "DISPONIBLE",
+        }),
+      });
+      if (!res.ok) throw new Error("Échec du transfert");
+      toast.success(`${format(montant, "XOF")} envoyés à ${selectedUser.nomComplet}`);
+      setMontantTransfer("");
+      setSearchUser("");
+      setSelectedUser(null);
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setLoadingTransfer(false);
+    }
+  };
 
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ montant }),
-      });
-      
-      // 1. Gestion des erreurs HTTP (doit lire le corps en texte avant res.json)
-      if (!res.ok) {
-          const errorBody = await res.text();
-          let errorMessage = errorBody;
-          try {
-              const errorJson = JSON.parse(errorBody);
-              errorMessage = errorJson.message || errorJson.error || errorBody; 
-          } catch(e) {}
-        throw new Error(errorMessage || t("common.server_error"));
-      }
-      
-      // 2. 🟢 CORRECTION: Lire TOUJOURS la réponse en JSON, car le backend renvoie un JSON
-      const data = await res.json(); 
-      let redirectUrl = data.redirectUrl; // La clé est 'redirectUrl' dans le JSON
+  if (loading || !wallet) {
+    return (
+      <div className={styles.loadingScreen}>
+        <div className={styles.loadingSpinner} />
+        <p>Chargement de votre portefeuille...</p>
+      </div>
+    );
+  }
 
-      if (redirectUrl && typeof redirectUrl === 'string' && redirectUrl.startsWith("http")) {
-        // ACTION CLÉ : Redirection vers la passerelle de paiement
-        window.location.href = redirectUrl;
-      } else {
-        // Si aucune URL n'est reçue, on suppose que PayDunya a échoué
-        toast.error(t("deposit.failed_mm") || "Échec de l'initialisation du paiement PayDunya."); 
-        setDepositMontant("");
-        fetchData();
-      }
-    } catch (err: any) {
-      toast.error(err.message || t("common.server_error"));
-    } finally {
-      setLoadingDeposit(false);
-    }
-  };
+  const totalBalance = wallet.soldeDisponible + wallet.soldeBloque + wallet.soldeRetirable;
+  const pctDispo = totalBalance > 0 ? (wallet.soldeDisponible / totalBalance) * 100 : 0;
+  const pctBloque = totalBalance > 0 ? (wallet.soldeBloque / totalBalance) * 100 : 0;
+  const pctRetirable = totalBalance > 0 ? (wallet.soldeRetirable / totalBalance) * 100 : 0;
 
-  const handleTransfer = async () => {
-    if (!selectedUser)
-      return toast.error(t("wallet.actions.transfer_select_error"));
-    const montant = parseFloat(montantTransfer);
-    if (isNaN(montant) || montant <= 0)
-      return toast.error(t("wallet.actions.transfer_amount_error"));
-    try {
-      const token = getFreshToken() || "";
-      const res = await fetch("http://localhost:8080/api/wallets/transfer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          destinataireUserId: selectedUser.id,
-          montant,
-          source: transferSource,
-        }),
-      });
-      if (!res.ok) throw new Error("Échec");
-      toast.success(t("wallet.actions.transfer_success"));
-      setMontantTransfer("");
-      setSearchUser("");
-      setSelectedUser(null);
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.message);
-    }
-  };
+  return (
+    <div className={styles.page}>
+      {/* ═══════════ HEADER SOLDES ═══════════ */}
+      <header className={styles.header}>
+        <div className={styles.headerTop}>
+          <div className={styles.headerIcon}><WalletIcon size={22} /></div>
+          <div>
+            <h1 className={styles.title}>Mon portefeuille</h1>
+            <p className={styles.subtitle}>Gérez vos fonds GrowzApp</p>
+          </div>
+        </div>
 
-  const handleDemandeRetrait = async () => {
-    const montant = parseFloat(montantDemande);
-    if (
-      isNaN(montant) ||
-      montant < 5 ||
-      montant > (wallet?.soldeDisponible || 0)
-    )
-      return toast.error("Montant invalide");
-    setLoadingDemande(true);
-    try {
-      const token = getFreshToken() || "";
-      const res = await fetch(
-        "http://localhost:8080/api/wallets/demande-retrait",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ montant }),
-        }
-      );
-      if (!res.ok) throw new Error("Échec");
-      toast.success(t("wallet.actions.withdraw_success"));
-      setMontantDemande("");
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setLoadingDemande(false);
-    }
-  };
+        <div className={styles.balanceHero}>
+          <span className={styles.balanceHeroLabel}>Solde total</span>
+          <span className={styles.balanceHeroAmount}>{format(totalBalance, "XOF")}</span>
+        </div>
 
-  if (loading || !wallet)
-    return <div className={styles.loading}>{t("wallet.loading")}</div>;
+        <div className={styles.balanceGrid}>
+          <div className={styles.balanceCard}>
+            <span className={styles.balanceDot} style={{ background: "var(--wallet-available)" }} />
+            <div>
+              <span className={styles.balanceLabel}>Disponible</span>
+              <span className={styles.balanceAmount}>{format(wallet.soldeDisponible, "XOF")}</span>
+            </div>
+          </div>
+          <div className={styles.balanceCard}>
+            <span className={styles.balanceDot} style={{ background: "var(--wallet-blocked)" }} />
+            <div>
+              <span className={styles.balanceLabel}>Bloqué</span>
+              <span className={styles.balanceAmount}>{format(wallet.soldeBloque, "XOF")}</span>
+            </div>
+          </div>
+          <div className={styles.balanceCard}>
+            <span className={styles.balanceDot} style={{ background: "var(--wallet-withdrawable)" }} />
+            <div>
+              <span className={styles.balanceLabel}>Retirable</span>
+              <span className={styles.balanceAmount}>{format(wallet.soldeRetirable, "XOF")}</span>
+            </div>
+          </div>
+        </div>
 
-  const totalBalance =
-    wallet.soldeDisponible + wallet.soldeBloque + wallet.soldeRetirable;
-
-  return (
-    <div className={styles.container}>
-      {/* HEADER PREMIUM */}
-      <header className={styles.header}>
-        <h1 className={styles.title}>{t("wallet.title")}</h1>
-        <div className={styles.balanceGrid}>
-          <div className={styles.balanceCard}>
-            <div className={styles.balanceLabel}>
-              {t("wallet.balance.available")}
-            </div>
-            <div className={styles.balanceAmount}>
-              {format(wallet.soldeDisponible, "XOF")}
-            </div>
-          </div>
-          <div className={styles.balanceCard}>
-            <div className={styles.balanceLabel}>
-              {t("wallet.balance.blocked")}
-            </div>
-            <div className={styles.balanceAmount}>
-              {format(wallet.soldeBloque, "XOF")}
-            </div>
-          </div>
-          <div className={styles.balanceCard}>
-            <div className={styles.balanceLabel}>
-              {t("wallet.balance.withdrawable")}
-            </div>
-            <div className={styles.balanceAmount}>
-              {format(wallet.soldeRetirable, "XOF")}
-            </div>
-          </div>
-        </div>
-        <div className={styles.total}>
-          {t("wallet.total")} : {format(totalBalance, "XOF")}
-        </div>
-          </header>
-          
-          {/* --- AJOUT : VISUALISATION DE RÉPARTITION --- */}
-        <section className={styles.visualSection}>
-        <h3 className={styles.actionTitle}>📊 {t("wallet.visual.distribution")}</h3>
         <div className={styles.distributionBar}>
-            <div 
-            className={styles.distAvailable} 
-            style={{ width: `${(wallet.soldeDisponible / totalBalance) * 100}%` }}
-            title="Disponible"
-            />
-            <div 
-            className={styles.distBlocked} 
-            style={{ width: `${(wallet.soldeBloque / totalBalance) * 100}%` }}
-            title="Bloqué"
-            />
-            <div 
-            className={styles.distWithdrawable} 
-            style={{ width: `${(wallet.soldeRetirable / totalBalance) * 100}%` }}
-            title="Retirable"
-            />
+          <div style={{ width: `${pctDispo}%`, background: "var(--wallet-available)" }} />
+          <div style={{ width: `${pctBloque}%`, background: "var(--wallet-blocked)" }} />
+          <div style={{ width: `${pctRetirable}%`, background: "var(--wallet-withdrawable)" }} />
         </div>
-        <div className={styles.distLegend}>
-            <span><span className={styles.dotAvailable}></span> {t("wallet.balance.available")}</span>
-            <span><span className={styles.dotBlocked}></span> {t("wallet.balance.blocked")}</span>
-            <span><span className={styles.dotWithdrawable}></span> {t("wallet.balance.withdrawable")}</span>
+      </header>
+
+      {/* ═══════════ ACTIONS (ONGLETS) ═══════════ */}
+      <section className={styles.actionsSection}>
+        <div className={styles.tabBar}>
+          <button
+            className={`${styles.tab} ${activeTab === "deposit" ? styles.tabActive : ""}`}
+            onClick={() => setActiveTab("deposit")}
+          >
+            <ArrowDownToLine size={17} /> Déposer
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "withdraw" ? styles.tabActive : ""}`}
+            onClick={() => setActiveTab("withdraw")}
+          >
+            <ArrowUpFromLine size={17} /> Retirer
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "transfer" ? styles.tabActive : ""}`}
+            onClick={() => setActiveTab("transfer")}
+          >
+            <Send size={17} /> Transférer
+          </button>
         </div>
-        </section>
 
-      <div className={styles.actionsGrid}>
-        {/* DÉPÔT (CARTE / MOBILE MONEY) */}
-        <div className={styles.actionCard}>
-          <h3 className={styles.actionTitle}>
-            💳 {t("wallet.actions.deposit_title")}
-          </h3>
+        <div className={styles.tabPanel}>
+          {/* ── DÉPÔT ── */}
+          {activeTab === "deposit" && (
+            <div className={styles.panelContent}>
+              <div className={styles.methodGrid}>
+                <button
+                  className={`${styles.methodCard} ${depositMethod === "DEBIT_CARD" ? styles.methodCardActive : ""}`}
+                  onClick={() => setDepositMethod("DEBIT_CARD")}
+                >
+                  <CreditCard size={20} />
+                  <span>Carte bancaire</span>
+                </button>
+                <button
+                  className={`${styles.methodCard} ${depositMethod === "MOBILE_MONEY" ? styles.methodCardActive : ""}`}
+                  onClick={() => setDepositMethod("MOBILE_MONEY")}
+                >
+                  <Smartphone size={20} />
+                  <span>Mobile Money</span>
+                </button>
+              </div>
 
-          <div className={styles.methodChoice}>
-            <label>
-              <input
-                type="radio"
-                checked={depositMethod === "DEBIT_CARD"}
-                onChange={() => setDepositMethod("DEBIT_CARD")}
-              />
-              Carte Bancaire
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={depositMethod === "MOBILE_MONEY"}
-                onChange={() => setDepositMethod("MOBILE_MONEY")}
-              />
-              Mobile Money
-            </label>
-          </div>
+              <label className={styles.fieldLabel}>Montant (FCFA)</label>
+              <input
+                type="number"
+                placeholder="Ex : 50 000"
+                value={depositMontant}
+                onChange={(e) => setDepositMontant(e.target.value)}
+                className={styles.input}
+              />
 
-          <input
-            type="number"
-            placeholder={t("deposit.amount_label")}
-            value={depositMontant}
-            onChange={(e) => setDepositMontant(e.target.value)}
-            className={styles.input}
-          />
+              {depositMethod === "DEBIT_CARD" && depositMontant && !isNaN(parseFloat(depositMontant)) && (
+                <div className={styles.conversionPreview}>
+                  <span>Stripe facturera</span>
+                  <strong>{(parseFloat(depositMontant) / TAUX_FCFA_PAR_EUR).toFixed(2)} €</strong>
+                </div>
+              )}
 
-          <button
-            onClick={handleDeposit}
-            disabled={loadingDeposit}
-            className={styles.btn}
-          >
-            {loadingDeposit
-              ? depositMethod === "MOBILE_MONEY"
-                ? "Demande en cours..."
-                : "Redirection..."
-              : depositMethod === "MOBILE_MONEY"
-              ? "Dépôt Mobile Money"
-              : "Payer par Carte"}
-          </button>
-        </div>
+              <button onClick={handleDeposit} disabled={loadingDeposit} className={styles.submitBtn}>
+                {loadingDeposit ? "Redirection..." : "Continuer le dépôt"}
+              </button>
+            </div>
+          )}
 
-        {/* TRANSFERT */}
-        <div className={styles.actionCard}>
-          <h3 className={styles.actionTitle}>
-            💸 {t("wallet.actions.transfer_title")}
-          </h3>
-          <input
-            type="text"
-            placeholder={t("wallet.actions.transfer_search_placeholder")}
-            value={searchUser}
-            onChange={(e) => {
-              setSearchUser(e.target.value);
-              setSelectedUser(null);
-            }}
-            className={styles.input}
-          />
-          {searchResults.length > 0 && (
-            <div className={styles.searchResults}>
-              {searchResults.map((u) => (
-                <div
-                  key={u.id}
-                  className={styles.searchItem}
-                  onClick={() => {
-                    setSelectedUser(u);
-                    setSearchUser(u.nomComplet);
-                    setSearchResults([]);
-                  }}
-                >
-                  {u.nomComplet} (@{u.login})
-                </div>
-              ))}
-            </div>
-          )}
-          {selectedUser && (
-            <>
-              <input
-                type="number"
-                placeholder="Montant"
-                value={montantTransfer}
-                onChange={(e) => setMontantTransfer(e.target.value)}
-                className={styles.input}
-              />
-              <div
-                style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}
-              >
-                <label>
-                  <input
-                    type="radio"
-                    checked={transferSource === "DISPONIBLE"}
-                    onChange={() => setTransferSource("DISPONIBLE")}
-                  />{" "}
-                  Dispo
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    checked={transferSource === "RETIRABLE"}
-                    onChange={() => setTransferSource("RETIRABLE")}
-                  />{" "}
-                  Retirable
-                </label>
-              </div>
-              <button onClick={handleTransfer} className={styles.btn}>
-                {t("wallet.actions.transfer_btn")}
-              </button>
-            </>
-          )}
-        </div>
+          {/* ── RETRAIT ── */}
+          {activeTab === "withdraw" && (
+            <div className={styles.panelContent}>
+              <div className={styles.availableHint}>
+                Solde disponible : <strong>{format(wallet.soldeDisponible, "XOF")}</strong>
+              </div>
 
-        {/* RETRAIT */}
-        <div className={styles.actionCard}>
-          <h3 className={styles.actionTitle}>
-            🏧 {t("wallet.actions.withdraw_admin_title")}
-          </h3>
-          <input
-            type="number"
-            placeholder="Montant"
-            value={montantDemande}
-            onChange={(e) => setMontantDemande(e.target.value)}
-            className={styles.input}
-          />
-          <button
-            onClick={handleDemandeRetrait}
-            disabled={loadingDemande}
-            className={styles.btn}
-          >
-            {t("wallet.actions.withdraw_admin_btn")}
-          </button>
-          {wallet.soldeRetirable > 0 && (
-            <Link to="/retrait" style={{ marginTop: "1rem", display: "block" }}>
-              <button className={styles.btn} style={{ background: "#27ae60" }}>
-                Retrait Direct Cash
-              </button>
-            </Link>
-          )}
-        </div>
-      </div>
+              <div className={styles.withdrawInfoBox}>
+                <Smartphone size={18} />
+                <span>Les retraits sont actuellement disponibles uniquement via Mobile Money (Orange Money, MTN, Wave). Le virement bancaire direct arrive bientôt.</span>
+              </div>
 
-      <div className={styles.historyCard}>
-        <h2 className={styles.historyTitle}>📋 {t("wallet.history.title")}</h2>
-        <div className={styles.tableWrapper}>
-          {/* Correction HTML critique ici */}
-          <table className={styles.table}><thead>
-              <tr>
-                <th className={styles.th}>{t("wallet.history.cols.date")}</th>
-                <th className={styles.th}>{t("wallet.history.cols.type")}</th>
-                <th className={styles.th}>{t("wallet.history.cols.amount")}</th>
-                <th className={styles.th}>{t("wallet.history.cols.status")}</th>
-              </tr></thead>
-            <tbody>
-              {sortedTransactions.map((tx) => {
-                const info = getTransactionInfo(tx);
-                return (
-                  <tr key={tx.id} className={styles.trBody}>
-                    <td className={styles.td}>
-                      {formatDate(new Date(tx.createdAt), "dd MMM yyyy", {
-                        locale: currentLocale,
-                      })}
-                    </td>
-                    <td className={styles.td}>
-                      {t(`wallet.tx_type.${tx.type}`, tx.type)}
-                    </td>
-                    <td className={`${styles.td} ${info.className}`}>
-                      {info.sign} {format(tx.montant, "XOF")}
-                    </td>
-                    <td className={styles.td}>
-                      <span
-                        className={`${styles.status} ${
-                          tx.statut === "SUCCESS"
-                            ? styles.statusSuccess
-                            : styles.statusPending
-                        }`}
-                      >
-                        {t(`wallet.status.${tx.statut}`, tx.statut)}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+              {withdrawMethod === "MOBILE_MONEY" && (
+                <>
+                  <label className={styles.fieldLabel}>Numéro Mobile Money</label>
+                  <input
+                    type="tel"
+                    placeholder="Ex : 0700000000"
+                    value={withdrawPhone}
+                    onChange={(e) => setWithdrawPhone(e.target.value)}
+                    className={styles.input}
+                  />
+                </>
+              )}
+
+              <label className={styles.fieldLabel}>Montant</label>
+              <input
+                type="number"
+                placeholder="Montant à retirer"
+                value={withdrawMontant}
+                onChange={(e) => setWithdrawMontant(e.target.value)}
+                className={styles.input}
+              />
+
+              <button onClick={handleWithdraw} disabled={loadingWithdraw} className={styles.submitBtn}>
+                {loadingWithdraw ? "Traitement..." : "Retirer maintenant"}
+              </button>
+              <p className={styles.helperText}>
+                Le retrait est traité immédiatement. En cas d'échec, les fonds sont automatiquement remboursés.
+              </p>
+            </div>
+          )}
+
+          {/* ── TRANSFERT ── */}
+          {activeTab === "transfer" && (
+            <div className={styles.panelContent}>
+              <label className={styles.fieldLabel}>Destinataire</label>
+              <div className={styles.searchWrapper}>
+                <input
+                  type="text"
+                  placeholder="Nom ou identifiant..."
+                  value={searchUser}
+                  onChange={(e) => { setSearchUser(e.target.value); setSelectedUser(null); }}
+                  className={styles.searchInput}
+                />
+                {selectedUser && (
+                  <button className={styles.clearSearch} onClick={() => { setSelectedUser(null); setSearchUser(""); }}>
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+
+              {searchResults.length > 0 && !selectedUser && (
+                <div className={styles.searchResults}>
+                  {searchResults.map((u) => (
+                    <div
+                      key={u.id}
+                      className={styles.searchItem}
+                      onClick={() => { setSelectedUser(u); setSearchUser(u.nomComplet); setSearchResults([]); }}
+                    >
+                      <div className={styles.searchAvatar}>{u.nomComplet[0]}</div>
+                      <div>
+                        <strong>{u.nomComplet}</strong>
+                        <span>@{u.login}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {selectedUser && (
+                <>
+                  <label className={styles.fieldLabel}>Montant</label>
+                  <input
+                    type="number"
+                    placeholder="Montant à transférer"
+                    value={montantTransfer}
+                    onChange={(e) => setMontantTransfer(e.target.value)}
+                    className={styles.input}
+                  />
+                  <button onClick={handleTransfer} disabled={loadingTransfer} className={styles.submitBtn}>
+                    {loadingTransfer ? "Envoi..." : `Envoyer à ${selectedUser.nomComplet}`}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ═══════════ HISTORIQUE ═══════════ */}
+      <section className={styles.historySection}>
+        <div className={styles.historyHeader}>
+          <h2 className={styles.historyTitle}>Historique</h2>
+          <span className={styles.historyCount}>{sortedTransactions.length} mouvement{sortedTransactions.length > 1 ? "s" : ""}</span>
+        </div>
+
+        <div className={styles.historyFilters}>
+          <button
+            className={`${styles.filterChip} ${historyFilter === "ALL" ? styles.filterChipActive : ""}`}
+            onClick={() => handleFilterChange("ALL")}
+          >
+            Tout
+          </button>
+          <button
+            className={`${styles.filterChip} ${historyFilter === "IN" ? styles.filterChipActive : ""}`}
+            onClick={() => handleFilterChange("IN")}
+          >
+            Entrées
+          </button>
+          <button
+            className={`${styles.filterChip} ${historyFilter === "OUT" ? styles.filterChipActive : ""}`}
+            onClick={() => handleFilterChange("OUT")}
+          >
+            Sorties
+          </button>
+        </div>
+
+        {sortedTransactions.length === 0 ? (
+          <div className={styles.emptyState}>
+            <WalletIcon size={32} />
+            <p>Aucune transaction pour le moment</p>
+          </div>
+        ) : (
+          <>
+            <div className={styles.txList}>
+              {visibleTransactions.map((tx) => {
+                const config = getTxConfig(tx.type);
+                const Icon = config.icon;
+                const isSuccess = tx.statut === "SUCCESS";
+                const isPending = tx.statut?.includes("ATTENTE");
+
+                return (
+                  <div key={tx.id} className={styles.txRow}>
+                    <div className={`${styles.txIcon} ${config.outbound ? styles.txIconOut : styles.txIconIn}`}>
+                      <Icon size={18} />
+                    </div>
+
+                    <div className={styles.txInfo}>
+                      <span className={styles.txLabel}>{config.label}</span>
+                      <span className={styles.txDate}>
+                        {formatDate(new Date(tx.createdAt), "dd MMM yyyy · HH:mm", { locale: currentLocale })}
+                      </span>
+                    </div>
+
+                    <div className={styles.txRight}>
+                      <span className={`${styles.txAmount} ${config.outbound ? styles.txAmountOut : styles.txAmountIn}`}>
+                        {config.outbound ? "−" : "+"} {format(tx.montant, "XOF")}
+                      </span>
+                      <span className={`${styles.txStatus} ${
+                        isSuccess ? styles.statusSuccess : isPending ? styles.statusPending : styles.statusFailed
+                      }`}>
+                        {isSuccess ? <CheckCircle2 size={12} /> : isPending ? <Clock size={12} /> : <XCircle size={12} />}
+                        {isSuccess ? "Réussi" : isPending ? "En cours" : "Échoué"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {hasMore && (
+              <button
+                className={styles.loadMoreBtn}
+                onClick={() => setHistoryLimit((prev) => prev + 15)}
+              >
+                <ChevronDown size={16} />
+                Voir plus ({sortedTransactions.length - historyLimit} restant{sortedTransactions.length - historyLimit > 1 ? "s" : ""})
+              </button>
+            )}
+          </>
+        )}
+      </section>
+    </div>
+  );
 }
