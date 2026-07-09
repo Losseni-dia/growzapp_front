@@ -72,6 +72,7 @@ import NewsDetail from "./pages/news/newsDetails/NewsDetails";
 import NewsForm from "./pages/news/newsForm/NewsForm";
 import NewsEdit from "./pages/news/newsEdit/newsEdit";
 import OAuth2RedirectHandler from "./components/Context/OAuth2RedirectHandler";
+import KycSuccess from "./components/kyc/KycSuccess";
 
 function App() {
   const location = useLocation();
@@ -109,6 +110,7 @@ function App() {
               path="/verifier-contrat/:code"
               element={<VerifierContrat />}
             />
+            <Route path="/kyc/success" element={<KycSuccess />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route
