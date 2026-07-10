@@ -15,8 +15,9 @@ import {
   FiShield,
   FiUser,
   FiCheck,
+  FiRss,
 } from "react-icons/fi";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
 import { useAuth } from "../Context/AuthContext";
 import { useCurrency } from "../Context/CurrencyContext";
@@ -98,7 +99,7 @@ export default function Header() {
                 className={`${styles.navLink} ${styles.proximityLink}`}
               >
                 <FiMapPin />
-                <span>Autour de moi</span>
+                <span>{t("header.nearby")}</span>
               </Link>
               <Link
                 to="/verifier-contrat"
@@ -107,9 +108,9 @@ export default function Header() {
                 <FiSearch /> <span>{t("link_verify_contract")}</span>
               </Link>
               <Link to="/news" className={styles.navLink}>
-                Actualités
+                <FiRss />
+                <span>{t("header.news")}</span>
               </Link>
-
               {isAdmin && (
                 <div className={styles.adminWrapper} ref={adminRef}>
                   <button
