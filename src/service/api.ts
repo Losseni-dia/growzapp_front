@@ -121,6 +121,19 @@ const request = async <T = unknown>(
   }
 };
 
+// Helper pour récupérer la langue active
+const getCurrentLangue = (): string => {
+  return localStorage.getItem("i18nextLng")?.split("-")[0] || "fr";
+};
+
+// Helper pour ajouter le paramètre langue aux URLs projets
+export const buildProjetUrl = (url: string): string => {
+  const langue = getCurrentLangue();
+  if (langue === "fr") return url;
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}langue=${langue}`;
+};
+
 export const api = {
   get: <T = unknown>(endpoint: string) => request<T>("GET", endpoint),
   post: <T = unknown>(endpoint: string, body?: any, isFormData = false) =>
