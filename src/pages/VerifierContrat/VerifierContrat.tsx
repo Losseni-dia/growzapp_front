@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { api } from "../../service/Api";
-import toast from "react-hot-toast";
-import { QRCodeSVG } from "qrcode.react";
-import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
-import styles from "./VerifierContrat.module.css";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { BrowserQRCodeReader } from "@zxing/browser";
 import {
+  FiShield,
+  FiCamera,
+  FiArrowLeft,
   FiCheckCircle,
   FiXCircle,
-  FiSearch,
-  FiShield,
-  FiArrowLeft,
-  FiLock,
-  FiMail,
-  FiFileText
+  FiRefreshCw,
 } from "react-icons/fi";
+import { api } from "../../service/Api";
+import styles from "./VerifierContrat.module.css";
 
-interface ContratPublic {
+interface ContratPublicDTO {
   valide: boolean;
   numeroContrat: string;
   projet: string;
@@ -27,161 +21,216 @@ interface ContratPublic {
   date: string;
 }
 
+type Etat = "scan" | "loading" | "result" | "error";
+
 export default function VerifierContrat() {
-  const { t, i18n } = useTranslation();
-  const { code } = useParams<{ code?: string }>();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const readerRef = useRef<BrowserQRCodeReader | null>(null);
+  const [etat, setEtat] = useState<Etat>("scan");
+  const [resultat, setResultat] = useState<ContratPublicDTO | null>(null);
+  const [erreur, setErreur] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
 
-  const locales: any = { fr, en: enUS, es };
-  const currentLocale = locales[i18n.language] || fr;
+  // Démarrer le scanner
+  const demarrerScanner = async () => {
+    try {
+      setScanning(true);
+      setEtat("scan");
+      setResultat(null);
+      setErreur(null);
 
-  const [formData, setFormData] = useState({
-    numero: code?.toUpperCase() || "",
-    email: "",
-    password: ""
-  });
-  
-  const [result, setResult] = useState<ContratPublic | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [searched, setSearched] = useState(false);
+      readerRef.current = new BrowserQRCodeReader();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === "numero" ? value.toUpperCase() : value
-    }));
+      const devices = await BrowserQRCodeReader.listVideoInputDevices();
+      if (devices.length === 0) {
+        setErreur("Aucune caméra détectée sur cet appareil.");
+        setEtat("error");
+        setScanning(false);
+        return;
+      }
+
+      // Préférer la caméra arrière sur mobile
+      const device =
+        devices.find(
+          (d) =>
+            d.label.toLowerCase().includes("back") ||
+            d.label.toLowerCase().includes("arrière") ||
+            d.label.toLowerCase().includes("rear"),
+        ) || devices[0];
+
+      await readerRef.current.decodeFromVideoDevice(
+        device.deviceId,
+        videoRef.current!,
+        async (result, error) => {
+          if (result) {
+            const text = result.getText();
+            await traiterQrCode(text);
+          }
+        },
+      );
+    } catch (err: any) {
+      setErreur("Impossible d'accéder à la caméra. Vérifiez les permissions.");
+      setEtat("error");
+      setScanning(false);
+    }
   };
 
-  const verifier = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    
-    if (!formData.numero || !formData.email || !formData.password) {
-      toast.error(t("verify_contract.toast_empty") || "Veuillez remplir tous les champs");
-      return;
+  // Arrêter le scanner
+  const arreterScanner = () => {
+    if (readerRef.current) {
+      BrowserQRCodeReader.releaseAllStreams();
+      readerRef.current = null;
     }
+    setScanning(false);
+  };
 
-    setLoading(true);
-    setSearched(true);
+  // Traiter le QR code scanné
+  const traiterQrCode = async (text: string) => {
+    arreterScanner();
+    setEtat("loading");
 
     try {
-      const res = await api.post<ContratPublic>(
-        `/api/contrats/public/verifier-securise`, 
-        formData
-      );
-      setResult(res);
-      toast.success(t("verify_contract.toast_success"));
-    } catch (err: any) {
-      setResult(null);
-      
-      // Récupération du message précis envoyé par le backend (ex: tentatives restantes)
-      const backendMessage = err.response?.data?.message;
-      const status = err.response?.status;
-
-      if (status === 403) {
-        // Cas du compte bloqué pour 24h
-        toast.error(backendMessage || "Accès bloqué pour 24h", { duration: 5000 });
-      } else if (status === 401) {
-        // Cas d'erreur mail/pass (L'intercepteur API doit ignorer cette route pour ne pas déconnecter)
-        toast.error(backendMessage || "Identifiants incorrects pour ce contrat");
-      } else {
-        toast.error(t("verify_contract.toast_error"));
+      // Extraire le token depuis l'URL
+      // Format : https://my-growzapp.com/verifier-contrat?token=UUID
+      let token = text;
+      if (text.includes("token=")) {
+        token = text.split("token=")[1];
       }
-    } finally {
-      setLoading(false);
+
+      const response = await api.get<ContratPublicDTO>(
+        `/api/contrats/verifier-token?token=${token}`,
+      );
+
+      setResultat(response);
+      setEtat("result");
+    } catch (err: any) {
+      setErreur("Erreur lors de la vérification. Réessayez.");
+      setEtat("error");
     }
   };
 
+  // Démarrer automatiquement au chargement
   useEffect(() => {
-    if (code) setFormData(prev => ({ ...prev, numero: code.toUpperCase() }));
-  }, [code]);
+    demarrerScanner();
+    return () => arreterScanner();
+  }, []);
 
   return (
     <div className={styles.page}>
       <div className={styles.container}>
         <div className={styles.card}>
+          {/* HEADER */}
           <div className={styles.header}>
-            <FiShield size={60} />
-            <h1>{t("verify_contract.title")}</h1>
-            <p>{t("verify_contract.subtitle")}</p>
+            <FiShield size={48} />
+            <h1>Vérifier un contrat</h1>
+            <p>Scannez le QR code de votre contrat GrowzApp</p>
           </div>
 
-          <form onSubmit={verifier} className={styles.search}>
-            <div className={styles.inputWrapper}>
-              <FiFileText size={24} className={styles.innerIcon} />
-              <input
-                name="numero"
-                type="text"
-                autoComplete="off"
-                className={styles.luxuryInput}
-                placeholder={t("verify_contract.placeholder")}
-                value={formData.numero}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className={styles.inputWrapper}>
-              <FiMail size={24} className={styles.innerIcon} />
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                className={styles.luxuryInput}
-                placeholder="Email de l'investisseur"
-                value={formData.email}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className={styles.inputWrapper}>
-              <FiLock size={24} className={styles.innerIcon} />
-              <input
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                className={styles.luxuryInput}
-                placeholder="Mot de passe de compte"
-                value={formData.password}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <button type="submit" disabled={loading} className={styles.btn}>
-              {loading ? t("verify_contract.btn_verifying") : t("verify_contract.btn_verify")}
-            </button>
-          </form>
-
-          {searched && (
-            <div className={styles.result}>
-              {result ? (
-                <div className={styles.success}>
-                  <FiCheckCircle size={100} />
-                  <h2>{t("verify_contract.success_title")}</h2>
-                  <div className={styles.details}>
-                    <p><strong>{t("verify_contract.label_contract_no")}</strong> {result.numeroContrat}</p>
-                    <p><strong>{t("verify_contract.label_project")}</strong> {result.projet}</p>
-                    <p><strong>{t("verify_contract.label_investor")}</strong> {result.investisseur}</p>
-                    <p><strong>{t("verify_contract.label_amount")}</strong> {result.montant.toLocaleString(i18n.language)} FCFA</p>
-                    <p><strong>{t("verify_contract.label_date")}</strong> {format(new Date(result.date), "dd MMMM yyyy", { locale: currentLocale })}</p>
-                  </div>
-                  <div className={styles.qr}>
-                    <QRCodeSVG value={window.location.href} size={180} fgColor="#1b5e20" />
-                    <small>{t("verify_contract.qr_hint")}</small>
-                  </div>
+          {/* ÉTAT : SCAN */}
+          {etat === "scan" && (
+            <div className={styles.scanSection}>
+              <div className={styles.videoWrapper}>
+                <video
+                  ref={videoRef}
+                  className={styles.video}
+                  autoPlay
+                  playsInline
+                  muted
+                />
+                {/* Cadre de visée */}
+                <div className={styles.scanFrame}>
+                  <div className={styles.corner} />
+                  <div className={styles.corner} />
+                  <div className={styles.corner} />
+                  <div className={styles.corner} />
                 </div>
-              ) : (
-                <div className={styles.error}>
-                  <FiXCircle size={100} />
-                  <h2>{t("verify_contract.error_title")}</h2>
-                  <p>{t("verify_contract.error_desc")}</p>
-                </div>
-              )}
+                <div className={styles.scanLine} />
+              </div>
+              <p className={styles.scanHint}>
+                <FiCamera size={18} />
+                Pointez la caméra vers le QR code du contrat
+              </p>
+              <button className={styles.btnSecondary} onClick={arreterScanner}>
+                Annuler
+              </button>
             </div>
           )}
 
+          {/* ÉTAT : LOADING */}
+          {etat === "loading" && (
+            <div className={styles.loadingSection}>
+              <div className={styles.spinner} />
+              <p>Vérification en cours...</p>
+            </div>
+          )}
+
+          {/* ÉTAT : RÉSULTAT */}
+          {etat === "result" && resultat && (
+            <div className={styles.result}>
+              {resultat.valide ? (
+                <div className={styles.success}>
+                  <FiCheckCircle size={64} />
+                  <h2>✅ Contrat VALIDE</h2>
+                  <p>Ce contrat est authentique et n'a pas été modifié.</p>
+                </div>
+              ) : (
+                <div className={styles.error}>
+                  <FiXCircle size={64} />
+                  <h2>❌ Contrat FALSIFIÉ</h2>
+                  <p>ATTENTION — Ce contrat a été modifié. Il est invalide.</p>
+                </div>
+              )}
+
+              <div className={styles.details}>
+                <p>
+                  <strong>📋 Numéro :</strong> {resultat.numeroContrat}
+                </p>
+                <p>
+                  <strong>🚀 Projet :</strong> {resultat.projet}
+                </p>
+                <p>
+                  <strong>👤 Investisseur :</strong> {resultat.investisseur}
+                </p>
+                <p>
+                  <strong>💰 Montant :</strong>{" "}
+                  {resultat.montant.toLocaleString("fr-FR")} FCFA
+                </p>
+                <p>
+                  <strong>📅 Date :</strong> {resultat.date}
+                </p>
+              </div>
+
+              <button className={styles.btn} onClick={demarrerScanner}>
+                <FiRefreshCw size={18} />
+                Scanner un autre contrat
+              </button>
+            </div>
+          )}
+
+          {/* ÉTAT : ERREUR */}
+          {etat === "error" && (
+            <div className={styles.result}>
+              <div className={styles.error}>
+                <FiXCircle size={64} />
+                <h2>Erreur</h2>
+                <p>{erreur}</p>
+              </div>
+              <button className={styles.btn} onClick={demarrerScanner}>
+                <FiRefreshCw size={18} />
+                Réessayer
+              </button>
+            </div>
+          )}
+
+          {/* FOOTER */}
           <div className={styles.footer}>
-            <div className={styles.logo}><h3>growzapp</h3></div>
-            <p>{t("verify_contract.footer_text")}</p>
-            <Link to="/" className={styles.back}><FiArrowLeft /> {t("verify_contract.back_home")}</Link>
+            <div className={styles.logo}>
+              <h3>GrowzApp</h3>
+            </div>
+            <Link to="/" className={styles.back}>
+              <FiArrowLeft size={16} />
+              Retour à l'accueil
+            </Link>
           </div>
         </div>
       </div>
