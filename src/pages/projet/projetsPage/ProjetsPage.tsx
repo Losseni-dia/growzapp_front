@@ -11,7 +11,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
-import { api } from "../../../service/Api";
+import { api, buildProjetUrl } from "../../../service/Api";
 import { ProjetDTO } from "../../../types/projet";
 import styles from "./ProjetsPage.module.css";
 
@@ -32,7 +32,7 @@ const normalize = (str: string): string =>
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ProjetsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [projects, setProjects] = useState<ProjetDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,8 +50,9 @@ export default function ProjetsPage() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const response =
-          await api.get<ApiResponse<ProjetDTO[]>>("/api/projets");
+        const response = await api.get<ApiResponse<ProjetDTO[]>>(
+          buildProjetUrl("/api/projets"),
+        );
         setProjects(response.data || []);
       } catch (err: any) {
         toast.error(t("projects_page.toast_error"));
@@ -61,7 +62,7 @@ export default function ProjetsPage() {
       }
     };
     fetchProjects();
-  }, [t]);
+  }, [t, i18n.language]);
 
   const filtresUniques = useMemo(() => {
     const secteurs = new Set<string>();
