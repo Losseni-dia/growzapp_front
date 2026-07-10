@@ -70,7 +70,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         })
       : "---";
 
-  const descriptionTexte = projet?.description || "";
+ const descriptionTexte = projet?.descriptionTradu || projet?.description || "";
   const descriptionAffichée = descriptionTexte.substring(0, 100);
 
   return (
@@ -112,7 +112,9 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
       </div>
 
       <div className={styles.content}>
-        <h3 className={styles.title}>{projet.libelle}</h3>
+        <h3 className={styles.title}>
+          {projet.libelleTradu || projet.libelle}
+        </h3>
         <div className={styles.location}>
           <FiMapPin />
           <span>{translateData("cities", projet.localiteNom ?? "")}</span>
