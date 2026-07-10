@@ -8,6 +8,7 @@ import {
 } from "react";
 import { api } from "../../service/Api"; // Assure-toi que l'import de ton service api est correct
 import { UserDTO } from "../../types/user";
+import i18n from "../../i18n";
 
 // 1. Définition de l'interface du contexte mise à jour
 export interface AuthContextType {
@@ -27,38 +28,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // 2. Récupération de la session au démarrage (Version Robuste)
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (!stored) {
-      setLoading(false);
-      return;
-    }
+ useEffect(() => {
+   const stored = localStorage.getItem("user");
+   if (!stored) {
+     setLoading(false);
+     return;
+   }
+   try {
+     const data = JSON.parse(stored);
+     let loadedUser: UserDTO | null = null;
 
-    try {
-      const data = JSON.parse(stored);
+     if (data?.user) {
+       loadedUser = data.user as UserDTO;
+     } else if (data?.id || data?.email) {
+       loadedUser = data as UserDTO;
+     }
 
-      // On vérifie si c'est le format imbriqué {user: ...} ou direct {...}
-      if (data?.user) {
-        setUser(data.user as UserDTO);
-      } else if (data?.id || data?.email) {
-        // Si l'objet contient un ID ou email, c'est l'utilisateur direct
-        setUser(data as UserDTO);
-      }
-    } catch (err) {
-      console.error("Erreur parsing user storage", err);
-      localStorage.removeItem("user");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+     if (loadedUser) {
+       setUser(loadedUser);
+
+       // ── Restaurer langue préférée ──────────────────────
+       if (loadedUser.interfaceLanguage) {
+         i18n.changeLanguage(loadedUser.interfaceLanguage);
+       }
+
+       // ── Restaurer devise préférée ──────────────────────
+       if (loadedUser.devisePreferee) {
+         localStorage.setItem("user_currency", loadedUser.devisePreferee);
+       }
+     }
+   } catch (err) {
+     console.error("Erreur parsing user storage", err);
+     localStorage.removeItem("user");
+   } finally {
+     setLoading(false);
+   }
+ }, []);
 
   // 3. Fonction de Connexion
-  const login = (token: string, userData: UserDTO) => {
-    const safeUser = { ...userData, enabled: userData.enabled ?? true };
-    localStorage.setItem("user", JSON.stringify({ token, user: safeUser }));
-    localStorage.setItem("access_token", token);
-    setUser(safeUser);
-  };
+const login = (token: string, userData: UserDTO) => {
+  const safeUser = { ...userData, enabled: userData.enabled ?? true };
+  localStorage.setItem("user", JSON.stringify({ token, user: safeUser }));
+  localStorage.setItem("access_token", token);
+  setUser(safeUser);
+
+  // ── Appliquer langue préférée ──────────────────────────────
+  if (safeUser.interfaceLanguage) {
+    i18n.changeLanguage(safeUser.interfaceLanguage);
+    localStorage.setItem("i18nextLng", safeUser.interfaceLanguage);
+  }
+
+  // ── Appliquer devise préférée ──────────────────────────────
+  if (safeUser.devisePreferee) {
+    localStorage.setItem("user_currency", safeUser.devisePreferee);
+  }
+};
 
   // 4. Fonction de mise à jour du profil (locale)
   const updateUserInfo = (userData: UserDTO) => {
