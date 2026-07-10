@@ -24,6 +24,10 @@
     "social_google": "Continuer avec Google",
     "social_github": "Continuer avec GitHub"
   },
+  "header": {
+    "news": "Actualités",
+    "nearby": "Autour de moi"
+  },
   "register_page": {
     "title": "Créer votre compte GrowzApp",
     "photo": {
@@ -38,16 +42,21 @@
     "form": {
       "firstname": "Prénom",
       "lastname": "Nom",
-      "login": "Login",
-      "email": "Email",
-      "phone": "Téléphone (facultatif)",
-      "password": "Mot de passe",
+      "login": "Nom d'utilisateur",
+      "email": "Email (optionnel)",
+      "phone": "Numéro de téléphone *",
+      "password": "Mot de passe (min. 6 caractères)",
       "confirm_password": "Confirmer le mot de passe",
       "gender_male": "Homme",
       "gender_female": "Femme",
-      "select_region": "Choisir votre région / ville",
-      "select_languages": "Langues parlées (cliquez)",
-      "languages_count": "langue(s)"
+      "select_region": "Choisir votre région / ville *",
+      "select_languages": "Langues parlées * (cliquer pour sélectionner)",
+      "languages_count": "langue(s) sélectionnée(s)",
+      "other_region": "Autre ville / région",
+      "other_region_placeholder": "Saisir votre ville ou région...",
+      "other_language_placeholder": "Ajouter une langue (Entrée pour valider)",
+      "interface_language": "Langue de l'interface",
+      "devise": "Devise préférée"
     },
     "buttons": {
       "submit_loading": "Création...",
@@ -59,13 +68,39 @@
     },
     "errors": {
       "load_data": "Impossible de charger les données",
-      "password_mismatch": "Mots de passe différents",
-      "missing_region": "Choisissez une région",
-      "missing_language": "Choisissez au moins une langue",
+      "firstname_required": "Le prénom est obligatoire",
+      "lastname_required": "Le nom est obligatoire",
+      "login_required": "Le nom d'utilisateur est obligatoire",
+      "login_min": "Le login doit contenir au moins 3 caractères",
+      "password_required": "Le mot de passe est obligatoire",
+      "password_min": "Le mot de passe doit contenir au moins 6 caractères",
+      "confirm_required": "Veuillez confirmer votre mot de passe",
+      "password_mismatch": "Les mots de passe ne correspondent pas",
+      "email_invalid": "Adresse email invalide",
+      "phone_required": "Le numéro de téléphone est obligatoire",
+      "phone_invalid": "Numéro invalide (ex: +22670123456)",
+      "region_required": "Veuillez choisir une région",
+      "language_required": "Veuillez sélectionner au moins une langue",
       "generic": "Erreur lors de l'inscription"
     },
-    "success": "Inscription réussie ! Bienvenue !"
+    "hints": {
+      "password": "Minimum 6 caractères",
+      "email_optional": "Optionnel — non obligatoire",
+      "phone": "Format international : +225XXXXXXXX",
+      "interface_language": "Le site sera automatiquement traduit dans cette langue à chaque connexion",
+      "devise": "Les montants seront affichés dans cette devise"
+    },
+    "success": "Inscription réussie ! Bienvenue !",
+    "sections": {
+      "identity": "Identité",
+      "connection": "Connexion",
+      "contact": "Contact",
+      "gender": "Genre",
+      "location": "Localisation",
+      "preferences": "Préférences"
+    }
   },
+
   "projects_page": {
     "loading": "Chargement des projets...",
     "filters": {
@@ -134,34 +169,87 @@
     "toast_invest_success": "Investissement pris en compte !"
   },
   "project_form": {
-    "title": "Soumettre un nouveau projet",
+    "title": "Soumettre un projet",
+    "subtitle": "Présentez votre idée en quelques étapes simples.",
+    "sections": {
+      "photo": "Photo de couverture",
+      "presentation": "Présentation",
+      "finances": "Finances",
+      "duration": "Durée",
+      "location": "Localisation & Secteur"
+    },
     "photo": {
-      "placeholder": "Ajouter un poster (16:9 recommandé)",
-      "crop_validate": "Valider",
-      "crop_cancel": "Annuler",
-      "error_type": "Image uniquement",
-      "error_size": "Max 10 Mo",
-      "success_crop": "Poster recadré !"
+      "click_to_add": "Cliquez pour ajouter une photo de couverture",
+      "format_hint": "Format 16:9 recommandé",
+      "validate": "Valider",
+      "cancel": "Annuler",
+      "cropped": "Image recadrée !"
     },
     "fields": {
-      "name_placeholder": "Nom du projet *",
-      "desc_placeholder": "Description détaillée *",
-      "sector_placeholder": "Secteur d'activité *",
-      "city_placeholder": "Ville / Localité *",
-      "country_placeholder": "Pays (Côte d'Ivoire par défaut)"
+      "title": "Titre du projet *",
+      "title_placeholder": "Ex: Ferme de Korhogo",
+      "description": "Pitch et besoins *",
+      "description_placeholder": "Décrivez votre projet en détail (minimum 20 caractères)...",
+      "description_hint": "Minimum 20 caractères —",
+      "description_chars": "saisis",
+      "objectif": "Montant à lever (FCFA) *",
+      "objectif_placeholder": "Ex : 5 000 000",
+      "prix_part": "Prix d'une part (FCFA) *",
+      "prix_part_placeholder": "Ex : 10 000",
+      "valuation": "Valorisation totale du projet (FCFA) *",
+      "valuation_placeholder": "Ex : 25 000 000 — valeur totale de votre entreprise",
+      "roi": "ROI projeté (% annuel) *",
+      "roi_placeholder": "Ex : 15 — rendement annuel estimé pour les investisseurs",
+      "duree": "Durée du projet (en mois)",
+      "duree_placeholder": "Ex : 24 — laisser vide si durée indéterminée",
+      "duree_indeterminate": "Durée indéterminée",
+      "date_debut": "Date de début *",
+      "date_fin": "Date de fin *",
+      "secteur": "Secteur *",
+      "secteur_placeholder": "Agriculture, Tech...",
+      "ville": "Ville *",
+      "ville_placeholder": "Yamoussoukro",
+      "pays": "Pays",
+      "pays_placeholder": "Côte d'Ivoire"
+    },
+    "calc": {
+      "parts": "Nombre de parts",
+      "parts_of": "parts de",
+      "equity": "Parts à lever",
+      "equity_of": "de la valorisation totale"
+    },
+    "modal": {
+      "title": "Engagement & Certification",
+      "alert": "Toute fausse déclaration est passible de poursuites pénales.",
+      "certified": "Je certifie sur l'honneur que toutes les informations fournies sont vraies et vérifiables.",
+      "monitoring": "J'accepte le monitoring de terrain et les audits réguliers par les experts Growzapp.",
+      "back": "Retour",
+      "confirm": "Confirmer et Publier",
+      "sending": "Envoi en cours..."
     },
     "buttons": {
       "submit": "Soumettre le projet",
-      "sending": "Envoi..."
+      "processing": "Traitement..."
     },
+    "success": "Projet soumis avec succès !",
     "errors": {
       "required_name": "Le nom du projet est obligatoire",
+      "required_name_min": "Le titre doit contenir au moins 3 caractères",
       "required_desc": "La description est obligatoire",
+      "required_desc_min": "La description doit contenir au moins 20 caractères",
       "required_sector": "Le secteur est obligatoire",
-      "required_city": "La localité est obligatoire",
+      "required_city": "La ville est obligatoire",
+      "required_objectif": "L'objectif minimum est de 100 000 FCFA",
+      "required_prix_part": "Le prix minimum par part est de 1 000 FCFA",
+      "required_valuation": "La valorisation minimum est de 100 000 FCFA",
+      "required_roi": "Le ROI doit être supérieur à 0",
+      "required_roi_max": "Le ROI ne peut pas dépasser 100%",
+      "required_date_debut": "La date de début est obligatoire",
+      "required_date_fin": "La date de fin est obligatoire",
+      "date_fin_before_debut": "La date de fin doit être après la date de début",
+      "coherence": "Incohérence financière — vérifiez objectif, prix et nombre de parts",
       "server": "Erreur lors de l'envoi"
-    },
-    "success": "Projet soumis avec succès !"
+    }
   },
   "projets_proches": {
     "title": "Projets à proximité",

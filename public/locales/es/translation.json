@@ -24,6 +24,10 @@
     "social_google": "Continuar con Google",
     "social_github": "Continuar con GitHub"
   },
+  "header": {
+    "news": "Noticias",
+    "nearby": "Cerca de mí"
+  },
   "register_page": {
     "title": "Crea tu cuenta GrowzApp",
     "photo": {
@@ -38,16 +42,21 @@
     "form": {
       "firstname": "Nombre",
       "lastname": "Apellido",
-      "login": "Usuario",
-      "email": "Correo electrónico",
-      "phone": "Teléfono (opcional)",
-      "password": "Contraseña",
+      "login": "Nombre de usuario",
+      "email": "Correo electrónico (opcional)",
+      "phone": "Número de teléfono *",
+      "password": "Contraseña (mín. 6 caracteres)",
       "confirm_password": "Confirmar contraseña",
       "gender_male": "Hombre",
       "gender_female": "Mujer",
-      "select_region": "Elige tu región / ciudad",
-      "select_languages": "Idiomas hablados (clic)",
-      "languages_count": "idioma(s)"
+      "select_region": "Elegir región / ciudad *",
+      "select_languages": "Idiomas hablados * (clic para seleccionar)",
+      "languages_count": "idioma(s) seleccionado(s)",
+      "other_region": "Otra ciudad / región",
+      "other_region_placeholder": "Ingrese su ciudad o región...",
+      "other_language_placeholder": "Agregar un idioma (Enter para confirmar)",
+      "interface_language": "Idioma de la interfaz",
+      "devise": "Moneda preferida"
     },
     "buttons": {
       "submit_loading": "Creando...",
@@ -58,14 +67,40 @@
       "login_link": "Iniciar sesión"
     },
     "errors": {
-      "load_data": "Imposible cargar datos",
+      "load_data": "No se pueden cargar los datos",
+      "firstname_required": "El nombre es obligatorio",
+      "lastname_required": "El apellido es obligatorio",
+      "login_required": "El nombre de usuario es obligatorio",
+      "login_min": "El usuario debe tener al menos 3 caracteres",
+      "password_required": "La contraseña es obligatoria",
+      "password_min": "La contraseña debe tener al menos 6 caracteres",
+      "confirm_required": "Por favor confirme su contraseña",
       "password_mismatch": "Las contraseñas no coinciden",
-      "missing_region": "Elige una región",
-      "missing_language": "Elige al menos un idioma",
+      "email_invalid": "Dirección de correo inválida",
+      "phone_required": "El número de teléfono es obligatorio",
+      "phone_invalid": "Número inválido (ej: +22670123456)",
+      "region_required": "Por favor elija una región",
+      "language_required": "Por favor seleccione al menos un idioma",
       "generic": "Error durante el registro"
     },
-    "success": "¡Registro exitoso! ¡Bienvenido!"
+    "hints": {
+      "password": "Mínimo 6 caracteres",
+      "email_optional": "Opcional — no requerido",
+      "phone": "Formato internacional: +225XXXXXXXX",
+      "interface_language": "El sitio se traducirá automáticamente a este idioma en cada inicio de sesión",
+      "devise": "Los montos se mostrarán en esta moneda"
+    },
+    "success": "¡Registro exitoso! ¡Bienvenido!",
+    "sections": {
+      "identity": "Identidad",
+      "connection": "Conexión",
+      "contact": "Contacto",
+      "gender": "Género",
+      "location": "Localización",
+      "preferences": "Preferencias"
+    }
   },
+
   "projects_page": {
     "equity_to_raise": "Acciones a captar",
     "loading": "Cargando proyectos...",
@@ -107,28 +142,28 @@
     "btn_invest": "Invertir",
     "certified": "Certificado"
   },
- "project_details": {
-  "equity_to_raise": "Acciones a captar",
-  "loading": "Cargando proyecto...",
-  "error_not_found": "Proyecto no encontrado",
-  "no_poster": "Ningún póster disponible",
-  "sector": "Sector",
-  "location": "Ubicación",
-  "country": "País",
-  "roi_projected": "ROI Proyectado",
-  "collected": "recaudados",
-  "goal": "objetivo",
-  "reached": "alcanzado",
-  "description_title": "Descripción del proyecto",
-  "documents_title": "Documentos del proyecto",
-  "no_documents": "No se han publicado documentos para este proyecto.",
-  "docs_restricted_title": "Documentos reservados para inversores",
-  "docs_restricted_hint": "Debe invertir en este proyecto para acceder a los documentos técnicos, financieros y legales.",
-  "invest_title": "Invertir en este proyecto",
-  "invest_in_title": "Invertir en",
-  "back_to_details": "Volver a los detalles del proyecto",
-  "toast_invest_success": "¡Inversión registrada!"
-},
+  "project_details": {
+    "equity_to_raise": "Acciones a captar",
+    "loading": "Cargando proyecto...",
+    "error_not_found": "Proyecto no encontrado",
+    "no_poster": "Ningún póster disponible",
+    "sector": "Sector",
+    "location": "Ubicación",
+    "country": "País",
+    "roi_projected": "ROI Proyectado",
+    "collected": "recaudados",
+    "goal": "objetivo",
+    "reached": "alcanzado",
+    "description_title": "Descripción del proyecto",
+    "documents_title": "Documentos del proyecto",
+    "no_documents": "No se han publicado documentos para este proyecto.",
+    "docs_restricted_title": "Documentos reservados para inversores",
+    "docs_restricted_hint": "Debe invertir en este proyecto para acceder a los documentos técnicos, financieros y legales.",
+    "invest_title": "Invertir en este proyecto",
+    "invest_in_title": "Invertir en",
+    "back_to_details": "Volver a los detalles del proyecto",
+    "toast_invest_success": "¡Inversión registrada!"
+  },
   "projets_proches": {
     "title": "Proyectos cercanos",
     "discover_title": "Descubre proyectos a tu autour",
@@ -140,34 +175,87 @@
     "gps_label": "Ruta GPS"
   },
   "project_form": {
-    "title": "Enviar un nuevo proyecto",
+    "title": "Enviar un proyecto",
+    "subtitle": "Presente su idea en unos sencillos pasos.",
+    "sections": {
+      "photo": "Foto de portada",
+      "presentation": "Presentación",
+      "finances": "Finanzas",
+      "duration": "Duración",
+      "location": "Localización & Sector"
+    },
     "photo": {
-      "placeholder": "Añadir un póster (16:9 recomendado)",
-      "crop_validate": "Validar",
-      "crop_cancel": "Cancelar",
-      "error_type": "Solo imagen",
-      "error_size": "Máx 10 MB",
-      "success_crop": "¡Póster recortado!"
+      "click_to_add": "Haga clic para agregar una foto de portada",
+      "format_hint": "Formato 16:9 recomendado",
+      "validate": "Validar",
+      "cancel": "Cancelar",
+      "cropped": "¡Imagen recortada!"
     },
     "fields": {
-      "name_placeholder": "Nombre del proyecto *",
-      "desc_placeholder": "Descripción detallada *",
-      "sector_placeholder": "Sector de actividad *",
-      "city_placeholder": "Ciudad / Localidad *",
-      "country_placeholder": "País (Costa de Marfil por defecto)"
+      "title": "Título del proyecto *",
+      "title_placeholder": "Ej: Granja de Korhogo",
+      "description": "Presentación y necesidades *",
+      "description_placeholder": "Describa su proyecto en detalle (mínimo 20 caracteres)...",
+      "description_hint": "Mínimo 20 caracteres —",
+      "description_chars": "ingresados",
+      "objectif": "Monto a recaudar (FCFA) *",
+      "objectif_placeholder": "Ej: 5.000.000",
+      "prix_part": "Precio por acción (FCFA) *",
+      "prix_part_placeholder": "Ej: 10.000",
+      "valuation": "Valoración total del proyecto (FCFA) *",
+      "valuation_placeholder": "Ej: 25.000.000 — valor total de su empresa",
+      "roi": "ROI proyectado (% anual) *",
+      "roi_placeholder": "Ej: 15 — rendimiento anual estimado para inversores",
+      "duree": "Duración del proyecto (en meses)",
+      "duree_placeholder": "Ej: 24 — dejar vacío si la duración es indeterminada",
+      "duree_indeterminate": "Duración indeterminada",
+      "date_debut": "Fecha de inicio *",
+      "date_fin": "Fecha de fin *",
+      "secteur": "Sector *",
+      "secteur_placeholder": "Agricultura, Tecnología...",
+      "ville": "Ciudad *",
+      "ville_placeholder": "Yamoussoukro",
+      "pays": "País",
+      "pays_placeholder": "Costa de Marfil"
+    },
+    "calc": {
+      "parts": "Número de acciones",
+      "parts_of": "acciones de",
+      "equity": "Acciones a recaudar",
+      "equity_of": "de la valoración total"
+    },
+    "modal": {
+      "title": "Compromiso & Certificación",
+      "alert": "Cualquier declaración falsa es punible con sanciones penales.",
+      "certified": "Certifico bajo mi honor que toda la información proporcionada es verdadera y verificable.",
+      "monitoring": "Acepto el monitoreo de campo y las auditorías regulares por parte de los expertos de Growzapp.",
+      "back": "Volver",
+      "confirm": "Confirmar y Publicar",
+      "sending": "Enviando..."
     },
     "buttons": {
       "submit": "Enviar proyecto",
-      "sending": "Enviando..."
+      "processing": "Procesando..."
     },
+    "success": "¡Proyecto enviado con éxito!",
     "errors": {
       "required_name": "El nombre del proyecto es obligatorio",
+      "required_name_min": "El título debe tener al menos 3 caracteres",
       "required_desc": "La descripción es obligatoria",
+      "required_desc_min": "La descripción debe tener al menos 20 caracteres",
       "required_sector": "El sector es obligatorio",
-      "required_city": "La localidad es obligatoria",
+      "required_city": "La ciudad es obligatoria",
+      "required_objectif": "El objetivo mínimo es de 100.000 FCFA",
+      "required_prix_part": "El precio mínimo por acción es de 1.000 FCFA",
+      "required_valuation": "La valoración mínima es de 100.000 FCFA",
+      "required_roi": "El ROI debe ser mayor que 0",
+      "required_roi_max": "El ROI no puede superar el 100%",
+      "required_date_debut": "La fecha de inicio es obligatoria",
+      "required_date_fin": "La fecha de fin es obligatoria",
+      "date_fin_before_debut": "La fecha de fin debe ser posterior a la fecha de inicio",
+      "coherence": "Incoherencia financiera — verifique objetivo, precio y número de acciones",
       "server": "Error al enviar"
-    },
-    "success": "¡Proyecto enviado con éxito!"
+    }
   },
   "data": {
     "countries": {
@@ -830,7 +918,7 @@
     "toast_success": "¡Contrato auténtico!",
     "toast_error": "Contrato no encontrado o inválido"
   },
- 
+
   "kyc": {
     "pending_action_hint": "Por favor, verifica tu identidad para desbloquear todas las funciones de retiro e inversión.",
     "title": "Verificación de identidad",
@@ -850,5 +938,4 @@
     "investment_blocked_title": "Acción requerida",
     "error_investment_blocked": "Se requiere verificación KYC para invertir"
   }
-
 }
