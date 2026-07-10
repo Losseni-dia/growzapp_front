@@ -6,8 +6,6 @@ export default function RegisterPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1>growzapp</h1>
-        <p>Rejoignez la communauté </p>
         <RegisterForm />
       </div>
     </div>
