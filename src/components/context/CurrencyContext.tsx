@@ -109,13 +109,15 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
       const amountInEUR = amount / rateSource;
       const convertedAmount = amountInEUR * rateTarget;
 
-      const lang = localStorage.getItem("i18nextLng") || "fr";
+      // Locale de formatage fixe, indépendante de la langue de l'interface :
+      // la devise ne doit pas changer d'apparence quand on change de langue.
+      const FORMAT_LOCALE = "fr-FR";
 
       // Devises sans décimales
       const noDecimals = ["XOF", "XAF", "GNF", "NGN", "KES", "GHS"];
       const decimals = noDecimals.includes(currency) ? 0 : 2;
 
-      return new Intl.NumberFormat(lang, {
+      return new Intl.NumberFormat(FORMAT_LOCALE, {
         style: "currency",
         currency: currency,
         minimumFractionDigits: decimals,
