@@ -10,8 +10,26 @@ import React, {
 } from "react";
 import { api } from "../../service/Api";
 
-// Stockage hors React pour garantir la stabilité
-let CACHED_RATES: Record<string, number> = { XOF: 1, EUR: 0.0015, USD: 0.0016 };
+// ── Taux par défaut (fallback si API indisponible) ────────────────────────
+// Exprimés en valeur relative à EUR (EUR = 1.0)
+// Convertis en valeur relative à XOF pour le calcul interne
+let CACHED_RATES: Record<string, number> = {
+  EUR: 1.0,
+  XOF: 655.957,
+  XAF: 655.957,
+  USD: 1.08,
+  GBP: 0.86,
+  MAD: 10.85,
+  GHS: 14.5,
+  KES: 140.0,
+  NGN: 1650.0,
+  GNF: 9300.0,
+};
+
+// ── Base de conversion : EUR ──────────────────────────────────────────────
+// Pour convertir A → B :
+// montant_en_EUR = montant_A / rate_A
+// montant_B = montant_en_EUR * rate_B
 
 interface CurrencyContextType {
   currency: string;
@@ -21,18 +39,19 @@ interface CurrencyContextType {
 }
 
 const CurrencyContext = createContext<CurrencyContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [currency, setCurrencyState] = useState(
-    () => localStorage.getItem("user_currency") || "XOF"
+    () => localStorage.getItem("user_currency") || "XOF",
   );
   const [rates, setRates] = useState<Record<string, number>>(CACHED_RATES);
   const isFetching = useRef(false);
 
+  // ── Fetch des taux depuis le backend ─────────────────────────────────────
   useEffect(() => {
     if (isFetching.current) return;
     isFetching.current = true;
@@ -48,6 +67,25 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
       .catch((err) => console.warn("Utilisation des taux par défaut", err));
   }, []);
 
+  // ── Écoute les changements de localStorage (depuis AuthContext au login) ─
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem("user_currency");
+      if (saved && saved !== currency) {
+        setCurrencyState(saved);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    const interval = setInterval(handleStorageChange, 500);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [currency]);
+
+  // ── Changement manuel de devise ───────────────────────────────────────────
   const changeCurrency = useCallback((code: string) => {
     if (!code) return;
     setCurrencyState((prev) => {
@@ -57,24 +95,34 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, []);
 
+  // ── Formatage des montants ────────────────────────────────────────────────
   const format = useCallback(
     (amount: number, fromCurrency: string = "XOF") => {
       if (amount === undefined || amount === null) return "---";
 
-      const rateSource = CACHED_RATES[fromCurrency] || 1;
-      const rateTarget = CACHED_RATES[currency] || 1;
-      const convertedAmount = (amount / rateSource) * rateTarget;
+      // Conversion : fromCurrency → EUR → currency cible
+      const rateSource =
+        CACHED_RATES[fromCurrency] ?? CACHED_RATES["XOF"] ?? 655.957;
+      const rateTarget = CACHED_RATES[currency] ?? 1;
+
+      // Convertir en EUR d'abord, puis dans la devise cible
+      const amountInEUR = amount / rateSource;
+      const convertedAmount = amountInEUR * rateTarget;
 
       const lang = localStorage.getItem("i18nextLng") || "fr";
+
+      // Devises sans décimales
+      const noDecimals = ["XOF", "XAF", "GNF", "NGN", "KES", "GHS"];
+      const decimals = noDecimals.includes(currency) ? 0 : 2;
 
       return new Intl.NumberFormat(lang, {
         style: "currency",
         currency: currency,
-        minimumFractionDigits: currency === "XOF" ? 0 : 2,
-        maximumFractionDigits: currency === "XOF" ? 0 : 2,
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
       }).format(convertedAmount);
     },
-    [currency]
+    [currency],
   );
 
   const value = useMemo(
@@ -84,7 +132,7 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
       format,
       rates,
     }),
-    [currency, rates, format, changeCurrency]
+    [currency, rates, format, changeCurrency],
   );
 
   return (
@@ -94,12 +142,9 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// Hook avec sécurité renforcée
 export const useCurrency = () => {
   const context = useContext(CurrencyContext);
   if (context === undefined) {
-    // Au lieu de throw une erreur qui fait un écran blanc,
-    // on renvoie un fallback temporaire si le provider n'est pas prêt
     return {
       currency: "XOF",
       setCurrency: () => {},
