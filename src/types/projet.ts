@@ -44,6 +44,10 @@ export interface ProjetDTO {
 
   documents: DocumentDTO[];
   investissements: InvestissementDTO[];
+
+  // ── Traductions ──────────────────────────────────────────────
+  libelleTradu?: string;
+  descriptionTradu?: string;
 }
 
 // Optionnel : Mise à jour du résumé si tu l'utilises
@@ -85,3 +89,16 @@ export interface ProjetCreateRequest {
   secteurId?: number;
   certifiedAt?: string;
 }
+
+
+// Helper — retourne le libellé traduit si disponible, sinon le libellé original
+export const getProjetLibelle = (projet: ProjetDTO | ProjetSummary): string => {
+  if ("libelleTradu" in projet && projet.libelleTradu) return projet.libelleTradu;
+  return projet.libelle;
+};
+
+// Helper — retourne la description traduite si disponible, sinon la description originale
+export const getProjetDescription = (projet: ProjetDTO): string => {
+  if (projet.descriptionTradu) return projet.descriptionTradu;
+  return projet.description;
+};
