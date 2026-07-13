@@ -1,7 +1,7 @@
 // src/pages/MonEspace/Mes-investissements/MesInvestissementsPage.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../../../service/Api";
+import { api, buildProjetUrl } from "../../../service/Api";
 import { InvestissementDTO } from "../../../types/investissement";
 import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";
@@ -38,7 +38,7 @@ export default function MesInvestissementsPage() {
   useEffect(() => {
     api
       .get<{ data: InvestissementDTO[] }>(
-        "/api/investissements/mes-investissements"
+        buildProjetUrl("/api/investissements/mes-investissements"),
       )
       .then((res) => setInvestissements(res.data || []))
       .catch(() => toast.error(t("user_investments.toast_error")))
@@ -165,7 +165,7 @@ export default function MesInvestissementsPage() {
                   </div>
                 </div>
                 <div className={styles.content}>
-                  <h3>{inv.projetLibelle}</h3>
+                  <h3>{inv.projetLibelleTradu || inv.projetLibelle}</h3>
                   <div className={styles.infoRow}>
                     <div>
                       <FiCalendar />{" "}

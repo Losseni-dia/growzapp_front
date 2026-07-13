@@ -32,6 +32,8 @@ export interface InvestissementDTO {
   statutGlobalDividendes: string;
 
   googleMapsUrl: string; // Ajouté pour le lien Google Maps
+
+  projetLibelleTradu?: string;
 }
 
 export interface InvestissementSummary {
@@ -39,7 +41,8 @@ export interface InvestissementSummary {
   projetLibelle: string;
   montantInvesti: number;
   date: string;
-  nombrePartsPris: number; 
+  nombrePartsPris: number;
   prixUnePart: number;
   statutPartInvestissement: StatutPartInvestissement;
+  projetLibelleTradu?: string;
 }
