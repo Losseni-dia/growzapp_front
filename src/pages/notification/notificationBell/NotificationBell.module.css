@@ -47,6 +47,15 @@
   border: 1px solid #eee;
 }
 
+.markAllReadBtn {
+  background: transparent;
+  border: none;
+  color: var(--growz-primary);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
 .dropdownHeader {
   padding: 15px;
   border-bottom: 1px solid #eee;
