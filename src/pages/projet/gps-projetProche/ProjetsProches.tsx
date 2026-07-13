@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FiMapPin, FiNavigation, FiCompass } from "react-icons/fi";
 import { useTranslation } from "react-i18next"; // Import pour les traductions
 import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
-import { api } from "../../../service/Api";
+import { api, buildProjetUrl } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
 import { useUserLocation } from "../../../service/HookGeoloc";
 import styles from "./ProjetsProches.module.css";
@@ -39,7 +39,9 @@ const ProjetsProches = () => {
       setLoading(true);
       api
         .get<ApiResponse<any[]>>(
-          `/api/projets/proche-de-moi?lat=${coords.lat}&lon=${coords.lon}&rayon=100`,
+          buildProjetUrl(
+               `/api/projets/proche-de-moi?lat=${coords.lat}&lon=${coords.lon}&rayon=100`,
+           ),
         )
         .then((res) => {
           if (res && res.data) {
