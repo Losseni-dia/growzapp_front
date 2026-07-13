@@ -186,3 +186,69 @@
 
 .cropBtn:hover { background: #219150; }
 .cancelBtn:hover { background: #dc2626; }
+
+/* --- SECTIONS & VALIDATION (ajoutées pour parité avec RegisterForm) --- */
+.sectionLabel {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--growz-primary);
+  margin: 1.5rem 0 0.8rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.errorMsg {
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: -0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.hintMsg {
+  color: #64748b;
+  font-size: 0.8rem;
+  margin-top: -0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.prefLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 0.4rem;
+}
+
+.addCustomLangue {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border-top: 1px solid #f1f5f9;
+  margin-top: 0.4rem;
+}
+
+.addCustomLangue input {
+  flex: 1;
+  margin-bottom: 0;
+  padding: 0.6rem 0.8rem;
+}
+
+.addCustomLangue button {
+  padding: 0.6rem 1rem;
+  background: var(--growz-green-500);
+  color: white;
+  border: none;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-weight: 700;
+}
