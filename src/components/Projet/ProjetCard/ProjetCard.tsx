@@ -181,8 +181,12 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
             />
           </div>
           <div className={styles.partsInfo}>
-            <span>{projet.partsPrises ?? 0} parts prises</span>
-            <span>{projet.partsDisponible ?? 0} parts disponibles</span>
+            <span>
+              {projet.partsPrises ?? 0} {t("project_card.parts_prises")}
+            </span>
+            <span>
+              {projet.partsDisponible ?? 0} {t("project_card.parts_disponibles")}
+            </span>
           </div>
         </div>
 
