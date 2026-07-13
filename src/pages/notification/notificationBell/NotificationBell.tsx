@@ -63,6 +63,24 @@ const NotificationBell = () => {
     }
   };
 
+  const markAllAsRead = async () => {
+    try {
+      await notificationService.markAllAsRead();
+      setUnreadCount(0);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    } catch (err) {
+      console.error("Erreur marquage global comme lu", err);
+    }
+  };
+
+  const handleBellClick = () => {
+    const opening = !isOpen;
+    setIsOpen(opening);
+    if (opening && unreadCount > 0) {
+      markAllAsRead();
+    }
+  };
+
   const getMotifLabel = (title: string): string => {
     const t = title.toLowerCase();
     if (t.includes("refus")) return "Motif du refus";
@@ -79,6 +97,13 @@ const NotificationBell = () => {
 
   const handleNotifClick = async (n: Notification) => {
     await markAsRead(n);
+
+    // Notification facture → ouvre directement le téléchargement de la facture
+    if (n.factureId) {
+      navigate(`/mes-factures?open=${n.factureId}`);
+      setIsOpen(false);
+      return;
+    }
 
     // Notification avec motif → popup
     if (n.motif) {
@@ -141,6 +166,7 @@ const NotificationBell = () => {
 
   // Label du hint selon le type de notification
   const getHint = (n: Notification) => {
+    if (n.factureId) return "Ouvrir la facture →";
     if (n.motif) return "Voir le motif →";
     if (isNewsNotif(n)) return "Lire l'article →";
     if (n.projetId || n.projetSlug) return "Voir le projet →";
@@ -156,7 +182,7 @@ const NotificationBell = () => {
   return (
     <>
       <div className={styles.bellContainer} ref={dropdownRef}>
-        <div className={styles.bellIconBox} onClick={() => setIsOpen(!isOpen)}>
+        <div className={styles.bellIconBox} onClick={handleBellClick}>
           <Bell size={24} className={unreadCount > 0 ? styles.shake : ""} />
           {unreadCount > 0 && (
             <span className={styles.badge}>
@@ -214,6 +240,9 @@ const NotificationBell = () => {
               )}
             </div>
             <div className={styles.dropdownFooter}>
+              <button onClick={markAllAsRead} className={styles.markAllReadBtn}>
+                Tout marquer comme lu
+              </button>
               <button onClick={() => setIsOpen(false)}>Fermer</button>
             </div>
           </div>
