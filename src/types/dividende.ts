@@ -9,6 +9,10 @@ export interface DividendeDTO {
   datePaiement?: string | null; // LocalDate → string ou null
   investissementId: number | null; // nullable si pas toujours présent
   investissementInfo: string;
+  projetId?: number | null;
+ projetLibelle?: string;
+ projetLibelleTradu?: string;
+ investisseurNom?: string;
   montantTotal: number; // BigDecimal → number
   fileName?: string | null; // optionnel
   factureUrl?: string | null; // ← AJOUTÉ : l'URL directe du PDF

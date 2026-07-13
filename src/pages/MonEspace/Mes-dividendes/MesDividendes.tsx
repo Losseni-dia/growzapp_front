@@ -1,7 +1,7 @@
 // src/pages/investisseur/MesDividendesPage.tsx
 
 import { useState, useEffect } from "react";
-import { api, getFreshToken } from "../../../service/Api";
+import { api, buildProjetUrl, getFreshToken } from "../../../service/Api";
 import { useAuth } from "../../../components/Context/AuthContext";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -34,7 +34,7 @@ export default function MesDividendesPage() {
       if (dividendes.length === 0) setLoading(true);
 
       const response = await api.get<ApiResponse<DividendeDTO[]>>(
-        "/api/dividendes/mes-dividendes"
+        buildProjetUrl("/api/dividendes/mes-dividendes"),
       );
 
       const data = response.data || [];
@@ -179,7 +179,8 @@ export default function MesDividendesPage() {
                 <tr key={d.id}>
                   <td>
                     <span className={styles.projectName}>
-                      {d.investissementInfo || d.projetLibelle || "Projet"}
+                      {d.projetLibelleTradu || d.projetLibelle || "Projet"} {" "}
+                      {d.investisseurNom ? ` - ${d.investisseurNom}` : ""}
                     </span>
                   </td>
                   <td className={styles.montant}>
@@ -193,7 +194,7 @@ export default function MesDividendesPage() {
                   <td>
                     {d.datePaiement
                       ? new Date(d.datePaiement).toLocaleDateString(
-                          i18n.language
+                          i18n.language,
                         )
                       : "-"}
                   </td>
