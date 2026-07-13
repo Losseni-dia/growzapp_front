@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { BrowserQRCodeReader } from "@zxing/browser";
 import {
   FiShield,
@@ -24,6 +25,7 @@ interface ContratPublicDTO {
 type Etat = "scan" | "loading" | "result" | "error";
 
 export default function VerifierContrat() {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BrowserQRCodeReader | null>(null);
   const [etat, setEtat] = useState<Etat>("scan");
@@ -43,7 +45,7 @@ export default function VerifierContrat() {
 
       const devices = await BrowserQRCodeReader.listVideoInputDevices();
       if (devices.length === 0) {
-        setErreur("Aucune caméra détectée sur cet appareil.");
+        setErreur(t("verify_contract.scan.no_camera"));
         setEtat("error");
         setScanning(false);
         return;
@@ -69,7 +71,7 @@ export default function VerifierContrat() {
         },
       );
     } catch (err: any) {
-      setErreur("Impossible d'accéder à la caméra. Vérifiez les permissions.");
+      setErreur(t("verify_contract.scan.camera_denied"));
       setEtat("error");
       setScanning(false);
     }
@@ -104,7 +106,7 @@ export default function VerifierContrat() {
       setResultat(response);
       setEtat("result");
     } catch (err: any) {
-      setErreur("Erreur lors de la vérification. Réessayez.");
+      setErreur(t("verify_contract.scan.verify_generic_error"));
       setEtat("error");
     }
   };
@@ -122,8 +124,8 @@ export default function VerifierContrat() {
           {/* HEADER */}
           <div className={styles.header}>
             <FiShield size={48} />
-            <h1>Vérifier un contrat</h1>
-            <p>Scannez le QR code de votre contrat GrowzApp</p>
+            <h1>{t("verify_contract.scan.page_title")}</h1>
+            <p>{t("verify_contract.scan.page_subtitle")}</p>
           </div>
 
           {/* ÉTAT : SCAN */}
@@ -148,10 +150,10 @@ export default function VerifierContrat() {
               </div>
               <p className={styles.scanHint}>
                 <FiCamera size={18} />
-                Pointez la caméra vers le QR code du contrat
+                {t("verify_contract.scan.hint")}
               </p>
               <button className={styles.btnSecondary} onClick={arreterScanner}>
-                Annuler
+                {t("verify_contract.scan.cancel")}
               </button>
             </div>
           )}
@@ -160,7 +162,7 @@ export default function VerifierContrat() {
           {etat === "loading" && (
             <div className={styles.loadingSection}>
               <div className={styles.spinner} />
-              <p>Vérification en cours...</p>
+              <p>{t("verify_contract.scan.verifying")}</p>
             </div>
           )}
 
@@ -170,39 +172,43 @@ export default function VerifierContrat() {
               {resultat.valide ? (
                 <div className={styles.success}>
                   <FiCheckCircle size={64} />
-                  <h2>✅ Contrat VALIDE</h2>
-                  <p>Ce contrat est authentique et n'a pas été modifié.</p>
+                  <h2>{t("verify_contract.scan.valid_title")}</h2>
+                  <p>{t("verify_contract.scan.valid_desc")}</p>
                 </div>
               ) : (
                 <div className={styles.error}>
                   <FiXCircle size={64} />
-                  <h2>❌ Contrat FALSIFIÉ</h2>
-                  <p>ATTENTION — Ce contrat a été modifié. Il est invalide.</p>
+                  <h2>{t("verify_contract.scan.invalid_title")}</h2>
+                  <p>{t("verify_contract.scan.invalid_desc")}</p>
                 </div>
               )}
 
               <div className={styles.details}>
                 <p>
-                  <strong>📋 Numéro :</strong> {resultat.numeroContrat}
+                  <strong>📋 {t("verify_contract.label_contract_no")}</strong>{" "}
+                  {resultat.numeroContrat}
                 </p>
                 <p>
-                  <strong>🚀 Projet :</strong> {resultat.projet}
+                  <strong>🚀 {t("verify_contract.label_project")}</strong>{" "}
+                  {resultat.projet}
                 </p>
                 <p>
-                  <strong>👤 Investisseur :</strong> {resultat.investisseur}
+                  <strong>👤 {t("verify_contract.label_investor")}</strong>{" "}
+                  {resultat.investisseur}
                 </p>
                 <p>
-                  <strong>💰 Montant :</strong>{" "}
+                  <strong>💰 {t("verify_contract.label_amount")}</strong>{" "}
                   {resultat.montant.toLocaleString("fr-FR")} FCFA
                 </p>
                 <p>
-                  <strong>📅 Date :</strong> {resultat.date}
+                  <strong>📅 {t("verify_contract.label_date")}</strong>{" "}
+                  {resultat.date}
                 </p>
               </div>
 
               <button className={styles.btn} onClick={demarrerScanner}>
                 <FiRefreshCw size={18} />
-                Scanner un autre contrat
+                {t("verify_contract.scan.scan_another")}
               </button>
             </div>
           )}
@@ -212,12 +218,12 @@ export default function VerifierContrat() {
             <div className={styles.result}>
               <div className={styles.error}>
                 <FiXCircle size={64} />
-                <h2>Erreur</h2>
+                <h2>{t("verify_contract.scan.error_title")}</h2>
                 <p>{erreur}</p>
               </div>
               <button className={styles.btn} onClick={demarrerScanner}>
                 <FiRefreshCw size={18} />
-                Réessayer
+                {t("verify_contract.scan.retry")}
               </button>
             </div>
           )}
@@ -229,7 +235,7 @@ export default function VerifierContrat() {
             </div>
             <Link to="/" className={styles.back}>
               <FiArrowLeft size={16} />
-              Retour à l'accueil
+              {t("verify_contract.back_home")}
             </Link>
           </div>
         </div>
