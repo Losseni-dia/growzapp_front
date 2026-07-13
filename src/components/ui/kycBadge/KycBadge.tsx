@@ -1,6 +1,6 @@
-import React from "react";
-import { KycStatus, KycStatusLabel } from "../../../types/enum";
-import { ShieldCheck, ShieldAlert, ShieldQuestion, Clock } from "lucide-react";
+import { Clock, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { KycStatus } from "../../../types/enum";
 import styles from "./KycBadge.module.css";
 
 interface KycBadgeProps {
@@ -9,6 +9,8 @@ interface KycBadgeProps {
 }
 
 export const KycBadge = ({ status, showLabel = true }: KycBadgeProps) => {
+  const { t } = useTranslation();
+
   const getBadgeConfig = () => {
     // Normalisation pour éviter les erreurs de casse (ex: "Valide" vs "VALIDE")
     const currentStatus = status?.toString().toUpperCase();
@@ -18,25 +20,25 @@ export const KycBadge = ({ status, showLabel = true }: KycBadgeProps) => {
         return {
           className: styles.valid,
           icon: <ShieldCheck size={16} />,
-          label: KycStatusLabel.VALIDE,
+          label: t("kyc.badge_valid"),
         };
       case KycStatus.EN_ATTENTE:
         return {
           className: styles.pending,
           icon: <Clock size={16} />,
-          label: KycStatusLabel.EN_ATTENTE,
+          label: t("kyc.badge_pending"),
         };
       case KycStatus.REJETE:
         return {
           className: styles.rejected,
           icon: <ShieldAlert size={16} />,
-          label: KycStatusLabel.REJETE,
+          label: t("kyc.badge_rejected"),
         };
       default:
         return {
           className: styles.none,
           icon: <ShieldQuestion size={16} />,
-          label: KycStatusLabel.NON_SOUMIS,
+          label: t("kyc.badge_none"),
         };
     }
   };
