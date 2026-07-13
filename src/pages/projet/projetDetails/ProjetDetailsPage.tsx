@@ -1,31 +1,29 @@
 import { useEffect, useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { api } from "../../../service/Api";
-import { ProjetDTO } from "../../../types/projet";
-import { DocumentDTO } from "../../../types/document";
-import InvestForm from "../../../components/Investissement/InvestForm/InvestForm";
 import toast from "react-hot-toast";
-import styles from "./ProjetDetailsPage.module.css";
-import { ApiResponse } from "../../../types/common";
-import { useAuth } from "../../../components/Context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/Context/CurrencyContext";
+import { BsShieldCheck } from "react-icons/bs";
 import {
+  FiClock,
+  FiDollarSign,
   FiDownload,
   FiFileText,
   FiLock,
-  FiArrowLeft,
   FiMapPin,
-  FiTrendingUp,
-  FiCalendar,
-  FiUsers,
-  FiDollarSign,
-  FiClock,
-  FiX,
   FiShield,
+  FiTrendingUp,
+  FiUsers,
+  FiX,
 } from "react-icons/fi";
-import { BsShieldCheck } from "react-icons/bs";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../../components/Context/AuthContext";
+import { useCurrency } from "../../../components/Context/CurrencyContext";
+import InvestForm from "../../../components/Investissement/InvestForm/InvestForm";
+import { api, buildProjetUrl } from "../../../service/Api";
+import { ApiResponse } from "../../../types/common";
+import { DocumentDTO } from "../../../types/document";
+import { ProjetDTO } from "../../../types/projet";
+import styles from "./ProjetDetailsPage.module.css";
 
 export default function ProjetDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -59,14 +57,14 @@ export default function ProjetDetailsPage() {
           month: "short",
           year: "numeric",
         })
-      : "Indéterminée";
+      : t("project_details.date_undetermined");
 
   const loadProjet = async () => {
     if (!id) return;
     try {
       setLoading(true);
       const projetRes = await api.get<ApiResponse<ProjetDTO>>(
-        `api/projets/slug/${id}`,
+        buildProjetUrl(`api/projets/slug/${id}`),
       );
       const projetData = projetRes.data;
       setProjet(projetData);
@@ -93,7 +91,7 @@ export default function ProjetDetailsPage() {
 
   useEffect(() => {
     loadProjet();
-  }, [id]);
+  }, [id, i18n.language]);
 
   // Ouvrir modal si ?action=invest
   useEffect(() => {
@@ -110,6 +108,9 @@ export default function ProjetDetailsPage() {
     return (
       <p className={styles.error}>{t("project_details.error_not_found")}</p>
     );
+
+  const libelleAffiche = projet.libelleTradu || projet.libelle;
+  const descriptionAffichee = projet.descriptionTradu || projet.description;
 
   const progress =
     projet.objectifFinancement > 0
@@ -129,8 +130,8 @@ export default function ProjetDetailsPage() {
         : 0;
 
   const dureeTexte = projet.dureeMois
-    ? `${projet.dureeMois} mois`
-    : "Durée indéterminée";
+    ? `${projet.dureeMois} ${t("project_details.months")}`
+    : t("project_details.duration_undetermined");
 
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
@@ -138,14 +139,14 @@ export default function ProjetDetailsPage() {
   return (
     <div className={styles.container}>
       <Helmet>
-        <title>{projet.libelle} | GrowzApp</title>
+        <title>{libelleAffiche} | GrowzApp</title>
         <meta
           name="description"
-          content={projet.description?.substring(0, 160)}
+          content={descriptionAffichee?.substring(0, 160)}
         />
         <meta
           property="og:title"
-          content={`${projet.libelle} - Investissement GrowzApp`}
+          content={`${libelleAffiche} - Investissement GrowzApp`}
         />
         <meta property="og:image" content={projet.poster} />
       </Helmet>
@@ -155,7 +156,7 @@ export default function ProjetDetailsPage() {
         {projet.poster && (
           <img
             src={projet.poster}
-            alt={projet.libelle}
+            alt={libelleAffiche}
             className={styles.heroPoster}
           />
         )}
@@ -163,7 +164,7 @@ export default function ProjetDetailsPage() {
 
         {projet.certifiedAt && (
           <div className={styles.certifiedBadge}>
-            <BsShieldCheck /> Certifié GrowzApp
+            <BsShieldCheck /> {t("project_details.certified")}
           </div>
         )}
 
@@ -182,20 +183,21 @@ export default function ProjetDetailsPage() {
               }`}
             >
               {financementTermine
-                ? "Terminé"
+                ? t("project_details.status_completed")
                 : projet.statutProjet === "VALIDE"
-                  ? "En cours"
+                  ? t("project_details.in_progress")
                   : projet.statutProjet}
             </span>
           </div>
-          <h1 className={styles.heroTitle}>{projet.libelle}</h1>
+          <h1 className={styles.heroTitle}>{libelleAffiche}</h1>
           <div className={styles.heroInfos}>
             <span>
               <FiMapPin /> {projet.siteNom},{" "}
               {translateData("cities", projet.localiteNom)}
             </span>
             <span>
-              <FiUsers /> {projet.porteurNom || "Porteur anonyme"}
+              <FiUsers />{" "}
+              {projet.porteurNom || t("project_details.owner_anonymous")}
             </span>
             <span>
               <FiClock /> {dureeTexte}
@@ -210,7 +212,9 @@ export default function ProjetDetailsPage() {
         <div className={styles.mainCol}>
           {/* Progression financement */}
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>📊 Financement</h2>
+            <h2 className={styles.cardTitle}>
+              📊 {t("project_details.financing")}
+            </h2>
             <div className={styles.progressStats}>
               <div className={styles.stat}>
                 <span className={styles.statValue}>
@@ -219,13 +223,17 @@ export default function ProjetDetailsPage() {
                     projet.currencyCode,
                   )}
                 </span>
-                <span className={styles.statLabel}>Collectés</span>
+                <span className={styles.statLabel}>
+                  {t("project_details.collected_amount")}
+                </span>
               </div>
               <div className={styles.stat}>
                 <span className={`${styles.statValue} ${styles.statHighlight}`}>
                   {progress.toFixed(1)}%
                 </span>
-                <span className={styles.statLabel}>Atteint</span>
+                <span className={styles.statLabel}>
+                  {t("project_details.reached")}
+                </span>
               </div>
               <div className={styles.stat}>
                 <span className={styles.statValue}>
@@ -234,7 +242,9 @@ export default function ProjetDetailsPage() {
                     projet.currencyCode,
                   )}
                 </span>
-                <span className={styles.statLabel}>Objectif</span>
+                <span className={styles.statLabel}>
+                  {t("project_details.goal")}
+                </span>
               </div>
             </div>
             <div className={styles.progressBar}>
@@ -245,26 +255,29 @@ export default function ProjetDetailsPage() {
             </div>
             <div className={styles.partsRow}>
               <span className={styles.partsPrises}>
-                {projet.partsPrises ?? 0} parts prises
+                {projet.partsPrises ?? 0} {t("project_details.parts_prises")}
               </span>
               <span className={styles.partsDisponibles}>
-                {projet.partsDisponible ?? 0} parts disponibles
+                {projet.partsDisponible ?? 0}{" "}
+                {t("project_details.parts_disponibles")}
               </span>
             </div>
           </div>
 
           {/* Description */}
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>📋 Description du projet</h2>
+            <h2 className={styles.cardTitle}>
+              📋 {t("project_details.description_title")}
+            </h2>
             <p className={styles.description}>
-              {projet.description || "Aucune description fournie."}
+              {descriptionAffichee || t("project_details.no_description")}
             </p>
           </div>
 
           {/* Documents */}
           <div className={styles.card}>
             <h2 className={styles.cardTitle}>
-              <FiFileText /> Documents
+              <FiFileText /> {t("project_details.documents_title")}
             </h2>
             {canSeeDocs ? (
               documents.length > 0 ? (
@@ -291,7 +304,7 @@ export default function ProjetDetailsPage() {
                 </div>
               ) : (
                 <p className={styles.noDocs}>
-                  Aucun document publié pour ce projet.
+                  {t("project_details.no_documents")}
                 </p>
               )
             ) : (
@@ -310,65 +323,75 @@ export default function ProjetDetailsPage() {
         <div className={styles.sideCol}>
           {/* Métriques clés */}
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>💡 Métriques clés</h2>
+            <h2 className={styles.cardTitle}>
+              💡 {t("project_details.key_metrics")}
+            </h2>
             <div className={styles.metricsGrid}>
               <div className={styles.metric}>
                 <FiTrendingUp className={styles.metricIcon} />
                 <span className={styles.metricValue}>
                   {projet.roiProjete || 0}%
                 </span>
-                <span className={styles.metricLabel}>ROI projeté</span>
+                <span className={styles.metricLabel}>
+                  {t("project_details.roi_projected")}
+                </span>
               </div>
               <div className={styles.metric}>
                 <FiDollarSign className={styles.metricIcon} />
                 <span className={styles.metricValue}>{partsALever}%</span>
-                <span className={styles.metricLabel}>Équité à lever</span>
+                <span className={styles.metricLabel}>
+                  {t("project_details.equity_to_raise")}
+                </span>
               </div>
               <div className={styles.metric}>
                 <FiClock className={styles.metricIcon} />
                 <span className={styles.metricValue}>{dureeTexte}</span>
-                <span className={styles.metricLabel}>Durée</span>
+                <span className={styles.metricLabel}>
+                  {t("project_details.duration")}
+                </span>
               </div>
               <div className={styles.metric}>
                 <FiShield className={styles.metricIcon} />
                 <span className={styles.metricValue}>
                   {format(Number(projet.prixUnePart || 0), projet.currencyCode)}
                 </span>
-                <span className={styles.metricLabel}>Prix / part</span>
+                <span className={styles.metricLabel}>
+                  {t("project_details.price_per_share")}
+                </span>
               </div>
             </div>
 
             <div className={styles.detailsList}>
               <div className={styles.detailRow}>
-                <span>Valorisation totale</span>
+                <span>{t("project_details.total_valuation")}</span>
                 <strong>
                   {format(Number(projet.valuation || 0), projet.currencyCode)}
                 </strong>
               </div>
               <div className={styles.detailRow}>
-                <span>Parts totales</span>
+                <span>{t("project_details.total_shares")}</span>
                 <strong>
                   {(projet.partsPrises ?? 0) + (projet.partsDisponible ?? 0)}
                 </strong>
               </div>
               <div className={styles.detailRow}>
-                <span>Début</span>
+                <span>{t("project_details.start_date")}</span>
                 <strong>{formatDate(projet.dateDebut)}</strong>
               </div>
               <div className={styles.detailRow}>
-                <span>Fin</span>
+                <span>{t("project_details.end_date")}</span>
                 <strong>{formatDate(projet.dateFin)}</strong>
               </div>
               {projet.googleMapsUrl && (
                 <div className={styles.detailRow}>
-                  <span>Localisation</span>
+                  <span>{t("project_details.location")}</span>
                   <a
                     href={projet.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.mapsLink}
                   >
-                    📍 Voir sur la carte
+                    📍 {t("project_details.view_on_maps")}
                   </a>
                 </div>
               )}
@@ -382,15 +405,17 @@ export default function ProjetDetailsPage() {
               onClick={() => setShowInvestModal(true)}
               disabled={user?.kycStatus !== "VALIDE"}
             >
-              <FiDollarSign /> Investir dans ce projet
+              <FiDollarSign /> {t("project_details.invest_button")}
             </button>
           ) : (
-            <div className={styles.btnFinished}>✅ Financement terminé</div>
+            <div className={styles.btnFinished}>
+              ✅ {t("project_details.financing_completed")}
+            </div>
           )}
 
           {user?.kycStatus !== "VALIDE" && (
             <div className={styles.kycWarning}>
-              <FiLock /> Votre KYC doit être validé pour investir
+              <FiLock /> {t("project_details.kyc_warning")}
             </div>
           )}
         </div>
@@ -405,7 +430,8 @@ export default function ProjetDetailsPage() {
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <h2>
-                Investir dans <span>{projet.libelle}</span>
+                {t("project_details.invest_in_title")}{" "}
+                <span>{libelleAffiche}</span>
               </h2>
               <button
                 className={styles.modalClose}

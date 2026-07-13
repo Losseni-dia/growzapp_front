@@ -88,6 +88,7 @@ export interface ProjetCreateRequest {
   siteId?: number;
   secteurId?: number;
   certifiedAt?: string;
+  googleMapsLink ?: string;
 }
 
 
