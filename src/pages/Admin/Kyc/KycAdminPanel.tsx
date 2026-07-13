@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api, getFreshToken } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
 import toast from "react-hot-toast";
@@ -14,6 +15,7 @@ import {
 import styles from "./KycAdminPanel.module.css";
 
 export const KycAdminPanel = () => {
+  const { t } = useTranslation();
   const [pendingUsers, setPendingUsers] = useState<UserDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
@@ -25,7 +27,7 @@ export const KycAdminPanel = () => {
       const data = await api.get<UserDTO[]>("/api/kyc/admin/en-attente");
       setPendingUsers(data);
     } catch (error: any) {
-      toast.error("Erreur lors du chargement des dossiers");
+      toast.error(t("admin.kyc.load_error"));
     } finally {
       setLoading(false);
     }
@@ -36,17 +38,25 @@ export const KycAdminPanel = () => {
   }, []);
 
   const getExpiryStatus = (dateString?: string) => {
-    if (!dateString) return { label: "Sans date", className: styles.badgeGray };
+    if (!dateString)
+      return { label: t("admin.kyc.expiry_none"), className: styles.badgeGray };
     const expiryDate = new Date(dateString);
     const today = new Date();
     const diffDays = Math.ceil(
       (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
     );
 
-    if (diffDays < 0) return { label: "Expiré", className: styles.badgeRed };
+    if (diffDays < 0)
+      return {
+        label: t("admin.kyc.expiry_expired"),
+        className: styles.badgeRed,
+      };
     if (diffDays <= 30)
-      return { label: `${diffDays} jours`, className: styles.badgeOrange };
-    return { label: "Valide", className: styles.badgeGreen };
+      return {
+        label: t("admin.kyc.expiry_soon", { count: diffDays }),
+        className: styles.badgeOrange,
+      };
+    return { label: t("admin.kyc.expiry_valid"), className: styles.badgeGreen };
   };
 
   const openDocument = async (
@@ -54,7 +64,7 @@ export const KycAdminPanel = () => {
     type: "recto" | "verso" | "selfie",
   ) => {
     try {
-      toast.loading("Chargement du document...");
+      toast.loading(t("admin.kyc.doc_loading"));
 
       const token = getFreshToken();
       const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
@@ -79,16 +89,13 @@ export const KycAdminPanel = () => {
       toast.dismiss();
     } catch (error: any) {
       toast.dismiss();
-      toast.error("Erreur : " + error.message);
+      toast.error(`${t("admin.kyc.doc_error")} ${error.message}`);
       console.error("Détails erreur ouverture doc:", error);
     }
   };
 
   const handleDecision = async (userId: number, approuve: boolean) => {
-    if (
-      approuve &&
-      !window.confirm("Confirmer la validation de cette identité ?")
-    )
+    if (approuve && !window.confirm(t("admin.kyc.confirm_approve") as string))
       return;
 
     try {
@@ -100,14 +107,16 @@ export const KycAdminPanel = () => {
 
       await api.post(`/api/kyc/admin/decider?${queryParams.toString()}`);
       toast.success(
-        approuve ? "Utilisateur validé avec succès" : "Dossier rejeté",
+        approuve
+          ? t("admin.kyc.toast_approved")
+          : t("admin.kyc.toast_rejected"),
       );
 
       setPendingUsers(pendingUsers.filter((u) => u.id !== userId));
       setSelectedUser(null);
       setRejectionReason("");
     } catch (error: any) {
-      toast.error("Erreur lors de l'enregistrement de la décision");
+      toast.error(t("admin.kyc.toast_decision_error"));
     }
   };
 
@@ -115,7 +124,7 @@ export const KycAdminPanel = () => {
     return (
       <div className={styles.loadingScreen}>
         <div className={styles.spinner} />
-        <p>Chargement des dossiers KYC...</p>
+        <p>{t("admin.kyc.loading")}</p>
       </div>
     );
   }
@@ -128,10 +137,14 @@ export const KycAdminPanel = () => {
           <ShieldCheck size={20} />
         </div>
         <div>
-          <h1 className={styles.title}>Validation des identités</h1>
+          <h1 className={styles.title}>{t("admin.kyc.title")}</h1>
           <p className={styles.subtitle}>
-            {pendingUsers.length} dossier{pendingUsers.length > 1 ? "s" : ""} en
-            attente
+            {t(
+              pendingUsers.length > 1
+                ? "admin.kyc.subtitle_plural"
+                : "admin.kyc.subtitle",
+              { count: pendingUsers.length },
+            )}
           </p>
         </div>
       </header>
@@ -139,7 +152,7 @@ export const KycAdminPanel = () => {
       {pendingUsers.length === 0 ? (
         <div className={styles.emptyState}>
           <ShieldCheck size={32} />
-          <p>Tous les dossiers ont été traités.</p>
+          <p>{t("admin.kyc.empty")}</p>
         </div>
       ) : (
         <div className={styles.grid}>
@@ -147,6 +160,7 @@ export const KycAdminPanel = () => {
             const status = getExpiryStatus(u.kycDateExpiration);
             return (
               <div key={u.id} className={styles.card}>
+                <div className={styles.cardAccent} />
                 <div className={styles.cardHeader}>
                   <div className={styles.avatar}>
                     {u.prenom[0]}
@@ -167,16 +181,16 @@ export const KycAdminPanel = () => {
 
                 <div className={styles.details}>
                   <div className={styles.detailItem}>
-                    <strong>N° Pièce :</strong>
+                    <strong>{t("admin.kyc.label_piece_no")}</strong>
                     <span>{u.kycNumeroPiece || "N/A"}</span>
                   </div>
                   <div className={styles.detailItem}>
                     <Calendar size={13} />
                     <span>
-                      Expire le{" "}
+                      {t("admin.kyc.expires_on")}{" "}
                       {u.kycDateExpiration
                         ? new Date(u.kycDateExpiration).toLocaleDateString()
-                        : "inconnu"}
+                        : t("admin.kyc.expires_unknown")}
                     </span>
                   </div>
                 </div>
@@ -186,19 +200,22 @@ export const KycAdminPanel = () => {
                     onClick={() => openDocument(u.id, "recto")}
                     className={styles.docBtn}
                   >
-                    <FileText size={16} /> <span>Recto</span>
+                    <FileText size={16} />{" "}
+                    <span>{t("admin.kyc.doc_recto")}</span>
                   </button>
                   <button
                     onClick={() => openDocument(u.id, "verso")}
                     className={styles.docBtn}
                   >
-                    <ImageIcon size={16} /> <span>Verso</span>
+                    <ImageIcon size={16} />{" "}
+                    <span>{t("admin.kyc.doc_verso")}</span>
                   </button>
                   <button
                     onClick={() => openDocument(u.id, "selfie")}
                     className={styles.docBtn}
                   >
-                    <UserCircle size={16} /> <span>Selfie</span>
+                    <UserCircle size={16} />{" "}
+                    <span>{t("admin.kyc.doc_selfie")}</span>
                   </button>
                 </div>
 
@@ -207,13 +224,13 @@ export const KycAdminPanel = () => {
                     onClick={() => handleDecision(u.id, true)}
                     className={styles.btnApprove}
                   >
-                    <Check size={16} /> Approuver
+                    <Check size={16} /> {t("admin.kyc.btn_approve")}
                   </button>
                   <button
                     onClick={() => setSelectedUser(u)}
                     className={styles.btnReject}
                   >
-                    <X size={16} /> Rejeter
+                    <X size={16} /> {t("admin.kyc.btn_reject")}
                   </button>
                 </div>
               </div>
@@ -229,13 +246,14 @@ export const KycAdminPanel = () => {
           onClick={() => setSelectedUser(null)}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>Motif du rejet</h3>
+            <h3 className={styles.modalTitle}>{t("admin.kyc.modal_title")}</h3>
             <p className={styles.modalUser}>
-              Utilisateur : {selectedUser.prenom} {selectedUser.nom}
+              {t("admin.kyc.modal_user_label")} {selectedUser.prenom}{" "}
+              {selectedUser.nom}
             </p>
             <textarea
               className={styles.modalTextarea}
-              placeholder="Ex : Photo du recto illisible, document expiré..."
+              placeholder={t("admin.kyc.reason_placeholder") as string}
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
             />
@@ -244,14 +262,14 @@ export const KycAdminPanel = () => {
                 onClick={() => setSelectedUser(null)}
                 className={styles.btnCancel}
               >
-                Annuler
+                {t("admin.kyc.cancel")}
               </button>
               <button
                 onClick={() => handleDecision(selectedUser.id, false)}
                 className={styles.btnConfirmReject}
                 disabled={!rejectionReason.trim()}
               >
-                Confirmer le rejet
+                {t("admin.kyc.confirm_reject")}
               </button>
             </div>
           </div>
