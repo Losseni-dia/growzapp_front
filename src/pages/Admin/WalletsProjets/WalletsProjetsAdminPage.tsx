@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import { api } from "../../../service/Api";
+import { api, buildProjetUrl } from "../../../service/Api";
 import styles from "./WalletsProjetsAdminPage.module.css";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
@@ -27,6 +27,7 @@ interface WalletProjet {
 interface Projet {
   id: number;
   libelle: string;
+  libelleTradu?: string;
   statutProjet: string;
   porteurNom: string;
 }
@@ -54,7 +55,7 @@ export default function ProjectWalletsAdminPage() {
       setLoading(true);
       const [walletsRes, projetsWrapped] = await Promise.all([
         api.get<WalletProjet[]>("/api/admin/projet-wallet/list"),
-        api.get<any>("/api/projets"),
+        api.get<any>(buildProjetUrl("/api/projets")),
       ]);
       const projetsRes: Projet[] = projetsWrapped.data || [];
       const projetsMap = new Map(projetsRes.map((p) => [p.id, p]));
@@ -124,11 +125,12 @@ export default function ProjectWalletsAdminPage() {
     if (!iso) return null;
     const diff = Date.now() - new Date(iso).getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days === 0) return "Aujourd'hui";
-    if (days === 1) return "Hier";
-    if (days < 30) return `Il y a ${days} j`;
+    if (days === 0) return t("admin.wallets.date_today");
+    if (days === 1) return t("admin.wallets.date_yesterday");
+    if (days < 30) return t("admin.wallets.date_days_ago", { count: days });
     const months = Math.floor(days / 30);
-    if (months < 12) return `Il y a ${months} mois`;
+    if (months < 12)
+      return t("admin.wallets.date_months_ago", { count: months });
     return new Date(iso).toLocaleDateString();
   };
 
@@ -148,8 +150,13 @@ export default function ProjectWalletsAdminPage() {
         <div>
           <h1 className={styles.title}>{t("admin.wallets.title")}</h1>
           <p className={styles.subtitle}>
-            {data.length} projet{data.length > 1 ? "s" : ""} · Trésorerie totale
-            disponible : <strong>{format(totalDisponible, "XOF")}</strong>
+            {t(
+              data.length > 1
+                ? "admin.wallets.subtitle_count_plural"
+                : "admin.wallets.subtitle_count",
+              { count: data.length },
+            )}{" "}
+            <strong>{format(totalDisponible, "XOF")}</strong>
           </p>
         </div>
       </header>
@@ -159,7 +166,7 @@ export default function ProjectWalletsAdminPage() {
         <div className={styles.searchWrapper}>
           <input
             type="text"
-            placeholder="Rechercher un projet ou un porteur..."
+            placeholder={t("admin.wallets.search_placeholder") as string}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className={styles.searchInput}
@@ -171,19 +178,19 @@ export default function ProjectWalletsAdminPage() {
             className={`${styles.chip} ${filter === "ALL" ? styles.chipActive : ""}`}
             onClick={() => setFilter("ALL")}
           >
-            Tous
+            {t("admin.wallets.filter_all")}
           </button>
           <button
             className={`${styles.chip} ${filter === "ACTIVE" ? styles.chipActive : ""}`}
             onClick={() => setFilter("ACTIVE")}
           >
-            Avec solde
+            {t("admin.wallets.filter_active")}
           </button>
           <button
             className={`${styles.chip} ${filter === "EMPTY" ? styles.chipActive : ""}`}
             onClick={() => setFilter("EMPTY")}
           >
-            Vides
+            {t("admin.wallets.filter_empty")}
           </button>
         </div>
       </div>
@@ -192,22 +199,24 @@ export default function ProjectWalletsAdminPage() {
       {filtered.length === 0 ? (
         <div className={styles.emptyState}>
           <FiDollarSign size={32} />
-          <p>Aucun projet ne correspond à votre recherche</p>
+          <p>{t("admin.wallets.search_empty")}</p>
         </div>
       ) : (
         <div className={styles.list}>
           {filtered.map((w) => {
             const relDate = formatRelativeDate(w.dernierInvestissement);
+            const libelleAffiche =
+              w.projet?.libelleTradu ||
+              w.projet?.libelle ||
+              `Projet #${w.projetId}`;
             return (
               <div key={w.id} className={styles.row}>
                 <div className={styles.rowMain}>
                   <div className={styles.rowInfo}>
-                    <h3 className={styles.rowTitle}>
-                      {w.projet?.libelle || `Projet #${w.projetId}`}
-                    </h3>
+                    <h3 className={styles.rowTitle}>{libelleAffiche}</h3>
                     <div className={styles.rowMeta}>
                       <span>
-                        {w.projet?.porteurNom || "Porteur non défini"}
+                        {w.projet?.porteurNom || t("admin.wallets.no_porteur")}
                       </span>
                       {relDate && (
                         <span className={styles.rowDate}>
@@ -221,10 +230,13 @@ export default function ProjectWalletsAdminPage() {
                     <span className={styles.amountValue}>
                       {format(w.soldeDisponible, "XOF")}
                     </span>
-                    <span className={styles.amountLabel}>disponible</span>
+                    <span className={styles.amountLabel}>
+                      {t("admin.wallets.available")}
+                    </span>
                     {w.soldeBloque > 0 && (
                       <span className={styles.amountBlocked}>
-                        +{format(w.soldeBloque, "XOF")} bloqué
+                        +{format(w.soldeBloque, "XOF")}{" "}
+                        {t("admin.wallets.blocked_suffix")}
                       </span>
                     )}
                   </div>
@@ -235,7 +247,7 @@ export default function ProjectWalletsAdminPage() {
                     to={`/admin/project-wallets/${w.projetId}`}
                     className={styles.btnSecondary}
                   >
-                    Détails <FiArrowRight size={14} />
+                    {t("admin.wallets.detail_label")} <FiArrowRight size={14} />
                   </Link>
                   <button
                     onClick={() => {
@@ -246,7 +258,7 @@ export default function ProjectWalletsAdminPage() {
                     className={styles.btnPrimary}
                     disabled={w.soldeDisponible <= 0}
                   >
-                    Verser au porteur
+                    {t("admin.wallets.pay_owner_btn")}
                   </button>
                 </div>
               </div>
@@ -263,7 +275,7 @@ export default function ProjectWalletsAdminPage() {
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h2>Versement au porteur</h2>
+              <h2>{t("admin.wallets.modal.title")}</h2>
               <button
                 className={styles.modalClose}
                 onClick={() => setShowModal(false)}
@@ -273,15 +285,18 @@ export default function ProjectWalletsAdminPage() {
             </div>
 
             <p className={styles.modalProjet}>
-              {selected.projet?.libelle} · {selected.projet?.porteurNom}
+              {selected.projet?.libelleTradu || selected.projet?.libelle} ·{" "}
+              {selected.projet?.porteurNom}
             </p>
 
             <div className={styles.modalBalance}>
-              Solde disponible :{" "}
+              {t("admin.wallets.modal.available")} :{" "}
               <strong>{format(selected.soldeDisponible, "XOF")}</strong>
             </div>
 
-            <label className={styles.modalLabel}>Montant à verser (FCFA)</label>
+            <label className={styles.modalLabel}>
+              {t("admin.wallets.modal.amount_label")}
+            </label>
             <input
               type="number"
               value={montant}
@@ -289,33 +304,36 @@ export default function ProjectWalletsAdminPage() {
               className={styles.modalInput}
             />
 
-            <label className={styles.modalLabel}>Motif</label>
+            <label className={styles.modalLabel}>
+              {t("admin.wallets.modal.reason_label")}
+            </label>
             <input
               type="text"
-              placeholder="Ex : Versement trimestriel T4 2025"
+              placeholder={
+                t("admin.wallets.reason_placeholder_wallet") as string
+              }
               value={motif}
               onChange={(e) => setMotif(e.target.value)}
               className={styles.modalInput}
             />
 
-            <p className={styles.modalHint}>
-              Le porteur et tous les investisseurs du projet seront notifiés
-              (in-app + email).
-            </p>
+            <p className={styles.modalHint}>{t("admin.wallets.modal_hint")}</p>
 
             <div className={styles.modalActions}>
               <button
                 onClick={() => setShowModal(false)}
                 className={styles.btnCancel}
               >
-                Annuler
+                {t("admin.wallets.modal.cancel")}
               </button>
               <button
                 onClick={handleVerser}
                 className={styles.btnConfirm}
                 disabled={submitting}
               >
-                {submitting ? "Traitement..." : "Confirmer le virement"}
+                {submitting
+                  ? t("admin.wallets.processing")
+                  : t("admin.wallets.modal.confirm")}
               </button>
             </div>
           </div>
