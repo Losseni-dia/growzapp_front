@@ -1,7 +1,7 @@
 // src/pages/porteur/MesProjetsPage.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../../../service/Api";
+import { api, buildProjetUrl } from "../../../service/Api";
 import { ProjetDTO } from "../../../types/projet";
 import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";
@@ -29,7 +29,7 @@ export default function MesProjetsPage() {
 
   useEffect(() => {
     api
-      .get<{ data: ProjetDTO[] }>("/api/projets/mes-projets")
+      .get<{ data: ProjetDTO[] }>(buildProjetUrl("/api/projets/mes-projets"))
       .then((response) => setProjets(response.data || []))
       .catch(() => toast.error(t("projects_page.toast_error")))
       .finally(() => setLoading(false));
@@ -85,7 +85,7 @@ export default function MesProjetsPage() {
                 <div className={styles.poster}>
                   <img
                     src={projet.poster || "/default-projet.jpg"}
-                    alt={projet.libelle}
+                    alt={projet.libelleTradu || projet.libelle}
                     className={styles.posterImg}
                   />
                   <div
@@ -97,7 +97,9 @@ export default function MesProjetsPage() {
                   </div>
                 </div>
                 <div className={styles.content}>
-                  <h3 className={styles.title}>{projet.libelle}</h3>
+                  <h3 className={styles.title}>
+                    {projet.libelleTradu || projet.libelle}
+                  </h3>
                   <div className={styles.infoGrid}>
                     <div className={styles.infoItem}>
                       <FiCalendar className={styles.icon} />
@@ -147,9 +149,9 @@ export default function MesProjetsPage() {
                     <FiEye /> {t("user_projects.card.btn_view")}
                   </Link>
 
-                  {projet.googleMapsLink && (
+                  {projet.googleMapsUrl && (
                     <a
-                      href={projet.googleMapsLink}
+                      href={projet.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.btnSite}
