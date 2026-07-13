@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
-import { api } from "../../../../service/Api";
+import { useTranslation } from "react-i18next";
+import { api, buildProjetUrl } from "../../../../service/Api";
 import styles from "./WalletProjetDetails.module.css";
 import toast from "react-hot-toast";
 import {
@@ -16,32 +17,24 @@ import { useCurrency } from "../../../../components/Context/CurrencyContext";
 
 const OUTBOUND_TYPES = [
   "VERSEMENT_PORTEUR",
+  "DIVIDENDE_SORTANT",
   "DISTRIBUTION_DIVIDENDE",
   "RETRAIT_ADMIN",
   "FRAIS_PLATEFORME",
   "RETRAIT",
 ];
 
-const TYPE_LABELS: Record<string, string> = {
-  VERSEMENT_PORTEUR: "Versement porteur",
-  DISTRIBUTION_DIVIDENDE: "Distribution dividende",
-  RETRAIT_ADMIN: "Retrait admin",
-  FRAIS_PLATEFORME: "Frais plateforme",
-  RETRAIT: "Retrait",
-  DEPOT: "Dépôt",
-  INVESTISSEMENT: "Investissement",
-};
-
 export default function ProjectWalletDetails() {
   const { projetId } = useParams();
   const { format } = useCurrency();
+  const { t } = useTranslation();
 
   const [report, setReport] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [montant, setMontant] = useState("");
-  const [motif, setMotif] = useState("Distribution Dividendes");
+  const [motif, setMotif] = useState(t("admin_wallet.detail.default_motif"));
   const [periode, setPeriode] = useState("");
   const [isDistributing, setIsDistributing] = useState(false);
   const [showDistribModal, setShowDistribModal] = useState(false);
@@ -49,10 +42,12 @@ export default function ProjectWalletDetails() {
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
-      const [reportRes, txRes] = await Promise.all([
-        api.get<any>(`/api/admin/projet-wallet/${projetId}/rapport-complet`),
-        api.get<any[]>(`/api/admin/projet-wallet/${projetId}/transactions`),
-      ]);
+     const [reportRes, txRes] = await Promise.all([
+       api.get<any>(
+         buildProjetUrl(`/api/admin/projet-wallet/${projetId}/rapport-complet`),
+       ),
+       api.get<any[]>(`/api/admin/projet-wallet/${projetId}/transactions`),
+     ]);
       setReport(reportRes);
       setTransactions(
         [...txRes].sort(
@@ -61,11 +56,11 @@ export default function ProjectWalletDetails() {
         ),
       );
     } catch (err: any) {
-      toast.error("Erreur de synchronisation des données");
+      toast.error(t("admin_wallet.detail.toast_sync_error"));
     } finally {
       setLoading(false);
     }
-  }, [projetId]);
+  }, [projetId, t]);
 
   useEffect(() => {
     loadData();
@@ -73,7 +68,7 @@ export default function ProjectWalletDetails() {
 
   const handleDistribute = async () => {
     if (!montant || !periode)
-      return toast.error("Veuillez remplir le montant et la période");
+      return toast.error(t("admin_wallet.detail.toast_period_required"));
 
     try {
       setIsDistributing(true);
@@ -83,13 +78,13 @@ export default function ProjectWalletDetails() {
         periode,
       });
 
-      toast.success("Distribution effectuée avec succès !");
+      toast.success(t("admin_wallet.detail.toast_success"));
       setMontant("");
       setPeriode("");
       setShowDistribModal(false);
       loadData();
     } catch (err: any) {
-      toast.error(err.message || "Échec de la distribution");
+      toast.error(err.message || t("admin_wallet.detail.toast_error"));
     } finally {
       setIsDistributing(false);
     }
@@ -99,18 +94,20 @@ export default function ProjectWalletDetails() {
     return (
       <div className={styles.loadingScreen}>
         <div className={styles.spinner} />
-        <p>Analyse des flux financiers...</p>
+        <p>{t("admin_wallet.detail.loading")}</p>
       </div>
     );
   }
 
+  const libelleAffiche = report?.projetLibelleTradu || report?.projetLibelle;
+
   return (
     <div className={styles.page}>
       <Link to="/admin/project-wallets" className={styles.backLink}>
-        <FiArrowLeft size={15} /> Retour
+        <FiArrowLeft size={15} /> {t("admin_wallet.detail.back")}
       </Link>
 
-      <h1 className={styles.title}>{report?.projetLibelle}</h1>
+      <h1 className={styles.title}>{libelleAffiche}</h1>
       <p className={styles.subtitle}>
         <FiUser size={13} /> {report?.porteurNom} · {report?.porteurContact}
       </p>
@@ -119,22 +116,26 @@ export default function ProjectWalletDetails() {
       <div className={styles.balanceGrid}>
         <div className={styles.balanceCard}>
           <div className={styles.balanceLabel}>
-            <FiPieChart size={14} /> Solde collecté (public)
+            <FiPieChart size={14} /> {t("admin_wallet.detail.collected_public")}
           </div>
           <div className={styles.balanceValue}>
             {format(report?.montantCollectePublic || 0, "XOF")}
           </div>
-          <p className={styles.balanceHint}>Visible par les investisseurs</p>
+          <p className={styles.balanceHint}>
+            {t("admin_wallet.detail.collected_public_hint")}
+          </p>
         </div>
 
         <div className={`${styles.balanceCard} ${styles.balanceCardGold}`}>
           <div className={styles.balanceLabel}>
-            <FiDollarSign size={14} /> Trésorerie réelle
+            <FiDollarSign size={14} /> {t("admin_wallet.detail.real_treasury")}
           </div>
           <div className={styles.balanceValue}>
             {format(report?.tresorerieReelle || 0, "XOF")}
           </div>
-          <p className={styles.balanceHint}>Fonds disponibles en coffre</p>
+          <p className={styles.balanceHint}>
+            {t("admin_wallet.detail.real_treasury_hint")}
+          </p>
         </div>
       </div>
 
@@ -143,23 +144,27 @@ export default function ProjectWalletDetails() {
         className={styles.distribTrigger}
         onClick={() => setShowDistribModal(true)}
       >
-        <FiTrendingUp size={16} /> Distribuer des dividendes
+        <FiTrendingUp size={16} /> {t("admin_wallet.detail.distribute_btn")}
       </button>
 
       {/* ═══════════ HISTORIQUE ═══════════ */}
       <section className={styles.historySection}>
-        <h2 className={styles.sectionTitle}>Historique des mouvements</h2>
+        <h2 className={styles.sectionTitle}>
+          {t("admin_wallet.detail.history_title")}
+        </h2>
 
         {transactions.length === 0 ? (
           <div className={styles.emptyState}>
             <FiClock size={28} />
-            <p>Aucune transaction pour ce projet</p>
+            <p>{t("admin_wallet.detail.history_empty")}</p>
           </div>
         ) : (
           <div className={styles.txList}>
             {transactions.map((tx) => {
               const isOut = OUTBOUND_TYPES.includes(tx.type);
-              const label = TYPE_LABELS[tx.type] || tx.type.replace(/_/g, " ");
+              const label = t(`admin_wallet.detail.tx_types.${tx.type}`, {
+                defaultValue: tx.type.replace(/_/g, " "),
+              });
               return (
                 <div key={tx.id} className={styles.txRow}>
                   <div
@@ -193,7 +198,9 @@ export default function ProjectWalletDetails() {
                           : styles.statusPending
                       }`}
                     >
-                      {tx.statut === "SUCCESS" ? "Réussi" : "En cours"}
+                      {tx.statut === "SUCCESS"
+                        ? t("wallet.history.status_success")
+                        : t("wallet.history.status_pending")}
                     </span>
                   </div>
                 </div>
@@ -211,7 +218,7 @@ export default function ProjectWalletDetails() {
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h2>Distribuer des dividendes</h2>
+              <h2>{t("admin_wallet.detail.distribute_btn")}</h2>
               <button
                 className={styles.modalClose}
                 onClick={() => setShowDistribModal(false)}
@@ -221,26 +228,34 @@ export default function ProjectWalletDetails() {
             </div>
 
             <label className={styles.modalLabel}>
-              Montant total à payer (FCFA)
+              {t("admin_wallet.detail.amount_label")}
             </label>
             <input
               type="number"
               className={styles.modalInput}
-              placeholder="Ex : 50000"
+              placeholder={
+                t("admin_wallet.detail.amount_placeholder") as string
+              }
               value={montant}
               onChange={(e) => setMontant(e.target.value)}
             />
 
-            <label className={styles.modalLabel}>Période</label>
+            <label className={styles.modalLabel}>
+              {t("admin_wallet.detail.period_label")}
+            </label>
             <input
               type="text"
               className={styles.modalInput}
-              placeholder="Ex : Trimestre 1 2025"
+              placeholder={
+                t("admin_wallet.detail.period_placeholder") as string
+              }
               value={periode}
               onChange={(e) => setPeriode(e.target.value)}
             />
 
-            <label className={styles.modalLabel}>Motif</label>
+            <label className={styles.modalLabel}>
+              {t("admin_wallet.detail.reason_label")}
+            </label>
             <input
               type="text"
               className={styles.modalInput}
@@ -249,8 +264,7 @@ export default function ProjectWalletDetails() {
             />
 
             <p className={styles.modalHint}>
-              Le montant sera réparti au prorata des parts entre tous les
-              investisseurs actifs.
+              {t("admin_wallet.detail.modal_hint")}
             </p>
 
             <div className={styles.modalActions}>
@@ -258,14 +272,16 @@ export default function ProjectWalletDetails() {
                 className={styles.btnCancel}
                 onClick={() => setShowDistribModal(false)}
               >
-                Annuler
+                {t("admin_wallet.detail.cancel")}
               </button>
               <button
                 className={styles.btnConfirm}
                 onClick={handleDistribute}
                 disabled={isDistributing || !montant}
               >
-                {isDistributing ? "Calcul du prorata..." : "Lancer le paiement"}
+                {isDistributing
+                  ? t("admin_wallet.detail.confirm_processing")
+                  : t("admin_wallet.detail.confirm")}
               </button>
             </div>
           </div>
