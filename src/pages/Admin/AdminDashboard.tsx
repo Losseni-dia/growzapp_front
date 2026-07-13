@@ -73,7 +73,7 @@ export default function DashboardAdmin() {
     return (
       <div className={styles.loadingScreen}>
         <div className={styles.spinner} />
-        <p>Chargement du tableau de bord...</p>
+        <p>{t("admin.dashboard.loading")}</p>
       </div>
     );
   }
@@ -91,10 +91,8 @@ export default function DashboardAdmin() {
           <FiShield size={20} />
         </div>
         <div>
-          <h1 className={styles.title}>Tableau de bord admin</h1>
-          <p className={styles.subtitle}>
-            Vue d'ensemble de la plateforme GrowzApp
-          </p>
+          <h1 className={styles.title}>{t("admin.dashboard.title")}</h1>
+          <p className={styles.subtitle}>{t("admin.dashboard.subtitle")}</p>
         </div>
       </header>
 
@@ -102,7 +100,7 @@ export default function DashboardAdmin() {
       <section className={styles.treasuryCard}>
         <div className={styles.treasuryItem}>
           <span className={styles.treasuryLabel}>
-            Trésorerie réelle (séquestre)
+            {t("admin.dashboard.real_escrow")}
           </span>
           <span className={styles.treasuryValue}>
             {format(stats.montantCollecteSequestre, "XOF")}
@@ -111,7 +109,7 @@ export default function DashboardAdmin() {
         <div className={styles.treasuryDivider} />
         <div className={styles.treasuryItem}>
           <span className={styles.treasuryLabel}>
-            Montant collecté (affiché)
+            {t("admin.dashboard.displayed_amount")}
           </span>
           <span className={styles.treasuryValue}>
             {format(stats.montantCollecteAffiche, "XOF")}
@@ -122,10 +120,12 @@ export default function DashboardAdmin() {
       {/* ═══════════ ALERTES — ACTIONS EN ATTENTE ═══════════ */}
       {pendingTotal > 0 && (
         <section className={styles.pendingBanner}>
-          <strong>
-            {pendingTotal} action{pendingTotal > 1 ? "s" : ""}
-          </strong>{" "}
-          en attente de votre validation
+          <strong>{pendingTotal}</strong>{" "}
+          {t(
+            pendingTotal > 1
+              ? "admin.dashboard.pending_action_plural"
+              : "admin.dashboard.pending_action",
+          )}
         </section>
       )}
 
@@ -138,7 +138,7 @@ export default function DashboardAdmin() {
           <div className={styles.statContent}>
             <span className={styles.statNumber}>{stats.totalUsers}</span>
             <span className={styles.statLabel}>
-              {t("admin.dashboard.users") || "Utilisateurs"}
+              {t("admin.dashboard.users")}
             </span>
           </div>
         </Link>
@@ -154,7 +154,9 @@ export default function DashboardAdmin() {
             <span className={styles.statNumber}>
               {stats.investissementsEnAttente}
             </span>
-            <span className={styles.statLabel}>Investissements en attente</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.investments_pending")}
+            </span>
           </div>
         </Link>
 
@@ -167,7 +169,9 @@ export default function DashboardAdmin() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statNumber}>{stats.retraitsEnAttente}</span>
-            <span className={styles.statLabel}>Retraits à valider</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.withdrawals_pending")}
+            </span>
           </div>
         </Link>
 
@@ -180,20 +184,26 @@ export default function DashboardAdmin() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statNumber}>{stats.kycEnAttente}</span>
-            <span className={styles.statLabel}>KYC en attente</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.kyc_pending")}
+            </span>
           </div>
         </Link>
       </section>
 
       {/* ═══════════ ACTIONS RAPIDES ═══════════ */}
       <section className={styles.quickActions}>
-        <h2 className={styles.sectionTitle}>Actions rapides</h2>
+        <h2 className={styles.sectionTitle}>
+          {t("admin.dashboard.quick_actions")}
+        </h2>
         <div className={styles.actionsList}>
           <Link to="/admin/projets" className={styles.actionRow}>
             <span className={styles.actionIcon}>
               <FiFolder size={16} />
             </span>
-            <span className={styles.actionLabel}>Gérer les projets</span>
+            <span className={styles.actionLabel}>
+              {t("admin.dashboard.manage_projects")}
+            </span>
             <FiArrowRight size={15} className={styles.actionArrow} />
           </Link>
 
@@ -202,7 +212,7 @@ export default function DashboardAdmin() {
               <FiCheckCircle size={16} />
             </span>
             <span className={styles.actionLabel}>
-              Vérifier les identités
+              {t("admin.dashboard.verify_identities")}
               {stats.kycEnAttente > 0 && (
                 <span className={styles.actionBadge}>{stats.kycEnAttente}</span>
               )}
@@ -214,7 +224,9 @@ export default function DashboardAdmin() {
             <span className={styles.actionIcon}>
               <FiDollarSign size={16} />
             </span>
-            <span className={styles.actionLabel}>Valider les fonds</span>
+            <span className={styles.actionLabel}>
+              {t("admin.dashboard.validate_investments")}
+            </span>
             <FiArrowRight size={15} className={styles.actionArrow} />
           </Link>
 
@@ -222,7 +234,9 @@ export default function DashboardAdmin() {
             <span className={styles.actionIcon}>
               <FiCreditCard size={16} />
             </span>
-            <span className={styles.actionLabel}>Trésorerie des projets</span>
+            <span className={styles.actionLabel}>
+              {t("admin.dashboard.project_treasury")}
+            </span>
             <FiArrowRight size={15} className={styles.actionArrow} />
           </Link>
         </div>
