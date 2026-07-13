@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,19 +8,17 @@ import {
   FiEye,
   FiTrash2,
   FiXCircle,
-  FiSearch,
-  FiArrowUp,
-  FiArrowDown,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { api } from "../../../service/Api";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
+import { api, buildProjetUrl } from "../../../service/Api";
 import styles from "./AdminProjetsList.module.css";
 
 interface ProjetAdmin {
   id: number;
   slug: string;
   libelle: string;
+  libelleTradu?: string;
   statutProjet: string;
   porteurPrenom?: string;
   porteurNom: string;
@@ -35,7 +33,7 @@ interface ProjetAdmin {
 type SortKey = "recent" | "ancien" | "collecte" | "objectif";
 
 export default function AdminProjetsList() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { format } = useCurrency();
   const queryClient = useQueryClient();
 
@@ -45,8 +43,9 @@ export default function AdminProjetsList() {
   const [secteurFilter, setSecteurFilter] = useState("TOUS");
 
   const { data: projetsData, isLoading } = useQuery({
-    queryKey: ["admin-projets"],
-    queryFn: () => api.get<{ data: ProjetAdmin[] }>("/api/admin/projets"),
+    queryKey: ["admin-projets", i18n.language],
+    queryFn: () =>
+      api.get<{ data: ProjetAdmin[] }>(buildProjetUrl("/api/admin/projets")),
   });
 
   const projets = projetsData?.data || [];
@@ -147,6 +146,11 @@ export default function AdminProjetsList() {
     }
   };
 
+  const getStatutLabel = (statut: string) => {
+    const key = `admin.projects_list.status.${statut?.toUpperCase()}`;
+    return t(key, { defaultValue: statut });
+  };
+
   if (isLoading)
     return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
@@ -160,10 +164,10 @@ export default function AdminProjetsList() {
         </h1>
 
         {/* Barre de recherche */}
-        <div className={styles.searchContainer}>        
+        <div className={styles.searchContainer}>
           <input
             type="text"
-            placeholder="Nom, porteur, ville, secteur..."
+            placeholder={t("admin.projects_list.search_placeholder") as string}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.searchInput}
@@ -189,7 +193,7 @@ export default function AdminProjetsList() {
               className={`${styles.tabButton} ${activeTab === tab ? styles.activeTab : ""}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab}
+              {getStatutLabel(tab)}
               <span className={styles.countBadge}>
                 {
                   projets.filter(
@@ -208,10 +212,18 @@ export default function AdminProjetsList() {
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
           >
-            <option value="recent">⬇ Plus récent</option>
-            <option value="ancien">⬆ Plus ancien</option>
-            <option value="collecte">📈 % collecté</option>
-            <option value="objectif">💰 Objectif</option>
+            <option value="recent">
+              {t("admin.projects_list.sort.recent")}
+            </option>
+            <option value="ancien">
+              {t("admin.projects_list.sort.ancien")}
+            </option>
+            <option value="collecte">
+              {t("admin.projects_list.sort.collecte")}
+            </option>
+            <option value="objectif">
+              {t("admin.projects_list.sort.objectif")}
+            </option>
           </select>
 
           <select
@@ -221,7 +233,7 @@ export default function AdminProjetsList() {
           >
             {secteurs.map((s) => (
               <option key={s} value={s}>
-                {s === "TOUS" ? "Tous les secteurs" : s}
+                {s === "TOUS" ? t("admin.projects_list.all_sectors") : s}
               </option>
             ))}
           </select>
@@ -235,6 +247,7 @@ export default function AdminProjetsList() {
             p.objectifFinancement > 0
               ? (p.montantCollecte / p.objectifFinancement) * 100
               : 0;
+          const libelleAffiche = p.libelleTradu || p.libelle;
 
           return (
             <div key={p.id} className={styles.card}>
@@ -242,7 +255,7 @@ export default function AdminProjetsList() {
                 {p.poster ? (
                   <img
                     src={p.poster}
-                    alt={p.libelle}
+                    alt={libelleAffiche}
                     className={styles.poster}
                   />
                 ) : (
@@ -253,7 +266,7 @@ export default function AdminProjetsList() {
                 <div
                   className={`${styles.statutBadge} ${getStatutClass(p.statutProjet)}`}
                 >
-                  {p.statutProjet}
+                  {getStatutLabel(p.statutProjet)}
                 </div>
                 {p.createdAt && (
                   <div className={styles.dateBadge}>
@@ -267,7 +280,7 @@ export default function AdminProjetsList() {
               </div>
 
               <div className={styles.content}>
-                <h3 className={styles.projectTitle}>{p.libelle}</h3>
+                <h3 className={styles.projectTitle}>{libelleAffiche}</h3>
                 <div className={styles.meta}>
                   <span>
                     {t("admin.projects.by")} <strong>{p.porteurNom}</strong>
@@ -277,7 +290,7 @@ export default function AdminProjetsList() {
                   )}
                 </div>
                 <p className={styles.location}>
-                  📍 {p.localiteNom || "Non spécifié"}
+                  📍 {p.localiteNom || t("common.not_provided")}
                 </p>
 
                 <div className={styles.progress}>
@@ -302,21 +315,21 @@ export default function AdminProjetsList() {
                   <Link
                     to={`/admin/projets/detail/${p.id}`}
                     className={styles.btnDetail}
-                    title="Voir"
+                    title={t("admin.projects.btn_view") as string}
                   >
                     <FiEye />
                   </Link>
                   <Link
                     to={`/admin/projets/edit/${p.slug || p.id}`}
                     className={styles.btnEdit}
-                    title="Modifier"
+                    title={t("admin.projects.btn_edit") as string}
                   >
                     <FiEdit />
                   </Link>
                   <button
                     onClick={() => handleSupprimer(p.id, p.libelle)}
                     className={styles.btnDelete}
-                    title="Supprimer"
+                    title={t("admin.projects.btn_delete") as string}
                   >
                     <FiTrash2 />
                   </button>
@@ -329,13 +342,13 @@ export default function AdminProjetsList() {
                       onClick={() => validerMutation.mutate(p.id)}
                       className={styles.btnValider}
                     >
-                      <FiCheckCircle /> Valider
+                      <FiCheckCircle /> {t("admin.projects.btn_validate")}
                     </button>
                     <button
                       onClick={() => rejeterMutation.mutate(p.id)}
                       className={styles.btnRejeter}
                     >
-                      <FiXCircle /> Rejeter
+                      <FiXCircle /> {t("admin.projects.btn_reject")}
                     </button>
                   </div>
                 )}
@@ -347,7 +360,7 @@ export default function AdminProjetsList() {
 
       {filteredProjets.length === 0 && (
         <div className={styles.emptyState}>
-          Aucun projet ne correspond à vos critères.
+          {t("admin.projects_list.empty")}
         </div>
       )}
     </div>
