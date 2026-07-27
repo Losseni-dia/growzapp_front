@@ -1,82 +1,141 @@
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Crisp } from "crisp-sdk-web";
-
-// === COMPONENTS ===
+// === COMPONENTS (chargés immédiatement, utilisés partout) ===
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import GrowzToaster from "./components/ui/Toaster";
 import CrispUserHandler from "./components/Crips-ChatBox/CrispUserHandler";
-
 // === PROVIDERS ===
 import { CurrencyProvider } from "./components/Context/CurrencyContext";
-
 import { HelmetProvider } from "react-helmet-async";
-
-// Pages publiques
-import HomePage from "./pages/HomePage/HomePage";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import ProjetsPage from "./pages/projet/projetsPage/ProjetsPage";
-
-// Pages utilisateur connecté
-import Dashboard from "./pages/MonEspace/Dashboard";
-import ProjectForm from "./components/Projet/ProjetForm/ProjetForm";
-import WalletPage from "./pages/Wallet/WalletPage";
-import DepotPage from "./pages/Depot/DepotPage";
-import RetraitPage from "./pages/Retrait/RetraitPage";
-import DepositCancel from "./pages/Depot/Cancel/CancelPage";
-import DepositSuccess from "./pages/Depot/Success/SuccessPage";
-import WithdrawCancelPage from "./pages/Retrait/Cancel/CancelPage";
-import WithdrawSuccessPage from "./pages/Retrait/Success/SuccessPage";
-import MesInvestissementsPage from "./pages/MonEspace/Mes-investissements/MesInvestissementsPage";
-import MesProjetsPage from "./pages/MonEspace/Mes-projets/MesProjetsPage";
-import MesDividendesPage from "./pages/MonEspace/Mes-dividendes/MesDividendes";
-import ProfileUpdateForm from "./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm";
-
-// Pages Admin
-import DashboardAdmin from "./pages/Admin/AdminDashboard";
-import AdminWithdrawalsPage from "./pages/Admin/AdminRetraitWalletPage/AdminRetraitWalletPage";
-import ContratsAdmin from "./pages/Admin/Contrats/ContratAdminPage";
-import InvestissementsAdminPage from "./pages/Admin/Investissements/InvestissementsAdminPage";
-import EditProjetPage from "./pages/Admin/Projets/EditProjet/EditProjetsPage";
-import UsersAdminPage from "./pages/Admin/Users/AdminUsersPage";
-import ProjectWalletDetailPage from "./pages/Admin/WalletsProjets/WalletProjetDetails/WalletProjetDetails";
-import ProjectWalletsAdminPage from "./pages/Admin/WalletsProjets/WalletsProjetsAdminPage";
-import ProjetAdminDetail from "./pages/Admin/Projets/ProjetDetails/ProjetAdminDetail";
-import AdminProjetsList from "./pages/Admin/Projets/AdminProjetsList";
-
-// Documents & Contrats
-import ContratPage from "./pages/Contrat/ContratsPage/ContratPage";
-import VerifierContrat from "./pages/VerifierContrat/VerifierContrat";
-import ContratViewer from "./pages/Contrat/ContratView/ContratView";
-
-// Guards
+// === GUARDS (légers, chargés immédiatement) ===
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
 import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
-import KYCUploadForm from "./components/kyc/KycUploadForm";
-import { KycAdminPanel } from "./pages/Admin/Kyc/KycAdminPanel";
-import ProjectSettingsPanel from "./pages/Admin/Projets/ProjectSettings/ProjectsSettingsPanel";
 
-// Pages Légales
-import CGV from "./pages/LegalPages/CGV";
-import RGPD from "./pages/LegalPages/RGPD";
-import CGU from "./pages/LegalPages/CGU";
-import MentionsLegales from "./pages/LegalPages/MentionsLegales";
-import RegisterPage from "./pages/RegisterPage/RegisterPage";
-import ProjetDetailsPage from "./pages/projet/projetDetails/ProjetDetailsPage";
-import ProjetsProches from "./pages/projet/gps-projetProche/ProjetsProches";
-import ResetPassword from "./pages/reset-password/ResetPassword";
-import ForgotPassword from "./pages/reset-password/ForgottenPassword";
-import NewsPage from "./pages/news/newsPage/NewsPage";
-import NewsDetail from "./pages/news/newsDetails/NewsDetails";
-import NewsForm from "./pages/news/newsForm/NewsForm";
-import NewsEdit from "./pages/news/newsEdit/newsEdit";
-import OAuth2RedirectHandler from "./components/Context/OAuth2RedirectHandler";
-import KycSuccess from "./components/kyc/KycSuccess";
-import MesContratsPage from "./pages/MonEspace/MesContrats/mes-contrats";
-import MonPortefeuillePage from "./pages/MonEspace/Mon-portefeuille/MonPortefeuillePage";
-import MesFacturesPage from "./pages/MonEspace/MesFactures/mes-factures";
-import MonDashboardPorteurPage from "./pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage";
+// === PAGES — chargement différé (code splitting) ===
+// Pages publiques
+const HomePage = lazy(() => import("./pages/HomePage/HomePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
+const ProjetsPage = lazy(
+  () => import("./pages/projet/projetsPage/ProjetsPage"),
+);
+const ProjetDetailsPage = lazy(
+  () => import("./pages/projet/projetDetails/ProjetDetailsPage"),
+);
+const RegisterPage = lazy(() => import("./pages/RegisterPage/RegisterPage"));
+const VerifierContrat = lazy(
+  () => import("./pages/VerifierContrat/VerifierContrat"),
+);
+const NewsForm = lazy(() => import("./pages/news/newsForm/NewsForm"));
+const NewsEdit = lazy(() => import("./pages/news/newsForm/NewsForm"));
+const KycSuccess = lazy(() => import("./components/kyc/KycSuccess"));
+const NewsPage = lazy(() => import("./pages/news/newsPage/NewsPage"));
+const NewsDetail = lazy(() => import("./pages/news/newsDetails/NewsDetails"));
+const OAuth2RedirectHandler = lazy(
+  () => import("./components/Context/OAuth2RedirectHandler"),
+);
+const ForgotPassword = lazy(
+  () => import("./pages/reset-password/ForgottenPassword"),
+);
+const ResetPassword = lazy(
+  () => import("./pages/reset-password/ResetPassword"),
+);
+const MentionsLegales = lazy(
+  () => import("./pages/LegalPages/MentionsLegales"),
+);
+const CGU = lazy(() => import("./pages/LegalPages/CGU"));
+const RGPD = lazy(() => import("./pages/LegalPages/RGPD"));
+const CGV = lazy(() => import("./pages/LegalPages/CGV"));
+
+// Pages utilisateur connecté
+const Dashboard = lazy(() => import("./pages/MonEspace/Dashboard"));
+const ProjectForm = lazy(
+  () => import("./components/Projet/ProjetForm/ProjetForm"),
+);
+const WalletPage = lazy(() => import("./pages/Wallet/WalletPage"));
+const DepotPage = lazy(() => import("./pages/Depot/DepotPage"));
+const RetraitPage = lazy(() => import("./pages/Retrait/RetraitPage"));
+const DepositCancel = lazy(() => import("./pages/Depot/Cancel/CancelPage"));
+const DepositSuccess = lazy(() => import("./pages/Depot/Success/SuccessPage"));
+const WithdrawCancelPage = lazy(
+  () => import("./pages/Retrait/Cancel/CancelPage"),
+);
+const WithdrawSuccessPage = lazy(
+  () => import("./pages/Retrait/Success/SuccessPage"),
+);
+const MesInvestissementsPage = lazy(
+  () => import("./pages/MonEspace/Mes-investissements/MesInvestissementsPage"),
+);
+const MesProjetsPage = lazy(
+  () => import("./pages/MonEspace/Mes-projets/MesProjetsPage"),
+);
+const MesDividendesPage = lazy(
+  () => import("./pages/MonEspace/Mes-dividendes/MesDividendes"),
+);
+const MesContratsPage = lazy(
+  () => import("./pages/MonEspace/MesContrats/mes-contrats"),
+);
+const MesFacturesPage = lazy(
+  () => import("./pages/MonEspace/MesFactures/mes-factures"),
+);
+const MonPortefeuillePage = lazy(
+  () => import("./pages/MonEspace/Mon-portefeuille/MonPortefeuillePage"),
+);
+const MonDashboardPorteurPage = lazy(
+  () =>
+    import("./pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage"),
+);
+const ProfileUpdateForm = lazy(
+  () => import("./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm"),
+);
+const KYCUploadForm = lazy(() => import("./components/kyc/KycUploadForm"));
+const ContratPage = lazy(
+  () => import("./pages/Contrat/ContratsPage/ContratPage"),
+);
+const ContratViewer = lazy(
+  () => import("./pages/Contrat/ContratView/ContratView"),
+);
+
+// Pages Admin
+const DashboardAdmin = lazy(() => import("./pages/Admin/AdminDashboard"));
+const AdminWithdrawalsPage = lazy(
+  () => import("./pages/Admin/AdminRetraitWalletPage/AdminRetraitWalletPage"),
+);
+const ContratsAdmin = lazy(
+  () => import("./pages/Admin/Contrats/ContratAdminPage"),
+);
+const InvestissementsAdminPage = lazy(
+  () => import("./pages/Admin/Investissements/InvestissementsAdminPage"),
+);
+const EditProjetPage = lazy(
+  () => import("./pages/Admin/Projets/EditProjet/EditProjetsPage"),
+);
+const UsersAdminPage = lazy(() => import("./pages/Admin/Users/AdminUsersPage"));
+const ProjectWalletDetailPage = lazy(
+  () =>
+    import("./pages/Admin/WalletsProjets/WalletProjetDetails/WalletProjetDetails"),
+);
+const ProjectWalletsAdminPage = lazy(
+  () => import("./pages/Admin/WalletsProjets/WalletsProjetsAdminPage"),
+);
+const ProjetAdminDetail = lazy(
+  () => import("./pages/Admin/Projets/ProjetDetails/ProjetAdminDetail"),
+);
+const AdminProjetsList = lazy(
+  () => import("./pages/Admin/Projets/AdminProjetsList"),
+);
+const KycAdminPanel = lazy(() =>
+  import("./pages/Admin/Kyc/KycAdminPanel").then((m) => ({
+    default: m.KycAdminPanel,
+  })),
+);
+const ProjectSettingsPanel = lazy(
+  () => import("./pages/Admin/Projets/ProjectSettings/ProjectsSettingsPanel"),
+);
+const ProjetsProches = lazy(
+  () => import("./pages/projet/gps-projetProche/ProjetsProches"),
+);
 
 function App() {
   const location = useLocation();
@@ -102,156 +161,169 @@ function App() {
         <GrowzToaster />
 
         <main className="growzAppMain">
-          <Routes>
-            {/* ==================== ROUTES PUBLIQUES ==================== */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/projets" element={<ProjetsPage />} />
-            <Route path="/projet/:id" element={<ProjetDetailsPage />} />
-            <Route path="/verifier-contrat" element={<VerifierContrat />} />
-            <Route
-              path="/verifier-contrat/:code"
-              element={<VerifierContrat />}
-            />
-            <Route path="/kyc/success" element={<KycSuccess />} />
-            <Route path="/news" element={<NewsPage />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
-            <Route
-              path="/oauth2/redirect"
-              element={<OAuth2RedirectHandler />}
-            />
-
-            {/* Étape 1 : Demander le reset */}
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* Étape 2 : Changer le mdp (Lien reçu par email) */}
-            <Route path="/reset-password" element={<ResetPassword />} />
-
-            {/* Routes Légales */}
-            <Route path="/mentions-legales" element={<MentionsLegales />} />
-            <Route path="/cgu" element={<CGU />} />
-            <Route path="/rgpd" element={<RGPD />} />
-            <Route path="/cgv" element={<CGV />} />
-
-            {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/mon-espace" element={<Dashboard />} />
-              <Route path="/profile/edit" element={<ProfileUpdateForm />} />
-              <Route path="/profile/kyc" element={<KYCUploadForm />} />
-              <Route path="/projet/creer" element={<ProjectForm />} />
-              <Route path="/projet/edit/:id" element={<ProjectForm />} />
-              <Route path="/wallet" element={<WalletPage />} />
-              <Route path="/depot" element={<DepotPage />} />
-              <Route path="/retrait" element={<RetraitPage />} />
-              <Route path="/depot/success" element={<DepositSuccess />} />
-              <Route path="/depot/cancel" element={<DepositCancel />} />
+          <Suspense
+            fallback={<div className="growzAppLoading">Chargement...</div>}
+          >
+            <Routes>
+              {/* ==================== ROUTES PUBLIQUES ==================== */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/projets" element={<ProjetsPage />} />
+              <Route path="/projet/:id" element={<ProjetDetailsPage />} />
+              <Route path="/verifier-contrat" element={<VerifierContrat />} />
               <Route
-                path="/retrait/success"
-                element={<WithdrawSuccessPage />}
+                path="/verifier-contrat/:code"
+                element={<VerifierContrat />}
               />
-              <Route path="/retrait/cancel" element={<WithdrawCancelPage />} />
+              <Route path="/kyc/success" element={<KycSuccess />} />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
               <Route
-                path="/mes-investissements"
-                element={<MesInvestissementsPage />}
+                path="/oauth2/redirect"
+                element={<OAuth2RedirectHandler />}
               />
-              <Route path="/mes-projets" element={<MesProjetsPage />} />
-              <Route path="/mes-dividendes" element={<MesDividendesPage />} />
-              <Route path="/mes-contrats" element={<MesContratsPage />} />
-              <Route path="/mon-dashboard-porteur" element={<MonDashboardPorteurPage />} />
-              <Route path="/mes-factures" element={<MesFacturesPage />} />
-              <Route
-                path="/mon-portefeuille"
-                element={<MonPortefeuillePage />}
-              />
-              <Route path="/contrat/:numero" element={<ContratPage />} />
-              <Route
-                path="/contrat/:numero/viewer"
-                element={<ContratViewer />}
-              />
-              <Route path="/projets/proximite" element={<ProjetsProches />} />
-            </Route>
 
-            {/* ==================== ROUTES ADMIN ==================== */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AdminRoute />}>
-                {/* 1. LE HUB : Statistiques et KPIs */}
-                <Route path="/admin" element={<DashboardAdmin />} />
+              {/* Étape 1 : Demander le reset */}
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              {/* Étape 2 : Changer le mdp (Lien reçu par email) */}
+              <Route path="/reset-password" element={<ResetPassword />} />
 
-                {/* 2. GESTION DES PROJETS : La nouvelle vue avec Tabs et Recherche */}
-                {/* On utilise AdminProjetsList comme page principale de gestion */}
-                <Route path="/admin/projets" element={<AdminProjetsList />} />
+              {/* Routes Légales */}
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/cgu" element={<CGU />} />
+              <Route path="/rgpd" element={<RGPD />} />
+              <Route path="/cgv" element={<CGV />} />
 
-                {/* Sous-pages de gestion des projets */}
+              {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/mon-espace" element={<Dashboard />} />
+                <Route path="/profile/edit" element={<ProfileUpdateForm />} />
+                <Route path="/profile/kyc" element={<KYCUploadForm />} />
+                <Route path="/projet/creer" element={<ProjectForm />} />
+                <Route path="/projet/edit/:id" element={<ProjectForm />} />
+                <Route path="/wallet" element={<WalletPage />} />
+                <Route path="/depot" element={<DepotPage />} />
+                <Route path="/retrait" element={<RetraitPage />} />
+                <Route path="/depot/success" element={<DepositSuccess />} />
+                <Route path="/depot/cancel" element={<DepositCancel />} />
                 <Route
-                  path="/admin/projets/detail/:id"
-                  element={<ProjetAdminDetail />}
+                  path="/retrait/success"
+                  element={<WithdrawSuccessPage />}
                 />
                 <Route
-                  path="/admin/projets/edit/:id"
-                  element={<EditProjetPage />}
-                />
-
-                {/* 3. AUTRES MODULES DE GESTION */}
-                <Route path="/admin/users" element={<UsersAdminPage />} />
-                <Route path="/admin/kyc" element={<KycAdminPanel />} />
-                <Route path="/admin/contrats" element={<ContratsAdmin />} />
-                <Route
-                  path="/admin/investissements"
-                  element={<InvestissementsAdminPage />}
+                  path="/retrait/cancel"
+                  element={<WithdrawCancelPage />}
                 />
                 <Route
-                  path="/admin/retraits"
-                  element={<AdminWithdrawalsPage />}
+                  path="/mes-investissements"
+                  element={<MesInvestissementsPage />}
                 />
-
-                {/* 4. WALLETS ET TRÉSORERIE */}
+                <Route path="/mes-projets" element={<MesProjetsPage />} />
+                <Route path="/mes-dividendes" element={<MesDividendesPage />} />
+                <Route path="/mes-contrats" element={<MesContratsPage />} />
                 <Route
-                  path="/admin/project-wallets"
-                  element={<ProjectWalletsAdminPage />}
+                  path="/mon-dashboard-porteur"
+                  element={<MonDashboardPorteurPage />}
                 />
+                <Route path="/mes-factures" element={<MesFacturesPage />} />
                 <Route
-                  path="/admin/project-wallets/:projetId"
-                  element={<ProjectWalletDetailPage />}
+                  path="/mon-portefeuille"
+                  element={<MonPortefeuillePage />}
                 />
-
-                {/* 5. CONFIGURATION */}
+                <Route path="/contrat/:numero" element={<ContratPage />} />
                 <Route
-                  path="/admin/settings"
-                  element={<ProjectSettingsPanel />}
+                  path="/contrat/:numero/viewer"
+                  element={<ContratViewer />}
                 />
-
-                {/* --- NETTOYAGE --- */}
-                {/* J'ai supprimé /admin/projetsList car /admin/projets fait maintenant le travail proprement */}
+                <Route path="/projets/proximite" element={<ProjetsProches />} />
               </Route>
-            </Route>
 
-            {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
-            {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
-            <Route
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />
-              }
-            >
-              <Route path="/admin/news/new" element={<NewsForm />} />
-              <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
-            </Route>
+              {/* ==================== ROUTES ADMIN ==================== */}
+              <Route element={<ProtectedRoute />}>
+                <Route element={<AdminRoute />}>
+                  {/* 1. LE HUB : Statistiques et KPIs */}
+                  <Route path="/admin" element={<DashboardAdmin />} />
 
-            {/* ==================== REDIRECTIONS ==================== */}
-            <Route path="/home" element={<Navigate to="/" replace />} />
-            <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
+                  {/* 2. GESTION DES PROJETS : La nouvelle vue avec Tabs et Recherche */}
+                  {/* On utilise AdminProjetsList comme page principale de gestion */}
+                  <Route path="/admin/projets" element={<AdminProjetsList />} />
 
-            {/* ==================== 404 ==================== */}
-            <Route
-              path="*"
-              element={
-                <div className="growzNotFound">
-                  <strong>404</strong>
-                  <span>Page non trouvée</span>
-                </div>
-              }
-            />
-          </Routes>
+                  {/* Sous-pages de gestion des projets */}
+                  <Route
+                    path="/admin/projets/detail/:id"
+                    element={<ProjetAdminDetail />}
+                  />
+                  <Route
+                    path="/admin/projets/edit/:id"
+                    element={<EditProjetPage />}
+                  />
+
+                  {/* 3. AUTRES MODULES DE GESTION */}
+                  <Route path="/admin/users" element={<UsersAdminPage />} />
+                  <Route path="/admin/kyc" element={<KycAdminPanel />} />
+                  <Route path="/admin/contrats" element={<ContratsAdmin />} />
+                  <Route
+                    path="/admin/investissements"
+                    element={<InvestissementsAdminPage />}
+                  />
+                  <Route
+                    path="/admin/retraits"
+                    element={<AdminWithdrawalsPage />}
+                  />
+
+                  {/* 4. WALLETS ET TRÉSORERIE */}
+                  <Route
+                    path="/admin/project-wallets"
+                    element={<ProjectWalletsAdminPage />}
+                  />
+                  <Route
+                    path="/admin/project-wallets/:projetId"
+                    element={<ProjectWalletDetailPage />}
+                  />
+
+                  {/* 5. CONFIGURATION */}
+                  <Route
+                    path="/admin/settings"
+                    element={<ProjectSettingsPanel />}
+                  />
+
+                  {/* --- NETTOYAGE --- */}
+                  {/* J'ai supprimé /admin/projetsList car /admin/projets fait maintenant le travail proprement */}
+                </Route>
+              </Route>
+
+              {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
+              {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
+              <Route
+                element={
+                  <ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />
+                }
+              >
+                <Route path="/admin/news/new" element={<NewsForm />} />
+                <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
+              </Route>
+
+              {/* ==================== REDIRECTIONS ==================== */}
+              <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route
+                path="/admin/*"
+                element={<Navigate to="/admin" replace />}
+              />
+
+              {/* ==================== 404 ==================== */}
+              <Route
+                path="*"
+                element={
+                  <div className="growzNotFound">
+                    <strong>404</strong>
+                    <span>Page non trouvée</span>
+                  </div>
+                }
+              />
+            </Routes>
+          </Suspense>
         </main>
 
         <Footer />
