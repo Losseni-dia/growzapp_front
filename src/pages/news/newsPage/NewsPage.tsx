@@ -4,7 +4,6 @@ import {
   PenLine,
   Edit,
   Trash2,
-  Search,
   Clock,
   X,
 } from "lucide-react";
@@ -12,12 +11,13 @@ import { useEffect, useState, useMemo } from "react";
 import { News, newsService } from "../../../service/newsService";
 import { useAuth } from "../../../components/Context/AuthContext";
 import styles from "./NewsPage.module.css";
+import { buildFileUrl } from "../../../service/Api";
 
 // ─── Image URL — gère chemins relatifs via proxy Vite ────────────────────────
 const getImageUrl = (url: string): string => {
   if (!url) return "/placeholder-news.jpg";
-  if (url.startsWith("http") || url.startsWith("/")) return url;
-  return "/" + url;
+  if (url.startsWith("http")) return url;
+  return buildFileUrl(url.startsWith("/") ? url : "/" + url);
 };
 
 // ─── Catégories ───────────────────────────────────────────────────────────────

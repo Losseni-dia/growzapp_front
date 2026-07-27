@@ -1,5 +1,15 @@
 import i18n from "../i18n";
 
+const API_BASE = import.meta.env.VITE_API_URL || "";
+
+export const buildFileUrl = (path: string | null | undefined): string => {
+  if (!path) return "";
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
 const getFreshToken = (): string | null => {
   try {
     const userStr = localStorage.getItem("user");
@@ -37,10 +47,11 @@ const buildUrl = (endpoint: string): string => {
     return endpoint;
   }
   if (endpoint.startsWith("/api") || endpoint.startsWith("api")) {
-    return endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    return `${API_BASE}${path}`;
   }
   const clean = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
-  return `/api/${clean}`;
+  return `${API_BASE}/api/${clean}`;
 };
 
 const request = async <T = unknown>(

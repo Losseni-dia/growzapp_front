@@ -19,6 +19,7 @@ import {
   FiMapPin,
 } from "react-icons/fi";
 import styles from "./MesInvestissementsPage.module.css";
+import { buildFileUrl } from "../../../service/Api";
 
 export default function MesInvestissementsPage() {
   const [investissements, setInvestissements] = useState<InvestissementDTO[]>(
@@ -154,7 +155,7 @@ export default function MesInvestissementsPage() {
               <div key={inv.id} className={styles.card}>
                 <div className={styles.poster}>
                   <img
-                    src={inv.projetPoster || "/default.jpg"}
+                    src={inv.projetPoster ? buildFileUrl(inv.projetPoster) : "/default.jpg"}
                     alt={inv.projetLibelle}
                   />
                   <div

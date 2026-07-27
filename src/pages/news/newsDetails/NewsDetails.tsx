@@ -1,8 +1,9 @@
-import { ArrowLeft, Calendar, Loader2, Clock, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, Loader2, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { News, newsService } from "../../../service/newsService";
 import styles from "./NewsDetail.module.css";
+import { buildFileUrl } from "../../../service/Api";
 
 // Temps de lecture estimé
 const readingTime = (html: string): number => {
@@ -82,7 +83,7 @@ const NewsDetail = () => {
           {article.imageUrl && (
             <div className={styles.imageContainer}>
               <img
-                src={article.imageUrl}
+                src={buildFileUrl(article.imageUrl)}
                 alt={article.title}
                 className={styles.fullImage}
               />
