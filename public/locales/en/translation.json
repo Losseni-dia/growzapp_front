@@ -534,6 +534,23 @@
         "collecte": "📈 % collected",
         "objectif": "💰 Goal"
       },
+      "revalorisation": {
+        "tooltip": "Revalue",
+        "modal_title": "Revalue project",
+        "current_label": "Current valuation",
+        "new_label": "New valuation (FCFA)",
+        "new_placeholder": "E.g.: 28,000,000",
+        "reason_label": "Reason",
+        "reason_placeholder": "E.g.: Q1 2026 audit — revenue growth",
+        "hint": "This action updates the project's official valuation and will be visible in investors' performance history.",
+        "cancel": "Cancel",
+        "confirm": "Confirm revaluation",
+        "confirm_processing": "Saving...",
+        "toast_success": "Project successfully revalued",
+        "toast_error": "Revaluation failed",
+        "toast_invalid": "Please enter a valid valuation",
+        "card_valuation_label": "Valuation"
+      },
       "status": {
         "TOUS": "All",
         "SOUMIS": "Submitted",
@@ -735,6 +752,33 @@
       },
       "empty": "No users found"
     },
+    "dashboard_global": {
+      "kpi_total_collected": "Total collected",
+      "kpi_global_goal": "Global goal reached",
+      "kpi_members": "Registered members",
+      "kpi_active_projects": "Active projects",
+      "section_investments": "Investments",
+      "stat_valid_investments": "Validated investments",
+      "stat_unique_investors": "Unique investors",
+      "stat_avg_investment": "Average investment",
+      "chart_investments_evolution": "Monthly investment evolution",
+      "no_data": "Not enough data yet",
+      "section_projects": "Projects",
+      "chart_status_distribution": "Distribution by status",
+      "top_collection_title": "🏆 Top 5 — Best collection",
+      "top_progression_title": "🚀 Top 5 — Best progression",
+      "section_dividends": "Dividends",
+      "stat_total_paid": "Total paid",
+      "stat_payments_count": "Payments made",
+      "chart_dividends_evolution": "Monthly dividend payment evolution",
+      "status": {
+        "VALIDE": "Validated",
+        "SOUMIS": "Submitted",
+        "REJETE": "Rejected",
+        "TERMINE": "Completed",
+        "EN_ATTENTE": "Pending"
+      }
+    },
     "roles": {
       "title": "Manage Roles",
       "loading": "Loading roles...",
@@ -766,6 +810,79 @@
     "not_found_title": "Contract not found",
     "not_found_desc": "The requested contract does not exist or you do not have access.",
     "back_to_space": "Back to my space"
+  },
+  "portfolio": {
+    "title": "My Portfolio",
+    "subtitle": "Overview of your {{count}} position",
+    "subtitle_plural": "Overview of your {{count}} positions",
+    "kpi": {
+      "capital_invested": "Capital invested",
+      "current_value": "Current value",
+      "global_performance": "Overall performance",
+      "dividends_received": "Dividends received"
+    },
+    "chart": {
+      "evolution_title": "Portfolio evolution",
+      "allocation_title": "Allocation by project",
+      "legend_invested": "Capital invested",
+      "legend_value": "Estimated value"
+    },
+    "positions": {
+      "section_title": "My positions",
+      "invested_label": "Invested",
+      "current_value_label": "Current value",
+      "dividends_label": "Dividends received",
+      "view_project": "View project",
+      "share": "share",
+      "share_plural": "shares"
+    },
+    "modal": {
+      "chart_title": "Valuation evolution",
+      "no_data": "Not enough data to draw an evolution chart.",
+      "entry_price": "Entry price / share",
+      "shares_held": "Shares held",
+      "equity_pct": "% of project held",
+      "invested_amount": "Invested amount",
+      "current_valuation": "Current valuation",
+      "position_value": "Position value",
+      "dividends_title": "Dividends received",
+      "dividends_total_suffix": "total",
+      "no_dividends": "No dividends received yet.",
+      "events_title": "Events log",
+      "view_project": "View project"
+    },
+    "events": {
+      "CREATION": "Project creation",
+      "VALIDATION": "Project validation",
+      "INVESTISSEMENT": "Investment",
+      "DIVIDENDE": "Dividend payment",
+      "REEVALUATION": "Revaluation"
+    }
+  },
+  "porteur": {
+    "title": "My Owner Space",
+    "subtitle": "Overview of your {{count}} project",
+    "subtitle_plural": "Overview of your {{count}} projects",
+    "empty": "You don't have any projects yet",
+    "projects_title": "My projects",
+    "kpi": {
+      "total_collected": "Total collected",
+      "total_investors": "Investors (all projects)",
+      "total_dividends": "Dividends paid",
+      "projects_count": "Active projects"
+    },
+    "card": {
+      "treasury": "Treasury",
+      "goal_progress": "Goal reached",
+      "investors": "investors",
+      "avg_investment": "avg. investment",
+      "dividends_paid": "dividends paid",
+      "available": "Available",
+      "blocked": "Blocked",
+      "collection_evolution": "Collection evolution",
+      "velocity": "Fundraising velocity",
+      "no_data": "Not enough data yet"
+    }
   },
   "contract_details": {
     "title": "INVESTMENT CONTRACT",
@@ -1138,5 +1255,28 @@
       "status": "Status"
     },
     "btn_download": "Download"
+  },
+  "kyc": {
+    "pending_action_hint": "Please verify your identity to unlock all withdrawal and investment features.",
+    "title": "Identity Verification",
+    "label_birthdate": "Date of Birth",
+    "label_address": "Current Residential Address",
+    "placeholder_address": "Street, City, Zip Code...",
+    "upload_hint": "Click to upload your ID or Passport (JPG, PNG, PDF)",
+    "btn_submit": "Submit for Verification",
+    "success_message": "Documents sent! Our teams will review them.",
+    "error_message": "Error sending documents.",
+    "pending_verification": "Your file is under review. Please check back later.",
+    "verified": "Your identity is verified!",
+    "status_rejected": "File rejected",
+    "no_reason_provided": "No reason provided",
+    "retry_button": "Resubmit documents",
+    "status_locked": "Restricted access (KYC required)",
+    "investment_blocked_title": "Action Required",
+    "error_investment_blocked": "KYC verification required to invest",
+    "badge_valid": "Verified",
+    "badge_pending": "Pending",
+    "badge_rejected": "Rejected",
+    "badge_none": "Not submitted"
   }
 }

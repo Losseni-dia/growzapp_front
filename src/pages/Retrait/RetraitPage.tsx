@@ -1,5 +1,5 @@
 // src/pages/Retrait/RetraitPage.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getFreshToken } from "../../service/Api";
@@ -15,15 +15,15 @@ export default function WithdrawPage() {
   const { format, currency } = useCurrency(); // <--- HOOK MONNAIE
 
   const [montant, setMontant] = useState("");
-  const [phone, setPhone] = useState("");
-  const [method, setMethod] = useState<WithdrawMethod>("ORANGE_MONEY");
+  const [phone] = useState("");
+  const [method] = useState<WithdrawMethod>("ORANGE_MONEY");
   const [loading, setLoading] = useState(false);
   const [soldeRetirable, setSoldeRetirable] = useState(0);
   const [isLoadingSolde, setIsLoadingSolde] = useState(true);
 
-  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [, setShowPhoneModal] = useState(false);
   const [showStripeModal, setShowStripeModal] = useState(false);
-  const [showRedirectLoader, setShowRedirectLoader] = useState(false);
+  const [, setShowRedirectLoader] = useState(false);
 
   useEffect(() => {
     const fetchSolde = async () => {

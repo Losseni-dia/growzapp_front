@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import {
   FiChevronLeft,
   FiFilter,
-  FiSearch,
   FiSliders,
   FiX,
 } from "react-icons/fi";

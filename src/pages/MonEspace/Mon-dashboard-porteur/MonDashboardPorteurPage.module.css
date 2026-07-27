@@ -1,0 +1,361 @@
+/* src/pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage.module.css */
+
+.container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1.5rem 4rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ═══════════ LOADING / EMPTY ═══════════ */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem;
+  gap: 1rem;
+  color: #64748b;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top-color: var(--growz-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 5rem;
+  color: #64748b;
+  text-align: center;
+}
+
+.btnCreer {
+  margin-top: 1rem;
+  background: var(--growz-gold);
+  color: var(--growz-primary);
+  padding: 12px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* ═══════════ HEADER ═══════════ */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  color: var(--growz-primary);
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 0 0 0.4rem;
+}
+
+.header p {
+  color: #666;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* ═══════════ KPIs ═══════════ */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
+}
+
+.kpiCard {
+  background: white;
+  border-radius: 18px;
+  padding: 1.3rem 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.kpiIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: var(--growz-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiLabel {
+  display: block;
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.kpiValue {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* ═══════════ PROJETS ═══════════ */
+.sectionTitle {
+  color: var(--growz-primary);
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 1.2rem;
+}
+
+.projetsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+.projetCard {
+  background: white;
+  border-radius: 22px;
+  padding: 1.4rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e2e8f0;
+}
+
+.projetHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+
+.projetPoster {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.projetTitleBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.projetTitleBlock h3 {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statutBadge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  background: #f0fdf4;
+  padding: 2px 9px;
+  border-radius: 8px;
+}
+
+.linkTresorerie {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  text-decoration: none;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── JAUGE ── */
+.gaugeBlock {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 1rem;
+}
+
+.gaugeTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gaugeLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.gaugePct {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--growz-primary);
+}
+
+.gaugeBar {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 50px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.gaugeFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--growz-primary), var(--growz-gold));
+  border-radius: 50px;
+  transition: width 0.4s ease;
+}
+
+.gaugeAmounts {
+  display: flex;
+  gap: 6px;
+  font-size: 0.82rem;
+}
+
+.gaugeAmounts strong {
+  color: #1e293b;
+}
+
+.gaugeAmounts span {
+  color: #94a3b8;
+}
+
+/* ── STATS ── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.statItem svg {
+  color: var(--growz-primary);
+  flex-shrink: 0;
+}
+
+.statItem div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.statItem strong {
+  font-size: 0.82rem;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statItem span {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* ── WALLET ── */
+.walletRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.walletItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.walletItem span {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.walletAvailable {
+  color: #1B5E20;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.walletBlocked {
+  color: #b8860b;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+/* ── MINI GRAPHIQUES ── */
+.chartsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.miniChart {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.miniChartTitle {
+  display: block;
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.noData {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  text-align: center;
+  padding: 2rem 0.5rem;
+  margin: 0;
+}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 500px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+}

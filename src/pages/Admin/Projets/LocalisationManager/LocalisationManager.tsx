@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiMapPin, FiPackage } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiPackage } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../ProjectSettings/Manager.module.css";
@@ -9,7 +9,7 @@ export default function LocalisationManager() {
   const { t } = useTranslation();
   const [items, setItems] = useState<any[]>([]);
   const [localites, setLocalites] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [formData, setFormData] = useState({ nom: "", adresse: "", contact: "", responsable: "", localiteNom: "" });
 
   const loadData = async () => {

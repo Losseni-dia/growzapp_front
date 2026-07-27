@@ -73,8 +73,10 @@ import NewsForm from "./pages/news/newsForm/NewsForm";
 import NewsEdit from "./pages/news/newsEdit/newsEdit";
 import OAuth2RedirectHandler from "./components/Context/OAuth2RedirectHandler";
 import KycSuccess from "./components/kyc/KycSuccess";
-import MesFacturesPage from "./pages/MonEspace/MesFactures/mes-factures";
 import MesContratsPage from "./pages/MonEspace/MesContrats/mes-contrats";
+import MonPortefeuillePage from "./pages/MonEspace/Mon-portefeuille/MonPortefeuillePage";
+import MesFacturesPage from "./pages/MonEspace/MesFactures/mes-factures";
+import MonDashboardPorteurPage from "./pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage";
 
 function App() {
   const location = useLocation();
@@ -156,7 +158,12 @@ function App() {
               <Route path="/mes-projets" element={<MesProjetsPage />} />
               <Route path="/mes-dividendes" element={<MesDividendesPage />} />
               <Route path="/mes-contrats" element={<MesContratsPage />} />
+              <Route path="/mon-dashboard-porteur" element={<MonDashboardPorteurPage />} />
               <Route path="/mes-factures" element={<MesFacturesPage />} />
+              <Route
+                path="/mon-portefeuille"
+                element={<MonPortefeuillePage />}
+              />
               <Route path="/contrat/:numero" element={<ContratPage />} />
               <Route
                 path="/contrat/:numero/viewer"

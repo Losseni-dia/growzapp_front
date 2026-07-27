@@ -21,6 +21,8 @@ import {
   FiCompass,
   FiFileText,
   FiFile,
+  FiBarChart2,
+  FiBriefcase,
 } from "react-icons/fi";
 import type { WalletDTO } from "../../types/wallet";
 import { ApiResponse } from "../../types/common";
@@ -308,6 +310,14 @@ export default function Dashboard() {
       <section className={styles.quickLinksSection}>
         <h2 className={styles.quickLinksTitle}>{t("dashboard.quick_links")}</h2>
         <div className={styles.quickLinksGrid}>
+        <Link to="/mon-portefeuille" className={styles.quickLink}>
+            <FiBarChart2 size={18} />
+            <span>{t("portfolio.title")}</span>
+          </Link>
+          <Link to="/mon-dashboard-porteur" className={styles.quickLink}>
+            <FiBriefcase size={18} />
+            <span>{t("porteur.title")}</span>
+          </Link>
           <Link to="/projets/proximite" className={styles.quickLink}>
             <FiCompass size={18} />
             <span>{t("projets_proches.title")}</span>

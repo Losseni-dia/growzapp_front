@@ -1,5 +1,5 @@
 // src/pages/Depot/DepotPage.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getFreshToken } from "../../service/Api";
@@ -15,13 +15,13 @@ export default function DepositPage() {
   const { currency } = useCurrency(); // <--- ON RÉCUPÈRE LA DEVISE CHOISIE
 
   const [montant, setMontant] = useState("");
-  const [method, setMethod] = useState<DepositMethod>("STRIPE_CARD");
-  const [phone, setPhone] = useState("");
+  const [method] = useState<DepositMethod>("STRIPE_CARD");
+  const [phone] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [, setShowPhoneModal] = useState(false);
   const [showStripeModal, setShowStripeModal] = useState(false);
-  const [showRedirectLoader, setShowRedirectLoader] = useState(false);
+  const [, setShowRedirectLoader] = useState(false);
 
   const handleContinue = () => {
     const amount = parseFloat(montant);

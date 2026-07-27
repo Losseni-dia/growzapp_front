@@ -1,0 +1,235 @@
+/* src/pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailModal.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 19, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  border-radius: 22px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 2;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.poster {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.header h2 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.statutBadge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  background: #f0fdf4;
+  padding: 3px 10px;
+  border-radius: 8px;
+}
+
+.closeBtn {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+  transition: 0.2s;
+}
+
+.closeBtn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* ── JAUGE ── */
+.gaugeBlock {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.gaugeTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gaugeLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.gaugePct {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--growz-primary);
+}
+
+.gaugeBar {
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 50px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.gaugeFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--growz-primary), var(--growz-gold));
+  border-radius: 50px;
+  transition: width 0.4s ease;
+}
+
+.gaugeAmounts {
+  display: flex;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.gaugeAmounts strong {
+  color: #1e293b;
+}
+
+.gaugeAmounts span {
+  color: #94a3b8;
+}
+
+/* ── STATS ── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.statBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.statBox svg {
+  color: var(--growz-primary);
+}
+
+.statBox span {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.statBox strong {
+  font-size: 0.92rem;
+  color: #1e293b;
+}
+
+/* ── WALLET ── */
+.walletRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.walletItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.walletItem span {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.walletAvailable {
+  color: #1B5E20;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.walletBlocked {
+  color: #b8860b;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+/* ── GRAPHIQUES ── */
+.chartBlock h3 {
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.noData {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  margin: 0;
+}

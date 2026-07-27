@@ -11,16 +11,13 @@ import {
   CreditCard,
   Smartphone,
   TrendingUp,
-  TrendingDown,
   RefreshCw,
   Gift,
   Clock,
   CheckCircle2,
   XCircle,
-  Search,
   X,
   ChevronDown,
-  Filter,
 } from "lucide-react";
 import { useAuth } from "../../components/Context/AuthContext";
 import { useCurrency } from "../../components/Context/CurrencyContext";
@@ -94,7 +91,7 @@ export default function WalletPage() {
 
   // Retrait
   const [withdrawMontant, setWithdrawMontant] = useState("");
-  const [withdrawMethod, setWithdrawMethod] = useState<WithdrawMethod>("MOBILE_MONEY");
+  const [withdrawMethod] = useState<WithdrawMethod>("MOBILE_MONEY");
   const [withdrawPhone, setWithdrawPhone] = useState("");
   const [loadingWithdraw, setLoadingWithdraw] = useState(false);
 

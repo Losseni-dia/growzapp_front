@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { api } from "../../../service/Api";
-import toast from "react-hot-toast";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
-import styles from "./AdminRetraitWalletPage.module.css";
+import { enUS, es, fr } from "date-fns/locale";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next"; // <--- IMPORT
+import { api } from "../../../service/Api";
 import type { TransactionDTO } from "../../../types/transaction";
+import styles from "./AdminRetraitWalletPage.module.css";
 
 export default function AdminWithdrawalsPage() {
   const { t, i18n } = useTranslation();

@@ -1,5 +1,5 @@
-import { Bell, Inbox, X, ExternalLink, Newspaper } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { Bell, Inbox, X, ExternalLink } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { notificationService } from "../../../service/notificationService";
 import { Notification } from "../../../types/notification";

@@ -1,5 +1,5 @@
 // src/pages/Admin/WalletsProjets/WalletsProjetsAdminPage.tsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { api, buildProjetUrl } from "../../../service/Api";
@@ -9,7 +9,6 @@ import { useCurrency } from "../../../components/Context/CurrencyContext";
 import {
   FiArrowRight,
   FiClock,
-  FiSearch,
   FiDollarSign,
   FiX,
 } from "react-icons/fi";

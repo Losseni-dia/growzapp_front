@@ -710,7 +710,6 @@
       "badge_rejected": "Rejeté",
       "badge_none": "Non soumis",
       "loading": "Chargement des dossiers KYC...",
-      "title": "Validation des identités",
       "subtitle": "{{count}} dossier en attente",
       "subtitle_plural": "{{count}} dossiers en attente",
       "empty": "Tous les dossiers ont été traités.",
@@ -749,6 +748,50 @@
         "collecte": "📈 % collecté",
         "objectif": "💰 Objectif"
       },
+      "dashboard_global": {
+        "kpi_total_collected": "Total collecté",
+        "kpi_global_goal": "Objectif global atteint",
+        "kpi_members": "Membres inscrits",
+        "kpi_active_projects": "Projets actifs",
+        "section_investments": "Investissements",
+        "stat_valid_investments": "Investissements validés",
+        "stat_unique_investors": "Investisseurs uniques",
+        "stat_avg_investment": "Investissement moyen",
+        "chart_investments_evolution": "Évolution mensuelle des investissements",
+        "no_data": "Pas encore assez de données",
+        "section_projects": "Projets",
+        "chart_status_distribution": "Répartition par statut",
+        "top_collection_title": "🏆 Top 5 — Meilleure collecte",
+        "top_progression_title": "🚀 Top 5 — Meilleure progression",
+        "section_dividends": "Dividendes",
+        "stat_total_paid": "Total versé",
+        "stat_payments_count": "Versements effectués",
+        "chart_dividends_evolution": "Évolution mensuelle des dividendes versés",
+        "status": {
+          "VALIDE": "Validés",
+          "SOUMIS": "Soumis",
+          "REJETE": "Rejetés",
+          "TERMINE": "Terminés",
+          "EN_ATTENTE": "En attente"
+        }
+      },
+      "revalorisation": {
+        "tooltip": "Revaloriser",
+        "modal_title": "Revaloriser le projet",
+        "current_label": "Valorisation actuelle",
+        "new_label": "Nouvelle valorisation (FCFA)",
+        "new_placeholder": "Ex : 28 000 000",
+        "reason_label": "Motif",
+        "reason_placeholder": "Ex : Audit Q1 2026 — croissance du CA",
+        "hint": "Cette action met à jour la valorisation officielle du projet et sera visible dans l'historique de performance des investisseurs.",
+        "cancel": "Annuler",
+        "confirm": "Confirmer la revalorisation",
+        "confirm_processing": "Enregistrement...",
+        "toast_success": "Projet revalorisé avec succès",
+        "toast_error": "Échec de la revalorisation",
+        "toast_invalid": "Veuillez saisir une valorisation valide",
+        "card_valuation_label": "Valorisation"
+      },
       "status": {
         "TOUS": "Tous",
         "SOUMIS": "Soumis",
@@ -771,6 +814,54 @@
     "not_found_desc": "Le contrat demandé n'existe pas ou vous n'y avez pas accès.",
     "back_to_space": "Retour à mon espace"
   },
+  "portfolio": {
+    "title": "Mon Portefeuille",
+    "subtitle": "Vue d'ensemble de votre {{count}} position",
+    "subtitle_plural": "Vue d'ensemble de vos {{count}} positions",
+    "kpi": {
+      "capital_invested": "Capital investi",
+      "current_value": "Valeur actuelle",
+      "global_performance": "Performance globale",
+      "dividends_received": "Dividendes perçus"
+    },
+    "chart": {
+      "evolution_title": "Évolution du portefeuille",
+      "allocation_title": "Répartition par projet",
+      "legend_invested": "Capital investi",
+      "legend_value": "Valeur estimée"
+    },
+    "positions": {
+      "section_title": "Mes positions",
+      "invested_label": "Investi",
+      "current_value_label": "Valeur actuelle",
+      "dividends_label": "Dividendes reçus",
+      "view_project": "Voir le projet",
+      "share": "part",
+      "share_plural": "parts"
+    },
+    "modal": {
+      "chart_title": "Évolution de la valorisation",
+      "no_data": "Pas assez de données pour tracer une évolution.",
+      "entry_price": "Prix d'entrée / part",
+      "shares_held": "Parts détenues",
+      "equity_pct": "% du projet détenu",
+      "invested_amount": "Montant investi",
+      "current_valuation": "Valorisation actuelle",
+      "position_value": "Valeur de la position",
+      "dividends_title": "Dividendes perçus",
+      "dividends_total_suffix": "au total",
+      "no_dividends": "Aucun dividende perçu pour le moment.",
+      "events_title": "Journal des événements",
+      "view_project": "Voir le projet"
+    },
+    "events": {
+      "CREATION": "Création du projet",
+      "VALIDATION": "Validation du projet",
+      "INVESTISSEMENT": "Investissement",
+      "DIVIDENDE": "Versement de dividende",
+      "REEVALUATION": "Revalorisation"
+    }
+  },
   "contract_details": {
     "title": "CONTRAT D'INVESTISSEMENT",
     "subtitle": "Entre GrowzApp et l'Investisseur",
@@ -792,6 +883,31 @@
     "certified": "Certifié par la Blockchain GrowzApp",
     "verify_label": "Lien de vérification officiel :",
     "btn_download": "Télécharger le PDF officiel"
+  },
+  "porteur": {
+    "title": "Mon Espace Porteur",
+    "subtitle": "Vue d'ensemble de votre {{count}} projet",
+    "subtitle_plural": "Vue d'ensemble de vos {{count}} projets",
+    "empty": "Vous n'avez pas encore de projet",
+    "projects_title": "Mes projets",
+    "kpi": {
+      "total_collected": "Total collecté",
+      "total_investors": "Investisseurs (tous projets)",
+      "total_dividends": "Dividendes versés",
+      "projects_count": "Projets actifs"
+    },
+    "card": {
+      "treasury": "Trésorerie",
+      "goal_progress": "Objectif atteint",
+      "investors": "investisseurs",
+      "avg_investment": "investissement moyen",
+      "dividends_paid": "dividendes versés",
+      "available": "Disponible",
+      "blocked": "Bloqué",
+      "collection_evolution": "Évolution de la collecte",
+      "velocity": "Vitesse de levée",
+      "no_data": "Pas encore assez de données"
+    }
   },
   "wallet": {
     "loading": "Chargement de votre portefeuille...",
@@ -1143,5 +1259,28 @@
       "status": "Statut"
     },
     "btn_download": "Télécharger"
+  },
+  "kyc": {
+    "pending_action_hint": "Veuillez vérifier votre identité pour débloquer toutes les fonctionnalités de retrait et d'investissement.",
+    "title": "Vérification d'identité",
+    "label_birthdate": "Date de naissance",
+    "label_address": "Adresse de résidence actuelle",
+    "placeholder_address": "N° de rue, Ville, Code postal...",
+    "upload_hint": "Cliquez pour uploader votre CNI ou Passeport (JPG, PNG, PDF)",
+    "btn_submit": "Soumettre pour vérification",
+    "success_message": "Documents envoyés ! Nos équipes vont les vérifier.",
+    "error_message": "Erreur lors de l'envoi des documents.",
+    "pending_verification": "Votre dossier est en cours d'examen. Revenez plus tard.",
+    "verified": "Votre identité est vérifiée !",
+    "status_rejected": "Dossier rejeté",
+    "no_reason_provided": "Aucun motif spécifié",
+    "retry_button": "Soumettre à nouveau",
+    "status_locked": "Accès restreint (KYC requis)",
+    "investment_blocked_title": "Action requise",
+    "error_investment_blocked": "Vérification KYC requise pour investir",
+    "badge_valid": "Vérifié",
+    "badge_pending": "En attente",
+    "badge_rejected": "Rejeté",
+    "badge_none": "Non soumis"
   }
 }
