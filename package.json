@@ -51,7 +51,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-unused-imports": "^4.4.1",
-    "globals": "^16.5.0",
+    "globals": "^17.8.0",
     "msw": "^2.12.9",
     "playwright": "^1.58.2",
     "typescript-eslint": "^8.65.0",
