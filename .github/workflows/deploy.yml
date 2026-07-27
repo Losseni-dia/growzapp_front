@@ -27,6 +27,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'growzapp-frontend-staging:latest'
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
       - name: Save image
         run: docker save growzapp-frontend-staging:latest | gzip > growzapp-frontend-staging.tar.gz
 
@@ -75,6 +83,17 @@ jobs:
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'growzapp-frontend-prod:latest'
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Save image
+        run: docker save growzapp-frontend-prod:latest | gzip > growzapp-frontend-prod.tar.gz
 
       - name: Save image
         run: docker save growzapp-frontend-prod:latest | gzip > growzapp-frontend-prod.tar.gz
