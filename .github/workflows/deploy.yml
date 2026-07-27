@@ -1,0 +1,76 @@
+name: Deploy GrowzApp Frontend
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  deploy-staging:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --build-arg VITE_API_URL=https://api-staging.my-growzapp.com -t growzapp-frontend-staging:latest .
+
+      - name: Save image
+        run: docker save growzapp-frontend-staging:latest | gzip > growzapp-frontend-staging.tar.gz
+
+      - name: Copy image to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.GROWZAPP_HOST }}
+          username: ${{ secrets.GROWZAPP_USER }}
+          key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          source: "growzapp-frontend-staging.tar.gz"
+          target: "/home/ec2-user/"
+
+      - name: Load and restart staging
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GROWZAPP_HOST }}
+          username: ${{ secrets.GROWZAPP_USER }}
+          key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          script: |
+            docker load < /home/ec2-user/growzapp-frontend-staging.tar.gz
+            docker stop growzapp-frontend-staging || true
+            docker rm growzapp-frontend-staging || true
+            docker run -d --name growzapp-frontend-staging -p 3010:80 --restart unless-stopped growzapp-frontend-staging:latest
+            rm /home/ec2-user/growzapp-frontend-staging.tar.gz
+
+  deploy-prod:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build --build-arg VITE_API_URL=https://api.my-growzapp.com -t growzapp-frontend-prod:latest .
+
+      - name: Save image
+        run: docker save growzapp-frontend-prod:latest | gzip > growzapp-frontend-prod.tar.gz
+
+      - name: Copy image to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.GROWZAPP_HOST }}
+          username: ${{ secrets.GROWZAPP_USER }}
+          key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          source: "growzapp-frontend-prod.tar.gz"
+          target: "/home/ec2-user/"
+
+      - name: Load and restart prod
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.GROWZAPP_HOST }}
+          username: ${{ secrets.GROWZAPP_USER }}
+          key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          script: |
+            docker load < /home/ec2-user/growzapp-frontend-prod.tar.gz
+            docker stop growzapp-frontend-prod || true
+            docker rm growzapp-frontend-prod || true
+            docker run -d --name growzapp-frontend-prod -p 3011:80 --restart unless-stopped growzapp-frontend-prod:latest
+            rm /home/ec2-user/growzapp-frontend-prod.tar.gz
