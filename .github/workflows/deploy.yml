@@ -13,8 +13,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker image
-        run: docker build --build-arg VITE_API_URL=https://api-staging.my-growzapp.com -t growzapp-frontend-staging:latest .
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: |
+            VITE_API_URL=https://api-staging.my-growzapp.com
+          tags: growzapp-frontend-staging:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Save image
         run: docker save growzapp-frontend-staging:latest | gzip > growzapp-frontend-staging.tar.gz
@@ -25,6 +36,8 @@ jobs:
           host: ${{ secrets.GROWZAPP_HOST }}
           username: ${{ secrets.GROWZAPP_USER }}
           key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          port: 22
+          timeout: 60s
           source: "growzapp-frontend-staging.tar.gz"
           target: "/home/ec2-user/"
 
@@ -34,6 +47,8 @@ jobs:
           host: ${{ secrets.GROWZAPP_HOST }}
           username: ${{ secrets.GROWZAPP_USER }}
           key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          port: 22
+          command_timeout: 15m
           script: |
             docker load < /home/ec2-user/growzapp-frontend-staging.tar.gz
             docker stop growzapp-frontend-staging || true
@@ -47,8 +62,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker image
-        run: docker build --build-arg VITE_API_URL=https://api.my-growzapp.com -t growzapp-frontend-prod:latest .
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: |
+            VITE_API_URL=https://api.my-growzapp.com
+          tags: growzapp-frontend-prod:latest
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Save image
         run: docker save growzapp-frontend-prod:latest | gzip > growzapp-frontend-prod.tar.gz
@@ -59,6 +85,8 @@ jobs:
           host: ${{ secrets.GROWZAPP_HOST }}
           username: ${{ secrets.GROWZAPP_USER }}
           key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          port: 22
+          timeout: 60s
           source: "growzapp-frontend-prod.tar.gz"
           target: "/home/ec2-user/"
 
@@ -68,6 +96,8 @@ jobs:
           host: ${{ secrets.GROWZAPP_HOST }}
           username: ${{ secrets.GROWZAPP_USER }}
           key: ${{ secrets.GROWZAPP_SSH_KEY }}
+          port: 22
+          command_timeout: 15m
           script: |
             docker load < /home/ec2-user/growzapp-frontend-prod.tar.gz
             docker stop growzapp-frontend-prod || true
