@@ -31,7 +31,7 @@ export default function VerifierContrat() {
   const [etat, setEtat] = useState<Etat>("scan");
   const [resultat, setResultat] = useState<ContratPublicDTO | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
-  const [scanning, setScanning] = useState(false);
+  const [, setScanning] = useState(false);
 
   // Démarrer le scanner
   const demarrerScanner = async () => {
@@ -63,7 +63,7 @@ export default function VerifierContrat() {
       await readerRef.current.decodeFromVideoDevice(
         device.deviceId,
         videoRef.current!,
-        async (result, error) => {
+        async (result, _error) => {
           if (result) {
             const text = result.getText();
             await traiterQrCode(text);

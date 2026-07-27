@@ -9,7 +9,6 @@ import {
   FiSearch,
   FiDownload,
   FiEye,
-  FiFileText,
   FiRefreshCw,
   FiFilter,
 } from "react-icons/fi";
@@ -38,12 +37,12 @@ const ContratsAdmin: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
 
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page] = useState(0);
+  const [, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
-  const [dateDebut, setDateDebut] = useState("");
-  const [dateFin, setDateFin] = useState("");
-  const [statut, setStatut] = useState("");
+  const [dateDebut] = useState("");
+  const [dateFin] = useState("");
+  const [statut] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
   const locales: any = { fr, en: enUS, es };

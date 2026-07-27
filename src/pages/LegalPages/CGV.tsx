@@ -1,6 +1,5 @@
-import React from "react";
 import styles from "./LegalPage.module.css";
-import { FiAlertTriangle, FiShield, FiCheckCircle } from "react-icons/fi";
+import { FiAlertTriangle, FiShield } from "react-icons/fi";
 
 export default function CGV() {
   return (

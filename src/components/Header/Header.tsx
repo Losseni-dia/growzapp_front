@@ -17,7 +17,7 @@ import {
   FiCheck,
   FiRss,
 } from "react-icons/fi";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
 import { useAuth } from "../Context/AuthContext";
 import { useCurrency } from "../Context/CurrencyContext";

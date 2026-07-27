@@ -11,7 +11,6 @@ import {
   FiAlertTriangle,
   FiShield,
   FiInfo,
-  FiX,
   FiArrowRight,
   FiArrowLeft,
   FiSmartphone,

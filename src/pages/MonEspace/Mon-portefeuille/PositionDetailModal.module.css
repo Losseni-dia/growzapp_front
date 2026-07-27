@@ -1,0 +1,246 @@
+/* src/pages/MonEspace/Mon-portefeuille/PositionDetailModal.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 19, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  border-radius: 22px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 2;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.poster {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.header h2 {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.perfBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 8px;
+}
+
+.badgePositive {
+  color: #1B5E20;
+  background: rgba(76, 175, 80, 0.12);
+}
+
+.badgeNegative {
+  color: #c0392b;
+  background: rgba(239, 83, 80, 0.12);
+}
+
+.closeBtn {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  flex-shrink: 0;
+  transition: 0.2s;
+}
+
+.closeBtn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.chartBlock h3,
+.dividendesBlock h3,
+.eventsBlock h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.noData {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+/* ── STATS GRID ── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.statBox {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.statBox span {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.statBox strong {
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+/* ── DIVIDENDES ── */
+.dividendesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dividendeRow {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8fdf8;
+  border: 1px solid #e8f5e9;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.dividendeDate {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.dividendeMotif {
+  color: #475569;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dividendeMontant {
+  color: #1B5E20;
+  font-weight: 800;
+}
+
+/* ── ÉVÉNEMENTS ── */
+.eventsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eventRow {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-bottom: 1px solid #f8fafc;
+  font-size: 0.8rem;
+}
+
+.eventDate {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.eventType {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.eventAmount {
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btnProjet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--growz-primary);
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+
+.btnProjet:hover {
+  background: #2d6a2f;
+}

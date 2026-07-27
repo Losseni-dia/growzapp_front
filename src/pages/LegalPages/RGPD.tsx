@@ -1,6 +1,5 @@
-import React from "react";
 import styles from "./LegalPage.module.css";
-import { FiLock, FiShield, FiActivity } from "react-icons/fi";
+import { FiLock, FiShield } from "react-icons/fi";
 
 export default function RGPD() {
   return (

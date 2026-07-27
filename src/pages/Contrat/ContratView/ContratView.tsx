@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { format as formatDate, Locale } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
 import styles from "./ContratView.module.css";
 import { FiCheckCircle, FiDownload, FiShield, FiEye } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
@@ -22,14 +20,12 @@ interface ContratDetails {
 
 const ContratViewer: React.FC = () => {
   const { numero } = useParams<{ numero: string }>();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { format: formatCurrency } = useCurrency();
 
   const [data, setData] = useState<ContratDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const locales: Record<string, Locale> = { fr, en: enUS, es };
-  const currentLocale = locales[i18n.language] || fr;
 
   useEffect(() => {
     if (!numero) return;

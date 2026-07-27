@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./LegalPage.module.css";
 import { FiFileText, FiShield } from "react-icons/fi";
 
