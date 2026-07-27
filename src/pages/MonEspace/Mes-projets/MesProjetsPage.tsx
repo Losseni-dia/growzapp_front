@@ -17,6 +17,7 @@ import {
   FiMapPin,
 } from "react-icons/fi";
 import styles from "./MesProjetsPage.module.css";
+import { buildFileUrl } from "../../../service/Api";
 
 export default function MesProjetsPage() {
   const { t, i18n } = useTranslation();
@@ -84,7 +85,7 @@ export default function MesProjetsPage() {
               <div key={projet.id} className={styles.card}>
                 <div className={styles.poster}>
                   <img
-                    src={projet.poster || "/default-projet.jpg"}
+                    src={projet.poster ? buildFileUrl(projet.poster) : "/default-projet.jpg"}
                     alt={projet.libelleTradu || projet.libelle}
                     className={styles.posterImg}
                   />

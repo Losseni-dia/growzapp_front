@@ -1,7 +1,6 @@
 // src/types/index.ts → VERSION CORRIGÉE & PROPRE (tout lowercase)
 export * from "./enum";
 export * from "./role";
-export * from "./auth";
 export * from "./user";
 export * from "./projet";
 export * from "./investissement";

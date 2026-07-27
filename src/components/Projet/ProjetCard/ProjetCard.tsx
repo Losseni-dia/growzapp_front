@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { ProjetDTO } from "../../../types/projet";
 import { useCurrency } from "../../Context/CurrencyContext";
 import styles from "./ProjetCard.module.css";
+import { buildFileUrl } from "../../../service/Api";
 
 interface ProjectCardProps {
   projet: ProjetDTO;
@@ -88,7 +89,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
 
         {projet.poster ? (
           <img
-            src={projet.poster}
+            src={buildFileUrl(projet.poster)}
             alt={projet.libelle}
             className={styles.poster}
           />
@@ -185,7 +186,8 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
               {projet.partsPrises ?? 0} {t("project_card.parts_prises")}
             </span>
             <span>
-              {projet.partsDisponible ?? 0} {t("project_card.parts_disponibles")}
+              {projet.partsDisponible ?? 0}{" "}
+              {t("project_card.parts_disponibles")}
             </span>
           </div>
         </div>

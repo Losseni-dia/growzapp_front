@@ -24,6 +24,7 @@ import { ApiResponse } from "../../../types/common";
 import { DocumentDTO } from "../../../types/document";
 import { ProjetDTO } from "../../../types/projet";
 import styles from "./ProjetDetailsPage.module.css";
+import { buildFileUrl } from "../../../service/Api";
 
 export default function ProjetDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -155,7 +156,7 @@ export default function ProjetDetailsPage() {
       <div className={styles.hero}>
         {projet.poster && (
           <img
-            src={projet.poster}
+            src={buildFileUrl(projet.poster)}
             alt={libelleAffiche}
             className={styles.heroPoster}
           />
