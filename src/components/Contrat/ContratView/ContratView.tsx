@@ -235,7 +235,7 @@ const ContratView: React.FC<ContratViewProps> = ({
         <div className={styles.footer}>
           <strong>GrowzApp</strong> • Investissement agricole durable
           <br />
-          Abidjan, Côte d’Ivoire • contact@growzapp.com • +225 07 00 00 00 00
+          Abidjan, Côte d’Ivoire • contact@my-growzapp.com • +225 07 00 00 00 00
         </div>
       </div>
     </div>

@@ -48,7 +48,7 @@ export default function MentionsLegales() {
           <p>Pour toute question, vous pouvez nous contacter :</p>
           <ul>
             <li>
-              Email : <strong>support@growzapp.com</strong>
+              Email : <strong>support@my-growzapp.com</strong>
             </li>
             <li>Téléphone : [NUMERO_TELEPHONE]</li>
           </ul>

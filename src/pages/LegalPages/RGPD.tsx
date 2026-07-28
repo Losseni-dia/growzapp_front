@@ -50,7 +50,7 @@ export default function RGPD() {
           <h2>4. Droits des utilisateurs</h2>
           <p>
             Accès, rectification et suppression via{" "}
-            <strong>rgpd@growzapp.com</strong>.
+            <strong>rgpd@my-growzapp.com</strong>.
           </p>
         </div>
       </section>
