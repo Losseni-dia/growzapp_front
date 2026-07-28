@@ -34,7 +34,7 @@ export default function MesInvestissementsPage() {
   const currentLocale = locales[i18n.language] || fr;
 
   const getToken = () => localStorage.getItem("access_token");
-  const BASE_URL = "http://localhost:8080";
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
   useEffect(() => {
     api

@@ -12,7 +12,7 @@ import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { FiDownload, FiFile, FiArrowLeft, FiRefreshCw } from "react-icons/fi";
 import styles from "./mes-factures.module.css";
 
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export default function MesFacturesPage() {
   const { t, i18n } = useTranslation();
