@@ -17,6 +17,8 @@ import { api } from "../../../service/Api";
 import styles from "./InvestissementsAdminPage.module.css";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 interface InvestissementAdmin {
   id: number;
   date: string;
@@ -81,7 +83,7 @@ export default function InvestissementsAdminPage() {
     setLoadingId(inv.id);
     try {
       const data = await api.post<{ numeroContrat: string }>(
-        `http://localhost:8080/api/admin/investissements/${inv.id}/valider-et-envoyer`,
+        `${API_BASE_URL}/api/admin/investissements/${inv.id}/valider-et-envoyer`,
       );
       toast.success(`✅ Contrat ${data.numeroContrat} envoyé`, {
         duration: 6000,
@@ -112,7 +114,7 @@ export default function InvestissementsAdminPage() {
     setLoadingId(inv.id);
     try {
       await api.post(
-        `http://localhost:8080/api/admin/investissements/${inv.id}/annuler`,
+        `${API_BASE_URL}/api/admin/investissements/${inv.id}/annuler`,
         { motif: motifRefus.trim() },
       );
       toast.success(

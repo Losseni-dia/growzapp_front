@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../components/Context/CurrencyContext"; // <--- IMPORT
 import styles from "./DepotPage.module.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 type DepositMethod = "STRIPE_CARD" | "ORANGE_MONEY" | "WAVE" | "MTN_MOMO";
 
 export default function DepositPage() {
@@ -38,7 +40,7 @@ export default function DepositPage() {
     const token = getFreshToken();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/api/wallets/deposit", {
+      const res = await fetch(`${API_BASE_URL}/api/wallets/deposit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -15,6 +15,8 @@ import {
 import { ApiResponse } from "../../../../types/common";
 import { ProjetDTO } from "../../../../types/projet";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 interface DocumentDTO {
   id: number;
   nom: string;
@@ -58,7 +60,7 @@ export default function ProjetAdminDetail() {
    try {
      const token = localStorage.getItem("access_token") || "";
      const response = await fetch(
-       `http://localhost:8080/api/documents/${docId}/download`,
+       `${API_BASE_URL}/api/documents/${docId}/download`,
        {
          method: "GET",
          headers: {

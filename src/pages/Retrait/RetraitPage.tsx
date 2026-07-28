@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../components/Context/CurrencyContext"; // <--- IMPORT
 import styles from "./RetraitPage.module.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 type WithdrawMethod = "ORANGE_MONEY" | "WAVE" | "MTN_MOMO" | "BANK_TRANSFER";
 
 export default function WithdrawPage() {
@@ -33,7 +35,7 @@ export default function WithdrawPage() {
         return;
       }
       try {
-        const res = await fetch("http://localhost:8080/api/wallets/solde", {
+        const res = await fetch(`${API_BASE_URL}/api/wallets/solde`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -69,7 +71,7 @@ export default function WithdrawPage() {
     const token = getFreshToken();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/api/wallets/withdraw", {
+      const res = await fetch(`${API_BASE_URL}/api/wallets/withdraw`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

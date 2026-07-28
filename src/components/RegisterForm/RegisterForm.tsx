@@ -6,6 +6,8 @@ import styles from "./RegisterForm.module.css";
 import { getCroppedImg, dataURLtoFile } from "../../types/utils/CropImage";
 import { useTranslation } from "react-i18next";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 interface Localite {
   id: number;
   nom: string;
@@ -105,8 +107,8 @@ export default function RegisterForm() {
     const fetchData = async () => {
       try {
         const [locRes, langRes] = await Promise.all([
-          fetch("http://localhost:8080/api/localites"),
-          fetch("http://localhost:8080/api/langues"),
+          fetch(`${API_BASE_URL}/api/localites`),
+          fetch(`${API_BASE_URL}/api/langues`),
         ]);
         const locData = await locRes.json();
         const langData = await langRes.json();
@@ -287,7 +289,7 @@ export default function RegisterForm() {
     if (photoFile) formData.append("image", photoFile);
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: "POST",
         body: formData,
       });

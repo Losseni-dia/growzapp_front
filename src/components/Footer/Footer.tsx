@@ -4,6 +4,8 @@ import { FiShield, FiLinkedin, FiFacebook, FiInstagram } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { Rss } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -63,7 +65,7 @@ export default function Footer() {
                 <FiInstagram />
               </a>
               <a
-                href="http://localhost:8080/api/news/rss"
+                href={`${API_BASE_URL}/api/news/rss`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.rssLink}

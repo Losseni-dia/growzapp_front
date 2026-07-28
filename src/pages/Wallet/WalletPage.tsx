@@ -27,6 +27,8 @@ import styles from "./WalletPage.module.css";
 import type { TransactionDTO } from "../../types/transaction";
 import type { WalletDTO } from "../../types/wallet";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 interface UserSearchResult {
   id: number;
   nomComplet: string;
@@ -171,8 +173,8 @@ export default function WalletPage() {
       const token = getFreshToken() || "";
       const endpoint =
         depositMethod === "DEBIT_CARD"
-          ? "http://localhost:8080/api/wallets/deposit/card"
-          : "http://localhost:8080/api/wallets/deposit/mobile-money";
+          ? `${API_BASE_URL}/api/wallets/deposit/card`
+          : `${API_BASE_URL}/api/wallets/deposit/mobile-money`;
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -211,7 +213,7 @@ export default function WalletPage() {
     setLoadingWithdraw(true);
     try {
       const token = getFreshToken() || "";
-      const res = await fetch("http://localhost:8080/api/wallets/retrait", {
+      const res = await fetch(`${API_BASE_URL}/api/wallets/retrait`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ montant, methode: withdrawMethod, phone: withdrawPhone }),
@@ -243,7 +245,7 @@ export default function WalletPage() {
     setLoadingTransfer(true);
     try {
       const token = getFreshToken() || "";
-      const res = await fetch("http://localhost:8080/api/wallets/transfer", {
+      const res = await fetch(`${API_BASE_URL}/api/wallets/transfer`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
