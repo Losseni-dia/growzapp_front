@@ -8,6 +8,8 @@ import { api } from "../../service/Api";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 export default function LoginForm() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +22,7 @@ export default function LoginForm() {
 
   const handleSocialLogin = (provider: "google" | "github") => {
     // Redirection vers le backend Spring Security
-    window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+    window.location.href = `${API_BASE_URL}/oauth2/authorization/${provider}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
