@@ -20,7 +20,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  const handleSocialLogin = (provider: "google" | "github") => {
+  const handleSocialLogin = (provider: "google") => {
     // Redirection vers le backend Spring Security
     window.location.href = `${API_BASE_URL}/oauth2/authorization/${provider}`;
   };
@@ -78,7 +78,7 @@ export default function LoginForm() {
       />
 
       <div className={styles.passwordContainer}>
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: "relative" }}>
           <input
             type={showPassword ? "text" : "password"}
             placeholder={t("login_page.placeholder_password")}
@@ -86,7 +86,11 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="button" className={styles.eyeBtn} onClick={() => setShowPassword(!showPassword)}>
+          <button
+            type="button"
+            className={styles.eyeBtn}
+            onClick={() => setShowPassword(!showPassword)}
+          >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
@@ -101,15 +105,17 @@ export default function LoginForm() {
         {loading ? t("login_page.btn_loading") : t("login_page.btn_submit")}
       </button>
 
-      <div className={styles.socialDivider}>{t("login_page.or_continue_with")}</div>
-
+      <div className={styles.socialDivider}>
+        {t("login_page.or_continue_with")}
+      </div>
+      
       <div className={styles.socialButtons}>
-        <button type="button" className={styles.socialBtn} onClick={() => handleSocialLogin("google")}>
+        <button
+          type="button"
+          className={styles.socialBtn}
+          onClick={() => handleSocialLogin("google")}
+        >
           <img src="/google.png" alt="Google" className={styles.socialIcon} />
-        </button>
-
-        <button type="button" className={styles.socialBtn} onClick={() => handleSocialLogin("github")}>
-          <img src="/github.png" alt="GitHub" className={styles.socialIcon} />
         </button>
       </div>
 
