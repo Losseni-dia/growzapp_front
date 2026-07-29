@@ -58,9 +58,10 @@ jobs:
           port: 22
           command_timeout: 15m
           script: |
+            set -e
             docker load < /home/ec2-user/growzapp-frontend-staging.tar.gz
-            docker stop growzapp-frontend-staging || true
-            docker rm growzapp-frontend-staging || true
+            docker stop growzapp-frontend-staging 2>/dev/null || true
+            docker rm growzapp-frontend-staging 2>/dev/null || true
             docker run -d --name growzapp-frontend-staging -p 3010:80 --restart unless-stopped growzapp-frontend-staging:latest
             rm /home/ec2-user/growzapp-frontend-staging.tar.gz
 
@@ -117,9 +118,11 @@ jobs:
           key: ${{ secrets.GROWZAPP_SSH_KEY }}
           port: 22
           command_timeout: 15m
+
           script: |
+            set -e
             docker load < /home/ec2-user/growzapp-frontend-prod.tar.gz
-            docker stop growzapp-frontend-prod || true
-            docker rm growzapp-frontend-prod || true
+            docker stop growzapp-frontend-prod 2>/dev/null || true
+            docker rm growzapp-frontend-prod 2>/dev/null || true
             docker run -d --name growzapp-frontend-prod -p 3011:80 --restart unless-stopped growzapp-frontend-prod:latest
             rm /home/ec2-user/growzapp-frontend-prod.tar.gz
