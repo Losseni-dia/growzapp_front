@@ -52,7 +52,6 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
   const [loadingSolde, setLoadingSolde] = useState(true);
   const [consentRisks, setConsentRisks] = useState(false);
   const [consentInsurance, setConsentInsurance] = useState(false);
-  const [mobilePhone, setMobilePhone] = useState("");
   const [mobileOperator, setMobileOperator] = useState<
     "orange" | "mtn" | "wave"
   >("orange");
@@ -97,10 +96,6 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
       toast.error("Solde insuffisant");
       return;
     }
-    if (selectedMethod === "mobile" && !mobilePhone.trim()) {
-      toast.error("Veuillez saisir votre numéro Mobile Money");
-      return;
-    }
     setStep("confirm");
   };
 
@@ -132,7 +127,6 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
           `${BACKEND_URL}/api/projets/${projet.id}/investir-mobile`,
           {
             nombreParts: parts,
-            phoneNumber: mobilePhone,
             operator: mobileOperator,
           },
         );
@@ -354,13 +348,6 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
                     </button>
                   ))}
                 </div>
-                <input
-                  type="tel"
-                  placeholder="Ex : +225 07 00 00 00 00"
-                  value={mobilePhone}
-                  onChange={(e) => setMobilePhone(e.target.value)}
-                  className={styles.phoneInput}
-                />
               </div>
             )}
 
