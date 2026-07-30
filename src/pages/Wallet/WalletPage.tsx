@@ -202,20 +202,23 @@ export default function WalletPage() {
     }
   };
 
-  const handleWithdraw = async () => {
+ const handleWithdraw = async () => {
     const montant = parseFloat(withdrawMontant);
     if (isNaN(montant) || montant <= 0) return toast.error(t("wallet.toast.invalid_amount"));
     if (montant > (wallet?.soldeDisponible || 0)) return toast.error(t("wallet.toast.insufficient_balance"));
     if (withdrawMethod === "MOBILE_MONEY" && !withdrawPhone.trim())
       return toast.error(t("wallet.toast.phone_required"));
-
     setLoadingWithdraw(true);
     try {
-     const res = await fetch(`${API_BASE_URL}/api/wallets/retrait`, {
+      // Clé unique générée à chaque clic — si l'utilisateur double-clique ou
+      // que la requête est relancée après un souci réseau, le backend
+      // rejette la deuxième tentative comme déjà traitée (HIGH-06)
+      const idempotencyKey = crypto.randomUUID();
+      const res = await fetch(`${API_BASE_URL}/api/wallets/retrait`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ montant, methode: withdrawMethod, phone: withdrawPhone }),
+        body: JSON.stringify({ montant, methode: withdrawMethod, phone: withdrawPhone, idempotencyKey }),
       });
       const data = await res.json();
 
