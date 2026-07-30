@@ -1,15 +1,15 @@
 // src/pages/MonEspace/Mes-factures/MesFacturesPage.tsx
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { api, buildProjetUrl, getFreshToken } from "../../../service/Api";
-import { DividendeDTO } from "../../../types/dividende";
-import { ApiResponse } from "../../../types/common";
-import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { enUS, es, fr } from "date-fns/locale";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { FiArrowLeft, FiDownload, FiFile, FiRefreshCw } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { FiDownload, FiFile, FiArrowLeft, FiRefreshCw } from "react-icons/fi";
+import { api, buildProjetUrl } from "../../../service/Api";
+import { ApiResponse } from "../../../types/common";
+import { DividendeDTO } from "../../../types/dividende";
 import styles from "./mes-factures.module.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
@@ -47,35 +47,34 @@ export default function MesFacturesPage() {
       .finally(() => setLoading(false));
   }, [t]);
 
-  const downloadFacture = async (factureId: number, numeroFacture: string) => {
-    try {
-      setDownloading(factureId);
-      const token = getFreshToken();
-      const lang = i18n.language || "fr";
-      const response = await fetch(
-        `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (!response.ok) throw new Error();
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Facture-${numeroFacture}_${lang}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      toast.success(t("admin.project_detail.download_start"));
-    } catch {
-      toast.error(t("admin.project_detail.download_error"));
-    } finally {
-      setDownloading(null);
-    }
-  };
+ const downloadFacture = async (factureId: number, numeroFacture: string) => {
+   try {
+     setDownloading(factureId);
+     const lang = i18n.language || "fr";
+     const response = await fetch(
+       `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}`,
+       {
+         method: "GET",
+         credentials: "include",
+       },
+     );
+     if (!response.ok) throw new Error();
+     const blob = await response.blob();
+     const url = window.URL.createObjectURL(blob);
+     const a = document.createElement("a");
+     a.href = url;
+     a.download = `Facture-${numeroFacture}_${lang}.pdf`;
+     document.body.appendChild(a);
+     a.click();
+     document.body.removeChild(a);
+     window.URL.revokeObjectURL(url);
+     toast.success(t("admin.project_detail.download_start"));
+   } catch {
+     toast.error(t("admin.project_detail.download_error"));
+   } finally {
+     setDownloading(null);
+   }
+ };
 
   if (loading)
     return <div className={styles.loading}>{t("dashboard.loading")}</div>;
