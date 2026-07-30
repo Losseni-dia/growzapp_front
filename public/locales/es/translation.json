@@ -144,6 +144,10 @@
     "parts_prises": "acciones tomadas",
     "parts_disponibles": "acciones disponibles"
   },
+  "common": {
+    "anonymous": "Anónimo",
+    "not_provided": "No proporcionado"
+  },
   "project_details": {
     "equity_to_raise": "Acciones a captar",
     "loading": "Cargando proyecto...",

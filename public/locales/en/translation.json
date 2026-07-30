@@ -144,7 +144,8 @@
     "parts_disponibles": "shares available"
   },
   "common": {
-    "anonymous": "Anonymous"
+    "anonymous": "Anonymous",
+    "not_provided": "Not provided"
   },
   "project_details": {
     "owner": "Project Owner",

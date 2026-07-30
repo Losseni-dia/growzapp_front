@@ -144,7 +144,8 @@
     "parts_disponibles": "parts disponibles"
   },
   "common": {
-    "anonymous": "Inconnu"
+    "anonymous": "Inconnu",
+    "not_provided": "Non renseigné"
   },
   "project_details": {
     "owner": "Porteur du projet",
