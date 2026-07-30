@@ -29,3 +29,4 @@ storybook-static
 ### Documentation ###
 docs/
 *.tar.gz
+.env
