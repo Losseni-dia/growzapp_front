@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { getFreshToken } from "../../service/Api";
 import { useTranslation } from "react-i18next";
 import { useCurrency } from "../../components/Context/CurrencyContext"; // <--- IMPORT
 import styles from "./DepotPage.module.css";
@@ -35,45 +34,44 @@ export default function DepositPage() {
     else setShowPhoneModal(true);
   };
 
-  const performDeposit = async () => {
-    const amount = parseFloat(montant);
-    const token = getFreshToken();
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/wallets/deposit`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          montant: amount,
-          currency: currency, // INDISPENSABLE : Dire au backend si c'est des EUR ou XOF
-          method,
-          phone: phone.trim() || undefined,
-        }),
-      });
+ const performDeposit = async () => {
+   const amount = parseFloat(montant);
+   setLoading(true);
+   try {
+     const res = await fetch(`${API_BASE_URL}/api/wallets/deposit`, {
+       method: "POST",
+       credentials: "include",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify({
+         montant: amount,
+         currency: currency, // INDISPENSABLE : Dire au backend si c'est des EUR ou XOF
+         method,
+         phone: phone.trim() || undefined,
+       }),
+     });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || t("deposit.toast.fail"));
+     const data = await res.json();
+     if (!res.ok) throw new Error(data.message || t("deposit.toast.fail"));
 
-      if (data.redirectUrl) {
-        setShowRedirectLoader(true);
-        setTimeout(() => {
-          window.location.href = data.redirectUrl;
-        }, 800);
-      } else {
-        toast.success(t("deposit.toast.success"));
-        navigate("/wallet");
-      }
-    } catch (err: any) {
-      toast.error(err.message || t("deposit.toast.fail"));
-    } finally {
-      setLoading(false);
-      setShowPhoneModal(false);
-      setShowStripeModal(false);
-    }
-  };
+     if (data.redirectUrl) {
+       setShowRedirectLoader(true);
+       setTimeout(() => {
+         window.location.href = data.redirectUrl;
+       }, 800);
+     } else {
+       toast.success(t("deposit.toast.success"));
+       navigate("/wallet");
+     }
+   } catch (err: any) {
+     toast.error(err.message || t("deposit.toast.fail"));
+   } finally {
+     setLoading(false);
+     setShowPhoneModal(false);
+     setShowStripeModal(false);
+   }
+ };
 
   return (
     <>
