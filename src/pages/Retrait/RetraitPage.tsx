@@ -1,9 +1,8 @@
 // src/pages/Retrait/RetraitPage.tsx
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { getFreshToken } from "../../service/Api";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useCurrency } from "../../components/Context/CurrencyContext"; // <--- IMPORT
 import styles from "./RetraitPage.module.css";
 
@@ -28,25 +27,20 @@ export default function WithdrawPage() {
   const [, setShowRedirectLoader] = useState(false);
 
   useEffect(() => {
-    const fetchSolde = async () => {
-      const token = getFreshToken();
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/wallets/solde`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        // On stocke le montant brut (XOF)
-        setSoldeRetirable(data.soldeRetirable || 0);
-      } catch {
-        toast.error(t("withdraw.toast.connection_error"));
-      } finally {
-        setIsLoadingSolde(false);
-      }
-    };
+ const fetchSolde = async () => {
+   try {
+     const res = await fetch(`${API_BASE_URL}/api/wallets/solde`, {
+       credentials: "include",
+     });
+     const data = await res.json();
+     // On stocke le montant brut (XOF)
+     setSoldeRetirable(data.soldeRetirable || 0);
+   } catch {
+     toast.error(t("withdraw.toast.connection_error"));
+   } finally {
+     setIsLoadingSolde(false);
+   }
+ };
     fetchSolde();
   }, [navigate, t]);
 
@@ -66,51 +60,50 @@ export default function WithdrawPage() {
     }
   };
 
-  const performWithdraw = async () => {
-    const amount = parseFloat(montant);
-    const token = getFreshToken();
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/wallets/withdraw`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          montant: amount, // On envoie le montant saisi
-          currency: currency, // On précise la devise de la saisie au backend
-          phone: phone.trim() || undefined,
-          method,
-          type:
-            method === "BANK_TRANSFER"
-              ? "PAYOUT_STRIPE"
-              : method === "ORANGE_MONEY"
+const performWithdraw = async () => {
+  const amount = parseFloat(montant);
+  setLoading(true);
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/wallets/withdraw`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        montant: amount, // On envoie le montant saisi
+        currency: currency, // On précise la devise de la saisie au backend
+        phone: phone.trim() || undefined,
+        method,
+        type:
+          method === "BANK_TRANSFER"
+            ? "PAYOUT_STRIPE"
+            : method === "ORANGE_MONEY"
               ? "PAYOUT_OM_SN"
               : method === "WAVE"
-              ? "PAYOUT_WAVE_SN"
-              : "PAYOUT_MTN",
-        }),
-      });
+                ? "PAYOUT_WAVE_SN"
+                : "PAYOUT_MTN",
+      }),
+    });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || t("withdraw.toast.fail"));
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || t("withdraw.toast.fail"));
 
-      if (data.redirectUrl) {
-        setShowRedirectLoader(true);
-        setTimeout(() => {
-          window.location.href = data.redirectUrl;
-        }, 800);
-      } else {
-        toast.success(t("withdraw.toast.success_sent"));
-        navigate("/wallet");
-      }
-    } catch (err: any) {
-      toast.error(err.message || t("withdraw.toast.fail"));
-    } finally {
-      setLoading(false);
+    if (data.redirectUrl) {
+      setShowRedirectLoader(true);
+      setTimeout(() => {
+        window.location.href = data.redirectUrl;
+      }, 800);
+    } else {
+      toast.success(t("withdraw.toast.success_sent"));
+      navigate("/wallet");
     }
-  };
+  } catch (err: any) {
+    toast.error(err.message || t("withdraw.toast.fail"));
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (isLoadingSolde)
     return <div className={styles.loading}>{t("wallet.loading")}</div>;
