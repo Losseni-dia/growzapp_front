@@ -1,27 +1,27 @@
 import { format as formatDate } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  CheckCircle2,
+  ChevronDown,
+  Clock,
+  CreditCard,
+  Gift,
+  RefreshCw,
+  Send,
+  Smartphone,
+  TrendingUp,
+  Wallet as WalletIcon,
+  X,
+  XCircle,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import {
-  Wallet as WalletIcon,
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  Send,
-  CreditCard,
-  Smartphone,
-  TrendingUp,
-  RefreshCw,
-  Gift,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  X,
-  ChevronDown,
-} from "lucide-react";
 import { useAuth } from "../../components/Context/AuthContext";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api, getFreshToken } from "../../service/Api";
+import { api } from "../../service/Api";
 import styles from "./WalletPage.module.css";
 
 import type { TransactionDTO } from "../../types/transaction";
@@ -170,15 +170,14 @@ export default function WalletPage() {
 
     setLoadingDeposit(true);
     try {
-      const token = getFreshToken() || "";
-      const endpoint =
+     const endpoint =
         depositMethod === "DEBIT_CARD"
           ? `${API_BASE_URL}/api/wallets/deposit/card`
           : `${API_BASE_URL}/api/wallets/deposit/mobile-money`;
-
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ montant }),
       });
 
@@ -212,13 +211,12 @@ export default function WalletPage() {
 
     setLoadingWithdraw(true);
     try {
-      const token = getFreshToken() || "";
-      const res = await fetch(`${API_BASE_URL}/api/wallets/retrait`, {
+     const res = await fetch(`${API_BASE_URL}/api/wallets/retrait`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ montant, methode: withdrawMethod, phone: withdrawPhone }),
       });
-
       const data = await res.json();
 
       if (res.ok && data.success) {
@@ -244,10 +242,10 @@ export default function WalletPage() {
 
     setLoadingTransfer(true);
     try {
-      const token = getFreshToken() || "";
       const res = await fetch(`${API_BASE_URL}/api/wallets/transfer`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           destinataireUserId: selectedUser.id,
           montant,
