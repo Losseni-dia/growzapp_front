@@ -1,22 +1,22 @@
 // src/pages/investisseur/MesDividendesPage.tsx
 
-import { useState, useEffect } from "react";
-import { api, buildProjetUrl, getFreshToken } from "../../../service/Api";
-import { useAuth } from "../../../components/Context/AuthContext";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT DU CONTEXT
 import {
-  FiDownload,
-  FiClock,
   FiCheckCircle,
+  FiClock,
   FiDollarSign,
+  FiDownload,
   FiFileText,
   FiRefreshCw,
 } from "react-icons/fi";
-import styles from "./MesDividendes.module.css";
-import { DividendeDTO } from "../../../types/dividende";
+import { useAuth } from "../../../components/Context/AuthContext";
+import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT DU CONTEXT
+import { api, buildProjetUrl } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
+import { DividendeDTO } from "../../../types/dividende";
+import styles from "./MesDividendes.module.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -65,43 +65,38 @@ export default function MesDividendesPage() {
   }, [user]);
 
   // --- 2. TÉLÉCHARGEMENT SÉCURISÉ ---
-  const downloadFacture = async (factureId: number, numeroFacture: string) => {
-    if (!factureId) {
-      toast.error("Facture non disponible");
-      return;
-    }
+ const downloadFacture = async (factureId: number, numeroFacture: string) => {
+   if (!factureId) {
+     toast.error("Facture non disponible");
+     return;
+   }
+   try {
+     const lang = i18n.language || "fr";
+     const response = await fetch(
+       `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}`,
+       {
+         method: "GET",
+         credentials: "include",
+       },
+     );
 
-    try {
-      const token = getFreshToken();
-      const lang = i18n.language || "fr";
+     if (!response.ok) throw new Error("Erreur serveur");
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+     const blob = await response.blob();
+     const url = window.URL.createObjectURL(blob);
+     const a = document.createElement("a");
+     a.href = url;
+     a.download = `Facture-${numeroFacture}_${lang}.pdf`;
+     document.body.appendChild(a);
+     a.click();
+     document.body.removeChild(a);
+     window.URL.revokeObjectURL(url);
 
-      if (!response.ok) throw new Error("Erreur serveur");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `Facture-${numeroFacture}_${lang}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-
-      toast.success(t("dividends.table.invoice_downloaded"));
-    } catch (e) {
-      toast.error(t("project_details.documents.error_download"));
-    }
-  };
+     toast.success(t("dividends.table.invoice_downloaded"));
+   } catch (e) {
+     toast.error(t("project_details.documents.error_download"));
+   }
+ };
 
   // --- 3. CALCULS (En XOF d'abord, convertis à l'affichage) ---
   const totalPercu = dividendes
