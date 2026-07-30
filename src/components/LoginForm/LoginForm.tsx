@@ -38,20 +38,21 @@ export default function LoginForm() {
         password,
       });
 
-      const token = response.token;
-      const user = response.user;
+     const user = response.user;
 
-      if (!token || !user) {
-        toast.error(t("login_page.toast_error_server"));
-        return;
-      }
+     // Le token n'est plus renvoyé en JSON (HIGH-03) — seul le cookie
+     // HttpOnly compte désormais. On ne vérifie plus que le profil.
+     if (!user) {
+       toast.error(t("login_page.toast_error_server"));
+       return;
+     }
 
       if (user.interfaceLanguage) {
         i18n.changeLanguage(user.interfaceLanguage);
       }
 
       // 1. On lance la connexion
-      authLogin(token, user as UserDTO);
+      authLogin("", user as UserDTO);
 
       // 2. Pas de toast ici comme demandé.
       // 3. On utilise un micro-délai pour éviter que le Router
