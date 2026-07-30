@@ -49,14 +49,13 @@ export default function MesInvestissementsPage() {
   const handleVoir = async (numeroContrat: string) => {
     try {
       setDownloading(numeroContrat);
-      const token = getToken();
       const lang = i18n.language || "fr";
       const response = await fetch(
         `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}`,
         {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        }
+          credentials: "include",
+        },
       );
       if (!response.ok) throw new Error();
       const blob = await response.blob();

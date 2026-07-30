@@ -17,14 +17,11 @@ const KycVoveId = () => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.post(
         "/api/kyc/start-voveid",
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true,
         },
       );
       setSession(response.data);

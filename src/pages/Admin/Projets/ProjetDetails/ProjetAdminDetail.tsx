@@ -56,47 +56,43 @@ export default function ProjetAdminDetail() {
     if (id) loadProjetAndDocuments();
   }, [id]);
 
- const handleDownload = async (docId: number, nom: string, type: string) => {
-   try {
-     const token = localStorage.getItem("access_token") || "";
-     const response = await fetch(
-       `${API_BASE_URL}/api/documents/${docId}/download`,
-       {
-         method: "GET",
-         headers: {
-           Authorization: `Bearer ${token}`,
-           // Important : ne pas définir Content-Type → laisser le navigateur gérer
-         },
-       }
-     );
+const handleDownload = async (docId: number, nom: string, type: string) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/documents/${docId}/download`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
 
-     if (!response.ok) {
-       const errorText = await response.text();
-       throw new Error(errorText || "Téléchargement refusé");
-     }
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Téléchargement refusé");
+    }
 
-     const blob = await response.blob();
-     const url = window.URL.createObjectURL(blob);
-     const a = document.createElement("a");
-     a.href = url;
-     a.download =
-       type === "PDF"
-         ? `${nom}.pdf`
-         : type === "EXCEL"
-         ? `${nom}.xlsx`
-         : type === "CSV"
-         ? `${nom}.csv`
-         : nom;
-     document.body.appendChild(a);
-     a.click();
-     document.body.removeChild(a);
-     window.URL.revokeObjectURL(url);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download =
+      type === "PDF"
+        ? `${nom}.pdf`
+        : type === "EXCEL"
+          ? `${nom}.xlsx`
+          : type === "CSV"
+            ? `${nom}.csv`
+            : nom;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
 
-     toast.success("Téléchargement démarré !");
-   } catch (err: any) {
-     toast.error(err.message || "Échec du téléchargement");
-   }
- };
+    toast.success("Téléchargement démarré !");
+  } catch (err: any) {
+    toast.error(err.message || "Échec du téléchargement");
+  }
+};
 
   const getIcon = (type: string) => {
     switch (type.toUpperCase()) {
