@@ -28,61 +28,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   // 2. Récupération de la session au démarrage (Version Robuste)
- useEffect(() => {
-   const stored = localStorage.getItem("user");
-   if (!stored) {
-     setLoading(false);
-     return;
-   }
-   try {
-     const data = JSON.parse(stored);
-     let loadedUser: UserDTO | null = null;
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (!stored) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const data = JSON.parse(stored);
+      let loadedUser: UserDTO | null = null;
 
-     if (data?.user) {
-       loadedUser = data.user as UserDTO;
-     } else if (data?.id || data?.email) {
-       loadedUser = data as UserDTO;
-     }
+      if (data?.user) {
+        loadedUser = data.user as UserDTO;
+      } else if (data?.id || data?.email) {
+        loadedUser = data as UserDTO;
+      }
 
-     if (loadedUser) {
-       setUser(loadedUser);
+      if (loadedUser) {
+        setUser(loadedUser);
 
-       // ── Restaurer langue préférée ──────────────────────
-       if (loadedUser.interfaceLanguage) {
-         i18n.changeLanguage(loadedUser.interfaceLanguage);
-       }
+        // ── Restaurer langue préférée ──────────────────────
+        if (loadedUser.interfaceLanguage) {
+          i18n.changeLanguage(loadedUser.interfaceLanguage);
+        }
 
-       // ── Restaurer devise préférée ──────────────────────
-       if (loadedUser.devisePreferee) {
-         localStorage.setItem("user_currency", loadedUser.devisePreferee);
-       }
-     }
-   } catch (err) {
-     console.error("Erreur parsing user storage", err);
-     localStorage.removeItem("user");
-   } finally {
-     setLoading(false);
-   }
- }, []);
+        // ── Restaurer devise préférée ──────────────────────
+        if (loadedUser.devisePreferee) {
+          localStorage.setItem("user_currency", loadedUser.devisePreferee);
+        }
+      }
+    } catch (err) {
+      console.error("Erreur parsing user storage", err);
+      localStorage.removeItem("user");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // 3. Fonction de Connexion
-const login = (token: string, userData: UserDTO) => {
-  const safeUser = { ...userData, enabled: userData.enabled ?? true };
-  localStorage.setItem("user", JSON.stringify({ token, user: safeUser }));
-  localStorage.setItem("access_token", token);
-  setUser(safeUser);
+  const login = (_token: string, userData: UserDTO) => {
+    const safeUser = { ...userData, enabled: userData.enabled ?? true };
+    // Le token n'est plus stocké côté client — il vit désormais uniquement
+    // dans le cookie HttpOnly posé par le backend, inaccessible à JavaScript
+    // (protection contre le vol de token via XSS, HIGH-03 de l'audit).
+    localStorage.setItem("user", JSON.stringify({ user: safeUser }));
+    setUser(safeUser);
 
-  // ── Appliquer langue préférée ──────────────────────────────
-  if (safeUser.interfaceLanguage) {
-    i18n.changeLanguage(safeUser.interfaceLanguage);
-    localStorage.setItem("i18nextLng", safeUser.interfaceLanguage);
-  }
+    // ── Appliquer langue préférée ──────────────────────────────
+    if (safeUser.interfaceLanguage) {
+      i18n.changeLanguage(safeUser.interfaceLanguage);
+      localStorage.setItem("i18nextLng", safeUser.interfaceLanguage);
+    }
 
-  // ── Appliquer devise préférée ──────────────────────────────
-  if (safeUser.devisePreferee) {
-    localStorage.setItem("user_currency", safeUser.devisePreferee);
-  }
-};
+    // ── Appliquer devise préférée ──────────────────────────────
+    if (safeUser.devisePreferee) {
+      localStorage.setItem("user_currency", safeUser.devisePreferee);
+    }
+  };
 
   // 4. Fonction de mise à jour du profil (locale)
   const updateUserInfo = (userData: UserDTO) => {
@@ -119,9 +121,10 @@ const login = (token: string, userData: UserDTO) => {
 
   // 6. Fonction de Déconnexion
   const logout = () => {
+    // Révoque le token côté serveur (invalide le cookie HttpOnly) avant de
+    // nettoyer l'état local — voir HIGH-02 (endpoint /api/auth/logout)
+    api.post("/api/auth/logout").catch(() => {});
     localStorage.removeItem("user");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("token");
     setUser(null);
     window.location.href = "/";
   };
