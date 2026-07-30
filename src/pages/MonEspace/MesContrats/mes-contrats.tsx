@@ -1,14 +1,14 @@
 // src/pages/MonEspace/Mes-contrats/MesContratsPage.tsx
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { api, buildProjetUrl, getFreshToken } from "../../../service/Api";
-import { InvestissementDTO } from "../../../types/investissement";
-import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { enUS, es, fr } from "date-fns/locale";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { FiArrowLeft, FiDownload, FiEye, FiFileText } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { FiEye, FiDownload, FiFileText, FiArrowLeft } from "react-icons/fi";
+import { api, buildProjetUrl } from "../../../service/Api";
+import { InvestissementDTO } from "../../../types/investissement";
 import styles from "./mes-contrats.module.css";
 
 export default function MesContratsPage() {
@@ -37,55 +37,54 @@ export default function MesContratsPage() {
       .finally(() => setLoading(false));
   }, [t]);
 
-  const handleVoir = async (numeroContrat: string) => {
-    try {
-      setDownloading(numeroContrat);
-      const token = getFreshToken();
-      const lang = i18n.language || "fr";
-      const response = await fetch(
-        `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (!response.ok) throw new Error();
-      const blob = await response.blob();
-      window.open(URL.createObjectURL(blob), "_blank");
-    } catch {
-      toast.error(t("contract_view.error_generic"));
-    } finally {
-      setDownloading(null);
-    }
-  };
+ const handleVoir = async (numeroContrat: string) => {
+   try {
+     setDownloading(numeroContrat);
+     const lang = i18n.language || "fr";
+     const response = await fetch(
+       `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}`,
+       {
+         method: "GET",
+         credentials: "include",
+       },
+     );
 
-  const handleDownload = async (numeroContrat: string) => {
-    try {
-      setDownloading(numeroContrat);
-      const token = getFreshToken();
-      const lang = i18n.language || "fr";
-      const response = await fetch(
-        `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (!response.ok) throw new Error();
-      const blob = await response.blob();
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", `Contrat_${numeroContrat}_${lang}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      toast.success(t("admin.project_detail.download_start"));
-    } catch {
-      toast.error(t("admin.project_detail.download_error"));
-    } finally {
-      setDownloading(null);
-    }
-  };
+     if (!response.ok) throw new Error();
+     const blob = await response.blob();
+     window.open(URL.createObjectURL(blob), "_blank");
+   } catch {
+     toast.error(t("contract_view.error_generic"));
+   } finally {
+     setDownloading(null);
+   }
+ };
+
+ const handleDownload = async (numeroContrat: string) => {
+   try {
+     setDownloading(numeroContrat);
+     const lang = i18n.language || "fr";
+     const response = await fetch(
+       `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
+       {
+         method: "GET",
+         credentials: "include",
+       },
+     );
+     if (!response.ok) throw new Error();
+     const blob = await response.blob();
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `Contrat_${numeroContrat}_${lang}.pdf`);
+     document.body.appendChild(link);
+     link.click();
+     link.parentNode?.removeChild(link);
+     toast.success(t("admin.project_detail.download_start"));
+   } catch {
+     toast.error(t("admin.project_detail.download_error"));
+   } finally {
+     setDownloading(null);
+   }
+ };
 
   if (loading)
     return <div className={styles.loading}>{t("dashboard.loading")}</div>;
