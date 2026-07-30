@@ -1,25 +1,24 @@
 // src/pages/MonEspace/Mes-investissements/MesInvestissementsPage.tsx
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { api, buildProjetUrl } from "../../../service/Api";
-import { InvestissementDTO } from "../../../types/investissement";
-import toast from "react-hot-toast";
 import { format as formatDate } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { enUS, es, fr } from "date-fns/locale";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT
 import {
-  FiClock,
-  FiCheckCircle,
-  FiXCircle,
   FiCalendar,
+  FiCheckCircle,
+  FiClock,
   FiDollarSign,
   FiDownload,
   FiEye,
   FiMapPin,
+  FiXCircle,
 } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT
+import { api, buildFileUrl, buildProjetUrl } from "../../../service/Api";
+import { InvestissementDTO } from "../../../types/investissement";
 import styles from "./MesInvestissementsPage.module.css";
-import { buildFileUrl } from "../../../service/Api";
 
 export default function MesInvestissementsPage() {
   const [investissements, setInvestissements] = useState<InvestissementDTO[]>(
@@ -33,7 +32,6 @@ export default function MesInvestissementsPage() {
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
-  const getToken = () => localStorage.getItem("access_token");
   const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
   useEffect(() => {
@@ -67,33 +65,32 @@ export default function MesInvestissementsPage() {
     }
   };
 
-  const handleDownload = async (numeroContrat: string) => {
-    try {
-      setDownloading(numeroContrat);
-      const token = getToken();
-      const lang = i18n.language || "fr";
-      const response = await fetch(
-        `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (!response.ok) throw new Error();
-      const blob = await response.blob();
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", `Contrat_${numeroContrat}_${lang}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      toast.success(t("admin.project_detail.download_start"));
-    } catch (err) {
-      toast.error(t("admin.project_detail.download_error"));
-    } finally {
-      setDownloading(null);
-    }
-  };
+ const handleDownload = async (numeroContrat: string) => {
+   try {
+     setDownloading(numeroContrat);
+     const lang = i18n.language || "fr";
+     const response = await fetch(
+       `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
+       {
+         method: "GET",
+         credentials: "include",
+       },
+     );
+     if (!response.ok) throw new Error();
+     const blob = await response.blob();
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `Contrat_${numeroContrat}_${lang}.pdf`);
+     document.body.appendChild(link);
+     link.click();
+     link.parentNode?.removeChild(link);
+     toast.success(t("admin.project_detail.download_start"));
+   } catch (err) {
+     toast.error(t("admin.project_detail.download_error"));
+   } finally {
+     setDownloading(null);
+   }
+ };
 
   const getStatutConfig = (statut: string) => {
     switch (statut) {
