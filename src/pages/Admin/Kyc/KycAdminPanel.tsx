@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { api, getFreshToken } from "../../../service/Api";
-import { UserDTO } from "../../../types/user";
-import toast from "react-hot-toast";
 import {
+  Calendar,
   Check,
-  X,
-  ShieldCheck,
   FileText,
   Image as ImageIcon,
+  ShieldCheck,
   UserCircle,
-  Calendar,
+  X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import { api } from "../../../service/Api";
+import { UserDTO } from "../../../types/user";
 import styles from "./KycAdminPanel.module.css";
 
 export const KycAdminPanel = () => {
@@ -65,15 +65,12 @@ export const KycAdminPanel = () => {
   ) => {
     try {
       toast.loading(t("admin.kyc.doc_loading"));
-
-      const token = getFreshToken();
       const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
       const url = `${baseUrl}/api/kyc/admin/document/${userId}/${type}`;
-
       const response = await fetch(url, {
         method: "GET",
+        credentials: "include",
         headers: {
-          Authorization: `Bearer ${token}`,
           Accept: "application/octet-stream",
         },
       });
