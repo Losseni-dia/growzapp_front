@@ -1,19 +1,19 @@
 // src/pages/admin/ContratsAdmin.tsx
-import React, { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
-import { fr, enUS, es } from "date-fns/locale";
+import { enUS, es, fr } from "date-fns/locale";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useCurrency } from "../../../components/Context/CurrencyContext";
 import {
-  FiSearch,
   FiDownload,
   FiEye,
-  FiRefreshCw,
   FiFilter,
+  FiRefreshCw,
+  FiSearch,
 } from "react-icons/fi";
+import { useCurrency } from "../../../components/Context/CurrencyContext";
+import { api } from "../../../service/Api"; // Import getFreshToken
 import styles from "./ContratAdmin.module.css";
-import { api, getFreshToken } from "../../../service/Api"; // Import getFreshToken
 
 interface ContratAdmin {
   id: number;
@@ -82,17 +82,13 @@ const ContratsAdmin: React.FC = () => {
   const handleVoir = async (numero: string) => {
     try {
       setDownloading(numero);
-      const token = getFreshToken(); // Utilise la fonction de ton api.ts
       const lang = i18n.language || "fr";
-
       const response = await fetch(
         `${BASE_URL}/api/contrats/${numero}?lang=${lang}`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+          credentials: "include",
+        },
       );
 
       if (!response.ok) throw new Error("Fichier introuvable");
@@ -109,42 +105,38 @@ const ContratsAdmin: React.FC = () => {
   };
 
   // --- 2. FONCTION TÉLÉCHARGER (CORRIGÉE) ---
-  const handleDownload = async (numero: string) => {
-    try {
-      setDownloading(numero);
-      const token = getFreshToken();
-      const lang = i18n.language || "fr";
+const handleDownload = async (numero: string) => {
+  try {
+    setDownloading(numero);
+    const lang = i18n.language || "fr";
+    const response = await fetch(
+      `${BASE_URL}/api/contrats/${numero}/download?lang=${lang}`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
 
-      const response = await fetch(
-        `${BASE_URL}/api/contrats/${numero}/download?lang=${lang}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    if (!response.ok) throw new Error("Erreur de téléchargement");
 
-      if (!response.ok) throw new Error("Erreur de téléchargement");
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Contrat_${numero}_${lang}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.parentNode?.removeChild(link);
+    window.URL.revokeObjectURL(url);
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `Contrat_${numero}_${lang}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      toast.success(t("admin.project_detail.download_start"));
-    } catch (err) {
-      console.error("Erreur Download PDF:", err);
-      toast.error(t("admin.project_detail.download_error"));
-    } finally {
-      setDownloading(null);
-    }
-  };
+    toast.success(t("admin.project_detail.download_start"));
+  } catch (err) {
+    console.error("Erreur Download PDF:", err);
+    toast.error(t("admin.project_detail.download_error"));
+  } finally {
+    setDownloading(null);
+  }
+};
 
   return (
     <div className={styles.container}>
