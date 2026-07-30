@@ -60,22 +60,16 @@ const request = async <T = unknown>(
   body?: any,
   isFormData = false
 ): Promise<T> => {
-  const token = getFreshToken();
   const url = buildUrl(endpoint);
-
-  console.log(
-    `API → ${method} ${url}`,
-    token ? "Token présent" : "Pas de token"
-  );
-
+  console.log(`API → ${method} ${url}`);
+  
   const headers: Record<string, string> = {};
   if (!isFormData) {
     headers["Content-Type"] = "application/json";
   }
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
+  // Le token n'est plus attaché manuellement — il voyage désormais via le
+  // cookie HttpOnly auth_token, envoyé automatiquement par le navigateur
+  // grâce à credentials: "include" (HIGH-03, étape 3b).
   if (i18n && i18n.language) {
     headers["Accept-Language"] = i18n.language;
   }
