@@ -19,6 +19,7 @@
     "toast_success": "Connecté avec succès !",
     "toast_error_server": "Réponse invalide du serveur",
     "toast_error_credentials": "Identifiants incorrects",
+    "error_account_locked": "Compte temporairement verrouillé suite à plusieurs échecs de connexion. Réessayez dans 15 minutes, ou contactez le support si vous pensez qu'il s'agit d'une erreur : {{email}}",
     "forgot_password": "Mot de passe oublié ?",
     "or_continue_with": "Ou continuer avec",
     "social_google": "Continuer avec Google",

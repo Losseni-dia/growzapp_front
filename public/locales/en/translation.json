@@ -19,6 +19,7 @@
     "toast_success": "Successfully connected!",
     "toast_error_server": "Invalid server response",
     "toast_error_credentials": "Invalid credentials",
+    "error_account_locked": "Account temporarily locked after several failed login attempts. Try again in 15 minutes, or contact support if you believe this is an error: {{email}}",
     "forgot_password": "Forgot password?",
     "or_continue_with": "Or continue with",
     "social_google": "Continue with Google",

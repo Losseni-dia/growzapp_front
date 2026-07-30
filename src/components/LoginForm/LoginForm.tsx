@@ -15,6 +15,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [lockMessage, setLockMessage] = useState<string | null>(null);
 
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ export default function LoginForm() {
     e.preventDefault();
     if (loading) return;
     setLoading(true);
+    setLockMessage(null);
 
     try {
       const response = await api.post<any>("/api/auth/login", {
@@ -58,7 +60,15 @@ export default function LoginForm() {
         navigate("/");
       }, 50);
     } catch (err: any) {
-      toast.error(err.message || t("login_page.toast_error_credentials"));
+      if (err.status === 423) {
+        setLockMessage(
+          t("login_page.error_account_locked", {
+            email: "losdiakite@gmail.com",
+          }),
+        );
+      } else {
+        toast.error(err.message || t("login_page.toast_error_credentials"));
+      }
     } finally {
       setLoading(false);
     }
@@ -68,6 +78,11 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className={styles.form}>
       <h2>{t("login_page.title")}</h2>
       <p className={styles.subtitle}>{t("login_page.subtitle")}</p>
+      {lockMessage && (
+        <p style={{ color: "#dc2626", fontWeight: 500, marginBottom: "1rem" }}>
+          {lockMessage}
+        </p>
+      )}
 
       <input
         type="text"
@@ -108,7 +123,7 @@ export default function LoginForm() {
       <div className={styles.socialDivider}>
         {t("login_page.or_continue_with")}
       </div>
-      
+
       <div className={styles.socialButtons}>
         <button
           type="button"

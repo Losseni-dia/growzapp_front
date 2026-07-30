@@ -107,22 +107,23 @@ const request = async <T = unknown>(
       // on laisse la logique d'erreur standard ci-dessous prendre le relais.
     }
     // ========================================================================
-
-    if (!response.ok) {
-      let msg = "Erreur serveur";
+if (!response.ok) {
+  let msg = "Erreur serveur";
+  try {
+    const text = await response.text();
+    if (text) {
       try {
-        const text = await response.text();
-        if (text) {
-          try {
-            const json = JSON.parse(text);
-            msg = json?.message || json?.error || json?.detail || text;
-          } catch {
-            msg = text;
-          }
-        }
-      } catch {}
-      throw new Error(msg);
+        const json = JSON.parse(text);
+        msg = json?.message || json?.error || json?.detail || text;
+      } catch {
+        msg = text;
+      }
     }
+  } catch {}
+  const error: any = new Error(msg);
+  error.status = response.status;
+  throw error;
+}
 
     if (response.status === 204) return {} as T;
     return response.json();

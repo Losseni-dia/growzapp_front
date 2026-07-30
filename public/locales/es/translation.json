@@ -19,6 +19,7 @@
     "toast_success": "¡Conectado con éxito!",
     "toast_error_server": "Respuesta del servidor no válida",
     "toast_error_credentials": "Credenciales incorrectas",
+    "error_account_locked": "Cuenta temporalmente bloqueada tras varios intentos fallidos de inicio de sesión. Vuelva a intentarlo en 15 minutos, o contacte con soporte si cree que se trata de un error: {{email}}",
     "forgot_password": "¿Has olvidado tu contraseña?",
     "or_continue_with": "O continuar con",
     "social_google": "Continuar con Google",
