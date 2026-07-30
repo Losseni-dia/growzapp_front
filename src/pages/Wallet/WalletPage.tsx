@@ -220,10 +220,11 @@ export default function WalletPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ montant, methode: withdrawMethod, phone: withdrawPhone, idempotencyKey }),
       });
-      const data = await res.json();
-
+     const data = await res.json();
       if (res.ok && data.success) {
         toast.success(data.message || t("wallet.toast.withdraw_success"));
+      } else if (data.errorCode === "WITHDRAWAL_FAILED_REFUNDED") {
+        toast.error(t("wallet.toast.withdraw_failed_refunded"));
       } else {
         toast.error(data.error || t("wallet.toast.withdraw_failed"));
       }

@@ -979,6 +979,7 @@
       "phone_required": "Número de teléfono requerido",
       "withdraw_success": "¡Retiro realizado con éxito!",
       "withdraw_failed": "El retiro falló — fondos reembolsados",
+      "withdraw_failed_refunded": "El retiro falló — los fondos fueron reembolsados a su monedero. Vuelva a intentarlo más tarde o contacte con soporte si el problema persiste.",
       "select_recipient": "Seleccione un destinatario",
       "transfer_success": "{{amount}} enviados a {{name}}",
       "transfer_failed": "Error en la transferencia"

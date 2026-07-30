@@ -986,6 +986,7 @@
       "phone_required": "Numéro de téléphone requis",
       "withdraw_success": "Retrait effectué avec succès !",
       "withdraw_failed": "Le retrait a échoué — fonds remboursés",
+      "withdraw_failed_refunded": "Le retrait a échoué — les fonds ont été remboursés dans votre portefeuille. Réessayez plus tard ou contactez le support si le problème persiste.",
       "select_recipient": "Sélectionnez un destinataire",
       "transfer_success": "{{amount}} envoyés à {{name}}",
       "transfer_failed": "Échec du transfert"

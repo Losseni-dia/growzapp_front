@@ -983,6 +983,7 @@
       "phone_required": "Phone number required",
       "withdraw_success": "Withdrawal successful!",
       "withdraw_failed": "Withdrawal failed — funds refunded",
+      "withdraw_failed_refunded": "The withdrawal failed — funds have been refunded to your wallet. Please try again later or contact support if the issue persists.",
       "select_recipient": "Select a recipient",
       "transfer_success": "{{amount}} sent to {{name}}",
       "transfer_failed": "Transfer failed"
