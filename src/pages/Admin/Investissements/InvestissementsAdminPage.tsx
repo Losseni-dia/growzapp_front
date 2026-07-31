@@ -37,10 +37,24 @@ interface InvestissementAdmin {
 
 type Filtre = "TOUS" | "EN_ATTENTE" | "VALIDE" | "ANNULE";
 
+interface InvestissementsPage {
+  content: InvestissementAdmin[];
+  totalPages: number;
+  totalElements: number;
+}
+
+interface StatutCounts {
+  EN_ATTENTE?: number;
+  VALIDE?: number;
+  ANNULE?: number;
+  TOUS?: number;
+}
+
 export default function InvestissementsAdminPage() {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const [filtre, setFiltre] = useState<Filtre>("EN_ATTENTE");
+  const [page, setPage] = useState(0);
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const [refusModal, setRefusModal] = useState<{
     inv: InvestissementAdmin;
@@ -50,33 +64,45 @@ export default function InvestissementsAdminPage() {
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
-  const { data: investissements = [], isLoading } = useQuery<
-    InvestissementAdmin[]
-  >({
-    queryKey: ["admin-investissements"],
+  const changeFiltre = (f: Filtre) => {
+    setPage(0);
+    setFiltre(f);
+  };
+
+  const { data: counts } = useQuery<StatutCounts>({
+    queryKey: ["admin-investissements-counts"],
     queryFn: async () => {
-      const res = await api.get<{ data: InvestissementAdmin[] }>(
-        "/api/admin/investissements",
+      const res = await api.get<{ data: StatutCounts }>(
+        "/api/admin/investissements/counts",
       );
-      return res.data || [];
+      return res.data;
     },
     refetchInterval: 30000,
   });
 
-  const enAttente = investissements.filter(
-    (i) => i.statutPartInvestissement === "EN_ATTENTE",
-  );
-  const valides = investissements.filter(
-    (i) => i.statutPartInvestissement === "VALIDE",
-  );
-  const annules = investissements.filter(
-    (i) => i.statutPartInvestissement === "ANNULE",
-  );
+  const { data, isLoading } = useQuery<InvestissementsPage>({
+    queryKey: ["admin-investissements", filtre, page],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        size: "20",
+        ...(filtre !== "TOUS" && { statut: filtre }),
+      });
+      const res = await api.get<{ data: InvestissementsPage }>(
+        `/api/admin/investissements?${params}`,
+      );
+      return res.data;
+    },
+    refetchInterval: 30000,
+  });
 
-  const filtered =
-    filtre === "TOUS"
-      ? investissements
-      : investissements.filter((i) => i.statutPartInvestissement === filtre);
+  const filtered = data?.content ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
+  const enAttenteCount = counts?.EN_ATTENTE ?? 0;
+  const validesCount = counts?.VALIDE ?? 0;
+  const annulesCount = counts?.ANNULE ?? 0;
+  const tousCount = counts?.TOUS ?? 0;
 
   // ── Valider ────────────────────────────────────────────────────────────────
   const valider = async (inv: InvestissementAdmin) => {
@@ -89,6 +115,9 @@ export default function InvestissementsAdminPage() {
         duration: 6000,
       });
       queryClient.invalidateQueries({ queryKey: ["admin-investissements"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-investissements-counts"],
+      });
     } catch (err: any) {
       toast.error(err.message || "Erreur lors de la validation");
     } finally {
@@ -121,6 +150,9 @@ export default function InvestissementsAdminPage() {
         "Investissement refusé — fonds restitués et investisseur notifié",
       );
       queryClient.invalidateQueries({ queryKey: ["admin-investissements"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-investissements-counts"],
+      });
     } catch (err: any) {
       toast.error(err.message || "Erreur lors du refus");
     } finally {
@@ -138,19 +170,19 @@ export default function InvestissementsAdminPage() {
           <h1>
             <FiTrendingUp /> {t("admin.investments.title")}
           </h1>
-          <p>{investissements.length} investissement(s) au total</p>
+          <p>{tousCount} investissement(s) au total</p>
         </div>
         <div className={styles.headerStats}>
           <div className={`${styles.stat} ${styles.statPending}`}>
-            <span className={styles.statCount}>{enAttente.length}</span>
+            <span className={styles.statCount}>{enAttenteCount}</span>
             <span className={styles.statLabel}>En attente</span>
           </div>
           <div className={`${styles.stat} ${styles.statValid}`}>
-            <span className={styles.statCount}>{valides.length}</span>
+            <span className={styles.statCount}>{validesCount}</span>
             <span className={styles.statLabel}>Validés</span>
           </div>
           <div className={`${styles.stat} ${styles.statCancelled}`}>
-            <span className={styles.statCount}>{annules.length}</span>
+            <span className={styles.statCount}>{annulesCount}</span>
             <span className={styles.statLabel}>Annulés</span>
           </div>
         </div>
@@ -162,16 +194,16 @@ export default function InvestissementsAdminPage() {
         {(["EN_ATTENTE", "TOUS", "VALIDE", "ANNULE"] as Filtre[]).map((f) => (
           <button
             key={f}
-            onClick={() => setFiltre(f)}
+            onClick={() => changeFiltre(f)}
             className={`${styles.filtreBtn} ${filtre === f ? styles.filtreActif : ""}`}
           >
             {f === "EN_ATTENTE"
-              ? `⏳ En attente (${enAttente.length})`
+              ? `⏳ En attente (${enAttenteCount})`
               : f === "VALIDE"
-                ? `✅ Validés (${valides.length})`
+                ? `✅ Validés (${validesCount})`
                 : f === "ANNULE"
-                  ? `❌ Annulés (${annules.length})`
-                  : `Tous (${investissements.length})`}
+                  ? `❌ Annulés (${annulesCount})`
+                  : `Tous (${tousCount})`}
           </button>
         ))}
       </div>
@@ -292,6 +324,26 @@ export default function InvestissementsAdminPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+          >
+            ‹
+          </button>
+          <span>
+            {page + 1} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+          >
+            ›
+          </button>
         </div>
       )}
 
