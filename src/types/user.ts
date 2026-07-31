@@ -27,6 +27,8 @@ export interface UserDTO {
 
   enabled: boolean;
   wallet: WalletSummary;
+  failedLoginAttempts?: number;
+  lockedUntil?: string | null;
 
   projets?: ProjetSummary[];
   investissements?: InvestissementSummary[];

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
@@ -8,7 +8,7 @@ import styles from "./AdminUsersPage.module.css";
 import { useTranslation } from "react-i18next";
 import { getAvatarUrl } from "../../../types/utils/UserUtils";
 import { KycBadge } from "../../../components/ui/kycBadge/KycBadge";
-import { FiSearch, FiX, FiShield, FiUsers } from "react-icons/fi";
+import { FiSearch, FiX, FiShield, FiUsers, FiLock } from "react-icons/fi";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -16,28 +16,44 @@ interface ApiResponse<T> {
   data: T;
 }
 
+interface UsersPage {
+  content: UserDTO[];
+  totalPages: number;
+  totalElements: number;
+}
+
+const isLocked = (u: UserDTO) =>
+  !!u.lockedUntil && new Date(u.lockedUntil).getTime() > Date.now();
+
 export default function UsersAdminPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin-users"],
-    queryFn: () => api.get<ApiResponse<UserDTO[]>>("/admin/users"),
+    queryKey: ["admin-users", page, debouncedSearch],
+    queryFn: () =>
+      api.get<ApiResponse<UsersPage>>(
+        `/admin/users?page=${page}&size=20${
+          debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ""
+        }`,
+      ),
   });
 
-  const users = data?.data || [];
-
-  const filteredUsers = users.filter((u) => {
-    const q = search.toLowerCase();
-    return (
-      u.prenom.toLowerCase().includes(q) ||
-      u.nom.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.login.toLowerCase().includes(q)
-    );
-  });
+  const users = data?.data.content || [];
+  const totalPages = data?.data.totalPages ?? 1;
+  const totalElements = data?.data.totalElements ?? 0;
 
   const toggleEnabled = useMutation({
     mutationFn: (id: number) => api.patch(`/admin/users/${id}/toggle`),
@@ -89,11 +105,11 @@ export default function UsersAdminPage() {
         </div>
         <div>
           <h1 className={styles.title}>
-            {t("admin.users.title", { count: users.length })}
+            {t("admin.users.title", { count: totalElements })}
           </h1>
           <p className={styles.subtitle}>
-            {users.length} utilisateur{users.length > 1 ? "s" : ""} enregistré
-            {users.length > 1 ? "s" : ""}
+            {totalElements} utilisateur{totalElements > 1 ? "s" : ""} enregistré
+            {totalElements > 1 ? "s" : ""}
           </p>
         </div>
       </header>
@@ -112,72 +128,105 @@ export default function UsersAdminPage() {
 
       {/* ═══════════ LISTE ═══════════ */}
       <div className={styles.list}>
-        {filteredUsers.map((u) => (
-          <div
-            key={u.id}
-            className={styles.row}
-            onClick={() => setSelectedUser(u)}
-          >
-            <img
-              src={getAvatarUrl(u.image)}
-              alt=""
-              className={styles.avatar}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = "/default-avatar.svg";
-              }}
-            />
-
-            <div className={styles.rowInfo}>
-              <span className={styles.fullName}>
-                {u.prenom} {u.nom}
-              </span>
-              <span className={styles.emailLine}>
-                {u.email} · @{u.login}
-              </span>
-            </div>
-
-            <div className={styles.rowKyc}>
-              <KycBadge status={u.kycStatus} showLabel={false} />
-              <span className={getExpirationClass(u.kycDateExpiration)}>
-                {u.kycDateExpiration
-                  ? new Date(u.kycDateExpiration).toLocaleDateString()
-                  : "—"}
-              </span>
-            </div>
-
-            <div className={styles.rowRoles}>
-              {u.roles.map((r) => (
-                <span
-                  key={r}
-                  className={`${styles.roleChip} ${styles[r.toLowerCase()] || ""}`}
-                >
-                  {r}
-                </span>
-              ))}
-            </div>
-
-            <label
-              className={styles.switch}
-              onClick={(e) => e.stopPropagation()}
+        {users.map((u) => {
+          const locked = isLocked(u);
+          return (
+            <div
+              key={u.id}
+              className={styles.row}
+              onClick={() => setSelectedUser(u)}
             >
-              <input
-                type="checkbox"
-                checked={u.enabled}
-                onChange={() => toggleEnabled.mutate(u.id)}
+              <img
+                src={getAvatarUrl(u.image)}
+                alt=""
+                className={styles.avatar}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/default-avatar.svg";
+                }}
               />
-              <span className={styles.slider} />
-            </label>
-          </div>
-        ))}
 
-        {filteredUsers.length === 0 && (
+              <div className={styles.rowInfo}>
+                <span className={styles.fullName}>
+                  {u.prenom} {u.nom}
+                  {locked && (
+                    <span
+                      className={styles.lockedBadge}
+                      title={t("admin.users.locked_until", {
+                        date: new Date(u.lockedUntil as string).toLocaleString(),
+                      })}
+                    >
+                      <FiLock size={11} /> {t("admin.users.locked")}
+                    </span>
+                  )}
+                </span>
+                <span className={styles.emailLine}>
+                  {u.email} · @{u.login}
+                </span>
+              </div>
+
+              <div className={styles.rowKyc}>
+                <KycBadge status={u.kycStatus} showLabel={false} />
+                <span className={getExpirationClass(u.kycDateExpiration)}>
+                  {u.kycDateExpiration
+                    ? new Date(u.kycDateExpiration).toLocaleDateString()
+                    : "—"}
+                </span>
+              </div>
+
+              <div className={styles.rowRoles}>
+                {u.roles.map((r) => (
+                  <span
+                    key={r}
+                    className={`${styles.roleChip} ${styles[r.toLowerCase()] || ""}`}
+                  >
+                    {r}
+                  </span>
+                ))}
+              </div>
+
+              <label
+                className={styles.switch}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={u.enabled}
+                  onChange={() => toggleEnabled.mutate(u.id)}
+                />
+                <span className={styles.slider} />
+              </label>
+            </div>
+          );
+        })}
+
+        {users.length === 0 && (
           <div className={styles.emptyState}>
             <FiUsers size={28} />
             <p>Aucun utilisateur ne correspond à votre recherche</p>
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+          >
+            ‹
+          </button>
+          <span>
+            {page + 1} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1}
+          >
+            ›
+          </button>
+        </div>
+      )}
 
       {/* ═══════════ MODAL DÉTAIL ═══════════ */}
       {selectedUser && (
@@ -214,6 +263,20 @@ export default function UsersAdminPage() {
                 <FiX size={18} />
               </button>
             </div>
+
+            {isLocked(selectedUser) && (
+              <div className={styles.lockedBox}>
+                <FiLock size={14} />
+                <span>
+                  {t("admin.users.locked_reason", {
+                    count: selectedUser.failedLoginAttempts ?? 0,
+                    date: new Date(
+                      selectedUser.lockedUntil as string,
+                    ).toLocaleString(),
+                  })}
+                </span>
+              </div>
+            )}
 
             <div className={styles.kycBox}>
               <h3 className={styles.kycBoxTitle}>Informations d'identité</h3>
