@@ -37,12 +37,12 @@ const ContratsAdmin: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
 
-  const [page] = useState(0);
-  const [, setTotalPages] = useState(1);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
-  const [dateDebut] = useState("");
-  const [dateFin] = useState("");
-  const [statut] = useState("");
+  const [dateDebut, setDateDebut] = useState("");
+  const [dateFin, setDateFin] = useState("");
+  const [statut, setStatut] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
   const locales: any = { fr, en: enUS, es };
@@ -67,7 +67,7 @@ const ContratsAdmin: React.FC = () => {
       setContrats(res.contrats || []);
       setTotalPages(res.totalPages || 1);
     } catch (err: any) {
-      toast.error(t("admin.withdrawals.toast.error"));
+      toast.error(t("admin.contracts.load_error"));
     } finally {
       setLoading(false);
     }
@@ -77,6 +77,31 @@ const ContratsAdmin: React.FC = () => {
     const timer = setTimeout(() => fetchContrats(), 300);
     return () => clearTimeout(timer);
   }, [fetchContrats]);
+
+  // Revenir à la première page dès qu'un filtre change
+  const handleSearchChange = (value: string) => {
+    setPage(0);
+    setSearch(value);
+  };
+  const handleDateDebutChange = (value: string) => {
+    setPage(0);
+    setDateDebut(value);
+  };
+  const handleDateFinChange = (value: string) => {
+    setPage(0);
+    setDateFin(value);
+  };
+  const handleStatutChange = (value: string) => {
+    setPage(0);
+    setStatut(value);
+  };
+  const resetFilters = () => {
+    setPage(0);
+    setSearch("");
+    setDateDebut("");
+    setDateFin("");
+    setStatut("");
+  };
 
   // --- 1. FONCTION VOIR (CORRIGÉE) ---
   const handleVoir = async (numero: string) => {
@@ -154,7 +179,7 @@ const handleDownload = async (numero: string) => {
               type="text"
               placeholder={t("admin.contracts.search_placeholder")}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
           </div>
           <div className={styles.actions}>
@@ -169,6 +194,62 @@ const handleDownload = async (numero: string) => {
             </button>
           </div>
         </div>
+
+        {/* PANNEAU DE FILTRES */}
+        {showFilters && (
+          <div className={styles.filtersPanel}>
+            <div className={styles.filterGrid}>
+              <div>
+                <label htmlFor="contrat-date-debut">
+                  {t("admin.contracts.filter_date_start")}
+                </label>
+                <input
+                  id="contrat-date-debut"
+                  type="date"
+                  value={dateDebut}
+                  onChange={(e) => handleDateDebutChange(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="contrat-date-fin">
+                  {t("admin.contracts.filter_date_end")}
+                </label>
+                <input
+                  id="contrat-date-fin"
+                  type="date"
+                  value={dateFin}
+                  onChange={(e) => handleDateFinChange(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="contrat-statut">
+                  {t("admin.contracts.filter_status")}
+                </label>
+                <select
+                  id="contrat-statut"
+                  value={statut}
+                  onChange={(e) => handleStatutChange(e.target.value)}
+                >
+                  <option value="">
+                    {t("admin.contracts.filter_status_all")}
+                  </option>
+                  <option value="EN_ATTENTE">
+                    {t("admin.contracts.filter_status_pending")}
+                  </option>
+                  <option value="VALIDE">
+                    {t("admin.contracts.filter_status_valid")}
+                  </option>
+                  <option value="ANNULE">
+                    {t("admin.contracts.filter_status_cancelled")}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <button className={styles.btnReset} onClick={resetFilters}>
+              {t("admin.contracts.filter_reset")}
+            </button>
+          </div>
+        )}
 
         {/* TABLEAU */}
         <div className={styles.tableContainer}>
@@ -256,6 +337,33 @@ const handleDownload = async (numero: string) => {
               )}
             </tbody>
           </table>
+          {!loading && contrats.length === 0 && (
+            <div className={styles.empty}>{t("admin.contracts.empty")}</div>
+          )}
+        </div>
+
+        {/* PAGINATION */}
+        <div className={styles.pagination}>
+          <button
+            className={styles.pageBtn}
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0 || loading}
+          >
+            {t("admin.contracts.pagination_prev")}
+          </button>
+          <span className={styles.pageInfo}>
+            {t("admin.contracts.pagination_page", {
+              page: page + 1,
+              total: totalPages,
+            })}
+          </span>
+          <button
+            className={styles.pageBtn}
+            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={page >= totalPages - 1 || loading}
+          >
+            {t("admin.contracts.pagination_next")}
+          </button>
         </div>
       </div>
     </div>
