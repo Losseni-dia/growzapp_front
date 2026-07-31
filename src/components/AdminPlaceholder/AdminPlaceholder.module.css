@@ -1,0 +1,51 @@
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.pageTitle {
+  margin: 0 0 20px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--growz-slate-700);
+}
+
+.card {
+  background: var(--growz-elevated);
+  border: 1px dashed var(--growz-border);
+  border-radius: var(--growz-radius-md);
+  padding: 40px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--growz-surface);
+  color: var(--growz-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--growz-slate-700);
+}
+
+.cardBody {
+  margin: 0;
+  max-width: 480px;
+  font-size: 0.88rem;
+  color: var(--growz-text-muted);
+  line-height: 1.5;
+}
