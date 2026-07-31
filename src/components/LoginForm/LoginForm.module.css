@@ -171,3 +171,37 @@ input {
   text-decoration: underline;
   color: var(--growz-green-700) !important;
 }
+
+/* ── Responsive mobile ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .form {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem 1.2rem;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    min-height: 100vh;
+    justify-content: center;
+  }
+
+  .form h2 {
+    font-size: 1.4rem;
+    margin: -1.5rem -1.2rem 1.2rem -1.2rem;
+    padding: 0.8rem;
+  }
+
+  input {
+    padding: 0.8rem 1rem;
+    font-size: 16px; /* évite le zoom automatique iOS sur focus */
+  }
+
+  .submitBtn {
+    padding: 0.9rem;
+    font-size: 1rem;
+  }
+
+  .socialBtn {
+    height: 42px;
+  }
+}
