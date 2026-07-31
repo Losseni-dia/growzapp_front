@@ -234,6 +234,136 @@
   font-weight: 700;
 }
 
+/* ── Miniatures documents (aperçu inline) ── */
+.docThumb {
+  position: relative;
+  padding: 0;
+  border: 1.5px solid var(--growz-border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 88px;
+  background: var(--growz-surface);
+}
+
+.docThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.docThumbOverlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 2px;
+  background: rgba(15, 23, 19, 0.65);
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.docThumb:hover .docThumbOverlay {
+  opacity: 1;
+}
+
+.docMissing,
+.docLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 88px;
+  border: 1.5px dashed var(--growz-border);
+  border-radius: 12px;
+  color: var(--growz-slate-700);
+  opacity: 0.6;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 4px;
+}
+
+.docMissing em {
+  font-style: normal;
+  font-size: 0.6rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.docSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--growz-border);
+  border-top-color: var(--growz-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ZOOM DOCUMENT (lightbox)
+   ═══════════════════════════════════════════════════════════════ */
+.zoomOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 12, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 32px;
+}
+
+.zoomContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: min(90vw, 720px);
+  max-height: 90vh;
+}
+
+.zoomContent img {
+  max-width: 100%;
+  max-height: 78vh;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  object-fit: contain;
+}
+
+.zoomLabel {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.zoomClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.zoomClose:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
 /* ── Actions ── */
 .cardActions {
   display: grid;

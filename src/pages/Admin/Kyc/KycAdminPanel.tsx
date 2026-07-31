@@ -6,13 +6,22 @@ import {
   ShieldCheck,
   UserCircle,
   X,
+  ZoomIn,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
 import styles from "./KycAdminPanel.module.css";
+
+type DocType = "recto" | "verso" | "selfie";
+type DocState = "loading" | "ready" | "missing";
+
+interface ZoomedDoc {
+  url: string;
+  label: string;
+}
 
 export const KycAdminPanel = () => {
   const { t } = useTranslation();
@@ -20,6 +29,12 @@ export const KycAdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [docUrls, setDocUrls] = useState<Record<string, string>>({});
+  const [docStates, setDocStates] = useState<Record<string, DocState>>({});
+  const [zoomedDoc, setZoomedDoc] = useState<ZoomedDoc | null>(null);
+  const docUrlsRef = useRef<Record<string, string>>({});
+
+  const docKey = (userId: number, type: DocType) => `${userId}-${type}`;
 
   const fetchPending = async () => {
     try {
@@ -36,6 +51,50 @@ export const KycAdminPanel = () => {
   useEffect(() => {
     fetchPending();
   }, []);
+
+  // Charge les miniatures recto/verso/selfie de tous les dossiers en attente
+  // dès que la liste est chargée, pour un aperçu immédiat (au lieu d'un
+  // téléchargement manuel par bouton — c'est le manque signalé à corriger).
+  useEffect(() => {
+    pendingUsers.forEach((u) => {
+      (["recto", "verso", "selfie"] as DocType[]).forEach((type) => {
+        loadDocumentThumbnail(u.id, type);
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingUsers]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(docUrlsRef.current).forEach((url) =>
+        window.URL.revokeObjectURL(url),
+      );
+    };
+  }, []);
+
+  const loadDocumentThumbnail = async (userId: number, type: DocType) => {
+    const key = docKey(userId, type);
+    if (docStates[key]) return;
+    setDocStates((prev) => ({ ...prev, [key]: "loading" }));
+    try {
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const response = await fetch(
+        `${baseUrl}/api/kyc/admin/document/${userId}/${type}`,
+        { method: "GET", credentials: "include" },
+      );
+      if (!response.ok) {
+        setDocStates((prev) => ({ ...prev, [key]: "missing" }));
+        return;
+      }
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      docUrlsRef.current[key] = blobUrl;
+      setDocUrls((prev) => ({ ...prev, [key]: blobUrl }));
+      setDocStates((prev) => ({ ...prev, [key]: "ready" }));
+    } catch (error) {
+      setDocStates((prev) => ({ ...prev, [key]: "missing" }));
+    }
+  };
 
   const getExpiryStatus = (dateString?: string) => {
     if (!dateString)
@@ -57,38 +116,6 @@ export const KycAdminPanel = () => {
         className: styles.badgeOrange,
       };
     return { label: t("admin.kyc.expiry_valid"), className: styles.badgeGreen };
-  };
-
-  const openDocument = async (
-    userId: number,
-    type: "recto" | "verso" | "selfie",
-  ) => {
-    try {
-      toast.loading(t("admin.kyc.doc_loading"));
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
-      const url = `${baseUrl}/api/kyc/admin/document/${userId}/${type}`;
-      const response = await fetch(url, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Accept: "application/octet-stream",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erreur serveur (${response.status})`);
-      }
-
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, "_blank");
-
-      toast.dismiss();
-    } catch (error: any) {
-      toast.dismiss();
-      toast.error(`${t("admin.kyc.doc_error")} ${error.message}`);
-      console.error("Détails erreur ouverture doc:", error);
-    }
   };
 
   const handleDecision = async (userId: number, approuve: boolean) => {
@@ -193,27 +220,50 @@ export const KycAdminPanel = () => {
                 </div>
 
                 <div className={styles.docGrid}>
-                  <button
-                    onClick={() => openDocument(u.id, "recto")}
-                    className={styles.docBtn}
-                  >
-                    <FileText size={16} />{" "}
-                    <span>{t("admin.kyc.doc_recto")}</span>
-                  </button>
-                  <button
-                    onClick={() => openDocument(u.id, "verso")}
-                    className={styles.docBtn}
-                  >
-                    <ImageIcon size={16} />{" "}
-                    <span>{t("admin.kyc.doc_verso")}</span>
-                  </button>
-                  <button
-                    onClick={() => openDocument(u.id, "selfie")}
-                    className={styles.docBtn}
-                  >
-                    <UserCircle size={16} />{" "}
-                    <span>{t("admin.kyc.doc_selfie")}</span>
-                  </button>
+                  {(
+                    [
+                      { type: "recto" as DocType, icon: FileText, label: t("admin.kyc.doc_recto") },
+                      { type: "verso" as DocType, icon: ImageIcon, label: t("admin.kyc.doc_verso") },
+                      { type: "selfie" as DocType, icon: UserCircle, label: t("admin.kyc.doc_selfie") },
+                    ]
+                  ).map(({ type, icon: Icon, label }) => {
+                    const key = docKey(u.id, type);
+                    const state = docStates[key];
+                    const url = docUrls[key];
+
+                    if (state === "ready" && url) {
+                      return (
+                        <button
+                          key={type}
+                          className={styles.docThumb}
+                          onClick={() => setZoomedDoc({ url, label })}
+                        >
+                          <img src={url} alt={label} />
+                          <span className={styles.docThumbOverlay}>
+                            <ZoomIn size={14} />
+                            {label}
+                          </span>
+                        </button>
+                      );
+                    }
+
+                    if (state === "missing") {
+                      return (
+                        <div key={type} className={styles.docMissing}>
+                          <Icon size={16} />
+                          <span>{label}</span>
+                          <em>{t("admin.kyc.doc_missing")}</em>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={type} className={styles.docLoading}>
+                        <div className={styles.docSpinner} />
+                        <span>{label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className={styles.cardActions}>
@@ -269,6 +319,29 @@ export const KycAdminPanel = () => {
                 {t("admin.kyc.confirm_reject")}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ ZOOM DOCUMENT ═══════════ */}
+      {zoomedDoc && (
+        <div
+          className={styles.zoomOverlay}
+          onClick={() => setZoomedDoc(null)}
+        >
+          <button
+            className={styles.zoomClose}
+            onClick={() => setZoomedDoc(null)}
+          >
+            <X size={20} />
+          </button>
+          <div className={styles.zoomContent}>
+            <img
+              src={zoomedDoc.url}
+              alt={zoomedDoc.label}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <span className={styles.zoomLabel}>{zoomedDoc.label}</span>
           </div>
         </div>
       )}
