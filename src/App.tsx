@@ -12,6 +12,7 @@ import { HelmetProvider } from "react-helmet-async";
 // === GUARDS (légers, chargés immédiatement) ===
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
 import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
+import AdminLayout from "./components/AdminLayout/AdminLayout";
 
 // === PAGES — chargement différé (code splitting) ===
 // Pages publiques
@@ -99,9 +100,6 @@ const ContratViewer = lazy(
 
 // Pages Admin
 const DashboardAdmin = lazy(() => import("./pages/Admin/AdminDashboard"));
-const AdminWithdrawalsPage = lazy(
-  () => import("./pages/Admin/AdminRetraitWalletPage/AdminRetraitWalletPage"),
-);
 const ContratsAdmin = lazy(
   () => import("./pages/Admin/Contrats/ContratAdminPage"),
 );
@@ -135,6 +133,25 @@ const ProjectSettingsPanel = lazy(
 );
 const ProjetsProches = lazy(
   () => import("./pages/projet/gps-projetProche/ProjetsProches"),
+);
+const NewsAdminPage = lazy(() => import("./pages/Admin/News/NewsAdminPage"));
+const DividendesAdminPage = lazy(
+  () => import("./pages/Admin/Dividendes/DividendesAdminPage"),
+);
+const FacturesAdminPage = lazy(
+  () => import("./pages/Admin/Factures/FacturesAdminPage"),
+);
+const NotificationsAdminPage = lazy(
+  () => import("./pages/Admin/Notifications/NotificationsAdminPage"),
+);
+const ParametresAdminPage = lazy(
+  () => import("./pages/Admin/Parametres/ParametresAdminPage"),
+);
+const CommentairesAdminPage = lazy(
+  () => import("./pages/Admin/Commentaires/CommentairesAdminPage"),
+);
+const ContactAdminPage = lazy(
+  () => import("./pages/Admin/Contact/ContactAdminPage"),
 );
 
 function App() {
@@ -241,68 +258,90 @@ function App() {
               </Route>
 
               {/* ==================== ROUTES ADMIN ==================== */}
-              <Route element={<ProtectedRoute />}>
-                <Route element={<AdminRoute />}>
-                  {/* 1. LE HUB : Statistiques et KPIs */}
-                  <Route path="/admin" element={<DashboardAdmin />} />
-
-                  {/* 2. GESTION DES PROJETS : La nouvelle vue avec Tabs et Recherche */}
-                  {/* On utilise AdminProjetsList comme page principale de gestion */}
-                  <Route path="/admin/projets" element={<AdminProjetsList />} />
-
-                  {/* Sous-pages de gestion des projets */}
-                  <Route
-                    path="/admin/projets/detail/:id"
-                    element={<ProjetAdminDetail />}
-                  />
-                  <Route
-                    path="/admin/projets/edit/:id"
-                    element={<EditProjetPage />}
-                  />
-
-                  {/* 3. AUTRES MODULES DE GESTION */}
-                  <Route path="/admin/users" element={<UsersAdminPage />} />
-                  <Route path="/admin/kyc" element={<KycAdminPanel />} />
-                  <Route path="/admin/contrats" element={<ContratsAdmin />} />
-                  <Route
-                    path="/admin/investissements"
-                    element={<InvestissementsAdminPage />}
-                  />
-                  <Route
-                    path="/admin/retraits"
-                    element={<AdminWithdrawalsPage />}
-                  />
-
-                  {/* 4. WALLETS ET TRÉSORERIE */}
-                  <Route
-                    path="/admin/project-wallets"
-                    element={<ProjectWalletsAdminPage />}
-                  />
-                  <Route
-                    path="/admin/project-wallets/:projetId"
-                    element={<ProjectWalletDetailPage />}
-                  />
-
-                  {/* 5. CONFIGURATION */}
-                  <Route
-                    path="/admin/settings"
-                    element={<ProjectSettingsPanel />}
-                  />
-
-                  {/* --- NETTOYAGE --- */}
-                  {/* J'ai supprimé /admin/projetsList car /admin/projets fait maintenant le travail proprement */}
-                </Route>
-              </Route>
-
-              {/* --- GROUPE 2 : ADMIN & COMMUNICANT --- */}
-              {/* On sort cette route de AdminRoute pour qu'elle soit accessible au Communicant */}
+              {/* Le layout (sidebar) est partagé par ADMIN et COMMUNICANT ;
+                  chaque page à l'intérieur affine ensuite l'accès (AdminRoute
+                  = ADMIN uniquement, ou ADMIN+COMMUNICANT pour les actualités). */}
               <Route
                 element={
                   <ProtectedRoute allowedRoles={["ADMIN", "COMMUNICANT"]} />
                 }
               >
-                <Route path="/admin/news/new" element={<NewsForm />} />
-                <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
+                <Route element={<AdminLayout />}>
+                  {/* --- ADMIN + COMMUNICANT : gestion des actualités --- */}
+                  <Route path="/admin/news" element={<NewsAdminPage />} />
+                  <Route path="/admin/news/new" element={<NewsForm />} />
+                  <Route path="/admin/news/edit/:id" element={<NewsEdit />} />
+
+                  {/* --- ADMIN UNIQUEMENT --- */}
+                  <Route element={<AdminRoute />}>
+                    {/* 1. LE HUB : Statistiques et KPIs */}
+                    <Route path="/admin" element={<DashboardAdmin />} />
+
+                    {/* 2. GESTION DES PROJETS */}
+                    <Route
+                      path="/admin/projets"
+                      element={<AdminProjetsList />}
+                    />
+                    <Route
+                      path="/admin/projets/detail/:id"
+                      element={<ProjetAdminDetail />}
+                    />
+                    <Route
+                      path="/admin/projets/edit/:id"
+                      element={<EditProjetPage />}
+                    />
+
+                    {/* 3. UTILISATEURS & KYC */}
+                    <Route path="/admin/users" element={<UsersAdminPage />} />
+                    <Route path="/admin/kyc" element={<KycAdminPanel />} />
+
+                    {/* 4. INVESTISSEMENTS & DIVIDENDES */}
+                    <Route
+                      path="/admin/investissements"
+                      element={<InvestissementsAdminPage />}
+                    />
+                    <Route
+                      path="/admin/dividendes"
+                      element={<DividendesAdminPage />}
+                    />
+
+                    {/* 5. FINANCES : WALLETS, CONTRATS, FACTURES */}
+                    <Route
+                      path="/admin/project-wallets"
+                      element={<ProjectWalletsAdminPage />}
+                    />
+                    <Route
+                      path="/admin/project-wallets/:projetId"
+                      element={<ProjectWalletDetailPage />}
+                    />
+                    <Route path="/admin/contrats" element={<ContratsAdmin />} />
+                    <Route
+                      path="/admin/factures"
+                      element={<FacturesAdminPage />}
+                    />
+
+                    {/* 6. CONTENU : COMMENTAIRES ET CONTACT (placeholders) */}
+                    <Route
+                      path="/admin/commentaires"
+                      element={<CommentairesAdminPage />}
+                    />
+                    <Route path="/admin/contact" element={<ContactAdminPage />} />
+                    <Route
+                      path="/admin/notifications"
+                      element={<NotificationsAdminPage />}
+                    />
+
+                    {/* 7. RÉFÉRENTIELS & PARAMÈTRES */}
+                    <Route
+                      path="/admin/settings"
+                      element={<ProjectSettingsPanel />}
+                    />
+                    <Route
+                      path="/admin/parametres"
+                      element={<ParametresAdminPage />}
+                    />
+                  </Route>
+                </Route>
               </Route>
 
               {/* ==================== REDIRECTIONS ==================== */}
