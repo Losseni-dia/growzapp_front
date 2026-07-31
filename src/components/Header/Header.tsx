@@ -16,6 +16,8 @@ import {
   FiUser,
   FiCheck,
   FiRss,
+  FiMenu,
+  FiX,
 } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
@@ -35,6 +37,7 @@ export default function Header() {
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const adminRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -87,7 +90,15 @@ export default function Header() {
         />
       </Link>
 
-      <nav className={styles.nav}>
+      <button
+        className={styles.hamburgerBtn}
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+        aria-label="Menu"
+      >
+        {showMobileMenu ? <FiX size={24} /> : <FiMenu size={24} />}
+      </button>
+
+      <nav className={`${styles.nav} ${showMobileMenu ? styles.navOpen : ""}`}>
         <div className={styles.navLeft}>
           {user && (
             <>
@@ -259,6 +270,12 @@ export default function Header() {
           </div>
         </div>
       </nav>
+      {showMobileMenu && (
+        <div
+          className={styles.mobileOverlay}
+          onClick={() => setShowMobileMenu(false)}
+        />
+      )}
     </header>
   );
 }

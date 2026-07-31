@@ -256,4 +256,31 @@
   }
 }
 
+@media (max-width: 480px) {
+  .empty, .loading {
+    padding: 4rem 1.5rem;
+  }
+
+  .empty h3 {
+    font-size: 1.5rem;
+  }
+
+  .loading {
+    font-size: 1.5rem;
+  }
+
+  .sidebarContent {
+    padding: 0 1.2rem;
+  }
+
+  .filterGroup {
+    margin-bottom: 1.5rem;
+  }
+
+  .filterGroup label {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

@@ -50,11 +50,24 @@
   margin: 0;
   font-size: 1.8rem;
   font-weight: 900;
+  white-space: nowrap;
   background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-500));
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
+  margin: 5px 0;
 }
+
+.logo {
+    margin-right: 0.5rem;
+  }
+
+  .logo h1 {
+    font-size: 1.3rem;
+  }
+
+  .logo img {
+    height: 32px !important;
+  }
 
 .nav {
   display: flex;
@@ -441,6 +454,76 @@
 
 .profileMenuLogout:hover {
   background: #fdecea;
+}
+
+/* ── Menu hamburger — caché sur desktop par défaut ────────────────── */
+.hamburgerBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--growz-primary);
+  padding: 0.5rem;
+  z-index: 1001;
+}
+
+/* ── Responsive mobile ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hamburgerBtn {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 5rem 1.5rem 2rem;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+
+  .navOpen {
+    right: 0;
+  }
+
+  .navLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .rightSection {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--growz-mint-50);
+  }
+
+  .navLink,
+  .adminBtn {
+    width: 100%;
+    padding: 0.8rem 0;
+  }
+
+  .mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 999;
+  }
 }
 
 /* Pour le responsive mobile */
