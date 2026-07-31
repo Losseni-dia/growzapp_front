@@ -44,9 +44,13 @@ export default function KYCUploadForm() {
   const startVoveId = async () => {
     setVoveLoading(true);
     try {
-      const session = await api.post<VoveIdSession>("/api/kyc/start-voveid");
-      if (session?.widgetUrl) {
-        window.open(session.widgetUrl, "_blank", "width=620,height=720");
+      const response = await api.post<{
+        success: boolean;
+        message: string;
+        data: VoveIdSession;
+      }>("/api/kyc/start-voveid");
+      if (response?.data?.widgetUrl) {
+        window.open(response.data.widgetUrl, "_blank", "width=620,height=720");
         setVoveStarted(true);
         toast.success(
           "Fenêtre de vérification ouverte — suivez les instructions.",

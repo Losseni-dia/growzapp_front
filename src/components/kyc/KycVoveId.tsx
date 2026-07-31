@@ -24,10 +24,13 @@ const KycVoveId = () => {
           withCredentials: true,
         },
       );
-      setSession(response.data);
-
+      setSession(response.data.data);
       // Ouvrir le widget VOVE ID dans une nouvelle fenêtre
-      window.open(response.data.widgetUrl, "_blank", "width=600,height=700");
+      window.open(
+        response.data.data.widgetUrl,
+        "_blank",
+        "width=600,height=700",
+      );
     } catch (err) {
       setError("Erreur lors du démarrage de la vérification. Réessayez.");
       console.error(err);
