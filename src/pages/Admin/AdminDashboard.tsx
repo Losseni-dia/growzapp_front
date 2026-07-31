@@ -23,7 +23,6 @@ export default function DashboardAdmin() {
   const [stats, setStats] = useState({
     totalUsers: 0,
     investissementsEnAttente: 0,
-    retraitsEnAttente: 0,
     montantCollecteSequestre: 0,
     montantCollecteAffiche: 0,
     kycEnAttente: 0,
@@ -43,10 +42,9 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, i, r, s, a, k] = await Promise.all([
+      const [u, i, s, a, k] = await Promise.all([
         api.get<any>("/api/admin/users").catch(() => ({ data: [] })),
         api.get<any>("/api/admin/investissements").catch(() => ({ data: [] })),
-        api.get<any>("/api/transactions/retraits-en-attente").catch(() => []),
         api.get<any>("/api/admin/projet-wallet/solde-total").catch(() => 0),
         api
           .get<any>("/api/admin/projet-wallet/montant-total-collecte")
@@ -59,7 +57,6 @@ export default function DashboardAdmin() {
         investissementsEnAttente: (i.data || []).filter(
           (inv: any) => inv.statutPartInvestissement === "EN_ATTENTE",
         ).length,
-        retraitsEnAttente: r.length || 0,
         montantCollecteSequestre: Number(s) || 0,
         montantCollecteAffiche: Number(a) || 0,
         kycEnAttente: k.length || 0,
@@ -78,10 +75,7 @@ export default function DashboardAdmin() {
     );
   }
 
-  const pendingTotal =
-    stats.investissementsEnAttente +
-    stats.retraitsEnAttente +
-    stats.kycEnAttente;
+  const pendingTotal = stats.investissementsEnAttente + stats.kycEnAttente;
 
   return (
     <div className={styles.page}>
@@ -156,21 +150,6 @@ export default function DashboardAdmin() {
             </span>
             <span className={styles.statLabel}>
               {t("admin.dashboard.investments_pending")}
-            </span>
-          </div>
-        </Link>
-
-        <Link
-          to="/admin/retraits"
-          className={`${styles.statCard} ${stats.retraitsEnAttente > 0 ? styles.statCardAlert : ""}`}
-        >
-          <div className={styles.statIconWrap}>
-            <FiCreditCard size={18} />
-          </div>
-          <div className={styles.statContent}>
-            <span className={styles.statNumber}>{stats.retraitsEnAttente}</span>
-            <span className={styles.statLabel}>
-              {t("admin.dashboard.withdrawals_pending")}
             </span>
           </div>
         </Link>
