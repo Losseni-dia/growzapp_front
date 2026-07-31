@@ -52,20 +52,22 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
   const isFetching = useRef(false);
 
   // ── Fetch des taux depuis le backend ─────────────────────────────────────
-  useEffect(() => {
-    if (isFetching.current) return;
-    isFetching.current = true;
-
-    api
-      .get<Record<string, number>>("/api/currencies/rates")
-      .then((data) => {
-        if (data && typeof data === "object") {
-          CACHED_RATES = data;
-          setRates(data);
-        }
-      })
-      .catch((err) => console.warn("Utilisation des taux par défaut", err));
-  }, []);
+ useEffect(() => {
+   if (isFetching.current) return;
+   isFetching.current = true;
+   api
+     .get<{ success: boolean; message: string; data: Record<string, number> }>(
+       "/api/currencies/rates",
+     )
+     .then((response) => {
+       const data = response.data;
+       if (data && typeof data === "object") {
+         CACHED_RATES = data;
+         setRates(data);
+       }
+     })
+     .catch((err) => console.warn("Utilisation des taux par défaut", err));
+ }, []);
 
   // ── Écoute les changements de localStorage (depuis AuthContext au login) ─
   useEffect(() => {
