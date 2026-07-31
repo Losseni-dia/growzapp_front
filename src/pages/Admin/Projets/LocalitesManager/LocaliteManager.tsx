@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiGlobe } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiGlobe, FiEdit2, FiX } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../ProjectSettings/Manager.module.css";
 
+const emptyForm = { nom: "", codePostal: "", paysNom: "COTE D'IVOIRE" };
+
 export default function LocaliteManager() {
   const { t } = useTranslation();
   const [localites, setLocalites] = useState<any[]>([]);
-  const [formData, setFormData] = useState({ nom: "", codePostal: "", paysNom: "COTE D'IVOIRE" });
+  const [formData, setFormData] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const loadLocalites = async () => {
     try {
@@ -21,12 +24,28 @@ export default function LocaliteManager() {
 
   const countriesCount = new Set(localites.map(l => l.paysNom)).size;
 
-  const handleAdd = async () => {
+  const startEdit = (l: any) => {
+    setEditingId(l.id);
+    setFormData({ nom: l.nom, codePostal: l.codePostal || "", paysNom: l.paysNom || "" });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData(emptyForm);
+  };
+
+  const handleSubmit = async () => {
     if (!formData.nom) return toast.error(t("admin.settings.name_required"));
     try {
-      await api.post("api/localites", formData);
-      toast.success(t("admin.settings.locality_success"));
-      setFormData({ nom: "", codePostal: "", paysNom: "COTE D'IVOIRE" });
+      if (editingId) {
+        await api.put(`api/localites/${editingId}`, formData);
+        toast.success(t("admin.settings.locality_update_success"));
+      } else {
+        await api.post("api/localites", formData);
+        toast.success(t("admin.settings.locality_success"));
+      }
+      setFormData(emptyForm);
+      setEditingId(null);
       loadLocalites();
     } catch (err) { toast.error(t("admin.settings.save_error")); }
   };
@@ -41,7 +60,14 @@ export default function LocaliteManager() {
         <input placeholder={t("admin.settings.city_placeholder")} value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value.toUpperCase()})} />
         <input placeholder={t("admin.settings.zip_placeholder")} value={formData.codePostal} onChange={e => setFormData({...formData, codePostal: e.target.value})} />
         <input placeholder={t("admin.settings.country_placeholder")} value={formData.paysNom} onChange={e => setFormData({...formData, paysNom: e.target.value.toUpperCase()})} />
-        <button onClick={handleAdd} className={styles.btnAdd}><FiPlus /> {t("admin.settings.btn_add")}</button>
+        <button onClick={handleSubmit} className={styles.btnAdd}>
+          {editingId ? <><FiEdit2 /> {t("admin.settings.btn_save")}</> : <><FiPlus /> {t("admin.settings.btn_add")}</>}
+        </button>
+        {editingId && (
+          <button onClick={cancelEdit} className={styles.btnIconDel} title={t("admin.settings.btn_cancel")}>
+            <FiX />
+          </button>
+        )}
       </div>
 
       <table className={styles.table}>
@@ -69,6 +95,9 @@ export default function LocaliteManager() {
                 </div>
               </td>
               <td>
+                <button onClick={() => startEdit(l)} className={styles.btnIconDel} title={t("admin.settings.btn_edit")}>
+                  <FiEdit2 />
+                </button>
                 <button onClick={async () => {
                   if(window.confirm(t("admin.settings.confirm_delete"))) {
                     await api.delete(`api/localites/${l.id}`);

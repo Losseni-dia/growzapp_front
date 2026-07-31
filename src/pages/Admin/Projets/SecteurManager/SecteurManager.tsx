@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiTag } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiTag, FiEdit2, FiX } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 // Importation du CSS depuis le dossier parent
@@ -10,6 +10,7 @@ export default function SecteurManager() {
   const { t } = useTranslation();
   const [secteurs, setSecteurs] = useState<any[]>([]);
   const [newNom, setNewNom] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const loadSecteurs = async () => {
     try {
@@ -22,15 +23,31 @@ export default function SecteurManager() {
 
   useEffect(() => { loadSecteurs(); }, []);
 
-  const handleAdd = async () => {
+  const startEdit = (s: any) => {
+    setEditingId(s.id);
+    setNewNom(s.nom);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setNewNom("");
+  };
+
+  const handleSubmit = async () => {
     if (!newNom.trim()) return;
     try {
-      await api.post("api/secteurs", { nom: newNom });
-      toast.success(t("admin.settings.sector_success"));
+      if (editingId) {
+        await api.put(`api/secteurs/${editingId}`, { nom: newNom });
+        toast.success(t("admin.settings.sector_update_success"));
+      } else {
+        await api.post("api/secteurs", { nom: newNom });
+        toast.success(t("admin.settings.sector_success"));
+      }
       setNewNom("");
+      setEditingId(null);
       loadSecteurs();
-    } catch (err) { 
-      toast.error(t("admin.settings.save_error")); 
+    } catch (err) {
+      toast.error(t("admin.settings.save_error"));
     }
   };
 
@@ -40,8 +57,8 @@ export default function SecteurManager() {
       await api.delete(`api/secteurs/${id}`);
       toast.success(t("admin.settings.delete_success"));
       loadSecteurs();
-    } catch (err) { 
-      toast.error(t("admin.settings.delete_error_linked")); 
+    } catch (err) {
+      toast.error(t("admin.settings.delete_error_linked"));
     }
   };
 
@@ -49,15 +66,20 @@ export default function SecteurManager() {
     <div className={styles.manager}>
       <div className={styles.addBar}>
         <FiTag className={styles.inputIcon} />
-        <input 
-          type="text" 
-          placeholder={t("admin.settings.new_sector_placeholder")} 
+        <input
+          type="text"
+          placeholder={t("admin.settings.new_sector_placeholder")}
           value={newNom}
           onChange={(e) => setNewNom(e.target.value.toUpperCase())}
         />
-        <button onClick={handleAdd} className={styles.btnAdd}>
-          <FiPlus /> {t("admin.settings.btn_add")}
+        <button onClick={handleSubmit} className={styles.btnAdd}>
+          {editingId ? <><FiEdit2 /> {t("admin.settings.btn_save")}</> : <><FiPlus /> {t("admin.settings.btn_add")}</>}
         </button>
+        {editingId && (
+          <button onClick={cancelEdit} className={styles.btnIconDel} title={t("admin.settings.btn_cancel")}>
+            <FiX />
+          </button>
+        )}
       </div>
 
       <div className={styles.list}>
@@ -69,7 +91,7 @@ export default function SecteurManager() {
                 {t("admin.settings.stats_projects", { count: s.projets?.length || 0 })}
               </span>
             </div>
-            
+
             <div className={styles.itemDetails}>
               {s.projets && s.projets.length > 0 ? (
                 <ul className={styles.projectMiniList}>
@@ -83,6 +105,9 @@ export default function SecteurManager() {
               )}
             </div>
 
+            <button onClick={() => startEdit(s)} className={styles.btnIconDel} title={t("admin.settings.btn_edit")}>
+              <FiEdit2 />
+            </button>
             <button onClick={() => handleDelete(s.id)} className={styles.btnIconDel}>
               <FiTrash2 />
             </button>

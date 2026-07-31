@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiPackage } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiPackage, FiEdit2, FiX } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../ProjectSettings/Manager.module.css";
+
+const emptyForm = { nom: "", adresse: "", contact: "", responsable: "", localiteNom: "" };
 
 export default function LocalisationManager() {
   const { t } = useTranslation();
   const [items, setItems] = useState<any[]>([]);
   const [localites, setLocalites] = useState<any[]>([]);
   const [, setLoading] = useState(true);
-  const [formData, setFormData] = useState({ nom: "", adresse: "", contact: "", responsable: "", localiteNom: "" });
+  const [formData, setFormData] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const loadData = async () => {
     try {
@@ -27,12 +30,34 @@ export default function LocalisationManager() {
 
   useEffect(() => { loadData(); }, []);
 
+  const startEdit = (item: any) => {
+    setEditingId(item.id);
+    setFormData({
+      nom: item.nom || "",
+      adresse: item.adresse || "",
+      contact: item.contact || "",
+      responsable: item.responsable || "",
+      localiteNom: item.localiteNom || "",
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData(emptyForm);
+  };
+
   const handleSave = async () => {
     if (!formData.nom || !formData.localiteNom) return toast.error(t("admin.settings.required_fields"));
     try {
-      await api.post("api/localisations", formData);
-      toast.success(t("admin.settings.site_success"));
-      setFormData({ nom: "", adresse: "", contact: "", responsable: "", localiteNom: "" });
+      if (editingId) {
+        await api.put(`api/localisations/${editingId}`, formData);
+        toast.success(t("admin.settings.site_update_success"));
+      } else {
+        await api.post("api/localisations", formData);
+        toast.success(t("admin.settings.site_success"));
+      }
+      setFormData(emptyForm);
+      setEditingId(null);
       loadData();
     } catch (err) { toast.error(t("admin.settings.save_error")); }
   };
@@ -49,7 +74,11 @@ export default function LocalisationManager() {
   return (
     <div className={styles.manager}>
       <div className={styles.addForm}>
-        <h3>{t("admin.settings.add_site_title")}</h3>
+        <h3>
+          {editingId
+            ? t("admin.settings.edit_site_title")
+            : t("admin.settings.add_site_title")}
+        </h3>
         <div className={styles.gridInputs}>
           <input placeholder={t("admin.settings.site_name_placeholder")} value={formData.nom} onChange={e => setFormData({...formData, nom: e.target.value})} />
           <select value={formData.localiteNom} onChange={e => setFormData({...formData, localiteNom: e.target.value})}>
@@ -60,7 +89,16 @@ export default function LocalisationManager() {
           <input placeholder={t("admin.settings.label_contact")} value={formData.contact} onChange={e => setFormData({...formData, contact: e.target.value})} />
           <input placeholder={t("admin.settings.label_address")} className={styles.fullWidth} value={formData.adresse} onChange={e => setFormData({...formData, adresse: e.target.value})} />
         </div>
-        <button onClick={handleSave} className={styles.btnSave}><FiPlus /> {t("admin.settings.btn_add_site")}</button>
+        <div className={styles.actions}>
+          <button onClick={handleSave} className={styles.btnSave}>
+            {editingId ? <><FiEdit2 /> {t("admin.settings.btn_save")}</> : <><FiPlus /> {t("admin.settings.btn_add_site")}</>}
+          </button>
+          {editingId && (
+            <button onClick={cancelEdit} className={styles.btnDel} title={t("admin.settings.btn_cancel")}>
+              <FiX />
+            </button>
+          )}
+        </div>
       </div>
 
       <table className={styles.table}>
@@ -95,6 +133,9 @@ export default function LocalisationManager() {
                 </div>
                 </td>
               <td className={styles.actions}>
+                <button onClick={() => startEdit(item)} className={styles.btnDel} title={t("admin.settings.btn_edit")}>
+                  <FiEdit2 />
+                </button>
                 <button onClick={() => handleDelete(item.id)} className={styles.btnDel}><FiTrash2 /></button>
               </td>
             </tr>
