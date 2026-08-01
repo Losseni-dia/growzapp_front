@@ -1418,6 +1418,8 @@
       "collected_public_hint": "Visible par les investisseurs",
       "real_treasury": "Trésorerie réelle",
       "real_treasury_hint": "Fonds disponibles en coffre",
+      "blocked": "Trésorerie bloquée",
+      "blocked_hint": "En attente de déblocage admin",
       "distribute_btn": "Distribuer des dividendes",
       "history_title": "Historique des mouvements",
       "history_empty": "Aucune transaction pour ce projet",

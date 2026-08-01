@@ -1414,6 +1414,8 @@
       "collected_public_hint": "Visible to investors",
       "real_treasury": "Real treasury",
       "real_treasury_hint": "Funds available in vault",
+      "blocked": "Blocked treasury",
+      "blocked_hint": "Pending admin unlock",
       "distribute_btn": "Distribute dividends",
       "history_title": "Transaction history",
       "history_empty": "No transactions for this project",

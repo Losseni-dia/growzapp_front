@@ -137,6 +137,18 @@ export default function ProjectWalletDetails() {
             {t("admin_wallet.detail.real_treasury_hint")}
           </p>
         </div>
+
+        <div className={`${styles.balanceCard} ${styles.balanceCardBlocked}`}>
+          <div className={styles.balanceLabel}>
+            <FiClock size={14} /> {t("admin_wallet.detail.blocked")}
+          </div>
+          <div className={styles.balanceValue}>
+            {format(report?.soldeBloque || 0, "XOF")}
+          </div>
+          <p className={styles.balanceHint}>
+            {t("admin_wallet.detail.blocked_hint")}
+          </p>
+        </div>
       </div>
 
       {/* ═══════════ ACTION DISTRIBUTION ═══════════ */}

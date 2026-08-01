@@ -71,7 +71,7 @@
    ═══════════════════════════════════════════════════════════════ */
 .balanceGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
   margin-bottom: 20px;
 }
@@ -86,6 +86,14 @@
 
 .balanceCardGold {
   border-left-color: #c9a227;
+}
+
+.balanceCardBlocked {
+  border-left-color: #b8860b;
+}
+
+.balanceCardBlocked .balanceValue {
+  color: #b8860b;
 }
 
 .balanceLabel {
