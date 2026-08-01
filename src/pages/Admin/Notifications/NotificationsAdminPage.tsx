@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiSearch } from "react-icons/fi";
 import { format } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
 import { api } from "../../../service/Api";
@@ -25,18 +25,49 @@ interface NotificationsPage {
   number: number;
 }
 
+type ReadFiltre = "TOUS" | "LUES" | "NON_LUES";
+
 export default function NotificationsAdminPage() {
   const { t, i18n } = useTranslation();
   const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [readFiltre, setReadFiltre] = useState<ReadFiltre>("TOUS");
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const changeReadFiltre = (f: ReadFiltre) => {
+    setPage(0);
+    setReadFiltre(f);
+  };
+
+  const readFiltreLabel = (f: ReadFiltre) => {
+    if (f === "NON_LUES") return t("admin.notifications.filter_unread");
+    if (f === "LUES") return t("admin.notifications.filter_read");
+    return t("admin.notifications.filter_all");
+  };
+
   const { data, isLoading, isError } = useQuery<NotificationsPage>({
-    queryKey: ["admin-notifications", page],
+    queryKey: ["admin-notifications", page, debouncedSearch, readFiltre],
     queryFn: async () => {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        size: "20",
+        ...(debouncedSearch && { search: debouncedSearch }),
+        ...(readFiltre === "LUES" && { isRead: "true" }),
+        ...(readFiltre === "NON_LUES" && { isRead: "false" }),
+      });
       const res = await api.get<{ data: NotificationsPage }>(
-        `/api/admin/notifications?page=${page}&size=20`,
+        `/api/admin/notifications?${params}`,
       );
       return res.data;
     },
@@ -57,6 +88,29 @@ export default function NotificationsAdminPage() {
           })}
         </p>
       </header>
+
+      <div className={styles.toolbar}>
+        <div className={styles.searchBox}>
+          <FiSearch size={15} />
+          <input
+            type="text"
+            placeholder={t("admin.notifications.search_placeholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className={styles.tabs}>
+          {(["TOUS", "NON_LUES", "LUES"] as ReadFiltre[]).map((f) => (
+            <button
+              key={f}
+              className={`${styles.tabBtn} ${readFiltre === f ? styles.tabBtnActive : ""}`}
+              onClick={() => changeReadFiltre(f)}
+            >
+              {readFiltreLabel(f)}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {isLoading ? (
         <div className={styles.loading}>{t("common.loading")}</div>
