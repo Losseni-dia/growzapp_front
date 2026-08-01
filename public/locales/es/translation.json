@@ -497,7 +497,8 @@
       "deleting": "Eliminando...",
       "confirm_delete": "¿Eliminar el artículo \"{{title}}\"? Esta acción es irreversible.",
       "delete_success": "Artículo eliminado",
-      "delete_error": "Error al eliminar"
+      "delete_error": "Error al eliminar",
+      "search_placeholder": "Buscar por título..."
     },
     "comments": {
       "title": "Comentarios",
@@ -515,7 +516,11 @@
       "empty": "Ninguna notificación por el momento",
       "load_error": "Error al cargar las notificaciones",
       "unread": "No leída",
-      "read": "Leída"
+      "read": "Leída",
+      "filter_all": "Todas",
+      "filter_unread": "No leídas",
+      "filter_read": "Leídas",
+      "search_placeholder": "Buscar por título, nombre o correo..."
     },
     "invoices": {
       "title": "Facturas",
@@ -548,6 +553,11 @@
       "confirm_delete": "¿Eliminar este dividendo? Esta acción es irreversible.",
       "delete_success": "Dividendo eliminado",
       "delete_error": "Error al eliminar",
+      "search_placeholder": "Buscar por proyecto o inversor...",
+      "filter_tous": "Todos",
+      "filter_planifie": "Planificados",
+      "filter_paye": "Pagados",
+      "filter_annule": "Anulados",
       "table": {
         "project": "Proyecto",
         "investor": "Inversor",
@@ -672,6 +682,7 @@
       "doc_verso": "Reverso",
       "doc_selfie": "Selfie",
       "doc_missing": "No proporcionado",
+      "search_placeholder": "Buscar por nombre o correo...",
       "btn_approve": "Aprobar",
       "btn_reject": "Rechazar",
       "modal_title": "Motivo del rechazo",
@@ -854,6 +865,7 @@
       "sites": "Sitios de Proyectos",
       "load_error": "Error al cargar los datos",
       "save_error": "Error al guardar",
+      "search_placeholder": "Buscar...",
       "required_fields": "Por favor, complete los campos obligatorios",
       "name_required": "El nombre es obligatorio",
       "confirm_delete": "¿Desea eliminar este elemento?",
@@ -897,6 +909,7 @@
       "locked": "Bloqueado",
       "locked_until": "Bloqueado hasta {{date}}",
       "locked_reason": "Cuenta bloqueada hasta {{date}} tras {{count}} intentos de inicio de sesión fallidos.",
+      "all_roles": "Todos los roles",
       "table": {
         "photo": "Foto",
         "name": "Nombre completo",
