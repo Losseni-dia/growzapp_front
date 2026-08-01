@@ -21,6 +21,9 @@ const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
 const ProjetsPage = lazy(
   () => import("./pages/projet/projetsPage/ProjetsPage"),
 );
+const ProjetsFinancesPage = lazy(
+  () => import("./pages/projet/projetsFinancesPage/ProjetsFinancesPage"),
+);
 const ProjetDetailsPage = lazy(
   () => import("./pages/projet/projetDetails/ProjetDetailsPage"),
 );
@@ -187,6 +190,10 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/projets" element={<ProjetsPage />} />
+              <Route
+                path="/projets-finances"
+                element={<ProjetsFinancesPage />}
+              />
               <Route path="/projet/:id" element={<ProjetDetailsPage />} />
               <Route path="/verifier-contrat" element={<VerifierContrat />} />
               <Route

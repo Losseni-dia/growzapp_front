@@ -27,7 +27,19 @@
   },
   "header": {
     "news": "Actualités",
-    "nearby": "Autour de moi"
+    "nearby": "Autour de moi",
+    "financed_projects": "Projets financés"
+  },
+  "financed_projects_page": {
+    "title": "Projets financés",
+    "subtitle": "{{count}} projet(s) ayant atteint leur objectif de financement",
+    "loading": "Chargement des projets financés...",
+    "toast_error": "Erreur lors du chargement des projets financés",
+    "search_placeholder": "Rechercher un projet, un secteur, une ville...",
+    "empty": {
+      "title": "Aucun projet financé pour le moment",
+      "subtitle": "Revenez bientôt pour découvrir les projets ayant atteint leur objectif."
+    }
   },
   "register_page": {
     "title": "Créer votre compte GrowzApp",

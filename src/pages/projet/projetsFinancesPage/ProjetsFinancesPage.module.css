@@ -1,0 +1,120 @@
+.pageContainer {
+  min-height: 100vh;
+  background: linear-gradient(
+    160deg,
+    var(--growz-slate-50) 0%,
+    var(--growz-mint-50) 35%,
+    var(--growz-bg) 100%
+  );
+  padding: 3rem 4rem 5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 1600px;
+  margin: 0 auto 1.75rem;
+}
+
+.headerIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--growz-primary), var(--growz-green-500));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px var(--growz-veil-20);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--growz-ink);
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+  color: var(--growz-text-muted);
+}
+
+.searchWrapper {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto 2.5rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.9rem 2.6rem 0.9rem 1.2rem;
+  border-radius: var(--growz-radius-lg);
+  border: 1px solid var(--growz-border-subtle);
+  background: var(--growz-elevated);
+  font-size: 0.95rem;
+  color: var(--growz-ink);
+  box-shadow: var(--growz-shadow-sm);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+}
+
+.clearBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: var(--growz-surface);
+  color: var(--growz-text-muted);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 2.8rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.empty,
+.loading {
+  text-align: center;
+  padding: 10rem 2rem;
+  color: var(--growz-text-muted);
+}
+
+.empty h3 {
+  font-size: 2rem;
+  color: var(--growz-primary);
+  margin-bottom: 1rem;
+}
+
+.loading {
+  font-size: 1.5rem;
+  color: var(--growz-primary);
+}
+
+@media (max-width: 720px) {
+  .pageContainer {
+    padding: 2rem 1.25rem 3rem;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+}

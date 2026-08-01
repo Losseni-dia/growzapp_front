@@ -15,6 +15,7 @@ import {
   FiShield,
   FiUser,
   FiCheck,
+  FiCheckCircle,
   FiRss,
   FiMenu,
   FiX,
@@ -121,6 +122,10 @@ export default function Header() {
               <Link to="/news" className={styles.navLink}>
                 <FiRss />
                 <span>{t("header.news")}</span>
+              </Link>
+              <Link to="/projets-finances" className={styles.navLink}>
+                <FiCheckCircle />
+                <span>{t("header.financed_projects")}</span>
               </Link>
               {isAdmin && (
                 <div className={styles.adminWrapper} ref={adminRef}>
