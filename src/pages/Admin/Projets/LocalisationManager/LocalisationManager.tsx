@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiPackage, FiEdit2, FiX } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiPackage, FiEdit2, FiX, FiSearch } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../ProjectSettings/Manager.module.css";
@@ -14,6 +14,17 @@ export default function LocalisationManager() {
   const [, setLoading] = useState(true);
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filteredItems = useMemo(() => {
+    if (!search.trim()) return items;
+    const term = search.trim().toLowerCase();
+    return items.filter(
+      (item) =>
+        (item.nom || "").toLowerCase().includes(term) ||
+        (item.localiteNom || "").toLowerCase().includes(term),
+    );
+  }, [items, search]);
 
   const loadData = async () => {
     try {
@@ -101,6 +112,15 @@ export default function LocalisationManager() {
         </div>
       </div>
 
+      <div className={styles.searchBar}>
+        <FiSearch size={15} />
+        <input
+          placeholder={t("admin.settings.search_placeholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
       <table className={styles.table}>
         <thead>
           <tr>
@@ -111,7 +131,7 @@ export default function LocalisationManager() {
           </tr>
         </thead>
         <tbody>
-          {items.map(item => (
+          {filteredItems.map(item => (
             <tr key={item.id}>
               <td>
                 <strong>{item.nom}</strong><br/>

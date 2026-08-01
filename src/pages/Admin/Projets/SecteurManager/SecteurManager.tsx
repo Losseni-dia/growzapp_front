@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiTag, FiEdit2, FiX } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiTag, FiEdit2, FiX, FiSearch } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 // Importation du CSS depuis le dossier parent
@@ -11,6 +11,13 @@ export default function SecteurManager() {
   const [secteurs, setSecteurs] = useState<any[]>([]);
   const [newNom, setNewNom] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filteredSecteurs = useMemo(() => {
+    if (!search.trim()) return secteurs;
+    const term = search.trim().toLowerCase();
+    return secteurs.filter((s) => (s.nom || "").toLowerCase().includes(term));
+  }, [secteurs, search]);
 
   const loadSecteurs = async () => {
     try {
@@ -82,8 +89,17 @@ export default function SecteurManager() {
         )}
       </div>
 
+      <div className={styles.searchBar}>
+        <FiSearch size={15} />
+        <input
+          placeholder={t("admin.settings.search_placeholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
       <div className={styles.list}>
-        {secteurs.map(s => (
+        {filteredSecteurs.map(s => (
           <div key={s.id} className={styles.itemCard}>
             <div className={styles.itemMain}>
               <span className={styles.itemName}>{s.nom}</span>

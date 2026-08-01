@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../../../service/Api";
-import { FiPlus, FiTrash2, FiGlobe, FiEdit2, FiX } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiGlobe, FiEdit2, FiX, FiSearch } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../ProjectSettings/Manager.module.css";
@@ -12,6 +12,17 @@ export default function LocaliteManager() {
   const [localites, setLocalites] = useState<any[]>([]);
   const [formData, setFormData] = useState(emptyForm);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filteredLocalites = useMemo(() => {
+    if (!search.trim()) return localites;
+    const term = search.trim().toLowerCase();
+    return localites.filter(
+      (l) =>
+        (l.nom || "").toLowerCase().includes(term) ||
+        (l.paysNom || "").toLowerCase().includes(term),
+    );
+  }, [localites, search]);
 
   const loadLocalites = async () => {
     try {
@@ -70,6 +81,15 @@ export default function LocaliteManager() {
         )}
       </div>
 
+      <div className={styles.searchBar}>
+        <FiSearch size={15} />
+        <input
+          placeholder={t("admin.settings.search_placeholder")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
       <table className={styles.table}>
         <thead>
           <tr>
@@ -80,7 +100,7 @@ export default function LocaliteManager() {
           </tr>
         </thead>
         <tbody>
-          {localites.map(l => (
+          {filteredLocalites.map(l => (
             <tr key={l.id}>
               <td><strong>{l.nom}</strong> <small>({l.codePostal})</small></td>
               <td>{l.paysNom}</td>

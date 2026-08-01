@@ -53,6 +53,27 @@
     gap: 15px;
 }
 
+.searchBar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 380px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--growz-veil-10);
+    background: #ffffff;
+    color: var(--growz-text-muted);
+}
+
+.searchBar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.9rem;
+    color: var(--growz-ink);
+}
+
 .fullWidth {
     grid-column: span 2;
 }
