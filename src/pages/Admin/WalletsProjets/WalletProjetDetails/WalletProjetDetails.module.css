@@ -129,8 +129,16 @@
 /* ═══════════════════════════════════════════════════════════════
    ACTION DISTRIBUTION
    ═══════════════════════════════════════════════════════════════ */
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
 .distribTrigger {
-  width: 100%;
+  flex: 1;
+  min-width: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,12 +151,42 @@
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  margin-bottom: 28px;
   transition: 0.15s;
 }
 
 .distribTrigger:hover {
   background: var(--growz-green-50, #eafaf0);
+}
+
+.recalcTrigger {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px dashed #b8860b;
+  background: var(--growz-surface);
+  color: #b8860b;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.recalcTrigger:hover:not(:disabled) {
+  background: #fdf6e3;
+}
+
+.recalcTrigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
 }
 
 /* ═══════════════════════════════════════════════════════════════

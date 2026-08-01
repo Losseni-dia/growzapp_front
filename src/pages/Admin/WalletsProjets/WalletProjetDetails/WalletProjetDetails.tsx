@@ -12,6 +12,7 @@ import {
   FiClock,
   FiUser,
   FiX,
+  FiRefreshCw,
 } from "react-icons/fi";
 import { useCurrency } from "../../../../components/Context/CurrencyContext";
 
@@ -38,6 +39,7 @@ export default function ProjectWalletDetails() {
   const [periode, setPeriode] = useState("");
   const [isDistributing, setIsDistributing] = useState(false);
   const [showDistribModal, setShowDistribModal] = useState(false);
+  const [isRecalculating, setIsRecalculating] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -87,6 +89,30 @@ export default function ProjectWalletDetails() {
       toast.error(err.message || t("admin_wallet.detail.toast_error"));
     } finally {
       setIsDistributing(false);
+    }
+  };
+
+  const handleRecalculer = async () => {
+    try {
+      setIsRecalculating(true);
+      const res = await api.post<any>(
+        `/api/admin/projets/${projetId}/recalculer-collecte`,
+      );
+      if (res?.data?.ecartDetecte) {
+        toast.success(
+          t("admin_wallet.detail.recalc_toast_fixed", {
+            before: format(res.data.montantCollecteAvant, "XOF"),
+            after: format(res.data.montantCollecteApres, "XOF"),
+          }),
+        );
+      } else {
+        toast(t("admin_wallet.detail.recalc_toast_ok") as string);
+      }
+      loadData();
+    } catch (err: any) {
+      toast.error(err.message || t("admin_wallet.detail.toast_error"));
+    } finally {
+      setIsRecalculating(false);
     }
   };
 
@@ -151,13 +177,24 @@ export default function ProjectWalletDetails() {
         </div>
       </div>
 
-      {/* ═══════════ ACTION DISTRIBUTION ═══════════ */}
-      <button
-        className={styles.distribTrigger}
-        onClick={() => setShowDistribModal(true)}
-      >
-        <FiTrendingUp size={16} /> {t("admin_wallet.detail.distribute_btn")}
-      </button>
+      {/* ═══════════ ACTIONS ═══════════ */}
+      <div className={styles.actionsRow}>
+        <button
+          className={styles.distribTrigger}
+          onClick={() => setShowDistribModal(true)}
+        >
+          <FiTrendingUp size={16} /> {t("admin_wallet.detail.distribute_btn")}
+        </button>
+        <button
+          className={styles.recalcTrigger}
+          onClick={handleRecalculer}
+          disabled={isRecalculating}
+          title={t("admin_wallet.detail.recalc_hint") as string}
+        >
+          <FiRefreshCw size={16} className={isRecalculating ? styles.spin : ""} />
+          {t("admin_wallet.detail.recalc_btn")}
+        </button>
+      </div>
 
       {/* ═══════════ HISTORIQUE ═══════════ */}
       <section className={styles.historySection}>
