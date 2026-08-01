@@ -666,7 +666,27 @@
       "modal_user_label": "Usuario:",
       "reason_placeholder": "Ej: Foto del anverso ilegible, documento expirado...",
       "cancel": "Cancelar",
-      "confirm_reject": "Confirmar rechazo"
+      "confirm_reject": "Confirmar rechazo",
+      "tab_pending": "Pendientes ({{count}})",
+      "tab_historique": "Historial",
+      "historique": {
+        "filter_tous": "Todos",
+        "filter_valide": "Validados",
+        "filter_rejete": "Rechazados",
+        "search_placeholder": "Buscar por nombre o correo...",
+        "empty": "Ningún expediente procesado todavía",
+        "load_error": "Error al cargar el historial",
+        "status_valide": "Validado",
+        "status_rejete": "Rechazado",
+        "table": {
+          "name": "Usuario",
+          "status": "Estado",
+          "piece_no": "N° Documento",
+          "expiration": "Expiración",
+          "decision_date": "Fecha de decisión",
+          "motif": "Motivo"
+        }
+      }
     },
     "wallets": {
       "title": "Tesorería de Proyectos",

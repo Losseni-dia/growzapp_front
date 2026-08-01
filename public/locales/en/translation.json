@@ -634,7 +634,27 @@
       "modal_user_label": "User:",
       "reason_placeholder": "E.g.: Front photo illegible, expired document...",
       "cancel": "Cancel",
-      "confirm_reject": "Confirm rejection"
+      "confirm_reject": "Confirm rejection",
+      "tab_pending": "Pending ({{count}})",
+      "tab_historique": "History",
+      "historique": {
+        "filter_tous": "All",
+        "filter_valide": "Approved",
+        "filter_rejete": "Rejected",
+        "search_placeholder": "Search by name or email...",
+        "empty": "No processed applications yet",
+        "load_error": "Error loading history",
+        "status_valide": "Approved",
+        "status_rejete": "Rejected",
+        "table": {
+          "name": "User",
+          "status": "Status",
+          "piece_no": "ID No.",
+          "expiration": "Expiration",
+          "decision_date": "Decision date",
+          "motif": "Reason"
+        }
+      }
     },
     "projects_list": {
       "search_placeholder": "Name, owner, city, sector...",

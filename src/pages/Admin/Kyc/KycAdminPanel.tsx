@@ -13,10 +13,12 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../service/Api";
 import { UserDTO } from "../../../types/user";
+import KycHistoriquePanel from "./KycHistoriquePanel";
 import styles from "./KycAdminPanel.module.css";
 
 type DocType = "recto" | "verso" | "selfie";
 type DocState = "loading" | "ready" | "missing";
+type MainTab = "en_attente" | "historique";
 
 interface ZoomedDoc {
   url: string;
@@ -25,6 +27,7 @@ interface ZoomedDoc {
 
 export const KycAdminPanel = () => {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<MainTab>("en_attente");
   const [pendingUsers, setPendingUsers] = useState<UserDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
@@ -175,7 +178,25 @@ export const KycAdminPanel = () => {
         </div>
       </header>
 
-      {pendingUsers.length === 0 ? (
+      {/* ═══════════ ONGLETS ═══════════ */}
+      <div className={styles.mainTabs}>
+        <button
+          className={`${styles.mainTabBtn} ${activeTab === "en_attente" ? styles.mainTabBtnActive : ""}`}
+          onClick={() => setActiveTab("en_attente")}
+        >
+          {t("admin.kyc.tab_pending", { count: pendingUsers.length })}
+        </button>
+        <button
+          className={`${styles.mainTabBtn} ${activeTab === "historique" ? styles.mainTabBtnActive : ""}`}
+          onClick={() => setActiveTab("historique")}
+        >
+          {t("admin.kyc.tab_historique")}
+        </button>
+      </div>
+
+      {activeTab === "historique" ? (
+        <KycHistoriquePanel />
+      ) : pendingUsers.length === 0 ? (
         <div className={styles.emptyState}>
           <ShieldCheck size={32} />
           <p>{t("admin.kyc.empty")}</p>

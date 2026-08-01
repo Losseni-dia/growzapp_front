@@ -871,7 +871,27 @@
       "modal_user_label": "Utilisateur :",
       "reason_placeholder": "Ex : Photo du recto illisible, document expiré...",
       "cancel": "Annuler",
-      "confirm_reject": "Confirmer le rejet"
+      "confirm_reject": "Confirmer le rejet",
+      "tab_pending": "En attente ({{count}})",
+      "tab_historique": "Historique",
+      "historique": {
+        "filter_tous": "Tous",
+        "filter_valide": "Validés",
+        "filter_rejete": "Rejetés",
+        "search_placeholder": "Rechercher par nom ou email...",
+        "empty": "Aucun dossier traité pour le moment",
+        "load_error": "Erreur lors du chargement de l'historique",
+        "status_valide": "Validé",
+        "status_rejete": "Rejeté",
+        "table": {
+          "name": "Utilisateur",
+          "status": "Statut",
+          "piece_no": "N° Pièce",
+          "expiration": "Expiration",
+          "decision_date": "Date de décision",
+          "motif": "Motif"
+        }
+      }
     },
     "projects_list": {
       "search_placeholder": "Nom, porteur, ville, secteur...",

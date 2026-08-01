@@ -71,6 +71,40 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   ONGLETS PRINCIPAUX (En attente / Historique)
+   ═══════════════════════════════════════════════════════════════ */
+.mainTabs {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--growz-surface);
+  border: 1px solid var(--growz-border);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 22px;
+}
+
+.mainTabBtn {
+  padding: 9px 18px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--growz-slate-700);
+  opacity: 0.65;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mainTabBtn:hover { opacity: 0.9; }
+
+.mainTabBtnActive {
+  background: var(--growz-primary);
+  color: white;
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    EMPTY STATE
    ═══════════════════════════════════════════════════════════════ */
 .emptyState {
