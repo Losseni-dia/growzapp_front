@@ -146,7 +146,7 @@ export default function MesProjetsPage() {
                       {formatCurrency(projet.objectifFinancement, "XOF")}
                     </strong>
                   </div>
-                  <Link to={`/projet/${projet.id}`} className={styles.btnVoir}>
+                  <Link to={`/projet/${projet.slug}`} className={styles.btnVoir}>
                     <FiEye /> {t("user_projects.card.btn_view")}
                   </Link>
 

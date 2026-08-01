@@ -64,8 +64,16 @@ export default function ProjetDetailsPage() {
     if (!id) return;
     try {
       setLoading(true);
+      // Certains liens internes pointent encore vers l'ID numérique du
+      // projet plutôt que son slug (ex: Mes investissements, Mon
+      // portefeuille) — on route vers le bon endpoint selon le cas plutôt
+      // que de systématiquement interroger /slug/{id}, qui échoue pour un
+      // identifiant purement numérique.
+      const isNumericId = /^\d+$/.test(id);
       const projetRes = await api.get<ApiResponse<ProjetDTO>>(
-        buildProjetUrl(`api/projets/slug/${id}`),
+        buildProjetUrl(
+          isNumericId ? `api/projets/${id}` : `api/projets/slug/${id}`,
+        ),
       );
       const projetData = projetRes.data;
       setProjet(projetData);
