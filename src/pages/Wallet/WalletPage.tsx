@@ -283,10 +283,9 @@ export default function WalletPage() {
     );
   }
 
-  const totalBalance = wallet.soldeDisponible + wallet.soldeBloque + wallet.soldeRetirable;
+  const totalBalance = wallet.soldeDisponible + wallet.soldeBloque;
   const pctDispo = totalBalance > 0 ? (wallet.soldeDisponible / totalBalance) * 100 : 0;
   const pctBloque = totalBalance > 0 ? (wallet.soldeBloque / totalBalance) * 100 : 0;
-  const pctRetirable = totalBalance > 0 ? (wallet.soldeRetirable / totalBalance) * 100 : 0;
 
   return (
     <div className={styles.page}>
@@ -320,19 +319,11 @@ export default function WalletPage() {
               <span className={styles.balanceAmount}>{format(wallet.soldeBloque, "XOF")}</span>
             </div>
           </div>
-          <div className={styles.balanceCard}>
-            <span className={styles.balanceDot} style={{ background: "var(--wallet-withdrawable)" }} />
-            <div>
-              <span className={styles.balanceLabel}>{t("wallet.withdrawable")}</span>
-              <span className={styles.balanceAmount}>{format(wallet.soldeRetirable, "XOF")}</span>
-            </div>
-          </div>
         </div>
 
         <div className={styles.distributionBar}>
           <div style={{ width: `${pctDispo}%`, background: "var(--wallet-available)" }} />
           <div style={{ width: `${pctBloque}%`, background: "var(--wallet-blocked)" }} />
-          <div style={{ width: `${pctRetirable}%`, background: "var(--wallet-withdrawable)" }} />
         </div>
       </header>
 

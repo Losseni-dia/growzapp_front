@@ -6,7 +6,6 @@ import type { ProjetSummary } from "./projet";
 export interface WalletSummary {
   soldeDisponible: number;
   soldeBloque: number;
-  soldeRetirable: number;
   soldeTotal?: number;
 }
 

@@ -59,15 +59,8 @@ const ProjectForm = lazy(
 );
 const WalletPage = lazy(() => import("./pages/Wallet/WalletPage"));
 const DepotPage = lazy(() => import("./pages/Depot/DepotPage"));
-const RetraitPage = lazy(() => import("./pages/Retrait/RetraitPage"));
 const DepositCancel = lazy(() => import("./pages/Depot/Cancel/CancelPage"));
 const DepositSuccess = lazy(() => import("./pages/Depot/Success/SuccessPage"));
-const WithdrawCancelPage = lazy(
-  () => import("./pages/Retrait/Cancel/CancelPage"),
-);
-const WithdrawSuccessPage = lazy(
-  () => import("./pages/Retrait/Success/SuccessPage"),
-);
 const MesInvestissementsPage = lazy(
   () => import("./pages/MonEspace/Mes-investissements/MesInvestissementsPage"),
 );
@@ -232,17 +225,8 @@ function App() {
                 <Route path="/projet/edit/:id" element={<ProjectForm />} />
                 <Route path="/wallet" element={<WalletPage />} />
                 <Route path="/depot" element={<DepotPage />} />
-                <Route path="/retrait" element={<RetraitPage />} />
                 <Route path="/depot/success" element={<DepositSuccess />} />
                 <Route path="/depot/cancel" element={<DepositCancel />} />
-                <Route
-                  path="/retrait/success"
-                  element={<WithdrawSuccessPage />}
-                />
-                <Route
-                  path="/retrait/cancel"
-                  element={<WithdrawCancelPage />}
-                />
                 <Route
                   path="/mes-investissements"
                   element={<MesInvestissementsPage />}
