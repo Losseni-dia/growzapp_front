@@ -211,17 +211,23 @@ export default function MonDashboardPorteurPage() {
   const { format } = useCurrency();
   const [dashboard, setDashboard] = useState<PorteurDashboardDTO | null>(null);
   const [loading, setLoading] = useState(true);
-  const [projetSelectionne, setProjetSelectionne] =
-    useState<PorteurProjetLigneDTO | null>(null);
+  const [projetSelectionneId, setProjetSelectionneId] = useState<number | null>(
+    null,
+  );
 
-  useEffect(() => {
-    api
+  const fetchDashboard = () => {
+    return api
       .get<ApiResponse<PorteurDashboardDTO>>(
         buildProjetUrl("/api/projets/mes-projets/dashboard-porteur"),
       )
       .then((res) => setDashboard(res.data))
-      .catch(() => toast.error(t("dashboard.loading")))
-      .finally(() => setLoading(false));
+      .catch(() => toast.error(t("dashboard.loading")));
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchDashboard().finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t, i18n.language]);
 
   if (loading) {
@@ -326,18 +332,25 @@ export default function MonDashboardPorteurPage() {
             <ProjetPorteurCard
               key={ligne.projetId}
               ligne={ligne}
-              onClick={() => setProjetSelectionne(ligne)}
+              onClick={() => setProjetSelectionneId(ligne.projetId)}
             />
           ))}
         </div>
       </section>
 
-      {projetSelectionne && (
-        <ProjetPorteurDetailModal
-          ligne={projetSelectionne}
-          onClose={() => setProjetSelectionne(null)}
-        />
-      )}
+      {projetSelectionneId != null && (() => {
+        const ligne = dashboard.projets.find(
+          (p) => p.projetId === projetSelectionneId,
+        );
+        if (!ligne) return null;
+        return (
+          <ProjetPorteurDetailModal
+            ligne={ligne}
+            onClose={() => setProjetSelectionneId(null)}
+            onActionDone={fetchDashboard}
+          />
+        );
+      })()}
     </div>
   );
 }

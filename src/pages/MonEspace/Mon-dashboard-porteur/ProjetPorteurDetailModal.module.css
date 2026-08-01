@@ -217,6 +217,110 @@
   font-size: 1rem;
 }
 
+/* ── ACTIONS TRÉSORERIE ── */
+.walletActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.walletActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #1B5E20;
+  background: white;
+  color: #1B5E20;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.walletActionBtn:hover:not(:disabled) {
+  background: #1B5E20;
+  color: white;
+}
+
+.walletActionBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #cbd5e1;
+  color: #94a3b8;
+}
+
+.walletPanel {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.walletPanelHint {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.walletPanel label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #1B5E20;
+}
+
+.walletPanel input {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.walletPanel input:focus {
+  outline: none;
+  border-color: #1B5E20;
+}
+
+.walletPanelActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.walletPanelCancel,
+.walletPanelConfirm {
+  flex: 1;
+  padding: 9px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+}
+
+.walletPanelCancel {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.walletPanelConfirm {
+  background: #1B5E20;
+  color: white;
+}
+
+.walletPanelConfirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ── GRAPHIQUES ── */
 .chartBlock h3 {
   margin: 0 0 0.8rem;

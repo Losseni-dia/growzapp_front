@@ -772,21 +772,27 @@
       "blocked": "Bloqueado",
       "detail_btn": "Ver detalle de tesorería",
       "pay_owner_btn": "Pagar al promotor",
+      "unlock_btn": "Desbloquear",
       "modal": {
         "title": "Pago al promotor",
+        "unlock_title": "Desbloquear tesorería",
         "project": "Proyecto",
         "owner": "Promotor",
         "available": "Saldo disponible",
+        "blocked": "Saldo bloqueado",
         "amount_label": "Monto a pagar (FCFA)",
         "reason_label": "Motivo (opcional)",
         "reason_placeholder": "Ej: Cierre del proyecto",
         "confirm": "Confirmar transferencia",
-        "cancel": "Cancelar"
+        "cancel": "Cancelar",
+        "unlock_hint": "Este monto pasa al saldo disponible del wallet del proyecto — el promotor podrá retirarlo o transferirlo libremente, sin validación adicional."
       },
       "toast": {
         "invalid_amount": "Monto inválido",
         "insufficient_funds": "El monto excede el saldo disponible",
+        "insufficient_blocked": "El monto excede el saldo bloqueado",
         "success": "¡{{amount}} pagados con éxito!",
+        "unlock_success": "¡{{amount}} desbloqueados con éxito!",
         "error": "Error en la transferencia"
       }
     },
@@ -1084,6 +1090,26 @@
       "collection_evolution": "Evolución de la recaudación",
       "velocity": "Velocidad de captación",
       "no_data": "Aún no hay suficientes datos"
+    },
+    "wallet": {
+      "withdraw_btn": "Retirar",
+      "transfer_btn": "Transferir a mi wallet",
+      "withdraw_hint": "Retiro Mobile Money desde el saldo disponible de este proyecto.",
+      "transfer_hint": "Transferencia instantánea a su wallet personal — retírelo luego desde Mi Portafolio.",
+      "amount_label": "Monto (FCFA)",
+      "phone_label": "Número Mobile Money",
+      "cancel": "Cancelar",
+      "processing": "Procesando...",
+      "confirm_withdraw": "Confirmar retiro",
+      "confirm_transfer": "Confirmar transferencia",
+      "toast": {
+        "invalid_amount": "Monto inválido",
+        "insufficient_funds": "El monto excede el saldo disponible",
+        "phone_required": "Número Mobile Money requerido",
+        "withdraw_success": "Retiro iniciado con éxito",
+        "transfer_success": "Transferencia realizada con éxito",
+        "error": "Error en la operación"
+      }
     }
   },
   "contract_view": {

@@ -665,21 +665,27 @@
       "blocked": "Bloqué",
       "detail_btn": "Voir détail trésorerie",
       "pay_owner_btn": "Verser au porteur",
+      "unlock_btn": "Débloquer",
       "modal": {
         "title": "Versement au porteur",
+        "unlock_title": "Débloquer la trésorerie",
         "project": "Projet",
         "owner": "Porteur",
         "available": "Solde disponible",
+        "blocked": "Solde bloqué",
         "amount_label": "Montant à verser (FCFA)",
         "reason_label": "Motif (facultatif)",
         "reason_placeholder": "Ex: Clôture du projet",
         "confirm": "Confirmer le virement",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "unlock_hint": "Ce montant passe en solde disponible du wallet projet — le porteur pourra ensuite le retirer ou le transférer librement, sans validation supplémentaire."
       },
       "toast": {
         "invalid_amount": "Montant invalide",
         "insufficient_funds": "Montant supérieur au solde disponible",
+        "insufficient_blocked": "Montant supérieur au solde bloqué",
         "success": "{{amount}} versés avec succès !",
+        "unlock_success": "{{amount}} débloqués avec succès !",
         "error": "Échec du virement"
       }
     },
@@ -1124,6 +1130,26 @@
       "collection_evolution": "Évolution de la collecte",
       "velocity": "Vitesse de levée",
       "no_data": "Pas encore assez de données"
+    },
+    "wallet": {
+      "withdraw_btn": "Retirer",
+      "transfer_btn": "Transférer vers mon wallet",
+      "withdraw_hint": "Retrait Mobile Money depuis le solde disponible de ce projet.",
+      "transfer_hint": "Virement instantané vers votre wallet personnel — à retirer ensuite depuis Mon Portefeuille.",
+      "amount_label": "Montant (FCFA)",
+      "phone_label": "Numéro Mobile Money",
+      "cancel": "Annuler",
+      "processing": "Traitement...",
+      "confirm_withdraw": "Confirmer le retrait",
+      "confirm_transfer": "Confirmer le transfert",
+      "toast": {
+        "invalid_amount": "Montant invalide",
+        "insufficient_funds": "Montant supérieur au solde disponible",
+        "phone_required": "Numéro Mobile Money requis",
+        "withdraw_success": "Retrait initié avec succès",
+        "transfer_success": "Transfert effectué avec succès",
+        "error": "Échec de l'opération"
+      }
     }
   },
   "wallet": {

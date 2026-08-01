@@ -1,6 +1,8 @@
 // src/pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailModal.tsx
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FiX, FiUsers, FiDollarSign, FiGift, FiTarget } from "react-icons/fi";
+import toast from "react-hot-toast";
+import { FiX, FiUsers, FiDollarSign, FiGift, FiTarget, FiSend, FiArrowRightCircle } from "react-icons/fi";
 import {
   AreaChart,
   Area,
@@ -13,17 +15,91 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
+import { api } from "../../../service/Api";
 import type { PorteurProjetLigneDTO } from "../../../types/porteurDashboard";
 import styles from "./ProjetPorteurDetailModal.module.css";
 
 interface Props {
   ligne: PorteurProjetLigneDTO;
   onClose: () => void;
+  onActionDone: () => void;
 }
 
-export default function ProjetPorteurDetailModal({ ligne, onClose }: Props) {
+type PanelType = "retrait" | "transfert" | null;
+
+export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone }: Props) {
   const { t } = useTranslation();
   const { format } = useCurrency();
+
+  const [panel, setPanel] = useState<PanelType>(null);
+  const [montant, setMontant] = useState("");
+  const [phone, setPhone] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const resetPanel = () => {
+    setPanel(null);
+    setMontant("");
+    setPhone("");
+  };
+
+  const handleRetrait = async () => {
+    const montantNum = parseFloat(montant);
+    if (!montantNum || montantNum <= 0) {
+      toast.error(t("porteur.wallet.toast.invalid_amount"));
+      return;
+    }
+    if (montantNum > ligne.soldeDisponibleWallet) {
+      toast.error(t("porteur.wallet.toast.insufficient_funds"));
+      return;
+    }
+    if (!phone.trim()) {
+      toast.error(t("porteur.wallet.toast.phone_required"));
+      return;
+    }
+    try {
+      setSubmitting(true);
+      const idempotencyKey = crypto.randomUUID();
+      await api.post(`/api/projets/${ligne.projetId}/wallet/retirer`, {
+        montant: montantNum,
+        phone,
+        idempotencyKey,
+      });
+      toast.success(t("porteur.wallet.toast.withdraw_success"));
+      resetPanel();
+      onActionDone();
+    } catch (err: any) {
+      toast.error(err.message || t("porteur.wallet.toast.error"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleTransfert = async () => {
+    const montantNum = parseFloat(montant);
+    if (!montantNum || montantNum <= 0) {
+      toast.error(t("porteur.wallet.toast.invalid_amount"));
+      return;
+    }
+    if (montantNum > ligne.soldeDisponibleWallet) {
+      toast.error(t("porteur.wallet.toast.insufficient_funds"));
+      return;
+    }
+    try {
+      setSubmitting(true);
+      const idempotencyKey = crypto.randomUUID();
+      await api.post(`/api/projets/${ligne.projetId}/wallet/transferer`, {
+        montant: montantNum,
+        idempotencyKey,
+      });
+      toast.success(t("porteur.wallet.toast.transfer_success"));
+      resetPanel();
+      onActionDone();
+    } catch (err: any) {
+      toast.error(err.message || t("porteur.wallet.toast.error"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const collecteChart = ligne.historiqueCollecte.map((s) => ({
     dateLabel: new Date(s.date).toLocaleDateString("fr-FR", {
@@ -112,7 +188,7 @@ export default function ProjetPorteurDetailModal({ ligne, onClose }: Props) {
             </div>
           </div>
 
-          {/* ── WALLET (chiffres uniquement, pas de lien de gestion) ── */}
+          {/* ── WALLET ── */}
           <div className={styles.walletRow}>
             <div className={styles.walletItem}>
               <span>{t("porteur.card.available")}</span>
@@ -127,6 +203,89 @@ export default function ProjetPorteurDetailModal({ ligne, onClose }: Props) {
               </strong>
             </div>
           </div>
+
+          {/* ── ACTIONS TRÉSORERIE (retrait / transfert du soldeDisponible) ── */}
+          <div className={styles.walletActions}>
+            <button
+              className={styles.walletActionBtn}
+              disabled={ligne.soldeDisponibleWallet <= 0}
+              onClick={() => setPanel(panel === "retrait" ? null : "retrait")}
+            >
+              <FiSend size={14} /> {t("porteur.wallet.withdraw_btn")}
+            </button>
+            <button
+              className={styles.walletActionBtn}
+              disabled={ligne.soldeDisponibleWallet <= 0}
+              onClick={() => setPanel(panel === "transfert" ? null : "transfert")}
+            >
+              <FiArrowRightCircle size={14} /> {t("porteur.wallet.transfer_btn")}
+            </button>
+          </div>
+
+          {panel === "retrait" && (
+            <div className={styles.walletPanel}>
+              <p className={styles.walletPanelHint}>
+                {t("porteur.wallet.withdraw_hint")}
+              </p>
+              <label>{t("porteur.wallet.amount_label")}</label>
+              <input
+                type="number"
+                value={montant}
+                onChange={(e) => setMontant(e.target.value)}
+                max={ligne.soldeDisponibleWallet}
+              />
+              <label>{t("porteur.wallet.phone_label")}</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+22670123456"
+              />
+              <div className={styles.walletPanelActions}>
+                <button onClick={resetPanel} className={styles.walletPanelCancel}>
+                  {t("porteur.wallet.cancel")}
+                </button>
+                <button
+                  onClick={handleRetrait}
+                  disabled={submitting}
+                  className={styles.walletPanelConfirm}
+                >
+                  {submitting
+                    ? t("porteur.wallet.processing")
+                    : t("porteur.wallet.confirm_withdraw")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {panel === "transfert" && (
+            <div className={styles.walletPanel}>
+              <p className={styles.walletPanelHint}>
+                {t("porteur.wallet.transfer_hint")}
+              </p>
+              <label>{t("porteur.wallet.amount_label")}</label>
+              <input
+                type="number"
+                value={montant}
+                onChange={(e) => setMontant(e.target.value)}
+                max={ligne.soldeDisponibleWallet}
+              />
+              <div className={styles.walletPanelActions}>
+                <button onClick={resetPanel} className={styles.walletPanelCancel}>
+                  {t("porteur.wallet.cancel")}
+                </button>
+                <button
+                  onClick={handleTransfert}
+                  disabled={submitting}
+                  className={styles.walletPanelConfirm}
+                >
+                  {submitting
+                    ? t("porteur.wallet.processing")
+                    : t("porteur.wallet.confirm_transfer")}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* ── GRAPHIQUE COLLECTE AGRANDI ── */}
           <div className={styles.chartBlock}>

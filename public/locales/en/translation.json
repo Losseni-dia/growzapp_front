@@ -774,21 +774,27 @@
       "blocked": "Blocked",
       "detail_btn": "View Treasury Details",
       "pay_owner_btn": "Pay to Owner",
+      "unlock_btn": "Unlock",
       "modal": {
         "title": "Payment to Owner",
+        "unlock_title": "Unlock treasury",
         "project": "Project",
         "owner": "Owner",
         "available": "Available Balance",
+        "blocked": "Blocked Balance",
         "amount_label": "Amount to pay (FCFA)",
         "reason_label": "Reason (optional)",
         "reason_placeholder": "E.g.: Project closing",
         "confirm": "Confirm Transfer",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "unlock_hint": "This amount moves to the project wallet's available balance — the owner can then freely withdraw or transfer it, with no further validation."
       },
       "toast": {
         "invalid_amount": "Invalid amount",
         "insufficient_funds": "Amount exceeds available balance",
+        "insufficient_blocked": "Amount exceeds blocked balance",
         "success": "{{amount}} paid successfully!",
+        "unlock_success": "{{amount}} unlocked successfully!",
         "error": "Transfer failed"
       }
     },
@@ -1099,6 +1105,26 @@
       "collection_evolution": "Collection evolution",
       "velocity": "Fundraising velocity",
       "no_data": "Not enough data yet"
+    },
+    "wallet": {
+      "withdraw_btn": "Withdraw",
+      "transfer_btn": "Transfer to my wallet",
+      "withdraw_hint": "Mobile Money withdrawal from this project's available balance.",
+      "transfer_hint": "Instant transfer to your personal wallet — withdraw it afterwards from My Wallet.",
+      "amount_label": "Amount (FCFA)",
+      "phone_label": "Mobile Money number",
+      "cancel": "Cancel",
+      "processing": "Processing...",
+      "confirm_withdraw": "Confirm withdrawal",
+      "confirm_transfer": "Confirm transfer",
+      "toast": {
+        "invalid_amount": "Invalid amount",
+        "insufficient_funds": "Amount exceeds available balance",
+        "phone_required": "Mobile Money number required",
+        "withdraw_success": "Withdrawal initiated successfully",
+        "transfer_success": "Transfer completed successfully",
+        "error": "Operation failed"
+      }
     }
   },
   "contract_details": {
