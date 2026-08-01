@@ -16,6 +16,7 @@ import {
   FiMap,
   FiSettings,
   FiBell,
+  FiActivity,
 } from "react-icons/fi";
 import styles from "./AdminLayout.module.css";
 
@@ -103,6 +104,11 @@ export default function AdminSidebar({
           to: "/admin/project-wallets",
           label: t("admin.sidebar.project_wallets"),
           icon: <FiCreditCard size={16} />,
+        },
+        {
+          to: "/admin/transactions",
+          label: t("admin.sidebar.transactions"),
+          icon: <FiActivity size={16} />,
         },
         {
           to: "/admin/contrats",

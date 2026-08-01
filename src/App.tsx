@@ -144,6 +144,9 @@ const DividendesAdminPage = lazy(
 const FacturesAdminPage = lazy(
   () => import("./pages/Admin/Factures/FacturesAdminPage"),
 );
+const TransactionsAdminPage = lazy(
+  () => import("./pages/Admin/Transactions/TransactionsAdminPage"),
+);
 const NotificationsAdminPage = lazy(
   () => import("./pages/Admin/Notifications/NotificationsAdminPage"),
 );
@@ -325,6 +328,10 @@ function App() {
                     <Route
                       path="/admin/factures"
                       element={<FacturesAdminPage />}
+                    />
+                    <Route
+                      path="/admin/transactions"
+                      element={<TransactionsAdminPage />}
                     />
 
                     {/* 6. CONTENU : COMMENTAIRES ET CONTACT (placeholders) */}
