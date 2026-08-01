@@ -33,6 +33,12 @@
     display: flex;
     gap: 15px;
     align-items: center;
+    flex-wrap: wrap;
+}
+
+.addBar input {
+    flex: 1;
+    min-width: 160px;
 }
 
 .addGrid {
@@ -161,8 +167,13 @@ select:focus {
 }
 
 /* Tables */
+.tableWrap {
+    overflow-x: auto;
+}
+
 .table {
     width: 100%;
+    min-width: 560px;
     border-spacing: 0 8px;
     border-collapse: separate;
 }
@@ -248,6 +259,26 @@ select:focus {
     background: #e11d48;
     color: white;
     transform: rotate(8deg) scale(1.1);
+}
+
+@media (max-width: 640px) {
+    .addGrid,
+    .gridInputs {
+        grid-template-columns: 1fr;
+    }
+
+    .fullWidth {
+        grid-column: span 1;
+    }
+
+    .statsHeader {
+        padding: 1rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    .searchBar {
+        max-width: none;
+    }
 }
 
 @keyframes slideUp {

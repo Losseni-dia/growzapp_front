@@ -90,6 +90,7 @@ export default function LocaliteManager() {
         />
       </div>
 
+      <div className={styles.tableWrap}>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -129,6 +130,7 @@ export default function LocaliteManager() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

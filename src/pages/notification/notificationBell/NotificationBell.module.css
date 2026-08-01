@@ -39,12 +39,24 @@
   top: 50px;
   right: 0;
   width: 320px;
+  max-width: calc(100vw - 2rem);
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   z-index: 1000;
   animation: slideIn 0.2s ease-out;
   border: 1px solid #eee;
+}
+
+@media (max-width: 480px) {
+  .dropdown {
+    position: fixed;
+    top: 64px;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+    max-width: none;
+  }
 }
 
 .markAllReadBtn {

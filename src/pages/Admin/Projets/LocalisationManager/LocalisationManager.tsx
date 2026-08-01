@@ -121,6 +121,7 @@ export default function LocalisationManager() {
         />
       </div>
 
+      <div className={styles.tableWrap}>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -162,6 +163,7 @@ export default function LocalisationManager() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
