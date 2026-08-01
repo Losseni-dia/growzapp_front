@@ -31,6 +31,7 @@ export default function UsersAdminPage() {
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
   const [page, setPage] = useState(0);
 
   useEffect(() => {
@@ -41,15 +42,26 @@ export default function UsersAdminPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin-users", page, debouncedSearch],
-    queryFn: () =>
-      api.get<ApiResponse<UsersPage>>(
-        `/admin/users?page=${page}&size=20${
-          debouncedSearch ? `&search=${encodeURIComponent(debouncedSearch)}` : ""
-        }`,
-      ),
+  const { data: rolesData } = useQuery({
+    queryKey: ["admin-users-roles"],
+    queryFn: () => api.get<string[]>("/admin/users/roles"),
   });
+  const availableRoles = rolesData || [];
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["admin-users", page, debouncedSearch, roleFilter],
+    queryFn: () => {
+      const params = new URLSearchParams({ page: page.toString(), size: "20" });
+      if (debouncedSearch) params.set("search", debouncedSearch);
+      if (roleFilter) params.set("role", roleFilter);
+      return api.get<ApiResponse<UsersPage>>(`/admin/users?${params}`);
+    },
+  });
+
+  const changeRoleFilter = (value: string) => {
+    setPage(0);
+    setRoleFilter(value);
+  };
 
   const users = data?.data.content || [];
   const totalPages = data?.data.totalPages ?? 1;
@@ -114,16 +126,30 @@ export default function UsersAdminPage() {
         </div>
       </header>
 
-      {/* ═══════════ RECHERCHE ═══════════ */}
-      <div className={styles.searchWrapper}>
-        <FiSearch size={16} className={styles.searchIcon} />
-        <input
-          type="text"
-          placeholder="Rechercher par nom, email, identifiant..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className={styles.searchInput}
-        />
+      {/* ═══════════ RECHERCHE + FILTRE RÔLE ═══════════ */}
+      <div className={styles.toolbar}>
+        <div className={styles.searchWrapper}>
+          <FiSearch size={16} className={styles.searchIcon} />
+          <input
+            type="text"
+            placeholder="Rechercher par nom, email, identifiant..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.searchInput}
+          />
+        </div>
+        <select
+          className={styles.roleSelect}
+          value={roleFilter}
+          onChange={(e) => changeRoleFilter(e.target.value)}
+        >
+          <option value="">{t("admin.users.all_roles")}</option>
+          {availableRoles.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* ═══════════ LISTE ═══════════ */}

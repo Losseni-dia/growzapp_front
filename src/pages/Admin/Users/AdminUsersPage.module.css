@@ -80,9 +80,24 @@
 /* ═══════════════════════════════════════════════════════════════
    RECHERCHE
    ═══════════════════════════════════════════════════════════════ */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 .searchWrapper {
   position: relative;
-  margin-bottom: 16px;
+  flex: 1;
+}
+
+.roleSelect {
+  padding: 0 14px;
+  border: 1px solid var(--growz-border);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--growz-slate-700);
+  background: var(--growz-elevated);
 }
 
 .searchIcon {
