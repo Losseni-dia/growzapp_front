@@ -115,11 +115,88 @@
 }
 
 /* ═══════════ PROJETS ═══════════ */
+.projetsSectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
 .sectionTitle {
   color: var(--growz-primary);
   font-size: 1.3rem;
   font-weight: 800;
-  margin-bottom: 1.2rem;
+  margin: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.searchInput {
+  padding: 9px 14px 9px 34px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 0.9rem;
+  min-width: 220px;
+  background: white;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #1B5E20;
+}
+
+.sortSelect {
+  padding: 9px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 0.9rem;
+  background: white;
+  color: #1e293b;
+  cursor: pointer;
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: #1B5E20;
+}
+
+.noResults {
+  text-align: center;
+  color: #94a3b8;
+  padding: 3rem 1rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 560px) {
+  .toolbar {
+    width: 100%;
+  }
+
+  .searchWrapper,
+  .searchInput {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .projetsGrid {

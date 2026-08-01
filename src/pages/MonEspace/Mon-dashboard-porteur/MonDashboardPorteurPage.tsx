@@ -1,11 +1,12 @@
-// src/pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage.tsx
-import { useEffect, useState } from "react";
+﻿// src/pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage.tsx
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
     FiDollarSign,
     FiGift,
     FiPackage,
+    FiSearch,
     FiTarget,
     FiTrendingUp,
     FiUsers,
@@ -30,6 +31,17 @@ import type {
 } from "../../../types/porteurDashboard";
 import styles from "./MonDashboardPorteurPage.module.css";
 import ProjetPorteurDetailModal from "./ProjetPorteurDetailModal";
+
+// Normalisation : retire accents + met en minuscule, pour une recherche
+// insensible à la casse et aux accents (ex: "ferme" == "Ferme" == "FÉRME")
+const normalize = (str: string): string =>
+  (str || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+type SortKey = "invested" | "investors" | "alpha";
 
 function ProjetPorteurCard({
   ligne,
@@ -214,6 +226,34 @@ export default function MonDashboardPorteurPage() {
   const [projetSelectionneId, setProjetSelectionneId] = useState<number | null>(
     null,
   );
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("invested");
+
+  const projetsAffiches = useMemo(() => {
+    const projets = dashboard?.projets ?? [];
+    const term = normalize(search);
+    const filtres = term
+      ? projets.filter(
+          (p) =>
+            normalize(p.projetLibelle).includes(term) ||
+            normalize(p.projetLibelleTradu || "").includes(term),
+        )
+      : projets;
+
+    return [...filtres].sort((a, b) => {
+      switch (sortBy) {
+        case "investors":
+          return b.nombreInvestisseurs - a.nombreInvestisseurs;
+        case "alpha":
+          return (a.projetLibelleTradu || a.projetLibelle).localeCompare(
+            b.projetLibelleTradu || b.projetLibelle,
+          );
+        case "invested":
+        default:
+          return b.montantCollecte - a.montantCollecte;
+      }
+    });
+  }, [dashboard, search, sortBy]);
 
   const fetchDashboard = () => {
     return api
@@ -326,16 +366,44 @@ export default function MonDashboardPorteurPage() {
 
       {/* ═══════════ PROJETS ═══════════ */}
       <section className={styles.projetsSection}>
-        <h2 className={styles.sectionTitle}>{t("porteur.projects_title")}</h2>
-        <div className={styles.projetsGrid}>
-          {dashboard.projets.map((ligne) => (
-            <ProjetPorteurCard
-              key={ligne.projetId}
-              ligne={ligne}
-              onClick={() => setProjetSelectionneId(ligne.projetId)}
-            />
-          ))}
+        <div className={styles.projetsSectionHeader}>
+          <h2 className={styles.sectionTitle}>{t("porteur.projects_title")}</h2>
+          <div className={styles.toolbar}>
+            <div className={styles.searchWrapper}>
+              <FiSearch size={15} className={styles.searchIcon} />
+              <input
+                type="text"
+                placeholder={t("porteur.search_placeholder") as string}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortKey)}
+              className={styles.sortSelect}
+            >
+              <option value="invested">{t("porteur.sort.invested")}</option>
+              <option value="investors">{t("porteur.sort.investors")}</option>
+              <option value="alpha">{t("porteur.sort.alpha")}</option>
+            </select>
+          </div>
         </div>
+
+        {projetsAffiches.length === 0 ? (
+          <p className={styles.noResults}>{t("porteur.search_empty")}</p>
+        ) : (
+          <div className={styles.projetsGrid}>
+            {projetsAffiches.map((ligne) => (
+              <ProjetPorteurCard
+                key={ligne.projetId}
+                ligne={ligne}
+                onClick={() => setProjetSelectionneId(ligne.projetId)}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {projetSelectionneId != null && (() => {

@@ -1073,6 +1073,13 @@
     "subtitle_plural": "Vista general de sus {{count}} proyectos",
     "empty": "Aún no tiene ningún proyecto",
     "projects_title": "Mis proyectos",
+    "search_placeholder": "Buscar un proyecto...",
+    "search_empty": "Ningún proyecto coincide con su búsqueda",
+    "sort": {
+      "invested": "Más invertido",
+      "investors": "Más inversores",
+      "alpha": "Alfabético"
+    },
     "kpi": {
       "total_collected": "Total recaudado",
       "total_investors": "Inversores (todos los proyectos)",

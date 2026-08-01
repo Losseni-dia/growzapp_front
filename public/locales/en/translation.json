@@ -1088,6 +1088,13 @@
     "subtitle_plural": "Overview of your {{count}} projects",
     "empty": "You don't have any projects yet",
     "projects_title": "My projects",
+    "search_placeholder": "Search a project...",
+    "search_empty": "No project matches your search",
+    "sort": {
+      "invested": "Most invested",
+      "investors": "Most investors",
+      "alpha": "Alphabetical"
+    },
     "kpi": {
       "total_collected": "Total collected",
       "total_investors": "Investors (all projects)",
