@@ -39,8 +39,10 @@ export const KycAdminPanel = () => {
   const fetchPending = async () => {
     try {
       setLoading(true);
-      const data = await api.get<UserDTO[]>("/api/kyc/admin/en-attente");
-      setPendingUsers(data);
+      const res = await api.get<{ data: UserDTO[] }>(
+        "/api/kyc/admin/en-attente",
+      );
+      setPendingUsers(res.data || []);
     } catch (error: any) {
       toast.error(t("admin.kyc.load_error"));
     } finally {
