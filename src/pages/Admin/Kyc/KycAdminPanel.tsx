@@ -3,6 +3,7 @@ import {
   Check,
   FileText,
   Image as ImageIcon,
+  Search,
   ShieldCheck,
   UserCircle,
   X,
@@ -25,10 +26,21 @@ interface ZoomedDoc {
   label: string;
 }
 
+interface PendingPage {
+  content: UserDTO[];
+  totalPages: number;
+  totalElements: number;
+}
+
 export const KycAdminPanel = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<MainTab>("en_attente");
   const [pendingUsers, setPendingUsers] = useState<UserDTO[]>([]);
+  const [totalPendingPages, setTotalPendingPages] = useState(1);
+  const [totalPendingElements, setTotalPendingElements] = useState(0);
+  const [pendingPage, setPendingPage] = useState(0);
+  const [pendingSearch, setPendingSearch] = useState("");
+  const [debouncedPendingSearch, setDebouncedPendingSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -39,13 +51,28 @@ export const KycAdminPanel = () => {
 
   const docKey = (userId: number, type: DocType) => `${userId}-${type}`;
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPendingPage(0);
+      setDebouncedPendingSearch(pendingSearch);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [pendingSearch]);
+
   const fetchPending = async () => {
     try {
       setLoading(true);
-      const res = await api.get<{ data: UserDTO[] }>(
-        "/api/kyc/admin/en-attente",
+      const params = new URLSearchParams({
+        page: pendingPage.toString(),
+        size: "20",
+        ...(debouncedPendingSearch && { search: debouncedPendingSearch }),
+      });
+      const res = await api.get<{ data: PendingPage }>(
+        `/api/kyc/admin/en-attente?${params}`,
       );
-      setPendingUsers(res.data || []);
+      setPendingUsers(res.data.content || []);
+      setTotalPendingPages(res.data.totalPages ?? 1);
+      setTotalPendingElements(res.data.totalElements ?? 0);
     } catch (error: any) {
       toast.error(t("admin.kyc.load_error"));
     } finally {
@@ -55,7 +82,8 @@ export const KycAdminPanel = () => {
 
   useEffect(() => {
     fetchPending();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingPage, debouncedPendingSearch]);
 
   // Charge les miniatures recto/verso/selfie de tous les dossiers en attente
   // dès que la liste est chargée, pour un aperçu immédiat (au lieu d'un
@@ -141,7 +169,7 @@ export const KycAdminPanel = () => {
           : t("admin.kyc.toast_rejected"),
       );
 
-      setPendingUsers(pendingUsers.filter((u) => u.id !== userId));
+      fetchPending();
       setSelectedUser(null);
       setRejectionReason("");
     } catch (error: any) {
@@ -169,10 +197,10 @@ export const KycAdminPanel = () => {
           <h1 className={styles.title}>{t("admin.kyc.title")}</h1>
           <p className={styles.subtitle}>
             {t(
-              pendingUsers.length > 1
+              totalPendingElements > 1
                 ? "admin.kyc.subtitle_plural"
                 : "admin.kyc.subtitle",
-              { count: pendingUsers.length },
+              { count: totalPendingElements },
             )}
           </p>
         </div>
@@ -184,7 +212,7 @@ export const KycAdminPanel = () => {
           className={`${styles.mainTabBtn} ${activeTab === "en_attente" ? styles.mainTabBtnActive : ""}`}
           onClick={() => setActiveTab("en_attente")}
         >
-          {t("admin.kyc.tab_pending", { count: pendingUsers.length })}
+          {t("admin.kyc.tab_pending", { count: totalPendingElements })}
         </button>
         <button
           className={`${styles.mainTabBtn} ${activeTab === "historique" ? styles.mainTabBtnActive : ""}`}
@@ -196,7 +224,18 @@ export const KycAdminPanel = () => {
 
       {activeTab === "historique" ? (
         <KycHistoriquePanel />
-      ) : pendingUsers.length === 0 ? (
+      ) : (
+        <>
+        <div className={styles.pendingSearchWrapper}>
+          <Search size={15} />
+          <input
+            type="text"
+            placeholder={t("admin.kyc.search_placeholder")}
+            value={pendingSearch}
+            onChange={(e) => setPendingSearch(e.target.value)}
+          />
+        </div>
+        {pendingUsers.length === 0 ? (
         <div className={styles.emptyState}>
           <ShieldCheck size={32} />
           <p>{t("admin.kyc.empty")}</p>
@@ -307,6 +346,29 @@ export const KycAdminPanel = () => {
             );
           })}
         </div>
+      )}
+        {totalPendingPages > 1 && (
+          <div className={styles.pendingPagination}>
+            <button
+              onClick={() => setPendingPage((p) => Math.max(0, p - 1))}
+              disabled={pendingPage === 0}
+            >
+              ‹
+            </button>
+            <span>
+              {pendingPage + 1} / {totalPendingPages}
+            </span>
+            <button
+              onClick={() =>
+                setPendingPage((p) => Math.min(totalPendingPages - 1, p + 1))
+              }
+              disabled={pendingPage >= totalPendingPages - 1}
+            >
+              ›
+            </button>
+          </div>
+        )}
+        </>
       )}
 
       {/* ═══════════ MODAL REJET ═══════════ */}
