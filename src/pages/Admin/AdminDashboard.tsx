@@ -42,24 +42,26 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, i, s, a, k] = await Promise.all([
-        api.get<any>("/api/admin/users").catch(() => ({ data: [] })),
-        api.get<any>("/api/admin/investissements").catch(() => ({ data: [] })),
+      const [u, invCounts, s, a, k] = await Promise.all([
+        api
+          .get<any>("/api/admin/users?page=0&size=1")
+          .catch(() => ({ data: { totalElements: 0 } })),
+        api
+          .get<any>("/api/admin/investissements/counts")
+          .catch(() => ({ data: {} })),
         api.get<any>("/api/admin/projet-wallet/solde-total").catch(() => 0),
         api
           .get<any>("/api/admin/projet-wallet/montant-total-collecte")
           .catch(() => 0),
-        api.get<any>("/api/kyc/admin/en-attente").catch(() => []),
+        api.get<any>("/api/kyc/admin/en-attente").catch(() => ({ data: [] })),
       ]);
 
       setStats({
-        totalUsers: u.data?.length || 0,
-        investissementsEnAttente: (i.data || []).filter(
-          (inv: any) => inv.statutPartInvestissement === "EN_ATTENTE",
-        ).length,
+        totalUsers: u.data?.totalElements || 0,
+        investissementsEnAttente: invCounts.data?.EN_ATTENTE || 0,
         montantCollecteSequestre: Number(s) || 0,
         montantCollecteAffiche: Number(a) || 0,
-        kycEnAttente: k.length || 0,
+        kycEnAttente: (k.data || []).length || 0,
       });
     } finally {
       setLoading(false);
