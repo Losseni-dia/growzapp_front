@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { FiGift, FiTrash2 } from "react-icons/fi";
+import { FiGift, FiSearch, FiTrash2 } from "react-icons/fi";
 import { format } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
 import { api } from "../../../service/Api";
@@ -27,21 +27,45 @@ interface DividendesPage {
   totalElements: number;
 }
 
+type StatutFiltre = "TOUS" | "PLANIFIE" | "PAYE" | "ANNULE";
+
 export default function DividendesAdminPage() {
   const { t, i18n } = useTranslation();
   const { format: formatCurrency } = useCurrency();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [statut, setStatut] = useState<StatutFiltre>("TOUS");
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const changeStatut = (s: StatutFiltre) => {
+    setPage(0);
+    setStatut(s);
+  };
+
   const { data, isLoading, isError } = useQuery<DividendesPage>({
-    queryKey: ["admin-dividendes", page],
+    queryKey: ["admin-dividendes", page, debouncedSearch, statut],
     queryFn: async () => {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        size: "20",
+        ...(debouncedSearch && { search: debouncedSearch }),
+        ...(statut !== "TOUS" && { statut }),
+      });
       const res = await api.get<{ data: DividendesPage }>(
-        `/api/admin/dividendes?page=${page}&size=20`,
+        `/api/admin/dividendes?${params}`,
       );
       return res.data;
     },
@@ -80,6 +104,31 @@ export default function DividendesAdminPage() {
           {t("admin.dividends.subtitle", { count: data?.totalElements ?? 0 })}
         </p>
       </header>
+
+      <div className={styles.toolbar}>
+        <div className={styles.searchBox}>
+          <FiSearch size={15} />
+          <input
+            type="text"
+            placeholder={t("admin.dividends.search_placeholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className={styles.tabs}>
+          {(["TOUS", "PLANIFIE", "PAYE", "ANNULE"] as StatutFiltre[]).map(
+            (s) => (
+              <button
+                key={s}
+                className={`${styles.tabBtn} ${statut === s ? styles.tabBtnActive : ""}`}
+                onClick={() => changeStatut(s)}
+              >
+                {t(`admin.dividends.filter_${s.toLowerCase()}`)}
+              </button>
+            ),
+          )}
+        </div>
+      </div>
 
       <div className={styles.tableWrap}>
         <table className={styles.table}>
