@@ -35,7 +35,9 @@ export default function ProjetsPage() {
 
   const [projects, setProjects] = useState<ProjetDTO[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => typeof window !== "undefined" && window.innerWidth > 992,
+  );
 
   const [search, setSearch] = useState("");
   const [secteurFilter, setSecteurFilter] = useState<string>("");

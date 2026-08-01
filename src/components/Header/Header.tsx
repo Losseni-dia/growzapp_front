@@ -69,6 +69,10 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    setShowMobileMenu(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (adminRef.current && !adminRef.current.contains(e.target as Node))
         setShowAdminMenu(false);

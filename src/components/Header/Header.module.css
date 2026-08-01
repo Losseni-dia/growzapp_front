@@ -57,18 +57,6 @@
   margin: 5px 0;
 }
 
-.logo {
-    margin-right: 0.5rem;
-  }
-
-  .logo h1 {
-    font-size: 1.3rem;
-  }
-
-  .logo img {
-    height: 32px !important;
-  }
-
 .nav {
   display: flex;
   align-items: center;
@@ -251,16 +239,12 @@
 }
 
 @media (max-width: 768px) {
-
-  .userName,
-  .directBtnText,
-  .navLink span,
-  .adminBtn span {
-    display: none;
-  }
-
   .header {
     padding: 0.8rem 1rem;
+  }
+
+  .logo img {
+    height: 32px !important;
   }
 }
 
@@ -472,23 +456,28 @@
   .hamburgerBtn {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
   }
 
   .nav {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 80%;
-    max-width: 320px;
-    height: 100vh;
-    background: white;
+    width: 85%;
+    max-width: 340px;
+    height: 100dvh;
+    background: var(--growz-elevated);
     flex-direction: column;
-    align-items: flex-start;
-    padding: 5rem 1.5rem 2rem;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-    transition: right 0.3s ease;
+    align-items: stretch;
+    padding: calc(env(safe-area-inset-top, 0px) + 4.5rem) 1.25rem
+      calc(env(safe-area-inset-bottom, 0px) + 1.5rem);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
+    transition: right 0.3s var(--growz-ease);
     z-index: 1000;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .navOpen {
@@ -497,43 +486,75 @@
 
   .navLeft {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     width: 100%;
-    gap: 0.5rem;
+    gap: 4px;
   }
 
   .rightSection {
     width: 100%;
-    margin-top: 1.5rem;
+    margin: 1.5rem 0 0;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--growz-mint-50);
+    border-top: 1px solid var(--growz-border-subtle);
+  }
+
+  .userSection {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 
   .navLink,
-  .adminBtn {
+  .adminBtn,
+  .loginBtn {
     width: 100%;
-    padding: 0.8rem 0;
+    box-sizing: border-box;
+    padding: 0.85rem 0.75rem;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
+  .navLink span,
+  .adminBtn span {
+    display: inline;
+  }
+
+  .userName {
+    display: inline;
+  }
+
+  /* Les dropdowns (admin, profil) deviennent des panneaux repliables
+     à l'intérieur du tiroir plutôt que des popovers flottants, qui
+     débordaient hors de l'écran sur les petits mobiles. */
+  .adminWrapper,
+  .profileWrapper {
+    width: 100%;
+  }
+
+  .adminMenu,
+  .profileMenu {
+    position: static;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-shadow: none;
+    border: 1px solid var(--growz-border-subtle);
+    margin-top: 6px;
+    animation: none;
+  }
+
+  .profileTrigger {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.6rem 0.5rem;
   }
 
   .mobileOverlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
+    inset: 0;
+    background: rgba(15, 23, 19, 0.45);
     z-index: 999;
-  }
-}
-
-/* Pour le responsive mobile */
-@media (max-width: 768px) {
-  /* On peut décider de garder la cloche même sur mobile car elle est importante */
-  .userName,
-  .directBtnText,
-  .navLink span,
-  .adminBtn span {
-    display: none;
   }
 }
 
