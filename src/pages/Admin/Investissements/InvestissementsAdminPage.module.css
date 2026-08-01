@@ -81,6 +81,29 @@
 .statCancelled { background: #fce4ec; color: #c62828; }
 
 /* ── FILTRES ─────────────────────────────────────────────── */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 380px;
+  padding: 10px 14px;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--growz-border);
+  background: var(--growz-elevated);
+  color: var(--growz-slate-700);
+  opacity: 0.85;
+}
+
+.searchBox input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: var(--growz-slate-700);
+}
+
 .filtres {
   display: flex;
   align-items: center;

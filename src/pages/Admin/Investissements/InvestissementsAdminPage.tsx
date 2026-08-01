@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
 import toast from "react-hot-toast";
@@ -7,6 +7,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiMail,
+  FiSearch,
   FiSend,
   FiTrendingUp,
   FiUser,
@@ -55,6 +56,8 @@ export default function InvestissementsAdminPage() {
   const queryClient = useQueryClient();
   const [filtre, setFiltre] = useState<Filtre>("EN_ATTENTE");
   const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loadingId, setLoadingId] = useState<number | null>(null);
   const [refusModal, setRefusModal] = useState<{
     inv: InvestissementAdmin;
@@ -63,6 +66,14 @@ export default function InvestissementsAdminPage() {
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPage(0);
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const changeFiltre = (f: Filtre) => {
     setPage(0);
@@ -81,12 +92,13 @@ export default function InvestissementsAdminPage() {
   });
 
   const { data, isLoading } = useQuery<InvestissementsPage>({
-    queryKey: ["admin-investissements", filtre, page],
+    queryKey: ["admin-investissements", filtre, page, debouncedSearch],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         size: "20",
         ...(filtre !== "TOUS" && { statut: filtre }),
+        ...(debouncedSearch && { search: debouncedSearch }),
       });
       const res = await api.get<{ data: InvestissementsPage }>(
         `/api/admin/investissements?${params}`,
@@ -186,6 +198,17 @@ export default function InvestissementsAdminPage() {
             <span className={styles.statLabel}>Annulés</span>
           </div>
         </div>
+      </div>
+
+      {/* ── RECHERCHE ─────────────────────────────────────────────── */}
+      <div className={styles.searchBox}>
+        <FiSearch size={16} />
+        <input
+          type="text"
+          placeholder="Rechercher par investisseur ou projet..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
       {/* ── FILTRES ───────────────────────────────────────────────── */}
