@@ -64,9 +64,6 @@ const DepositSuccess = lazy(() => import("./pages/Depot/Success/SuccessPage"));
 const MesInvestissementsPage = lazy(
   () => import("./pages/MonEspace/Mes-investissements/MesInvestissementsPage"),
 );
-const MesProjetsPage = lazy(
-  () => import("./pages/MonEspace/Mes-projets/MesProjetsPage"),
-);
 const MesDividendesPage = lazy(
   () => import("./pages/MonEspace/Mes-dividendes/MesDividendes"),
 );
@@ -231,7 +228,10 @@ function App() {
                   path="/mes-investissements"
                   element={<MesInvestissementsPage />}
                 />
-                <Route path="/mes-projets" element={<MesProjetsPage />} />
+                <Route
+                  path="/mes-projets"
+                  element={<Navigate to="/mon-dashboard-porteur" replace />}
+                />
                 <Route path="/mes-dividendes" element={<MesDividendesPage />} />
                 <Route path="/mes-contrats" element={<MesContratsPage />} />
                 <Route

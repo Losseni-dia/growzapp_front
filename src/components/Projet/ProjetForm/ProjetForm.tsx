@@ -207,7 +207,7 @@ export default function ProjectForm() {
     try {
       await api.post("/api/projets", formData, true);
       toast.success(t("project_form.success"));
-      navigate("/mes-projets");
+      navigate("/mon-dashboard-porteur");
     } catch (err: any) {
       const msg = err.message || t("project_form.errors.server");
       setErrors({ global: msg });

@@ -272,7 +272,7 @@ export default function Dashboard() {
             <FiArrowRight className={styles.statArrow} />
           </Link>
 
-          <Link to="/mes-projets" className={styles.statCard}>
+          <Link to="/mon-dashboard-porteur" className={styles.statCard}>
             <div className={`${styles.statIcon} ${styles.statIconGold}`}>
               <FiPackage size={22} />
             </div>

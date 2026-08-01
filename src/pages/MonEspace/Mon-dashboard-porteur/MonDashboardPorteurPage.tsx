@@ -22,7 +22,7 @@ import {
     YAxis,
 } from "recharts";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { api, buildProjetUrl } from "../../../service/Api";
+import { api, buildFileUrl, buildProjetUrl } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
 import type {
     PorteurDashboardDTO,
@@ -68,7 +68,7 @@ function ProjetPorteurCard({
       <div className={styles.projetHeader}>
         {ligne.projetPoster && (
           <img
-            src={ligne.projetPoster}
+            src={buildFileUrl(ligne.projetPoster)}
             alt={ligne.projetLibelleTradu || ligne.projetLibelle}
             className={styles.projetPoster}
           />

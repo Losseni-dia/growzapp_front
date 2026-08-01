@@ -15,7 +15,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { api } from "../../../service/Api";
+import { api, buildFileUrl } from "../../../service/Api";
 import type { PorteurProjetLigneDTO } from "../../../types/porteurDashboard";
 import styles from "./ProjetPorteurDetailModal.module.css";
 
@@ -127,7 +127,7 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
           <div className={styles.headerLeft}>
             {ligne.projetPoster && (
               <img
-                src={ligne.projetPoster}
+                src={buildFileUrl(ligne.projetPoster)}
                 alt={ligne.projetLibelleTradu || ligne.projetLibelle}
                 className={styles.poster}
               />
