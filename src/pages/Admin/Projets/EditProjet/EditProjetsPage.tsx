@@ -8,6 +8,7 @@ import {
   FiX,
   FiCamera,
   FiInfo,
+  FiTag,
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../../service/Api";
@@ -15,7 +16,15 @@ import {
   dataURLtoFile,
   getCroppedImg,
 } from "../../../../types/utils/CropImage";
+import type { SecteurDTO } from "../../../../types/secteur";
+import ComboBox from "../../../../components/ui/ComboBox/ComboBox";
 import styles from "./EditProjetsPage.module.css";
+
+interface ApiWrapper<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
 
 function toDisplay(val: number | null | undefined): string {
   if (val === null || val === undefined || val === 0) return "";
@@ -37,6 +46,19 @@ export default function EditProjetPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [projet, setProjet] = useState<any>(null);
+
+  // ── SECTEURS (liste + création à la volée, même pattern que ProjetForm) ────
+  const [secteurs, setSecteurs] = useState<string[]>([]);
+  const [loadingSecteurs, setLoadingSecteurs] = useState(false);
+
+  useEffect(() => {
+    setLoadingSecteurs(true);
+    api
+      .get<ApiWrapper<SecteurDTO[]>>("/api/secteurs")
+      .then((res) => setSecteurs((res.data ?? []).map((s) => s.nom)))
+      .catch(() => setSecteurs([]))
+      .finally(() => setLoadingSecteurs(false));
+  }, []);
 
   // ── IMAGE ─────────────────────────────────────────────────────────────────
   const [preview, setPreview] = useState<string | null>(null);
@@ -479,13 +501,17 @@ export default function EditProjetPage() {
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>Secteur</label>
-                  <input
-                    type="text"
-                    value={projet.secteurNom}
-                    onChange={(e) =>
-                      setProjet({ ...projet, secteurNom: e.target.value })
+                  <ComboBox
+                    label="Secteur"
+                    icon={<FiTag />}
+                    placeholder="Secteur d'activité"
+                    value={projet.secteurNom || ""}
+                    onChange={(v) =>
+                      setProjet({ ...projet, secteurNom: v })
                     }
+                    options={secteurs}
+                    loading={loadingSecteurs}
+                    required
                   />
                 </div>
               </div>
