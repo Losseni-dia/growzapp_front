@@ -208,6 +208,34 @@ export default function EditProjetPage() {
     }
   };
 
+  // ── CHANGEMENT DE STATUT (action séparée, déclenche les notifications) ─────
+  const [changingStatut, setChangingStatut] = useState(false);
+  const handleChangerStatut = async (nouveauStatut: string) => {
+    if (!projet || nouveauStatut === projet.statutProjet) return;
+
+    const estValidation = nouveauStatut === "VALIDE";
+    const confirmMessage = estValidation
+      ? "Valider ce projet ? Tous les utilisateurs de la plateforme seront notifiés qu'un nouveau projet est disponible."
+      : `Changer le statut du projet en "${nouveauStatut}" ?`;
+    if (!window.confirm(confirmMessage)) return;
+
+    const ancienStatut = projet.statutProjet;
+    try {
+      setChangingStatut(true);
+      await api.patch(
+        `/api/admin/projets/${projet.id}/statut`,
+        nouveauStatut,
+      );
+      setProjet({ ...projet, statutProjet: nouveauStatut });
+      toast.success("Statut mis à jour");
+    } catch (err: any) {
+      toast.error("Erreur : " + err.message);
+      setProjet({ ...projet, statutProjet: ancienStatut });
+    } finally {
+      setChangingStatut(false);
+    }
+  };
+
   // ── SAUVEGARDE ────────────────────────────────────────────────────────────
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -571,9 +599,8 @@ export default function EditProjetPage() {
                 <label>Statut</label>
                 <select
                   value={projet.statutProjet}
-                  onChange={(e) =>
-                    setProjet({ ...projet, statutProjet: e.target.value })
-                  }
+                  disabled={changingStatut}
+                  onChange={(e) => handleChangerStatut(e.target.value)}
                 >
                   <option value="SOUMIS">🟠 Soumis</option>
                   <option value="VALIDE">🟢 Validé</option>
@@ -581,6 +608,10 @@ export default function EditProjetPage() {
                   <option value="TERMINE">🏁 Terminé</option>
                   <option value="REJETE">🔴 Rejeté</option>
                 </select>
+                <p className={styles.statutHint}>
+                  Le changement de statut est appliqué immédiatement et
+                  séparément du bouton "Enregistrer".
+                </p>
               </div>
             </div>
 

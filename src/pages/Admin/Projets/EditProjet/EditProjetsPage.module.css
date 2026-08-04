@@ -330,6 +330,18 @@
   box-sizing: border-box;
 }
 
+.statutHint {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.field select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .field input:focus,
 .field select:focus {
   outline: none;
