@@ -45,9 +45,7 @@ export default function ProjectWalletsAdminPage() {
   >(null);
   const [montant, setMontant] = useState("");
   const [motif, setMotif] = useState("");
-  const [modalType, setModalType] = useState<"verser" | "debloquer" | null>(
-    null,
-  );
+  const [showModal, setShowModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const fetchData = async () => {
@@ -77,37 +75,6 @@ export default function ProjectWalletsAdminPage() {
     fetchData();
   }, []);
 
-  const handleVerser = async () => {
-    if (!selected || !montant || parseFloat(montant) <= 0) {
-      toast.error(t("admin.wallets.toast.invalid_amount"));
-      return;
-    }
-    const montantNum = parseFloat(montant);
-    if (montantNum > selected.soldeDisponible) {
-      toast.error(t("admin.wallets.toast.insufficient_funds"));
-      return;
-    }
-
-    try {
-      setSubmitting(true);
-      await api.post(
-        `/api/admin/projet-wallet/${selected.projetId}/verser-porteur`,
-        { montant: montantNum, motif: motif || "Versement administrateur" },
-      );
-      toast.success(
-        t("admin.wallets.toast.success", { amount: format(montantNum, "XOF") }),
-      );
-      setModalType(null);
-      setMontant("");
-      setMotif("");
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.message || t("admin.wallets.toast.error"));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   const handleDebloquer = async () => {
     if (!selected || !montant || parseFloat(montant) <= 0) {
       toast.error(t("admin.wallets.toast.invalid_amount"));
@@ -130,7 +97,7 @@ export default function ProjectWalletsAdminPage() {
           amount: format(montantNum, "XOF"),
         }),
       );
-      setModalType(null);
+      setShowModal(false);
       setMontant("");
       setMotif("");
       fetchData();
@@ -287,24 +254,12 @@ export default function ProjectWalletsAdminPage() {
                       setSelected(w);
                       setMontant(w.soldeBloque.toString());
                       setMotif("");
-                      setModalType("debloquer");
+                      setShowModal(true);
                     }}
-                    className={styles.btnSecondary}
+                    className={styles.btnPrimary}
                     disabled={w.soldeBloque <= 0}
                   >
                     {t("admin.wallets.unlock_btn")}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelected(w);
-                      setMontant(w.soldeDisponible.toString());
-                      setMotif("");
-                      setModalType("verser");
-                    }}
-                    className={styles.btnPrimary}
-                    disabled={w.soldeDisponible <= 0}
-                  >
-                    {t("admin.wallets.pay_owner_btn")}
                   </button>
                 </div>
               </div>
@@ -313,22 +268,18 @@ export default function ProjectWalletsAdminPage() {
         </div>
       )}
 
-      {/* ═══════════ MODAL VERSEMENT / DÉBLOCAGE ═══════════ */}
-      {modalType && selected && (
+      {/* ═══════════ MODAL DÉBLOCAGE ═══════════ */}
+      {showModal && selected && (
         <div
           className={styles.modalOverlay}
-          onClick={() => setModalType(null)}
+          onClick={() => setShowModal(false)}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h2>
-                {modalType === "debloquer"
-                  ? t("admin.wallets.modal.unlock_title")
-                  : t("admin.wallets.modal.title")}
-              </h2>
+              <h2>{t("admin.wallets.modal.unlock_title")}</h2>
               <button
                 className={styles.modalClose}
-                onClick={() => setModalType(null)}
+                onClick={() => setShowModal(false)}
               >
                 <FiX size={18} />
               </button>
@@ -340,17 +291,8 @@ export default function ProjectWalletsAdminPage() {
             </p>
 
             <div className={styles.modalBalance}>
-              {modalType === "debloquer" ? (
-                <>
-                  {t("admin.wallets.modal.blocked")} :{" "}
-                  <strong>{format(selected.soldeBloque, "XOF")}</strong>
-                </>
-              ) : (
-                <>
-                  {t("admin.wallets.modal.available")} :{" "}
-                  <strong>{format(selected.soldeDisponible, "XOF")}</strong>
-                </>
-              )}
+              {t("admin.wallets.modal.blocked")} :{" "}
+              <strong>{format(selected.soldeBloque, "XOF")}</strong>
             </div>
 
             <label className={styles.modalLabel}>
@@ -377,20 +319,18 @@ export default function ProjectWalletsAdminPage() {
             />
 
             <p className={styles.modalHint}>
-              {modalType === "debloquer"
-                ? t("admin.wallets.modal.unlock_hint")
-                : t("admin.wallets.modal_hint")}
+              {t("admin.wallets.modal.unlock_hint")}
             </p>
 
             <div className={styles.modalActions}>
               <button
-                onClick={() => setModalType(null)}
+                onClick={() => setShowModal(false)}
                 className={styles.btnCancel}
               >
                 {t("admin.wallets.modal.cancel")}
               </button>
               <button
-                onClick={modalType === "debloquer" ? handleDebloquer : handleVerser}
+                onClick={handleDebloquer}
                 className={styles.btnConfirm}
                 disabled={submitting}
               >
