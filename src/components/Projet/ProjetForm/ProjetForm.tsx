@@ -37,6 +37,7 @@ export default function ProjectForm() {
   const [paysNom, setPaysNom] = useState("");
   const [dateDebut, setDateDebut] = useState("");
   const [dateFin, setDateFin] = useState("");
+  const todayStr = new Date().toISOString().split("T")[0];
 
   const [valuation, setValuation] = useState<number>(0);
   const [valuationDisplay, setValuationDisplay] = useState("");
@@ -127,6 +128,8 @@ export default function ProjectForm() {
     else if (roi > 100) errs.roi = "project_form.errors.required_roi_max";
 
     if (!dateDebut) errs.dateDebut = "project_form.errors.required_date_debut";
+    else if (dateDebut < todayStr)
+      errs.dateDebut = "project_form.errors.date_debut_past";
     if (!dateFin) errs.dateFin = "project_form.errors.required_date_fin";
     else if (dateDebut && dateFin && dateFin < dateDebut)
       errs.dateFin = "project_form.errors.date_fin_before_debut";
@@ -423,7 +426,7 @@ export default function ProjectForm() {
             <div className={styles.fieldGroup}>
               <label>📅 {t("project_form.fields.date_debut")}</label>
               <input
-                type="date" value={dateDebut}
+                type="date" value={dateDebut} min={todayStr}
                 onChange={(e) => { setDateDebut(e.target.value); clearError("dateDebut"); }}
                 className={errors.dateDebut ? styles.inputError : ""}
               />

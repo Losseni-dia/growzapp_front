@@ -282,6 +282,7 @@
       "required_roi": "Le ROI doit être supérieur à 0",
       "required_roi_max": "Le ROI ne peut pas dépasser 100%",
       "required_date_debut": "La date de début est obligatoire",
+      "date_debut_past": "La date de début ne peut pas être dans le passé",
       "required_date_fin": "La date de fin est obligatoire",
       "date_fin_before_debut": "La date de fin doit être après la date de début",
       "coherence": "Incohérence financière — vérifiez objectif, prix et nombre de parts",

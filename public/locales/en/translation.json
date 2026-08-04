@@ -292,6 +292,7 @@
       "required_roi": "ROI must be greater than 0",
       "required_roi_max": "ROI cannot exceed 100%",
       "required_date_debut": "Start date is required",
+      "date_debut_past": "Start date cannot be in the past",
       "required_date_fin": "End date is required",
       "date_fin_before_debut": "End date must be after start date",
       "coherence": "Financial inconsistency — check objective, price and number of shares",
