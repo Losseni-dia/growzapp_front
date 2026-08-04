@@ -131,8 +131,12 @@ export default function ProjetsPage() {
   return (
     <div className={styles.pageContainer}>
       {/* ── BOUTON MOBILE (FAB) ─────────────────────────────────────────── */}
+      {/* Toujours affiché sur mobile (géré par la media query CSS).
+          Sur desktop, sert de secours pour rouvrir le filtre une fois
+          fermé, puisque le sidebar (et son bouton toggle interne) sort
+          alors entièrement de l'écran. */}
       <button
-        className={styles.mobileToggle}
+        className={`${styles.mobileToggle} ${!sidebarOpen ? styles.visible : ""}`}
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label="Toggle Filters"
       >

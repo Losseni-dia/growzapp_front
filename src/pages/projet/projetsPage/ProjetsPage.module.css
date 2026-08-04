@@ -226,6 +226,13 @@
 .mobileToggle:hover { transform: scale(1.1); background: #144418; }
 .mobileToggle:active { transform: scale(0.9); }
 
+/* Sur desktop, le sidebar fermé sort entièrement de l'écran (transform
+   translateX(-100%) plus bas), emportant avec lui son bouton toggle
+   interne. Sans ceci, il n'existe alors plus aucun moyen de le rouvrir. */
+.mobileToggle.visible {
+  display: flex;
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 992px) {
   .main {
