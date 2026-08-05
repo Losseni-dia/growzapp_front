@@ -23,6 +23,7 @@ interface DocumentDTO {
   url: string;
   type: string;
   uploadedAt: string;
+  statut?: string;
 }
 
 export default function ProjetAdminDetail() {
@@ -56,43 +57,61 @@ export default function ProjetAdminDetail() {
     if (id) loadProjetAndDocuments();
   }, [id]);
 
-const handleDownload = async (docId: number, nom: string, type: string) => {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/documents/${docId}/download`,
-      {
-        method: "GET",
-        credentials: "include",
-      },
-    );
+  const handleDownload = async (docId: number, nom: string, type: string) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/documents/${docId}/download`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Téléchargement refusé");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Téléchargement refusé");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download =
+        type === "PDF"
+          ? `${nom}.pdf`
+          : type === "EXCEL"
+            ? `${nom}.xlsx`
+            : type === "CSV"
+              ? `${nom}.csv`
+              : nom;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Téléchargement démarré !");
+    } catch (err: any) {
+      toast.error(err.message || "Échec du téléchargement");
     }
+  };
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download =
-      type === "PDF"
-        ? `${nom}.pdf`
-        : type === "EXCEL"
-          ? `${nom}.xlsx`
-          : type === "CSV"
-            ? `${nom}.csv`
-            : nom;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+  const handleApprouver = async (docId: number) => {
+    try {
+      await api.patch(`api/documents/${docId}/approuver`, {});
+      loadProjetAndDocuments();
+    } catch (err) {
+      console.error("Erreur approbation document", err);
+    }
+  };
 
-    toast.success("Téléchargement démarré !");
-  } catch (err: any) {
-    toast.error(err.message || "Échec du téléchargement");
-  }
-};
+  const handleRejeter = async (docId: number) => {
+    try {
+      await api.patch(`api/documents/${docId}/rejeter`, {});
+      loadProjetAndDocuments();
+    } catch (err) {
+      console.error("Erreur rejet document", err);
+    }
+  };
 
   const getIcon = (type: string) => {
     switch (type.toUpperCase()) {
@@ -136,6 +155,24 @@ const handleDownload = async (docId: number, nom: string, type: string) => {
                   <small>
                     {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
                   </small>
+                  {doc.statut && doc.statut !== "APPROUVE" && (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginTop: 4,
+                        padding: "2px 8px",
+                        borderRadius: 999,
+                        fontSize: "0.75rem",
+                        fontWeight: 700,
+                        background:
+                          doc.statut === "EN_ATTENTE" ? "#fef3c7" : "#fee2e2",
+                        color:
+                          doc.statut === "EN_ATTENTE" ? "#92400e" : "#991b1b",
+                      }}
+                    >
+                      {doc.statut === "EN_ATTENTE" ? "En attente" : "Rejeté"}
+                    </span>
+                  )}
                 </div>
                 <button
                   onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
@@ -144,6 +181,38 @@ const handleDownload = async (docId: number, nom: string, type: string) => {
                 >
                   <FiDownload />
                 </button>
+                {doc.statut === "EN_ATTENTE" && (
+                  <div style={{ display: "flex", gap: 6, marginLeft: 8 }}>
+                    <button
+                      onClick={() => handleApprouver(doc.id)}
+                      style={{
+                        background: "#16a34a",
+                        color: "white",
+                        border: "none",
+                        borderRadius: 6,
+                        padding: "4px 10px",
+                        cursor: "pointer",
+                        fontSize: "0.85rem",
+                      }}
+                    >
+                      Approuver
+                    </button>
+                    <button
+                      onClick={() => handleRejeter(doc.id)}
+                      style={{
+                        background: "#dc2626",
+                        color: "white",
+                        border: "none",
+                        borderRadius: 6,
+                        padding: "4px 10px",
+                        cursor: "pointer",
+                        fontSize: "0.85rem",
+                      }}
+                    >
+                      Rejeter
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -5,4 +5,5 @@ export interface DocumentDTO {
   url: string;
   type: string;
   uploadedAt: string;
+  statut?: string;
 }
