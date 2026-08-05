@@ -10,7 +10,7 @@
   "login_page": {
     "title": "Login to growzapp",
     "subtitle": "Login to manage your investments",
-    "placeholder_login": "Login or email",
+    "placeholder_login": "Login",
     "placeholder_password": "Password",
     "btn_loading": "Logging in...",
     "btn_submit": "Login",

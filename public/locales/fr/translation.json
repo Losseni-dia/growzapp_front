@@ -10,7 +10,7 @@
   "login_page": {
     "title": "Connexion à growzapp",
     "subtitle": "Connectez-vous pour gérer vos investissements",
-    "placeholder_login": "Login ou email",
+    "placeholder_login": "Identifiant",
     "placeholder_password": "Mot de passe",
     "btn_loading": "Connexion...",
     "btn_submit": "Se connecter",

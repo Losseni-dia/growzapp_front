@@ -10,7 +10,7 @@
   "login_page": {
     "title": "Iniciar sesión en growzapp",
     "subtitle": "Inicia sesión para gestionar tus inversiones",
-    "placeholder_login": "Usuario o correo",
+    "placeholder_login": "Usuario",
     "placeholder_password": "Contraseña",
     "btn_loading": "Conectando...",
     "btn_submit": "Iniciar sesión",
