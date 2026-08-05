@@ -87,19 +87,27 @@ const request = async <T = unknown>(
     // ========================================================================
     // MODIFICATION ICI : Exception pour la vérification de contrat
     // ========================================================================
-    if (response.status === 401) {
-      const isVerifyRoute = url.includes("/api/contrats/public/verifier-securise");
+if (response.status === 401) {
+  const isVerifyRoute = url.includes("/api/contrats/public/verifier-securise");
+  // Documents d'un projet : un 401 ici veut dire "visiteur non connecté",
+  // pas "session expirée" — l'appel est secondaire sur une page par
+  // ailleurs publique (détail projet). Rediriger casserait la
+  // consultation publique et créait une faille de routage via le
+  // bouton "Retour" du navigateur (URL /login empilée après la page
+  // publique dans l'historique).
+  const isProjectDocumentsRoute = url.includes("/api/documents/projet/");
 
-      if (!isVerifyRoute) {
-        console.error("401 Unauthorized – Session expirée sur :", url);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-        throw new Error("Session expirée");
-      }
-      // Si c'est la route de vérification, on ne fait rien ici, 
-      // on laisse la logique d'erreur standard ci-dessous prendre le relais.
-    }
+  if (!isVerifyRoute && !isProjectDocumentsRoute) {
+    console.error("401 Unauthorized – Session expirée sur :", url);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+    throw new Error("Session expirée");
+  }
+  // Route exclue : on ne fait rien ici, on laisse la logique d'erreur
+  // standard ci-dessous prendre le relais (le composant appelant gère
+  // lui-même le 401/403 localement).
+}
     // ========================================================================
 if (!response.ok) {
   let msg = "Erreur serveur";
