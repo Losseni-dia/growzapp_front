@@ -1118,6 +1118,21 @@
         "transfer_success": "Transferencia realizada con éxito",
         "error": "Error en la operación"
       }
+    },
+    "documents": {
+      "upload_btn": "Añadir un documento",
+      "upload_hint": "El documento será visible para los inversores tras la aprobación del administrador.",
+      "name_label": "Nombre del documento",
+      "name_placeholder": "Ej: Balance contable T2 2026",
+      "description_label": "Descripción",
+      "description_placeholder": "Describa brevemente el contenido de este documento",
+      "file_label": "Archivo (PDF, Excel, CSV)",
+      "confirm_upload": "Enviar",
+      "toast": {
+        "file_required": "Seleccione un archivo",
+        "name_required": "El nombre del documento es obligatorio",
+        "upload_success": "Documento enviado, pendiente de aprobación del administrador"
+      }
     }
   },
   "contract_view": {

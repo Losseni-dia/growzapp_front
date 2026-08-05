@@ -1133,6 +1133,21 @@
         "transfer_success": "Transfer completed successfully",
         "error": "Operation failed"
       }
+    },
+    "documents": {
+      "upload_btn": "Add a document",
+      "upload_hint": "The document will be visible to investors after admin approval.",
+      "name_label": "Document name",
+      "name_placeholder": "E.g.: Q2 2026 financial statement",
+      "description_label": "Description",
+      "description_placeholder": "Briefly describe what this document contains",
+      "file_label": "File (PDF, Excel, CSV)",
+      "confirm_upload": "Send",
+      "toast": {
+        "file_required": "Please select a file",
+        "name_required": "Document name is required",
+        "upload_success": "Document sent, pending admin approval"
+      }
     }
   },
   "contract_details": {
