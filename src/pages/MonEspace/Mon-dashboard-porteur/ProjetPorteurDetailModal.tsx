@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { FiX, FiUsers, FiDollarSign, FiGift, FiTarget, FiSend, FiArrowRightCircle } from "react-icons/fi";
+import { FiX, FiUsers, FiDollarSign, FiGift, FiTarget, FiSend, FiArrowRightCircle, FiUpload } from "react-icons/fi";
 import {
   AreaChart,
   Area,
@@ -25,7 +25,7 @@ interface Props {
   onActionDone: () => void;
 }
 
-type PanelType = "retrait" | "transfert" | null;
+type PanelType = "retrait" | "transfert" | "document" | null;
 
 export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone }: Props) {
   const { t } = useTranslation();
@@ -35,6 +35,10 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
   const [montant, setMontant] = useState("");
   const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const [docFile, setDocFile] = useState<File | null>(null);
+  const [docNom, setDocNom] = useState("");
+  const [docDescription, setDocDescription] = useState("");
 
   const resetPanel = () => {
     setPanel(null);
@@ -92,6 +96,36 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
         idempotencyKey,
       });
       toast.success(t("porteur.wallet.toast.transfer_success"));
+      resetPanel();
+      onActionDone();
+    } catch (err: any) {
+      toast.error(err.message || t("porteur.wallet.toast.error"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleUploadDocument = async () => {
+    if (!docFile) {
+      toast.error(t("porteur.documents.toast.file_required"));
+      return;
+    }
+    if (!docNom.trim()) {
+      toast.error(t("porteur.documents.toast.name_required"));
+      return;
+    }
+    try {
+      setSubmitting(true);
+      const formData = new FormData();
+      formData.append("file", docFile);
+      formData.append("nom", docNom);
+      formData.append("type", "PDF");
+      formData.append("description", docDescription);
+      await api.post(`/api/documents/projet/${ligne.projetId}`, formData, true);
+      toast.success(t("porteur.documents.toast.upload_success"));
+      setDocFile(null);
+      setDocNom("");
+      setDocDescription("");
       resetPanel();
       onActionDone();
     } catch (err: any) {
@@ -216,9 +250,18 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
             <button
               className={styles.walletActionBtn}
               disabled={ligne.soldeDisponibleWallet <= 0}
-              onClick={() => setPanel(panel === "transfert" ? null : "transfert")}
+              onClick={() =>
+                setPanel(panel === "transfert" ? null : "transfert")
+              }
             >
-              <FiArrowRightCircle size={14} /> {t("porteur.wallet.transfer_btn")}
+              <FiArrowRightCircle size={14} />{" "}
+              {t("porteur.wallet.transfer_btn")}
+            </button>
+            <button
+              className={styles.walletActionBtn}
+              onClick={() => setPanel(panel === "document" ? null : "document")}
+            >
+              <FiUpload size={14} /> {t("porteur.documents.upload_btn")}
             </button>
           </div>
 
@@ -242,7 +285,10 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
                 placeholder="+22670123456"
               />
               <div className={styles.walletPanelActions}>
-                <button onClick={resetPanel} className={styles.walletPanelCancel}>
+                <button
+                  onClick={resetPanel}
+                  className={styles.walletPanelCancel}
+                >
                   {t("porteur.wallet.cancel")}
                 </button>
                 <button
@@ -253,6 +299,52 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
                   {submitting
                     ? t("porteur.wallet.processing")
                     : t("porteur.wallet.confirm_withdraw")}
+                </button>
+              </div>
+            </div>
+          )}
+          {panel === "document" && (
+            <div className={styles.walletPanel}>
+              <p className={styles.walletPanelHint}>
+                {t("porteur.documents.upload_hint")}
+              </p>
+              <label>{t("porteur.documents.name_label")}</label>
+              <input
+                type="text"
+                value={docNom}
+                onChange={(e) => setDocNom(e.target.value)}
+                placeholder={t("porteur.documents.name_placeholder") || ""}
+              />
+              <label>{t("porteur.documents.description_label")}</label>
+              <textarea
+                value={docDescription}
+                onChange={(e) => setDocDescription(e.target.value)}
+                placeholder={
+                  t("porteur.documents.description_placeholder") || ""
+                }
+                rows={3}
+              />
+              <label>{t("porteur.documents.file_label")}</label>
+              <input
+                type="file"
+                accept=".pdf,.xls,.xlsx,.csv"
+                onChange={(e) => setDocFile(e.target.files?.[0] || null)}
+              />
+              <div className={styles.walletPanelActions}>
+                <button
+                  onClick={resetPanel}
+                  className={styles.walletPanelCancel}
+                >
+                  {t("porteur.wallet.cancel")}
+                </button>
+                <button
+                  onClick={handleUploadDocument}
+                  disabled={submitting}
+                  className={styles.walletPanelConfirm}
+                >
+                  {submitting
+                    ? t("porteur.wallet.processing")
+                    : t("porteur.documents.confirm_upload")}
                 </button>
               </div>
             </div>
@@ -271,7 +363,10 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
                 max={ligne.soldeDisponibleWallet}
               />
               <div className={styles.walletPanelActions}>
-                <button onClick={resetPanel} className={styles.walletPanelCancel}>
+                <button
+                  onClick={resetPanel}
+                  className={styles.walletPanelCancel}
+                >
                   {t("porteur.wallet.cancel")}
                 </button>
                 <button
