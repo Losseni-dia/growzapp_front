@@ -219,7 +219,7 @@ export default function EditProjetPage() {
     formData.append("nom", docNom.trim());
     formData.append("type", selectedDoc.type.includes("pdf") ? "PDF" : "IMAGE");
     try {
-      await api.post(`/api/documents/projet/${id}`, formData);
+      await api.post(`/api/documents/projet/${projet.id}`, formData);
       toast.success("Document ajouté !");
       setSelectedDoc(null);
       setDocNom("");
