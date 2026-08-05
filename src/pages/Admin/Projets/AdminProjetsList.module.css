@@ -179,6 +179,7 @@
 
 /* ── CARTE ──────────────────────────────────────────────── */
 .card {
+  position: relative;
   background: white;
   border-radius: 16px;
   overflow: hidden;

@@ -32,6 +32,7 @@ interface ProjetAdmin {
   secteurNom?: string;
   localiteNom?: string;
   createdAt?: string;
+  documentsEnAttente?: number;
 }
 
 type SortKey = "recent" | "ancien" | "collecte" | "objectif";
@@ -317,6 +318,25 @@ export default function AdminProjetsList() {
           return (
             <div key={p.id} className={styles.card}>
               <div className={styles.cardAccent} />
+              {!!p.documentsEnAttente && p.documentsEnAttente > 0 && (
+                <div
+                  title={`${p.documentsEnAttente} document(s) en attente de validation`}
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    background: "#f59e0b",
+                    color: "white",
+                    borderRadius: "999px",
+                    padding: "2px 8px",
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    zIndex: 2,
+                  }}
+                >
+                  📄 {p.documentsEnAttente}
+                </div>
+              )}
               <div className={styles.posterWrapper}>
                 {p.poster ? (
                   <img
