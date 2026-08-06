@@ -94,6 +94,11 @@ export default function AdminSidebar({
           label: t("admin.sidebar.dividends"),
           icon: <FiGift size={16} />,
         },
+        {
+          to: "/admin/documents",
+          label: t("admin.sidebar.documents"),
+          icon: <FiFileText size={16} />,
+        },
       ],
     });
 
