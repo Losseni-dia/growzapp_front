@@ -908,6 +908,8 @@
       "by": "Por",
       "real_balance": "saldo real",
       "btn_docs": "Documentos",
+      "btn_administer": "Administrar",
+      "btn_revaloriser": "Revalorizar",
       "btn_edit": "Editar",
       "btn_delete": "Eliminar",
       "btn_validate": "Validar",

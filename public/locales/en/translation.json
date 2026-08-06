@@ -914,9 +914,13 @@
       "btn_validate": "Validate",
       "btn_reject": "Reject",
       "btn_wallet": "Project Wallet",
+      "btn_administer": "Administer",
+      "btn_revaloriser": "Revalue",
       "btn_public": "View Project (Public)",
       "btn_view": "View",
-      "confirm_delete": "Permanently delete project \"{{name}}\"? This action is irreversible."
+      "confirm_delete": "Permanently delete project \"{{name}}\"? This action is irreversible.",
+      "delete_success": "Project deleted",
+      "delete_error": "Deletion failed"
     },
     "settings": {
       "analytics": "Global Analytics",

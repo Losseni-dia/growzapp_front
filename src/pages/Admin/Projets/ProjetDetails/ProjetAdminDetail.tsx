@@ -1,6 +1,7 @@
 // src/pages/Admin/ProjetAdminDetail.tsx
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../../service/Api";
 import DocumentUpload from "../../../../components/DocumentUpload/DocumentUpload";
 import { useAuth } from "../../../../components/Context/AuthContext";
@@ -34,6 +35,7 @@ export default function ProjetAdminDetail() {
   const { user } = useAuth();
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [showRevaloriser, setShowRevaloriser] = useState(false);
   const [nouvelleValorisation, setNouvelleValorisation] = useState("");
   const [motifRevalorisation, setMotifRevalorisation] = useState("");
@@ -119,37 +121,52 @@ export default function ProjetAdminDetail() {
     }
   };
 
-  const handleSupprimer = async () => {
-    if (!projet) return;
-    if (!window.confirm(`Supprimer définitivement "${projet.libelle}" ?`))
-      return;
-    try {
-      await api.delete(`api/admin/projets/${projet.id}`);
-      toast.success("Projet supprimé");
-      navigate("/admin/projets");
-    } catch (err: any) {
-      toast.error(err.message || "Échec de la suppression");
-    }
-  };
+ const handleSupprimer = async () => {
+   if (!projet) return;
+   if (
+     !window.confirm(
+       t("admin.projects.confirm_delete", { name: projet.libelle }) as string,
+     )
+   )
+     return;
+   try {
+     await api.delete(`api/admin/projets/${projet.id}`);
+     toast.success(t("admin.projects.delete_success") as string);
+     navigate("/admin/projets");
+   } catch (err: any) {
+     toast.error(err.message || (t("admin.projects.delete_error") as string));
+   }
+ };
 
   const handleRevaloriser = async () => {
     if (!nouvelleValorisation || parseFloat(nouvelleValorisation) <= 0) {
-      toast.error("Valorisation invalide");
+      toast.error(
+        t("admin.projects_list.revalorisation.toast_invalid") as string,
+      );
       return;
     }
     try {
       setSubmitting(true);
       await api.patch(`api/admin/projets/${projet?.id}/revaloriser`, {
         nouvelleValorisation: parseFloat(nouvelleValorisation),
-        motif: motifRevalorisation || "Réévaluation manuelle",
+        motif:
+          motifRevalorisation ||
+          (t(
+            "admin.projects_list.revalorisation.reason_placeholder",
+          ) as string),
       });
-      toast.success("Projet réévalué avec succès");
+      toast.success(
+        t("admin.projects_list.revalorisation.toast_success") as string,
+      );
       setShowRevaloriser(false);
       setNouvelleValorisation("");
       setMotifRevalorisation("");
       loadProjetAndDocuments();
     } catch (err: any) {
-      toast.error(err.message || "Échec de la réévaluation");
+      toast.error(
+        err.message ||
+          (t("admin.projects_list.revalorisation.toast_error") as string),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -175,6 +192,12 @@ export default function ProjetAdminDetail() {
       <div className={styles.headerRow}>
         <h1 className={styles.title}>Administration : {projet.libelle}</h1>
         <div className={styles.headerActions}>
+          <Link
+            to={`/admin/projets/edit/${projet.slug || projet.id}`}
+            className={styles.btnModifier}
+          >
+            Modifier
+          </Link>
           <button
             className={styles.btnRevaloriser}
             onClick={() => {

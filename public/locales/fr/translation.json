@@ -800,6 +800,8 @@
       "by": "Par",
       "real_balance": "séquestré réel",
       "btn_docs": "Documents",
+      "btn_administer": "Administrer",
+      "btn_revaloriser": "Réévaluer",
       "btn_edit": "Modifier",
       "btn_delete": "Supprimer",
       "btn_validate": "Valider",
@@ -807,7 +809,9 @@
       "btn_wallet": "Portefeuille projet",
       "btn_public": "Voir le projet (public)",
       "btn_view": "Voir",
-      "confirm_delete": "Supprimer définitivement le projet \"{{name}}\" ? Cette action est irréversible."
+      "confirm_delete": "Supprimer définitivement le projet \"{{name}}\" ? Cette action est irréversible.",
+      "delete_success": "Projet supprimé",
+      "delete_error": "Échec de la suppression"
     },
     "settings": {
       "title": "Configuration des Projets",
