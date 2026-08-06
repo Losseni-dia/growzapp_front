@@ -2,22 +2,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import {
-  FiFileText,
-  FiSave,
-  FiUpload,
-  FiX,
   FiCamera,
   FiInfo,
+  FiSave,
   FiTag,
+  FiUpload
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
+import ComboBox from "../../../../components/ui/ComboBox/ComboBox";
 import { api } from "../../../../service/Api";
+import type { SecteurDTO } from "../../../../types/secteur";
 import {
   dataURLtoFile,
   getCroppedImg,
 } from "../../../../types/utils/CropImage";
-import type { SecteurDTO } from "../../../../types/secteur";
-import ComboBox from "../../../../components/ui/ComboBox/ComboBox";
 import styles from "./EditProjetsPage.module.css";
 
 interface ApiWrapper<T> {
@@ -70,11 +68,6 @@ export default function EditProjetPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // ── DOCUMENTS ─────────────────────────────────────────────────────────────
-  const [uploadingDoc, setUploadingDoc] = useState(false);
-  const [selectedDoc, setSelectedDoc] = useState<File | null>(null);
-  const [docNom, setDocNom] = useState("");
-  const docInputRef = useRef<HTMLInputElement>(null);
 
   // ── DISPLAYS NUMÉRIQUES ───────────────────────────────────────────────────
   const [objectifDisplay, setObjectifDisplay] = useState("");
@@ -200,34 +193,6 @@ export default function EditProjetPage() {
     setRawPreview(null);
     setCrop({ x: 0, y: 0 });
     setZoom(1);
-  };
-
-  // ── DOCUMENTS ─────────────────────────────────────────────────────────────
-  const handleDocSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedDoc(file);
-      setDocNom(file.name.split(".").slice(0, -1).join("."));
-    }
-  };
-
-  const uploadDocument = async () => {
-    if (!selectedDoc || !docNom.trim()) return toast.error("Nom requis");
-    setUploadingDoc(true);
-    const formData = new FormData();
-    formData.append("file", selectedDoc);
-    formData.append("nom", docNom.trim());
-    formData.append("type", selectedDoc.type.includes("pdf") ? "PDF" : "IMAGE");
-    try {
-      await api.post(`/api/documents/projet/${projet.id}`, formData);
-      toast.success("Document ajouté !");
-      setSelectedDoc(null);
-      setDocNom("");
-    } catch {
-      toast.error("Échec de l'upload");
-    } finally {
-      setUploadingDoc(false);
-    }
   };
 
   // ── CHANGEMENT DE STATUT (action séparée, déclenche les notifications) ─────
@@ -433,54 +398,6 @@ export default function EditProjetPage() {
               onChange={handlePhotoChange}
             />
           </section>
-
-          {/* DOCUMENTS */}
-          <section className={styles.section}>
-            <h3>
-              <FiFileText /> Pièces Jointes
-            </h3>
-            <div className={styles.docUploadZone}>
-              <input
-                ref={docInputRef}
-                type="file"
-                style={{ display: "none" }}
-                onChange={handleDocSelect}
-              />
-              {!selectedDoc ? (
-                <button
-                  type="button"
-                  onClick={() => docInputRef.current?.click()}
-                  className={styles.btnAddDoc}
-                >
-                  <FiUpload /> Choisir un document
-                </button>
-              ) : (
-                <div className={styles.selectedDoc}>
-                  <input
-                    type="text"
-                    value={docNom}
-                    onChange={(e) => setDocNom(e.target.value)}
-                    placeholder="Nom"
-                  />
-                  <button
-                    type="button"
-                    onClick={uploadDocument}
-                    disabled={uploadingDoc}
-                    className={styles.btnConfirmDoc}
-                  >
-                    {uploadingDoc ? "..." : "OK"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedDoc(null)}
-                    className={styles.btnCancelDoc}
-                  >
-                    <FiX />
-                  </button>
-                </div>
-              )}
-            </div>
-          </section>
         </aside>
 
         {/* ── FORMULAIRE ─────────────────────────────────────────────────── */}
@@ -603,7 +520,6 @@ export default function EditProjetPage() {
                   <input
                     type="date"
                     value={projet.dateDebut?.split("T")[0] || ""}
-                    min={new Date().toISOString().split("T")[0]}
                     onChange={(e) =>
                       setProjet({ ...projet, dateDebut: e.target.value })
                     }
