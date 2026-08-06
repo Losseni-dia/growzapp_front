@@ -1,0 +1,136 @@
+.page {
+  padding: 2rem;
+}
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.subtitle {
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  flex: 1;
+  min-width: 200px;
+}
+.searchBox input {
+  border: none;
+  outline: none;
+  flex: 1;
+}
+.filters {
+  display: flex;
+  gap: 0.5rem;
+}
+.filterBtn,
+.filterActive {
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.filterActive {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.tableWrapper {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.docDescription {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+.badgePending {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.badgeRejected {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.badgeApproved {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.iconBtn {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+}
+.approveBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.rejectBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.empty,
+.error {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
