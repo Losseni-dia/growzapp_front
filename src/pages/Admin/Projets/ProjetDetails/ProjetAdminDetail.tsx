@@ -11,7 +11,13 @@ import {
   FiDownload,
   FiFileText,
   FiImage,
-  FiFile, // Icône existante et parfaite pour Excel/CSV
+  FiFile,
+  FiArrowLeft,
+  FiEdit2,
+  FiTrendingUp,
+  FiTrash2,
+  FiCheck,
+  FiX,
 } from "react-icons/fi";
 import { ApiResponse } from "../../../../types/common";
 import { ProjetDTO } from "../../../../types/projet";
@@ -33,9 +39,9 @@ export default function ProjetAdminDetail() {
   const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-
   const navigate = useNavigate();
   const { t } = useTranslation();
+
   const [showRevaloriser, setShowRevaloriser] = useState(false);
   const [nouvelleValorisation, setNouvelleValorisation] = useState("");
   const [motifRevalorisation, setMotifRevalorisation] = useState("");
@@ -43,19 +49,16 @@ export default function ProjetAdminDetail() {
 
   const loadProjetAndDocuments = async () => {
     if (!id) return;
-
     try {
       setLoading(true);
-
       const [projetRes, docsRes] = await Promise.all([
         api.get<ApiResponse<ProjetDTO>>(`api/projets/${id}`),
         api.get<ApiResponse<DocumentDTO[]>>(`api/documents/projet/${id}`),
       ]);
-
       setProjet(projetRes.data);
       setDocuments(docsRes.data || []);
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors du chargement du projet");
+      toast.error(err.message || (t("admin.documents.load_error") as string));
     } finally {
       setLoading(false);
     }
@@ -69,17 +72,12 @@ export default function ProjetAdminDetail() {
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/documents/${docId}/download`,
-        {
-          method: "GET",
-          credentials: "include",
-        },
+        { method: "GET", credentials: "include" },
       );
-
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || "Téléchargement refusé");
+        throw new Error(errorText || "Download refused");
       }
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -96,47 +94,47 @@ export default function ProjetAdminDetail() {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-
-      toast.success("Téléchargement démarré !");
     } catch (err: any) {
-      toast.error(err.message || "Échec du téléchargement");
+      toast.error(err.message);
     }
   };
 
   const handleApprouver = async (docId: number) => {
     try {
       await api.patch(`api/documents/${docId}/approuver`, {});
+      toast.success(t("admin.documents.toast.approved") as string);
       loadProjetAndDocuments();
-    } catch (err) {
-      console.error("Erreur approbation document", err);
+    } catch {
+      toast.error(t("admin.documents.toast.error") as string);
     }
   };
 
   const handleRejeter = async (docId: number) => {
     try {
       await api.patch(`api/documents/${docId}/rejeter`, {});
+      toast.success(t("admin.documents.toast.rejected") as string);
       loadProjetAndDocuments();
-    } catch (err) {
-      console.error("Erreur rejet document", err);
+    } catch {
+      toast.error(t("admin.documents.toast.error") as string);
     }
   };
 
- const handleSupprimer = async () => {
-   if (!projet) return;
-   if (
-     !window.confirm(
-       t("admin.projects.confirm_delete", { name: projet.libelle }) as string,
-     )
-   )
-     return;
-   try {
-     await api.delete(`api/admin/projets/${projet.id}`);
-     toast.success(t("admin.projects.delete_success") as string);
-     navigate("/admin/projets");
-   } catch (err: any) {
-     toast.error(err.message || (t("admin.projects.delete_error") as string));
-   }
- };
+  const handleSupprimer = async () => {
+    if (!projet) return;
+    if (
+      !window.confirm(
+        t("admin.projects.confirm_delete", { name: projet.libelle }) as string,
+      )
+    )
+      return;
+    try {
+      await api.delete(`api/admin/projets/${projet.id}`);
+      toast.success(t("admin.projects.delete_success") as string);
+      navigate("/admin/projets");
+    } catch (err: any) {
+      toast.error(err.message || (t("admin.projects.delete_error") as string));
+    }
+  };
 
   const handleRevaloriser = async () => {
     if (!nouvelleValorisation || parseFloat(nouvelleValorisation) <= 0) {
@@ -175,28 +173,51 @@ export default function ProjetAdminDetail() {
   const getIcon = (type: string) => {
     switch (type.toUpperCase()) {
       case "PDF":
-        return <FiFileText color="#d32f2f" size={28} />;
+        return <FiFileText color="#d32f2f" size={24} />;
       case "EXCEL":
       case "CSV":
-        return <FiFile color="var(--growz-hex-primary, #1b5e20)" size={28} />; // Icône fichier générique (parfaite)
+        return <FiFile color="var(--growz-hex-primary, #1b5e20)" size={24} />;
       default:
-        return <FiImage color="var(--growz-hex-primary, #1b5e20)" size={28} />;
+        return <FiImage color="var(--growz-hex-primary, #1b5e20)" size={24} />;
     }
   };
 
-  if (loading) return <div className={styles.loading}>Chargement...</div>;
-  if (!projet) return <div className={styles.error}>Projet non trouvé</div>;
+  const statutBadge = (statut?: string) => {
+    if (!statut || statut === "APPROUVE") return null;
+    const isPending = statut === "EN_ATTENTE";
+    return (
+      <span className={isPending ? styles.badgePending : styles.badgeRejected}>
+        {isPending
+          ? t("admin.documents.status_pending")
+          : t("admin.documents.status_rejected")}
+      </span>
+    );
+  };
+
+  if (loading)
+    return <div className={styles.loading}>{t("admin.documents.loading")}</div>;
+  if (!projet)
+    return <div className={styles.error}>{t("admin.projects.btn_view")}</div>;
 
   return (
     <div className={styles.container}>
-      <div className={styles.headerRow}>
-        <h1 className={styles.title}>Administration : {projet.libelle}</h1>
+      <Link to="/admin/projets" className={styles.backLink}>
+        <FiArrowLeft /> {t("admin.projects.btn_administer")}
+      </Link>
+
+      <div className={styles.headerCard}>
+        <div className={styles.headerMain}>
+          <span className={styles.headerEyebrow}>
+            {t("admin.projects.project_config")}
+          </span>
+          <h1 className={styles.title}>{projet.libelle}</h1>
+        </div>
         <div className={styles.headerActions}>
           <Link
             to={`/admin/projets/edit/${projet.slug || projet.id}`}
             className={styles.btnModifier}
           >
-            Modifier
+            <FiEdit2 /> {t("admin.projects.btn_edit")}
           </Link>
           <button
             className={styles.btnRevaloriser}
@@ -207,125 +228,109 @@ export default function ProjetAdminDetail() {
               setShowRevaloriser(true);
             }}
           >
-            Réévaluer
+            <FiTrendingUp /> {t("admin.projects.btn_revaloriser")}
           </button>
           <button className={styles.btnDelete} onClick={handleSupprimer}>
-            Supprimer
+            <FiTrash2 /> {t("admin.projects.btn_delete")}
           </button>
         </div>
       </div>
+
       {showRevaloriser && (
         <div
           className={styles.modalOverlay}
           onClick={() => setShowRevaloriser(false)}
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>Réévaluer le projet</h2>
-            <label>Nouvelle valorisation (FCFA)</label>
+            <h2>{t("admin.projects_list.revalorisation.modal_title")}</h2>
+            <label>{t("admin.projects_list.revalorisation.new_label")}</label>
             <input
               type="number"
               value={nouvelleValorisation}
               onChange={(e) => setNouvelleValorisation(e.target.value)}
               autoFocus
             />
-            <label>Motif</label>
+            <label>
+              {t("admin.projects_list.revalorisation.reason_label")}
+            </label>
             <input
               type="text"
               value={motifRevalorisation}
               onChange={(e) => setMotifRevalorisation(e.target.value)}
-              placeholder="Ex : audit Q1 2026"
+              placeholder={
+                t(
+                  "admin.projects_list.revalorisation.reason_placeholder",
+                ) as string
+              }
             />
             <div className={styles.modalActions}>
-              <button onClick={() => setShowRevaloriser(false)}>Annuler</button>
+              <button onClick={() => setShowRevaloriser(false)}>
+                {t("admin.projects_list.revalorisation.cancel")}
+              </button>
               <button onClick={handleRevaloriser} disabled={submitting}>
-                {submitting ? "..." : "Confirmer"}
+                {submitting
+                  ? t("admin.projects_list.revalorisation.confirm_processing")
+                  : t("admin.projects_list.revalorisation.confirm")}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Upload réservé à l'admin */}
       {user?.roles?.includes("ADMIN") && (
-        <DocumentUpload
-          projetId={Number(id)}
-          onUploadSuccess={loadProjetAndDocuments}
-        />
+        <div className={styles.uploadCard}>
+          <DocumentUpload
+            projetId={Number(id)}
+            onUploadSuccess={loadProjetAndDocuments}
+          />
+        </div>
       )}
 
-      {/* Liste des documents */}
       <div className={styles.documentsSection}>
-        <h2>Documents du projet ({documents.length})</h2>
+        <h2>
+          {t("admin.documents.title")} ({documents.length})
+        </h2>
         {documents.length === 0 ? (
-          <p className={styles.noDocs}>Aucun document uploadé pour l'instant</p>
+          <p className={styles.noDocs}>{t("admin.documents.empty")}</p>
         ) : (
           <div className={styles.grid}>
             {documents.map((doc) => (
               <div key={doc.id} className={styles.docCard}>
-                <div className={styles.docIcon}>{getIcon(doc.type)}</div>
-                <div className={styles.docInfo}>
-                  <strong>{doc.nom}</strong>
-                  <small>
-                    {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
-                  </small>
-                  {doc.statut && doc.statut !== "APPROUVE" && (
-                    <span
-                      style={{
-                        display: "inline-block",
-                        marginTop: 4,
-                        padding: "2px 8px",
-                        borderRadius: 999,
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        background:
-                          doc.statut === "EN_ATTENTE" ? "#fef3c7" : "#fee2e2",
-                        color:
-                          doc.statut === "EN_ATTENTE" ? "#92400e" : "#991b1b",
-                      }}
-                    >
-                      {doc.statut === "EN_ATTENTE" ? "En attente" : "Rejeté"}
-                    </span>
+                <div className={styles.docTop}>
+                  <div className={styles.docIcon}>{getIcon(doc.type)}</div>
+                  <div className={styles.docInfo}>
+                    <strong>{doc.nom}</strong>
+                    <small>
+                      {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
+                    </small>
+                  </div>
+                </div>
+                {statutBadge(doc.statut)}
+                <div className={styles.docActions}>
+                  <button
+                    onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
+                    className={styles.iconBtn}
+                    title={t("admin.documents.download") as string}
+                  >
+                    <FiDownload />
+                  </button>
+                  {doc.statut === "EN_ATTENTE" && (
+                    <>
+                      <button
+                        onClick={() => handleApprouver(doc.id)}
+                        className={styles.approveBtn}
+                      >
+                        <FiCheck /> {t("admin.documents.approve")}
+                      </button>
+                      <button
+                        onClick={() => handleRejeter(doc.id)}
+                        className={styles.rejectBtn}
+                      >
+                        <FiX /> {t("admin.documents.reject")}
+                      </button>
+                    </>
                   )}
                 </div>
-                <button
-                  onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
-                  className={styles.downloadBtn}
-                  title="Télécharger"
-                >
-                  <FiDownload />
-                </button>
-                {doc.statut === "EN_ATTENTE" && (
-                  <div style={{ display: "flex", gap: 6, marginLeft: 8 }}>
-                    <button
-                      onClick={() => handleApprouver(doc.id)}
-                      style={{
-                        background: "#16a34a",
-                        color: "white",
-                        border: "none",
-                        borderRadius: 6,
-                        padding: "4px 10px",
-                        cursor: "pointer",
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      Approuver
-                    </button>
-                    <button
-                      onClick={() => handleRejeter(doc.id)}
-                      style={{
-                        background: "#dc2626",
-                        color: "white",
-                        border: "none",
-                        borderRadius: 6,
-                        padding: "4px 10px",
-                        cursor: "pointer",
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      Rejeter
-                    </button>
-                  </div>
-                )}
               </div>
             ))}
           </div>
