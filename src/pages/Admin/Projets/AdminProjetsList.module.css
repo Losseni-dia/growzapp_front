@@ -349,11 +349,10 @@
   padding-top: 1rem;
   border-top: 1px solid #f0f0f0;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 8px;
 }
-
-.btnDetail, .btnEdit, .btnDelete, .btnValider, .btnRejeter {
+.btnDetail, .btnEdit, .btnDelete, .btnValider, .btnRejeter, .btnAdminister {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -368,10 +367,10 @@
   transition: all 0.2s;
   height: 38px;
 }
-
+.btnAdminister { background: var(--growz-primary); }
+.btnAdminister:hover { background: #155c30; }
 .btnDetail { background: var(--growz-primary); }
 .btnDetail:hover { background: #155c30; }
-
 .btnEdit { background: #1976D2; }
 .btnEdit:hover { background: #1565C0; }
 
