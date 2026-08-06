@@ -484,6 +484,7 @@
       "comments": "Commentaires",
       "contact": "Messages de contact",
       "notifications": "Notifications",
+      "documents": "Documents",
       "section_referentiels": "Référentiels",
       "referentiels": "Pays, secteurs, sites",
       "section_config": "Configuration",
@@ -523,6 +524,34 @@
       "filter_unread": "Non lues",
       "filter_read": "Lues",
       "search_placeholder": "Rechercher par titre, nom ou email..."
+    },
+    "documents": {
+      "title": "Documents des projets",
+      "subtitle": "Tous les documents, tous projets confondus",
+      "loading": "Chargement des documents...",
+      "empty": "Aucun document trouvé",
+      "load_error": "Erreur lors du chargement des documents",
+      "search_placeholder": "Rechercher par nom de document ou de projet...",
+      "filter_tous": "Tous",
+      "filter_en_attente": "En attente",
+      "filter_approuve": "Approuvés",
+      "filter_rejete": "Rejetés",
+      "status_pending": "En attente",
+      "status_approved": "Approuvé",
+      "status_rejected": "Rejeté",
+      "col_name": "Document",
+      "col_project": "Projet",
+      "col_status": "Statut",
+      "col_date": "Date",
+      "col_actions": "Actions",
+      "download": "Télécharger",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "toast": {
+        "approved": "Document approuvé",
+        "rejected": "Document rejeté",
+        "error": "Une erreur est survenue"
+      }
     },
     "invoices": {
       "title": "Factures",

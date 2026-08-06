@@ -484,6 +484,7 @@
       "comments": "Comentarios",
       "contact": "Mensajes de contacto",
       "notifications": "Notificaciones",
+      "documents": "Documentos",
       "section_referentiels": "Datos de referencia",
       "referentiels": "Países, sectores, sitios",
       "section_config": "Configuración",
@@ -523,6 +524,34 @@
       "filter_unread": "No leídas",
       "filter_read": "Leídas",
       "search_placeholder": "Buscar por título, nombre o correo..."
+    },
+    "documents": {
+      "title": "Documentos de los proyectos",
+      "subtitle": "Todos los documentos, de todos los proyectos",
+      "loading": "Cargando documentos...",
+      "empty": "No se encontraron documentos",
+      "load_error": "Error al cargar los documentos",
+      "search_placeholder": "Buscar por nombre de documento o proyecto...",
+      "filter_tous": "Todos",
+      "filter_en_attente": "Pendientes",
+      "filter_approuve": "Aprobados",
+      "filter_rejete": "Rechazados",
+      "status_pending": "Pendiente",
+      "status_approved": "Aprobado",
+      "status_rejected": "Rechazado",
+      "col_name": "Documento",
+      "col_project": "Proyecto",
+      "col_status": "Estado",
+      "col_date": "Fecha",
+      "col_actions": "Acciones",
+      "download": "Descargar",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "toast": {
+        "approved": "Documento aprobado",
+        "rejected": "Documento rechazado",
+        "error": "Ocurrió un error"
+      }
     },
     "invoices": {
       "title": "Facturas",

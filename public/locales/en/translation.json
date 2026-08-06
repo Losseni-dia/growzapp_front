@@ -485,6 +485,7 @@
       "comments": "Comments",
       "contact": "Contact messages",
       "notifications": "Notifications",
+      "documents": "Documents",
       "section_referentiels": "Reference data",
       "referentiels": "Countries, sectors, sites",
       "section_config": "Configuration",
@@ -524,6 +525,34 @@
       "filter_unread": "Unread",
       "filter_read": "Read",
       "search_placeholder": "Search by title, name or email..."
+    },
+    "documents": {
+      "title": "Project documents",
+      "subtitle": "All documents, across all projects",
+      "loading": "Loading documents...",
+      "empty": "No documents found",
+      "load_error": "Error loading documents",
+      "search_placeholder": "Search by document or project name...",
+      "filter_tous": "All",
+      "filter_en_attente": "Pending",
+      "filter_approuve": "Approved",
+      "filter_rejete": "Rejected",
+      "status_pending": "Pending",
+      "status_approved": "Approved",
+      "status_rejected": "Rejected",
+      "col_name": "Document",
+      "col_project": "Project",
+      "col_status": "Status",
+      "col_date": "Date",
+      "col_actions": "Actions",
+      "download": "Download",
+      "approve": "Approve",
+      "reject": "Reject",
+      "toast": {
+        "approved": "Document approved",
+        "rejected": "Document rejected",
+        "error": "An error occurred"
+      }
     },
     "invoices": {
       "title": "Invoices",
