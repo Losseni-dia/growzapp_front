@@ -140,6 +140,9 @@ const TransactionsAdminPage = lazy(
 const NotificationsAdminPage = lazy(
   () => import("./pages/Admin/Notifications/NotificationsAdminPage"),
 );
+const DocumentsAdminPage = lazy(
+  () => import("./pages/Admin/Documents/DocumentsAdminPage"),
+);
 const ParametresAdminPage = lazy(
   () => import("./pages/Admin/Parametres/ParametresAdminPage"),
 );
@@ -323,12 +326,19 @@ function App() {
                       path="/admin/commentaires"
                       element={<CommentairesAdminPage />}
                     />
-                    <Route path="/admin/contact" element={<ContactAdminPage />} />
+                    <Route
+                      path="/admin/contact"
+                      element={<ContactAdminPage />}
+                    />
                     <Route
                       path="/admin/notifications"
                       element={<NotificationsAdminPage />}
                     />
-
+                    <Route
+                      path="/admin/documents"
+                      element={<DocumentsAdminPage />}
+                    />
+                    
                     {/* 7. RÉFÉRENTIELS & PARAMÈTRES */}
                     <Route
                       path="/admin/settings"
