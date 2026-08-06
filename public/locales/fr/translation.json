@@ -1158,6 +1158,21 @@
         "transfer_success": "Transfert effectué avec succès",
         "error": "Échec de l'opération"
       }
+    },
+    "documents": {
+      "upload_btn": "Ajouter un document",
+      "upload_hint": "Le document sera visible par les investisseurs après validation par l'administrateur.",
+      "name_label": "Nom du document",
+      "name_placeholder": "Ex : Bilan comptable T2 2026",
+      "description_label": "Description",
+      "description_placeholder": "Décrivez brièvement ce que contient ce document",
+      "file_label": "Fichier (PDF, Excel, CSV)",
+      "confirm_upload": "Envoyer",
+      "toast": {
+        "file_required": "Veuillez sélectionner un fichier",
+        "name_required": "Le nom du document est requis",
+        "upload_success": "Document envoyé, en attente de validation par l'administrateur"
+      }
     }
   },
   "wallet": {
