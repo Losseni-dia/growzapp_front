@@ -4,17 +4,11 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
   FiCheckCircle,
-  FiEdit,
-  FiEye,
-  FiTrash2,
-  FiXCircle,
-  FiTrendingUp,
-  FiX,
-  FiArrowRight,
+  FiXCircle
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { api, buildProjetUrl, buildFileUrl } from "../../../service/Api";
+import { api, buildFileUrl, buildProjetUrl } from "../../../service/Api";
 import styles from "./AdminProjetsList.module.css";
 
 interface ProjetAdmin {
@@ -47,12 +41,6 @@ export default function AdminProjetsList() {
   const [sortKey, setSortKey] = useState<SortKey>("recent");
   const [secteurFilter, setSecteurFilter] = useState("TOUS");
 
-  const [projetARevaloriser, setProjetARevaloriser] =
-    useState<ProjetAdmin | null>(null);
-  const [nouvelleValorisation, setNouvelleValorisation] = useState("");
-  const [motifRevalorisation, setMotifRevalorisation] = useState("");
-  const [submittingRevalorisation, setSubmittingRevalorisation] =
-    useState(false);
 
   const { data: projetsData, isLoading } = useQuery({
     queryKey: ["admin-projets", i18n.language],
@@ -123,73 +111,6 @@ export default function AdminProjetsList() {
     },
   });
 
-  const supprimerMutation = useMutation({
-    mutationFn: (id: number) => api.delete(`/api/admin/projets/${id}`),
-    onSuccess: () => {
-      toast.success(t("admin.roles.success"));
-      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
-    },
-  });
-
-  const revaloriserMutation = useMutation({
-    mutationFn: ({
-      id,
-      nouvelleValorisation,
-      motif,
-    }: {
-      id: number;
-      nouvelleValorisation: number;
-      motif: string;
-    }) =>
-      api.patch(`/api/admin/projets/${id}/revaloriser`, {
-        nouvelleValorisation,
-        motif,
-      }),
-    onSuccess: () => {
-      toast.success(t("admin.projects_list.revalorisation.toast_success"));
-      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
-      setProjetARevaloriser(null);
-      setNouvelleValorisation("");
-      setMotifRevalorisation("");
-    },
-    onError: () => {
-      toast.error(t("admin.projects_list.revalorisation.toast_error"));
-    },
-  });
-
-  const handleSupprimer = (id: number, libelle: string) => {
-    if (window.confirm(t("admin.projects.confirm_delete", { name: libelle }))) {
-      supprimerMutation.mutate(id);
-    }
-  };
-
-  const openRevalorisation = (p: ProjetAdmin) => {
-    setProjetARevaloriser(p);
-    setNouvelleValorisation(p.valuation ? p.valuation.toString() : "");
-    setMotifRevalorisation("");
-  };
-
-  const handleRevaloriser = () => {
-    if (
-      !projetARevaloriser ||
-      !nouvelleValorisation ||
-      parseFloat(nouvelleValorisation) <= 0
-    ) {
-      toast.error(t("admin.projects_list.revalorisation.toast_invalid"));
-      return;
-    }
-    setSubmittingRevalorisation(true);
-    revaloriserMutation.mutate(
-      {
-        id: projetARevaloriser.id,
-        nouvelleValorisation: parseFloat(nouvelleValorisation),
-        motif:
-          motifRevalorisation ||
-          t("admin.projects_list.revalorisation.reason_placeholder"),
-      },
-      { onSettled: () => setSubmittingRevalorisation(false) },
-    );
-  };
 
   const getStatutClass = (statut: string) => {
     switch (statut?.toUpperCase()) {
@@ -218,10 +139,6 @@ export default function AdminProjetsList() {
   if (isLoading)
     return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
-  const nouvelleValorisationNum = parseFloat(nouvelleValorisation) || 0;
-  const ancienneValorisation = projetARevaloriser?.valuation || 0;
-  const deltaValorisation = nouvelleValorisationNum - ancienneValorisation;
-  const deltaPositif = deltaValorisation >= 0;
 
   return (
     <div className={styles.container}>
@@ -411,34 +328,10 @@ export default function AdminProjetsList() {
                 <div className={styles.actions}>
                   <Link
                     to={`/admin/projets/detail/${p.id}`}
-                    className={styles.btnDetail}
-                    title={t("admin.projects.btn_view") as string}
+                    className={styles.btnAdminister}
                   >
-                    <FiEye />
+                    {t("admin.projects.btn_administer")}
                   </Link>
-                  <Link
-                    to={`/admin/projets/edit/${p.slug || p.id}`}
-                    className={styles.btnEdit}
-                    title={t("admin.projects.btn_edit") as string}
-                  >
-                    <FiEdit />
-                  </Link>
-                  <button
-                    onClick={() => openRevalorisation(p)}
-                    className={styles.btnRevaloriser}
-                    title={
-                      t("admin.projects_list.revalorisation.tooltip") as string
-                    }
-                  >
-                    <FiTrendingUp />
-                  </button>
-                  <button
-                    onClick={() => handleSupprimer(p.id, p.libelle)}
-                    className={styles.btnDelete}
-                    title={t("admin.projects.btn_delete") as string}
-                  >
-                    <FiTrash2 />
-                  </button>
                 </div>
 
                 {(p.statutProjet === "SOUMIS" ||
@@ -467,123 +360,6 @@ export default function AdminProjetsList() {
       {filteredProjets.length === 0 && (
         <div className={styles.emptyState}>
           {t("admin.projects_list.empty")}
-        </div>
-      )}
-
-      {/* ── MODAL REVALORISATION ─────────────────────────────────────────── */}
-      {projetARevaloriser && (
-        <div
-          className={styles.modalOverlay}
-          onClick={() => setProjetARevaloriser(null)}
-        >
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalAccent} />
-            <div className={styles.modalHeader}>
-              <div>
-                <h2>{t("admin.projects_list.revalorisation.modal_title")}</h2>
-                <p className={styles.modalProjetNom}>
-                  {projetARevaloriser.libelleTradu ||
-                    projetARevaloriser.libelle}
-                </p>
-              </div>
-              <button
-                className={styles.modalClose}
-                onClick={() => setProjetARevaloriser(null)}
-              >
-                <FiX size={18} />
-              </button>
-            </div>
-
-            {/* Comparaison avant / après */}
-            <div className={styles.valorisationCompare}>
-              <div className={styles.compareBox}>
-                <span className={styles.compareLabel}>
-                  {t("admin.projects_list.revalorisation.current_label")}
-                </span>
-                <strong className={styles.compareValue}>
-                  {format(ancienneValorisation, "XOF")}
-                </strong>
-              </div>
-              <FiArrowRight size={18} className={styles.compareArrow} />
-              <div
-                className={`${styles.compareBox} ${styles.compareBoxNew} ${
-                  nouvelleValorisationNum > 0
-                    ? deltaPositif
-                      ? styles.compareBoxPositive
-                      : styles.compareBoxNegative
-                    : ""
-                }`}
-              >
-                <span className={styles.compareLabel}>
-                  {t("admin.projects_list.revalorisation.new_label")}
-                </span>
-                <strong className={styles.compareValue}>
-                  {nouvelleValorisationNum > 0
-                    ? format(nouvelleValorisationNum, "XOF")
-                    : "—"}
-                </strong>
-                {nouvelleValorisationNum > 0 && deltaValorisation !== 0 && (
-                  <span className={styles.compareDelta}>
-                    {deltaPositif ? "+" : ""}
-                    {format(deltaValorisation, "XOF")}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <label className={styles.modalLabel}>
-              {t("admin.projects_list.revalorisation.new_label")}
-            </label>
-            <input
-              type="number"
-              className={styles.modalInput}
-              placeholder={
-                t(
-                  "admin.projects_list.revalorisation.new_placeholder",
-                ) as string
-              }
-              value={nouvelleValorisation}
-              onChange={(e) => setNouvelleValorisation(e.target.value)}
-              autoFocus
-            />
-
-            <label className={styles.modalLabel}>
-              {t("admin.projects_list.revalorisation.reason_label")}
-            </label>
-            <input
-              type="text"
-              className={styles.modalInput}
-              placeholder={
-                t(
-                  "admin.projects_list.revalorisation.reason_placeholder",
-                ) as string
-              }
-              value={motifRevalorisation}
-              onChange={(e) => setMotifRevalorisation(e.target.value)}
-            />
-
-            <p className={styles.modalHint}>
-              {t("admin.projects_list.revalorisation.hint")}
-            </p>
-
-            <div className={styles.modalActions}>
-              <button
-                onClick={() => setProjetARevaloriser(null)}
-                className={styles.btnCancel}
-              >
-                {t("admin.projects_list.revalorisation.cancel")}
-              </button>
-              <button
-                onClick={handleRevaloriser}
-                className={styles.btnConfirm}
-                disabled={submittingRevalorisation}
-              >
-                {submittingRevalorisation
-                  ? t("admin.projects_list.revalorisation.confirm_processing")
-                  : t("admin.projects_list.revalorisation.confirm")}
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>

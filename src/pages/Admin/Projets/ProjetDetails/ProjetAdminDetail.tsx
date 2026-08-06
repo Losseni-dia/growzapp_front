@@ -1,6 +1,6 @@
 // src/pages/Admin/ProjetAdminDetail.tsx
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../../service/Api";
 import DocumentUpload from "../../../../components/DocumentUpload/DocumentUpload";
 import { useAuth } from "../../../../components/Context/AuthContext";
@@ -32,6 +32,12 @@ export default function ProjetAdminDetail() {
   const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+
+  const navigate = useNavigate();
+  const [showRevaloriser, setShowRevaloriser] = useState(false);
+  const [nouvelleValorisation, setNouvelleValorisation] = useState("");
+  const [motifRevalorisation, setMotifRevalorisation] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const loadProjetAndDocuments = async () => {
     if (!id) return;
@@ -113,6 +119,42 @@ export default function ProjetAdminDetail() {
     }
   };
 
+  const handleSupprimer = async () => {
+    if (!projet) return;
+    if (!window.confirm(`Supprimer définitivement "${projet.libelle}" ?`))
+      return;
+    try {
+      await api.delete(`api/admin/projets/${projet.id}`);
+      toast.success("Projet supprimé");
+      navigate("/admin/projets");
+    } catch (err: any) {
+      toast.error(err.message || "Échec de la suppression");
+    }
+  };
+
+  const handleRevaloriser = async () => {
+    if (!nouvelleValorisation || parseFloat(nouvelleValorisation) <= 0) {
+      toast.error("Valorisation invalide");
+      return;
+    }
+    try {
+      setSubmitting(true);
+      await api.patch(`api/admin/projets/${projet?.id}/revaloriser`, {
+        nouvelleValorisation: parseFloat(nouvelleValorisation),
+        motif: motifRevalorisation || "Réévaluation manuelle",
+      });
+      toast.success("Projet réévalué avec succès");
+      setShowRevaloriser(false);
+      setNouvelleValorisation("");
+      setMotifRevalorisation("");
+      loadProjetAndDocuments();
+    } catch (err: any) {
+      toast.error(err.message || "Échec de la réévaluation");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const getIcon = (type: string) => {
     switch (type.toUpperCase()) {
       case "PDF":
@@ -130,7 +172,55 @@ export default function ProjetAdminDetail() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Administration : {projet.libelle}</h1>
+      <div className={styles.headerRow}>
+        <h1 className={styles.title}>Administration : {projet.libelle}</h1>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.btnRevaloriser}
+            onClick={() => {
+              setNouvelleValorisation(
+                projet.valuation ? String(projet.valuation) : "",
+              );
+              setShowRevaloriser(true);
+            }}
+          >
+            Réévaluer
+          </button>
+          <button className={styles.btnDelete} onClick={handleSupprimer}>
+            Supprimer
+          </button>
+        </div>
+      </div>
+      {showRevaloriser && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setShowRevaloriser(false)}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>Réévaluer le projet</h2>
+            <label>Nouvelle valorisation (FCFA)</label>
+            <input
+              type="number"
+              value={nouvelleValorisation}
+              onChange={(e) => setNouvelleValorisation(e.target.value)}
+              autoFocus
+            />
+            <label>Motif</label>
+            <input
+              type="text"
+              value={motifRevalorisation}
+              onChange={(e) => setMotifRevalorisation(e.target.value)}
+              placeholder="Ex : audit Q1 2026"
+            />
+            <div className={styles.modalActions}>
+              <button onClick={() => setShowRevaloriser(false)}>Annuler</button>
+              <button onClick={handleRevaloriser} disabled={submitting}>
+                {submitting ? "..." : "Confirmer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Upload réservé à l'admin */}
       {user?.roles?.includes("ADMIN") && (
