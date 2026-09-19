@@ -12,6 +12,7 @@ export default function SecteurManager() {
   const [newNom, setNewNom] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [translating, setTranslating] = useState(false);
 
   const filteredSecteurs = useMemo(() => {
     if (!search.trim()) return secteurs;
@@ -58,6 +59,18 @@ export default function SecteurManager() {
     }
   };
 
+  const handleTranslateAll = async () => {
+    setTranslating(true);
+    try {
+      const res: any = await api.post("api/secteurs/admin/traduire-tous");
+      toast.success(res?.message || "Secteurs traduits");
+    } catch (err: any) {
+      toast.error(err.message || t("admin.settings.save_error"));
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   const handleDelete = async (id: number) => {
     if (!window.confirm(t("admin.settings.confirm_delete"))) return;
     try {
@@ -96,6 +109,14 @@ export default function SecteurManager() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+        <button
+          onClick={handleTranslateAll}
+          disabled={translating}
+          className={styles.btnAdd}
+          title="Retraduit automatiquement (DeepL) le nom de tous les secteurs existants, en anglais et en espagnol"
+        >
+          {translating ? "Traduction en cours…" : "🌐 Traduire tous les secteurs"}
+        </button>
       </div>
 
       <div className={styles.list}>
