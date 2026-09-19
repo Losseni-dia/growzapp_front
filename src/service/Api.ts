@@ -128,7 +128,30 @@ if (!response.ok) {
 }
 
     if (response.status === 204) return {} as T;
-    return response.json();
+
+    const data = await response.json();
+
+    // Le backend enveloppe certaines réponses dans ApiResponseDTO
+    // { success, message, data } mais renvoie parfois success:false avec
+    // un HTTP 200 (erreur métier attrapée côté serveur, pas une erreur
+    // réseau/HTTP). Sans ce contrôle, ces échecs sont invisibles ici et
+    // chaque composant appelant doit re-vérifier .success à la main —
+    // oubli constaté sur la soumission de projet (toast de succès affiché
+    // alors que rien n'avait été enregistré en base).
+    if (
+      data &&
+      typeof data === "object" &&
+      !Array.isArray(data) &&
+      "success" in data &&
+      data.success === false
+    ) {
+      const error: any = new Error(data.message || data.error || "Erreur serveur");
+      error.status = response.status;
+      error.data = data;
+      throw error;
+    }
+
+    return data;
   } catch (err: any) {
     console.error("Erreur réseau ou fetch :", err.message);
     throw err;

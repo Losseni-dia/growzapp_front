@@ -76,7 +76,7 @@ export default function RolesManagerModal({
                     isChecked ? styles.roleLabelChecked : ""
                   }`}
                 >
-                  {role}
+                  {t(`admin.users.role_labels.${role}`, { defaultValue: role })}
                 </span>
               </label>
             );

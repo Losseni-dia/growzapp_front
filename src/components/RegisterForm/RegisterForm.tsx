@@ -459,7 +459,7 @@ export default function RegisterForm() {
               <span className={styles.errorMsg}>⚠ {t(errors.password)}</span>
             ) : (
               <span className={styles.hintMsg}>
-                💡 {t("register_page.hints.password")}
+                 {t("register_page.hints.password")}
               </span>
             )}
           </div>
@@ -500,7 +500,7 @@ export default function RegisterForm() {
             <span className={styles.errorMsg}>⚠ {t(errors.email)}</span>
           ) : (
             <span className={styles.hintMsg}>
-              💡 {t("register_page.hints.email_optional")}
+               {t("register_page.hints.email_optional")}
             </span>
           )}
         </div>
@@ -517,7 +517,7 @@ export default function RegisterForm() {
             <span className={styles.errorMsg}>⚠ {t(errors.contact)}</span>
           ) : (
             <span className={styles.hintMsg}>
-              💡 {t("register_page.hints.phone")}
+               {t("register_page.hints.phone")}
             </span>
           )}
         </div>
@@ -714,7 +714,7 @@ export default function RegisterForm() {
               ))}
             </select>
             <span className={styles.hintMsg}>
-              💡 {t("register_page.hints.interface_language")}
+               {t("register_page.hints.interface_language")}
             </span>
           </div>
 
@@ -739,7 +739,7 @@ export default function RegisterForm() {
               ))}
             </select>
             <span className={styles.hintMsg}>
-              💡 {t("register_page.hints.devise")}
+               {t("register_page.hints.devise")}
             </span>
           </div>
         </div>

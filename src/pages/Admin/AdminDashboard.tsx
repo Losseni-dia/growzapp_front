@@ -61,7 +61,11 @@ export default function DashboardAdmin() {
         investissementsEnAttente: invCounts.data?.EN_ATTENTE || 0,
         montantCollecteSequestre: Number(s) || 0,
         montantCollecteAffiche: Number(a) || 0,
-        kycEnAttente: (k.data || []).length || 0,
+        // GET /api/kyc/admin/en-attente retourne une Page<UserDTO> paginée
+        // ({ content, totalElements, ... }), pas un tableau brut — .length
+        // sur cet objet valait toujours undefined, d'où un compteur figé à 0
+        // malgré des dizaines de dossiers réellement en attente.
+        kycEnAttente: k.data?.totalElements ?? 0,
       });
     } finally {
       setLoading(false);
