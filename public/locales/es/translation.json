@@ -152,7 +152,7 @@
     "dates": "Del {{start}} al {{end}}",
     "btn_view": "Ver",
     "btn_invest": "Invertir",
-    "certified": "Certificado",
+    "premium": "Premium",
     "parts_prises": "acciones tomadas",
     "parts_disponibles": "acciones disponibles"
   },
@@ -193,7 +193,7 @@
     "start_date": "Inicio",
     "end_date": "Fin",
     "months": "meses",
-    "certified": "Certificado GrowzApp",
+    "premium": "Premium",
     "in_progress": "En curso",
     "invest_button": "Invertir en este proyecto",
     "owner_anonymous": "Promotor anónimo",
@@ -460,6 +460,32 @@
       "error_url": "Falta la URL de pago"
     }
   },
+  "user_sidebar": {
+    "brand": "Mi espacio",
+    "aria_label": "Menú de mi espacio",
+    "toggle": "Abrir/cerrar el menú",
+    "section_overview": "Resumen",
+    "dashboard": "Panel de control",
+    "section_porteur": "Promotor de proyecto",
+    "my_projects": "Mis proyectos",
+    "create_project": "Crear un proyecto",
+    "fiche_porteur": "Mi ficha de promotor",
+    "section_investisseur": "Inversor",
+    "my_investments": "Mis inversiones",
+    "my_portfolio": "Mi cartera",
+    "my_dividends": "Mis dividendos",
+    "section_finance": "Finanzas",
+    "wallet": "Mi cartera GrowzApp",
+    "deposit": "Depositar fondos",
+    "withdraw": "Retirar fondos",
+    "transfer": "Transferir fondos",
+    "section_documents": "Documentos",
+    "my_contracts": "Mis contratos",
+    "my_invoices": "Mis facturas",
+    "section_account": "Cuenta",
+    "profile": "Mi perfil",
+    "kyc": "Verificación de identidad (KYC)"
+  },
   "admin": {
     "sidebar": {
       "brand": "GrowzApp Admin",
@@ -600,6 +626,7 @@
       "type_transfer_in": "Transferencia entrante",
       "type_credit_projet": "Crédito de proyecto",
       "type_retrait_admin": "Retiro (admin)",
+      "type_premium_projet": "Compra Premium",
       "table": {
         "date": "Fecha",
         "type": "Tipo",
@@ -938,6 +965,7 @@
       "sectors": "Sectores",
       "localities": "Ciudades / Localidades",
       "sites": "Sitios de Proyectos",
+      "currencies": "Divisas",
       "load_error": "Error al cargar los datos",
       "save_error": "Error al guardar",
       "search_placeholder": "Buscar...",
@@ -985,6 +1013,13 @@
       "locked_until": "Bloqueado hasta {{date}}",
       "locked_reason": "Cuenta bloqueada hasta {{date}} tras {{count}} intentos de inicio de sesión fallidos.",
       "all_roles": "Todos los roles",
+      "role_labels": {
+        "ADMIN": "Administrador",
+        "USER": "Usuario",
+        "PORTEUR": "Promotor del proyecto",
+        "INVESTISSEUR": "Inversor",
+        "COMMUNICANT": "Comunicación"
+      },
       "table": {
         "photo": "Foto",
         "name": "Nombre completo",
@@ -1266,7 +1301,8 @@
       "transfer_out": "Transferencia enviada",
       "investment": "Inversión",
       "refund": "Reembolso",
-      "dividend": "Dividendo"
+      "dividend": "Dividendo",
+      "premium": "Compra Premium"
     },
     "toast": {
       "invalid_amount": "Monto inválido",
@@ -1557,7 +1593,8 @@
       "amount": "Monto",
       "status": "Estado"
     },
-    "btn_download": "Descargar"
+    "btn_download": "Descargar",
+    "premium_label": "Estatus Premium — {{project}}"
   },
   "kyc": {
     "pending_action_hint": "Por favor, verifica tu identidad para desbloquear todas las funciones de retiro e inversión.",

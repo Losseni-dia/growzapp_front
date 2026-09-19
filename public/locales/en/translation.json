@@ -151,7 +151,7 @@
     "dates": "From {{start}} to {{end}}",
     "btn_view": "View",
     "btn_invest": "Invest",
-    "certified": "Certified",
+    "premium": "Premium",
     "parts_prises": "shares taken",
     "parts_disponibles": "shares available"
   },
@@ -194,7 +194,7 @@
     "start_date": "Start",
     "end_date": "End",
     "months": "months",
-    "certified": "Certified GrowzApp",
+    "premium": "Premium",
     "in_progress": "In progress",
     "invest_button": "Invest in this project",
     "owner_anonymous": "Anonymous backer",
@@ -461,6 +461,32 @@
       "error_url": "Payment URL missing"
     }
   },
+  "user_sidebar": {
+    "brand": "My space",
+    "aria_label": "My space menu",
+    "toggle": "Open/close menu",
+    "section_overview": "Overview",
+    "dashboard": "Dashboard",
+    "section_porteur": "Project owner",
+    "my_projects": "My projects",
+    "create_project": "Create a project",
+    "fiche_porteur": "My owner profile sheet",
+    "section_investisseur": "Investor",
+    "my_investments": "My investments",
+    "my_portfolio": "My portfolio",
+    "my_dividends": "My dividends",
+    "section_finance": "Finance",
+    "wallet": "My GrowzApp wallet",
+    "deposit": "Deposit funds",
+    "withdraw": "Withdraw funds",
+    "transfer": "Transfer funds",
+    "section_documents": "Documents",
+    "my_contracts": "My contracts",
+    "my_invoices": "My invoices",
+    "section_account": "Account",
+    "profile": "My profile",
+    "kyc": "Identity verification (KYC)"
+  },
   "admin": {
     "sidebar": {
       "brand": "GrowzApp Admin",
@@ -601,6 +627,7 @@
       "type_transfer_in": "Incoming transfer",
       "type_credit_projet": "Project credit",
       "type_retrait_admin": "Withdrawal (admin)",
+      "type_premium_projet": "Premium purchase",
       "table": {
         "date": "Date",
         "type": "Type",
@@ -944,6 +971,7 @@
       "sectors": "Sectors",
       "localities": "Cities / Localities",
       "sites": "Project Sites",
+      "currencies": "Currencies",
       "load_error": "Error loading data",
       "save_error": "Error during saving",
       "search_placeholder": "Search...",
@@ -988,6 +1016,13 @@
       "locked_until": "Locked until {{date}}",
       "locked_reason": "Account locked until {{date}} after {{count}} failed login attempts.",
       "all_roles": "All roles",
+      "role_labels": {
+        "ADMIN": "Administrator",
+        "USER": "User",
+        "PORTEUR": "Project owner",
+        "INVESTISSEUR": "Investor",
+        "COMMUNICANT": "Communications"
+      },
       "table": {
         "photo": "Photo",
         "name": "Full Name",
@@ -1269,7 +1304,8 @@
       "transfer_out": "Transfer sent",
       "investment": "Investment",
       "refund": "Refund",
-      "dividend": "Dividend"
+      "dividend": "Dividend",
+      "premium": "Premium purchase"
     },
     "toast": {
       "invalid_amount": "Invalid amount",
@@ -1560,7 +1596,8 @@
       "amount": "Amount",
       "status": "Status"
     },
-    "btn_download": "Download"
+    "btn_download": "Download",
+    "premium_label": "Premium status — {{project}}"
   },
   "kyc": {
     "pending_action_hint": "Please verify your identity to unlock all withdrawal and investment features.",
