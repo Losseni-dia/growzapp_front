@@ -8,7 +8,19 @@ import styles from "./AdminUsersPage.module.css";
 import { useTranslation } from "react-i18next";
 import { getAvatarUrl } from "../../../types/utils/UserUtils";
 import { KycBadge } from "../../../components/ui/kycBadge/KycBadge";
-import { FiSearch, FiX, FiShield, FiUsers, FiLock } from "react-icons/fi";
+import {
+  FiSearch,
+  FiX,
+  FiShield,
+  FiUsers,
+  FiLock,
+  FiKey,
+  FiCopy,
+  FiChevronRight,
+  FiTrash2,
+  FiRotateCcw,
+  FiAlertTriangle,
+} from "react-icons/fi";
 
 interface ApiResponse<T> {
   success: boolean;
@@ -33,6 +45,14 @@ export default function UsersAdminPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [page, setPage] = useState(0);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetMotif, setResetMotif] = useState("");
+  const [tempPassword, setTempPassword] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"active" | "corbeille">("active");
+  const [deleteTarget, setDeleteTarget] = useState<UserDTO | null>(null);
+  const [deleteMotif, setDeleteMotif] = useState("");
+  const [purgeTarget, setPurgeTarget] = useState<UserDTO | null>(null);
+  const [purgeConfirm, setPurgeConfirm] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,19 +69,32 @@ export default function UsersAdminPage() {
   const availableRoles = rolesData || [];
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin-users", page, debouncedSearch, roleFilter],
+    queryKey: ["admin-users", page, debouncedSearch, roleFilter, viewMode],
     queryFn: () => {
       const params = new URLSearchParams({ page: page.toString(), size: "20" });
       if (debouncedSearch) params.set("search", debouncedSearch);
-      if (roleFilter) params.set("role", roleFilter);
-      return api.get<ApiResponse<UsersPage>>(`/admin/users?${params}`);
+      if (viewMode === "active") {
+        if (roleFilter) params.set("role", roleFilter);
+        return api.get<ApiResponse<UsersPage>>(`/admin/users?${params}`);
+      }
+      return api.get<ApiResponse<UsersPage>>(`/admin/users/corbeille?${params}`);
     },
   });
+
+  const { data: corbeilleCountData } = useQuery({
+    queryKey: ["admin-users-corbeille-count"],
+    queryFn: () =>
+      api.get<ApiResponse<UsersPage>>("/admin/users/corbeille?page=0&size=1"),
+  });
+  const corbeilleCount = corbeilleCountData?.data.totalElements ?? 0;
 
   const changeRoleFilter = (value: string) => {
     setPage(0);
     setRoleFilter(value);
   };
+
+  const roleLabel = (role: string) =>
+    t(`admin.users.role_labels.${role}`, { defaultValue: role });
 
   const users = data?.data.content || [];
   const totalPages = data?.data.totalPages ?? 1;
@@ -71,6 +104,7 @@ export default function UsersAdminPage() {
     mutationFn: (id: number) => api.patch(`/admin/users/${id}/toggle`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-corbeille-count"] });
       toast.success(t("admin.roles.success"));
     },
   });
@@ -80,8 +114,70 @@ export default function UsersAdminPage() {
       api.patch(`/admin/users/${id}/roles`, ["ADMIN"]),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-corbeille-count"] });
       toast.success(t("admin.roles.success"));
     },
+  });
+
+  const resetPassword = useMutation({
+    mutationFn: ({ id, motif }: { id: number; motif: string }) =>
+      api.post<ApiResponse<string>>(`/admin/users/${id}/reset-password`, {
+        motifVerification: motif,
+      }),
+    onSuccess: (res) => {
+      setTempPassword(res.data);
+      toast.success(
+        "Mot de passe temporaire généré — communiquez-le par téléphone uniquement.",
+      );
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erreur lors de la réinitialisation.");
+    },
+  });
+
+  const closeResetModal = () => {
+    setShowResetPassword(false);
+    setResetMotif("");
+    setTempPassword(null);
+  };
+
+  const softDelete = useMutation({
+    mutationFn: ({ id, motif }: { id: number; motif: string }) => {
+      const params = new URLSearchParams();
+      if (motif) params.set("motif", motif);
+      return api.delete(`/admin/users/${id}?${params}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-corbeille-count"] });
+      toast.success("Utilisateur déplacé dans la corbeille");
+      setDeleteTarget(null);
+      setDeleteMotif("");
+      setSelectedUser(null);
+    },
+    onError: (err: any) => toast.error(err.message || "Erreur"),
+  });
+
+  const restoreUser = useMutation({
+    mutationFn: (id: number) => api.post(`/admin/users/${id}/restaurer`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-corbeille-count"] });
+      toast.success("Utilisateur restauré");
+    },
+    onError: (err: any) => toast.error(err.message || "Erreur"),
+  });
+
+  const purgeUser = useMutation({
+    mutationFn: (id: number) => api.delete(`/admin/users/${id}/purger`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-corbeille-count"] });
+      toast.success("Utilisateur supprimé définitivement");
+      setPurgeTarget(null);
+      setPurgeConfirm("");
+    },
+    onError: (err: any) => toast.error(err.message || "Erreur"),
   });
 
   const getExpirationClass = (dateStr?: string) => {
@@ -126,6 +222,60 @@ export default function UsersAdminPage() {
         </div>
       </header>
 
+      {/* ═══════════ ONGLETS ACTIFS / CORBEILLE ═══════════ */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        <button
+          type="button"
+          onClick={() => {
+            setViewMode("active");
+            setPage(0);
+          }}
+          className={styles.makeAdminBtn}
+          style={{
+            background: viewMode === "active" ? undefined : "#e5e7eb",
+            color: viewMode === "active" ? undefined : "#374151",
+            width: "auto",
+            padding: "0.4rem 1rem",
+          }}
+        >
+          Actifs
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setViewMode("corbeille");
+            setPage(0);
+          }}
+          className={styles.makeAdminBtn}
+          style={{
+            background: viewMode === "corbeille" ? "#b45309" : "#e5e7eb",
+            color: viewMode === "corbeille" ? undefined : "#374151",
+            width: "auto",
+            padding: "0.4rem 1rem",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
+        >
+          <FiTrash2 size={14} /> Corbeille
+          {corbeilleCount > 0 && (
+            <span
+              style={{
+                background: viewMode === "corbeille" ? "#fff" : "#b45309",
+                color: viewMode === "corbeille" ? "#b45309" : "#fff",
+                borderRadius: "999px",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                padding: "1px 7px",
+                lineHeight: 1.4,
+              }}
+            >
+              {corbeilleCount}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* ═══════════ RECHERCHE + FILTRE RÔLE ═══════════ */}
       <div className={styles.toolbar}>
         <div className={styles.searchWrapper}>
@@ -138,18 +288,20 @@ export default function UsersAdminPage() {
             className={styles.searchInput}
           />
         </div>
-        <select
-          className={styles.roleSelect}
-          value={roleFilter}
-          onChange={(e) => changeRoleFilter(e.target.value)}
-        >
-          <option value="">{t("admin.users.all_roles")}</option>
-          {availableRoles.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
+        {viewMode === "active" && (
+          <select
+            className={styles.roleSelect}
+            value={roleFilter}
+            onChange={(e) => changeRoleFilter(e.target.value)}
+          >
+            <option value="">{t("admin.users.all_roles")}</option>
+            {availableRoles.map((r) => (
+              <option key={r} value={r}>
+                {roleLabel(r)}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {/* ═══════════ LISTE ═══════════ */}
@@ -160,7 +312,7 @@ export default function UsersAdminPage() {
             <div
               key={u.id}
               className={styles.row}
-              onClick={() => setSelectedUser(u)}
+              onClick={() => viewMode === "active" && setSelectedUser(u)}
             >
               <img
                 src={getAvatarUrl(u.image)}
@@ -189,39 +341,109 @@ export default function UsersAdminPage() {
                 <span className={styles.emailLine}>
                   {u.email} · @{u.login}
                 </span>
-              </div>
-
-              <div className={styles.rowKyc}>
-                <KycBadge status={u.kycStatus} showLabel={false} />
-                <span className={getExpirationClass(u.kycDateExpiration)}>
-                  {u.kycDateExpiration
-                    ? new Date(u.kycDateExpiration).toLocaleDateString()
-                    : "—"}
-                </span>
-              </div>
-
-              <div className={styles.rowRoles}>
-                {u.roles.map((r) => (
-                  <span
-                    key={r}
-                    className={`${styles.roleChip} ${styles[r.toLowerCase()] || ""}`}
-                  >
-                    {r}
+                {viewMode === "corbeille" && u.motifSuppression && (
+                  <span style={{ fontSize: "0.78rem", color: "#b91c1c" }}>
+                    Motif : {u.motifSuppression}
                   </span>
-                ))}
+                )}
               </div>
 
-              <label
-                className={styles.switch}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <input
-                  type="checkbox"
-                  checked={u.enabled}
-                  onChange={() => toggleEnabled.mutate(u.id)}
-                />
-                <span className={styles.slider} />
-              </label>
+              {viewMode === "active" && (
+                <>
+                  <div className={styles.rowKyc}>
+                    <KycBadge status={u.kycStatus} showLabel={false} />
+                    <span className={getExpirationClass(u.kycDateExpiration)}>
+                      {u.kycDateExpiration
+                        ? new Date(u.kycDateExpiration).toLocaleDateString()
+                        : "—"}
+                    </span>
+                  </div>
+
+                  <div className={styles.rowRoles}>
+                    {u.roles.map((r) => (
+                      <span
+                        key={r}
+                        className={`${styles.roleChip} ${styles[r.toLowerCase()] || ""}`}
+                      >
+                        {roleLabel(r)}
+                      </span>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.modalClose}
+                    title="Réinitialiser le mot de passe"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedUser(u);
+                      setShowResetPassword(true);
+                    }}
+                  >
+                    <FiKey size={16} />
+                  </button>
+
+                  <label
+                    className={styles.switch}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={u.enabled}
+                      onChange={() => toggleEnabled.mutate(u.id)}
+                    />
+                    <span className={styles.slider} />
+                  </label>
+
+                  <button
+                    type="button"
+                    className={styles.modalClose}
+                    title="Supprimer (corbeille)"
+                    style={{ color: "#b91c1c" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteTarget(u);
+                    }}
+                  >
+                    <FiTrash2 size={16} />
+                  </button>
+
+                  <FiChevronRight
+                    size={18}
+                    title="Voir le détail"
+                    style={{ color: "#9ca3af", flexShrink: 0 }}
+                  />
+                </>
+              )}
+
+              {viewMode === "corbeille" && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.modalClose}
+                    title="Restaurer"
+                    style={{ color: "#15803d" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      restoreUser.mutate(u.id);
+                    }}
+                  >
+                    <FiRotateCcw size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.modalClose}
+                    title="Supprimer définitivement"
+                    style={{ color: "#b91c1c" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPurgeTarget(u);
+                    }}
+                  >
+                    <FiAlertTriangle size={16} />
+                  </button>
+                </>
+              )}
             </div>
           );
         })}
@@ -229,7 +451,11 @@ export default function UsersAdminPage() {
         {users.length === 0 && (
           <div className={styles.emptyState}>
             <FiUsers size={28} />
-            <p>Aucun utilisateur ne correspond à votre recherche</p>
+            <p>
+              {viewMode === "active"
+                ? "Aucun utilisateur ne correspond à votre recherche"
+                : "La corbeille est vide"}
+            </p>
           </div>
         )}
       </div>
@@ -332,6 +558,7 @@ export default function UsersAdminPage() {
                 onClose={() => {
                   setSelectedUser(null);
                   queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users-corbeille-count"] });
                 }}
               />
             </div>
@@ -344,6 +571,257 @@ export default function UsersAdminPage() {
                 {t("admin.users.modal.make_admin")}
               </button>
             )}
+
+            <button
+              onClick={() => setShowResetPassword(true)}
+              className={styles.makeAdminBtn}
+              style={{
+                marginTop: "0.5rem",
+                background: "#b45309",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+              }}
+            >
+              <FiKey size={14} />
+              Réinitialiser le mot de passe
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ MODAL RÉINITIALISATION MOT DE PASSE ═══════════ */}
+      {showResetPassword && selectedUser && (
+        <div className={styles.modalOverlay} onClick={closeResetModal}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalName}>
+                Réinitialiser le mot de passe
+              </h2>
+              <button className={styles.modalClose} onClick={closeResetModal}>
+                <FiX size={18} />
+              </button>
+            </div>
+
+            <p style={{ fontSize: "0.9rem", color: "#555" }}>
+              Compte : <strong>@{selectedUser.login}</strong> (
+              {selectedUser.prenom} {selectedUser.nom})
+            </p>
+
+            {!tempPassword ? (
+              <>
+                <div
+                  style={{
+                    background: "#fff7ed",
+                    border: "1px solid #fed7aa",
+                    borderRadius: 8,
+                    padding: "0.75rem",
+                    fontSize: "0.85rem",
+                    margin: "0.75rem 0",
+                  }}
+                >
+                  ⚠️ Vérifiez d'abord l'identité de l'utilisateur (appel
+                  téléphonique, comparaison avec sa pièce KYC en base) avant
+                  de continuer. Indiquez ci-dessous comment l'identité a été
+                  confirmée — ce motif est conservé pour audit.
+                </div>
+                <textarea
+                  className={styles.searchInput}
+                  style={{ width: "100%", minHeight: 80, resize: "vertical" }}
+                  placeholder="Ex: Appel téléphonique au numéro KYC enregistré, identité confirmée le 18/09/2026."
+                  value={resetMotif}
+                  onChange={(e) => setResetMotif(e.target.value)}
+                />
+                <button
+                  className={styles.makeAdminBtn}
+                  style={{ marginTop: "0.75rem" }}
+                  disabled={!resetMotif.trim() || resetPassword.isPending}
+                  onClick={() =>
+                    resetPassword.mutate({
+                      id: selectedUser.id,
+                      motif: resetMotif.trim(),
+                    })
+                  }
+                >
+                  {resetPassword.isPending
+                    ? "Génération..."
+                    : "Générer un mot de passe temporaire"}
+                </button>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{
+                    background: "#f0fdf4",
+                    border: "1px solid #86efac",
+                    borderRadius: 8,
+                    padding: "1rem",
+                    margin: "0.75rem 0",
+                    textAlign: "center",
+                  }}
+                >
+                  <p style={{ fontSize: "0.85rem", marginBottom: "0.5rem" }}>
+                    Mot de passe temporaire :
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <code
+                      style={{
+                        fontSize: "1.4rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      {tempPassword}
+                    </code>
+                    <button
+                      className={styles.modalClose}
+                      title="Copier"
+                      onClick={() => {
+                        navigator.clipboard.writeText(tempPassword);
+                        toast.success("Copié");
+                      }}
+                    >
+                      <FiCopy size={16} />
+                    </button>
+                  </div>
+                </div>
+                <p style={{ fontSize: "0.85rem", color: "#b91c1c" }}>
+                  Communiquez ce mot de passe par téléphone (ou en personne)
+                  uniquement — jamais par email ou SMS non chiffré.
+                  L'utilisateur devra le changer dès sa prochaine connexion.
+                </p>
+                <button className={styles.makeAdminBtn} onClick={closeResetModal}>
+                  Terminé
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ MODAL SUPPRESSION (SOFT DELETE) ═══════════ */}
+      {deleteTarget && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => {
+            setDeleteTarget(null);
+            setDeleteMotif("");
+          }}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalName}>Supprimer l'utilisateur</h2>
+              <button
+                className={styles.modalClose}
+                onClick={() => {
+                  setDeleteTarget(null);
+                  setDeleteMotif("");
+                }}
+              >
+                <FiX size={18} />
+              </button>
+            </div>
+            <p style={{ fontSize: "0.9rem", color: "#555" }}>
+              Compte : <strong>@{deleteTarget.login}</strong> (
+              {deleteTarget.prenom} {deleteTarget.nom})
+            </p>
+            <div
+              style={{
+                background: "#fff7ed",
+                border: "1px solid #fed7aa",
+                borderRadius: 8,
+                padding: "0.75rem",
+                fontSize: "0.85rem",
+                margin: "0.75rem 0",
+              }}
+            >
+              Le compte sera masqué et ne pourra plus se connecter, mais reste
+              restaurable depuis la corbeille — aucune donnée n'est perdue.
+            </div>
+            <textarea
+              className={styles.searchInput}
+              style={{ width: "100%", minHeight: 70, resize: "vertical" }}
+              placeholder="Motif de suppression (facultatif)"
+              value={deleteMotif}
+              onChange={(e) => setDeleteMotif(e.target.value)}
+            />
+            <button
+              className={styles.makeAdminBtn}
+              style={{ marginTop: "0.75rem", background: "#b91c1c" }}
+              disabled={softDelete.isPending}
+              onClick={() =>
+                softDelete.mutate({ id: deleteTarget.id, motif: deleteMotif.trim() })
+              }
+            >
+              {softDelete.isPending ? "Suppression..." : "Déplacer dans la corbeille"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════ MODAL PURGE DÉFINITIVE ═══════════ */}
+      {purgeTarget && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => {
+            setPurgeTarget(null);
+            setPurgeConfirm("");
+          }}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalName} style={{ color: "#b91c1c" }}>
+                Suppression définitive
+              </h2>
+              <button
+                className={styles.modalClose}
+                onClick={() => {
+                  setPurgeTarget(null);
+                  setPurgeConfirm("");
+                }}
+              >
+                <FiX size={18} />
+              </button>
+            </div>
+            <div
+              style={{
+                background: "#fef2f2",
+                border: "1px solid #fecaca",
+                borderRadius: 8,
+                padding: "0.75rem",
+                fontSize: "0.85rem",
+                margin: "0.75rem 0",
+              }}
+            >
+              <FiAlertTriangle size={14} style={{ marginRight: 6 }} />
+              Action irréversible. Toutes les données de{" "}
+              <strong>@{purgeTarget.login}</strong> seront définitivement
+              effacées. Tapez son login pour confirmer.
+            </div>
+            <input
+              type="text"
+              className={styles.searchInput}
+              style={{ width: "100%" }}
+              placeholder={purgeTarget.login}
+              value={purgeConfirm}
+              onChange={(e) => setPurgeConfirm(e.target.value)}
+            />
+            <button
+              className={styles.makeAdminBtn}
+              style={{ marginTop: "0.75rem", background: "#b91c1c" }}
+              disabled={purgeConfirm !== purgeTarget.login || purgeUser.isPending}
+              onClick={() => purgeUser.mutate(purgeTarget.id)}
+            >
+              {purgeUser.isPending ? "Suppression..." : "Supprimer définitivement"}
+            </button>
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import type { KycStatus, Sexe } from "./enum";
+import type { KycStatus, Sexe, StatutFichePorteur } from "./enum";
 import type { InvestissementSummary } from "./investissement";
 import type { LocaliteDTO } from "./localite";
 import type { ProjetSummary } from "./projet";
@@ -41,9 +41,18 @@ export interface UserDTO {
   kycVersoUrl?: string; // <-- AJOUTÉ
   kycSelfieUrl?: string; // <-- AJOUTÉ
   kycCommentaireRejet?: string;
+  // === FICHE DE PRÉSENTATION PORTEUR ===
+  ficheStatut?: StatutFichePorteur;
+  ficheCommentaireRejet?: string;
   dateNaissance?: string;
   adresseResidencielle?: string;
   // ── PRÉFÉRENCES ──────────────────────────────────────────────
   interfaceLanguage?: string; // "fr" | "en" | "es"
   devisePreferee?: string; // "XOF" | "USD" | "EUR" | "XAF" | ...
+  // === RÉINITIALISATION ASSISTÉE PAR L'ADMIN ===
+  mustChangePassword?: boolean;
+  // === SUPPRESSION LOGIQUE (SOFT DELETE) ===
+  supprimeLe?: string | null;
+  supprimePar?: string | null;
+  motifSuppression?: string | null;
 }

@@ -1,0 +1,117 @@
+.wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1.2rem 4rem;
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  color: #1B5E20;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  font-size: 1.4rem;
+  margin: 0 0 0.4rem;
+}
+
+.header p {
+  color: #555;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.badgeValidee, .badgeAttente, .badgeRejetee {
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badgeValidee { background: #f0fdf4; color: #1B5E20; border: 1.5px solid #86efac; }
+.badgeAttente { background: #fffbea; color: #6b5900; border: 1.5px solid #f0c419; }
+.badgeRejetee { background: #fff5f5; color: #c62828; border: 1.5px solid #e53935; }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field input, .field select, .field textarea {
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 0.92rem;
+  font-family: inherit;
+}
+
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: #1B5E20;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+}
+
+@media (max-width: 560px) {
+  .grid2 { grid-template-columns: 1fr; }
+}
+
+.sectionLabel {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #888;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  margin-top: 0.4rem;
+}
+
+.submitBtn {
+  padding: 1rem;
+  background: #F5C400;
+  color: #1B5E20;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.6rem;
+}
+
+.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.readonlyText {
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  white-space: pre-wrap;
+  color: #333;
+}

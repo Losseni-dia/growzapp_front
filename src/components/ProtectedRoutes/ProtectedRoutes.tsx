@@ -1,5 +1,5 @@
 // src/components/ProtectedRoutes/ProtectedRoutes.tsx
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 
 interface ProtectedRouteProps {
@@ -8,6 +8,7 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -22,6 +23,12 @@ export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   // 1. Si pas d'utilisateur, redirection Login
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // 1bis. Mot de passe temporaire (réinitialisation assistée par l'admin) :
+  // on bloque toute navigation tant qu'il n'a pas été changé.
+  if (user.mustChangePassword && location.pathname !== "/changer-mot-de-passe") {
+    return <Navigate to="/changer-mot-de-passe" replace />;
   }
 
   // 2. Si des rôles sont spécifiés, on vérifie l'autorisation
