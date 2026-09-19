@@ -7,15 +7,18 @@ export enum Sexe {
 
 // === PROJET ===
 export type StatutProjet =
+  | "BROUILLON"
   | "EN_PREPARATION"
   | "SOUMIS"
   | "VALIDE"
   | "REJETE"
   | "EN_COURS"
   | "TERMINE"
-  | "EN_ATTENTE";
+  | "EN_ATTENTE"
+  | "FINANCE";
 
 export const StatutProjetLabel: Record<StatutProjet, string> = {
+  BROUILLON: "Brouillon",
   EN_PREPARATION: "En préparation",
   SOUMIS: "En attente de validation",
   VALIDE: "Validé & publié",
@@ -23,6 +26,7 @@ export const StatutProjetLabel: Record<StatutProjet, string> = {
   EN_COURS: "En cours de financement",
   TERMINE: "Terminé",
   EN_ATTENTE: "En attente",
+  FINANCE: "Financé",
 };
 
 // === INVESTISSEMENT ===
@@ -111,5 +115,17 @@ export enum KycStatusLabel {
   EN_ATTENTE = "En attente",
   VALIDE = "Vérifié",
   REJETE = "Rejeté"
+}
+
+export enum StatutFichePorteur {
+  NON_SOUMISE = "NON_SOUMISE",
+  EN_ATTENTE = "EN_ATTENTE",
+  VALIDEE = "VALIDEE",
+  REJETEE = "REJETEE"
+}
+
+export enum StatutJuridiquePorteur {
+  INDIVIDUEL = "INDIVIDUEL",
+  SOCIETE = "SOCIETE"
 }
 

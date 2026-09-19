@@ -238,7 +238,10 @@ export default function EditProjetPage() {
               ...projet,
               dateDebut: projet.dateDebut || null,
               dateFin: projet.dateFin || null,
-              dureeMois: projet.dureeMois || 36,
+              // Ne jamais forcer 36 par défaut : null = durée indéterminée,
+              // un choix explicite du porteur qu'un enregistrement admin ne
+              // doit pas écraser silencieusement.
+              dureeMois: projet.dureeMois ?? null,
             }),
           ],
           { type: "application/json" },

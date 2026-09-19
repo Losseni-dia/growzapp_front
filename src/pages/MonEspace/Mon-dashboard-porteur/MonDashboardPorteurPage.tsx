@@ -6,12 +6,11 @@ import {
     FiDollarSign,
     FiGift,
     FiPackage,
-    FiSearch,
     FiTarget,
     FiTrendingUp,
     FiUsers,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     Area,
     AreaChart,
@@ -70,6 +69,8 @@ function ProjetPorteurCard({
     defaultValue: ligne.statutProjet,
   });
 
+  const estBrouillon = ligne.statutProjet === "BROUILLON";
+
   return (
     <div
       className={styles.projetCard}
@@ -91,6 +92,22 @@ function ProjetPorteurCard({
         </div>
       </div>
 
+      {estBrouillon && (
+        <div className={styles.brouillonNotice}>
+          <p>
+            {t(
+              "porteur.card.draft_notice",
+              "Ce projet est encore en brouillon — les informations sont incomplètes et il n'est pas encore visible des investisseurs.",
+            )}
+          </p>
+          <span className={styles.brouillonCta}>
+            {t("porteur.card.draft_cta", "Cliquer pour continuer et soumettre →")}
+          </span>
+        </div>
+      )}
+
+      {!estBrouillon && (
+        <>
       {/* ── JAUGE OBJECTIF ── */}
       <div className={styles.gaugeBlock}>
         <div className={styles.gaugeTop}>
@@ -214,6 +231,8 @@ function ProjetPorteurCard({
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
@@ -221,6 +240,7 @@ function ProjetPorteurCard({
 export default function MonDashboardPorteurPage() {
   const { t, i18n } = useTranslation();
   const { format } = useCurrency();
+  const navigate = useNavigate();
   const [dashboard, setDashboard] = useState<PorteurDashboardDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [projetSelectionneId, setProjetSelectionneId] = useState<number | null>(
@@ -370,7 +390,6 @@ export default function MonDashboardPorteurPage() {
           <h2 className={styles.sectionTitle}>{t("porteur.projects_title")}</h2>
           <div className={styles.toolbar}>
             <div className={styles.searchWrapper}>
-              <FiSearch size={15} className={styles.searchIcon} />
               <input
                 type="text"
                 placeholder={t("porteur.search_placeholder") as string}
@@ -399,7 +418,11 @@ export default function MonDashboardPorteurPage() {
               <ProjetPorteurCard
                 key={ligne.projetId}
                 ligne={ligne}
-                onClick={() => setProjetSelectionneId(ligne.projetId)}
+                onClick={() =>
+                  ligne.statutProjet === "BROUILLON"
+                    ? navigate(`/projet/creer?brouillonId=${ligne.projetId}`)
+                    : setProjetSelectionneId(ligne.projetId)
+                }
               />
             ))}
           </div>

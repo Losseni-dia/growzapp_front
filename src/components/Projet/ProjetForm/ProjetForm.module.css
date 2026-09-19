@@ -319,6 +319,57 @@
 
 .saveBtn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
+/* ── ACTIONS (brouillon + soumettre) ────────────────────── */
+.formActions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.formActions .saveBtn { margin-top: 0; flex: 1 1 auto; }
+
+.draftBtn {
+  flex: 1 1 auto;
+  padding: 1rem;
+  background: #fff;
+  color: #1B5E20;
+  border: 1.5px solid #1B5E20;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.draftBtn:hover:not(:disabled) { background: #f0f7f0; }
+.draftBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── GARDE-FOU KYC ───────────────────────────────────────── */
+.kycGate {
+  max-width: 560px;
+  margin: 3rem auto;
+  padding: 2.2rem;
+  background: #fff;
+  border-radius: 16px;
+  border: 1.5px solid #f0c419;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.kycGate h2 { color: #1B5E20; margin-bottom: 0.8rem; }
+.kycGate p { color: #444; margin-bottom: 1.6rem; line-height: 1.5; }
+
+.kycGateBtn {
+  display: inline-block;
+  padding: 0.9rem 1.8rem;
+  background: #F5C400;
+  color: #1B5E20;
+  border-radius: 12px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
 /* ── MODAL ───────────────────────────────────────────── */
 .modalOverlay {
   position: fixed;

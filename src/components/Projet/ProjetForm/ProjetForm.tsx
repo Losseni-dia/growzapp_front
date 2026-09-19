@@ -6,9 +6,11 @@ import {
   FiCamera, FiDollarSign, FiPieChart, FiSend,
   FiShield, FiAlertTriangle, FiCheck, FiMapPin, FiTag, FiClock,
 } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { dataURLtoFile, getCroppedImg } from "../../../types/utils/CropImage";
 import { api } from "../../../service/Api";
+import { useAuth } from "../../Context/AuthContext";
+import { KycStatus, StatutFichePorteur } from "../../../types/enum";
 import type { SecteurDTO } from "../../../types/secteur";
 import type { PaysDTO } from "../../../types/pays";
 import type { LocaliteDTO } from "../../../types/localite";
@@ -26,9 +28,15 @@ type FormErrors = Partial<Record<
 
 export default function ProjectForm() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cropContainerRef = useRef<HTMLDivElement>(null);
+
+  const [draftId, setDraftId] = useState<number | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [loadingDraft, setLoadingDraft] = useState(false);
 
   const [libelle, setLibelle] = useState("");
   const [description, setDescription] = useState("");
@@ -92,6 +100,43 @@ export default function ProjectForm() {
       .catch(() => setLocalites([]))
       .finally(() => setLoadingLocalites(false));
   }, []);
+
+  // Reprise d'un brouillon existant (lien "Continuer" depuis "Mes projets")
+  // — on passe par mes-projets (scopé au porteur connecté côté backend) plutôt
+  // que par GET /api/projets/{id} qui est public et ne devrait jamais exposer
+  // un brouillon à quelqu'un d'autre que son propriétaire.
+  useEffect(() => {
+    const brouillonId = searchParams.get("brouillonId");
+    if (!brouillonId) return;
+
+    setLoadingDraft(true);
+    api.get<ApiWrapper<any[]>>("/api/projets/mes-projets")
+      .then((res) => {
+        const projets = res.data ?? [];
+        const draft = projets.find((p) => String(p.id) === brouillonId);
+        if (!draft) {
+          toast.error(t("project_form.draft.not_found", "Brouillon introuvable"));
+          return;
+        }
+        setDraftId(draft.id);
+        setLibelle(draft.libelle ?? "");
+        setDescription(draft.description ?? "");
+        setSecteurNom(draft.secteurNom ?? "");
+        setLocaliteNom(draft.localiteNom ?? "");
+        setPaysNom(draft.paysNom ?? "");
+        setDateDebut(draft.dateDebut ?? "");
+        setDateFin(draft.dateFin ?? "");
+        setDureeMois(draft.dureeMois ?? null);
+        if (draft.objectifFinancement) { setObjectif(draft.objectifFinancement); setObjectifDisplay(String(draft.objectifFinancement)); }
+        if (draft.prixUnePart) { setPrixPart(draft.prixUnePart); setPrixPartDisplay(String(draft.prixUnePart)); }
+        if (draft.valuation) { setValuation(draft.valuation); setValuationDisplay(String(draft.valuation)); }
+        if (draft.roiProjete) { setRoi(draft.roiProjete); setRoiDisplay(String(draft.roiProjete)); }
+        if (draft.poster) setPreview(draft.poster);
+      })
+      .catch(() => toast.error(t("project_form.draft.not_found", "Brouillon introuvable")))
+      .finally(() => setLoadingDraft(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const clearError = (field: keyof FormErrors) => {
     if (errors[field]) setErrors((prev: FormErrors) => ({ ...prev, [field]: undefined }));
@@ -180,35 +225,73 @@ export default function ProjectForm() {
     setShowLegalModal(true);
   };
 
+  // Payload permissif utilisé pour l'enregistrement d'un brouillon — les
+  // champs pas encore remplis sont envoyés à null plutôt que 0/"" pour ne
+  // déclencher aucune validation côté backend (ProjetBrouillonDTO).
+  const buildBrouillonPayload = () => ({
+    libelle: libelle.trim() || null,
+    description: description.trim() || null,
+    secteurNom: secteurNom.trim() || null,
+    localiteNom: localiteNom.trim() || null,
+    paysNom: paysNom.trim() || null,
+    objectifFinancement: objectif > 0 ? objectif : null,
+    prixUnePart: prixPart > 0 ? prixPart : null,
+    partsDisponible: totalParts > 0 ? totalParts : null,
+    roiProjete: roi > 0 ? roi : null,
+    valuation: valuation > 0 ? valuation : null,
+    dureeMois: dureeMois ?? null,
+    currencyCode: "XOF",
+    dateDebut: dateDebut || null,
+    dateFin: dateFin || null,
+  });
+
+  // Enregistre l'état courant du formulaire comme brouillon (crée le
+  // brouillon au premier appel, le met à jour ensuite) — aucune validation
+  // requise, utilisable à n'importe quelle étape de saisie.
+  const handleSaveDraft = async () => {
+    setSavingDraft(true);
+    try {
+      const formData = new FormData();
+      formData.append("projet", new Blob([JSON.stringify(buildBrouillonPayload())], { type: "application/json" }));
+      if (posterFile) formData.append("poster", posterFile);
+
+      const res: any = draftId
+        ? await api.put(`/api/projets/brouillon/${draftId}`, formData, true)
+        : await api.post("/api/projets/brouillon", formData, true);
+
+      if (res?.data?.id) setDraftId(res.data.id);
+      toast.success(t("project_form.draft.saved", "Brouillon enregistré"));
+    } catch (err: any) {
+      toast.error(err.message || t("project_form.errors.server"));
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
   const handleFinalSubmit = async () => {
     if (!isCertified || !agreedToMonitoring) return;
     setLoading(true);
 
-    const formData = new FormData();
-    const projetJson = {
-      libelle: libelle.trim(),
-      description: description.trim(),
-      secteurNom: secteurNom.trim(),
-      localiteNom: localiteNom.trim(),
-      paysNom: paysNom.trim(),
-      objectifFinancement: objectif,
-      prixUnePart: prixPart,
-      partsDisponible: totalParts,
-      roiProjete: roi,
-      valuation,
-      dureeMois: dureeMois ?? null,
-      currencyCode: "XOF",
-      statutProjet: "SOUMIS",
-      dateDebut,
-      dateFin,
-      certifiedAt: new Date().toISOString(),
-    };
-
-    formData.append("projet", new Blob([JSON.stringify(projetJson)], { type: "application/json" }));
-    if (posterFile) formData.append("poster", posterFile);
-
     try {
-      await api.post("/api/projets", formData, true);
+      // 1. On (re)synchronise systématiquement le brouillon avec l'état
+      // actuel du formulaire avant de soumettre — garantit que la
+      // soumission porte exactement sur ce qui est affiché à l'écran,
+      // que l'utilisateur ait cliqué "Enregistrer brouillon" avant ou non.
+      const formData = new FormData();
+      formData.append("projet", new Blob([JSON.stringify(buildBrouillonPayload())], { type: "application/json" }));
+      if (posterFile) formData.append("poster", posterFile);
+
+      const draftRes: any = draftId
+        ? await api.put(`/api/projets/brouillon/${draftId}`, formData, true)
+        : await api.post("/api/projets/brouillon", formData, true);
+
+      const id = draftRes?.data?.id ?? draftId;
+      if (!id) throw new Error(t("project_form.errors.server"));
+      setDraftId(id);
+
+      // 2. Validation complète + transition BROUILLON → SOUMIS côté backend.
+      await api.post(`/api/projets/brouillon/${id}/soumettre`);
+
       toast.success(t("project_form.success"));
       navigate("/mon-dashboard-porteur");
     } catch (err: any) {
@@ -221,12 +304,89 @@ export default function ProjectForm() {
     }
   };
 
+  if (loadingDraft) {
+    return (
+      <div className={styles.pageWrapper}>
+        <div className={styles.kycGate}>
+          <p>{t("project_form.draft.loading", "Chargement du brouillon…")}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Seul un KYC VALIDÉ par l'admin permet de soumettre un projet — un
+  // dossier simplement soumis (EN_ATTENTE) ne suffit pas, même règle que
+  // pour investir (cf InvestissementService.investir côté backend).
+  if (user && user.kycStatus !== KycStatus.VALIDE) {
+    const isEnAttente = user.kycStatus === KycStatus.EN_ATTENTE;
+    const isRejete = user.kycStatus === KycStatus.REJETE;
+
+    return (
+      <div className={styles.pageWrapper}>
+        <div className={styles.kycGate}>
+          <h2>🛡 {t("project_form.kyc_gate.title", "Vérification d'identité requise")}</h2>
+          <p>
+            {isEnAttente
+              ? t(
+                  "project_form.kyc_gate.message_pending",
+                  "Votre dossier KYC a bien été soumis et est en cours d'examen par notre équipe. Vous pourrez soumettre un projet dès qu'il sera validé."
+                )
+              : isRejete
+              ? t(
+                  "project_form.kyc_gate.message_rejected",
+                  "Votre dossier KYC a été rejeté. Merci de le resoumettre avec les documents corrigés avant de pouvoir soumettre un projet."
+                )
+              : t(
+                  "project_form.kyc_gate.message",
+                  "Avant de pouvoir soumettre un projet, vous devez d'abord soumettre votre dossier KYC (vérification d'identité). Cela nous permet de garantir la fiabilité des porteurs de projet auprès des investisseurs."
+                )}
+          </p>
+          {!isEnAttente && (
+            <Link to="/profile/kyc" className={styles.kycGateBtn}>
+              {t("project_form.kyc_gate.cta", "Soumettre mon KYC")}
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Deuxième garde-fou : la fiche de présentation professionnelle du
+  // porteur doit elle aussi être validée par un admin (distincte du KYC,
+  // qui ne couvre que l'identité civile) — même règle appliquée strictement
+  // côté backend (ProjetService.requireFichePorteurValidee).
+  if (user && user.ficheStatut !== StatutFichePorteur.VALIDEE) {
+    const isRejetee = user.ficheStatut === StatutFichePorteur.REJETEE;
+
+    return (
+      <div className={styles.pageWrapper}>
+        <div className={styles.kycGate}>
+          <h2>📋 {t("project_form.fiche_gate.title", "Fiche de présentation requise")}</h2>
+          <p>
+            {isRejetee
+              ? t(
+                  "project_form.fiche_gate.message_rejected",
+                  "Votre fiche de présentation a été marquée non conforme par notre équipe. Contactez GrowzApp pour la faire corriger avant de pouvoir soumettre un projet."
+                )
+              : t(
+                  "project_form.fiche_gate.message",
+                  "Avant de pouvoir soumettre un projet, votre profil doit être vérifié par notre équipe (fiche de présentation professionnelle). Contactez GrowzApp pour engager cette vérification — elle rassure les investisseurs sur le sérieux des porteurs de projet."
+                )}
+          </p>
+          <Link to="/profile/fiche-porteur" className={styles.kycGateBtn}>
+            {t("project_form.fiche_gate.cta", "Voir l'état de ma fiche")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
 
         <div className={styles.formHeader}>
-          <h1 className={styles.title}>🚀 {t("project_form.title")}</h1>
+          <h1 className={styles.title}> {t("project_form.title")}</h1>
           <p className={styles.subtitle}>{t("project_form.subtitle")}</p>
         </div>
 
@@ -309,7 +469,7 @@ export default function ProjectForm() {
             {errors.description
               ? <span className={styles.errorMsg}>⚠ {t(errors.description)}</span>
               : <span className={styles.hintMsg}>
-                  💡 {t("project_form.fields.description_hint")} {description.length} {t("project_form.fields.description_chars")}
+                   {t("project_form.fields.description_hint")} {description.length} {t("project_form.fields.description_chars")}
                 </span>}
           </div>
 
@@ -488,10 +648,23 @@ export default function ProjectForm() {
             <div className={styles.globalError}>⚠ {errors.global}</div>
           )}
 
-          <button type="submit" className={styles.saveBtn} disabled={loading}>
-            <FiSend />
-            {loading ? t("project_form.buttons.processing") : t("project_form.buttons.submit")}
-          </button>
+          <div className={styles.formActions}>
+            <button
+              type="button"
+              className={styles.draftBtn}
+              disabled={savingDraft || loading}
+              onClick={handleSaveDraft}
+            >
+              {savingDraft
+                ? t("project_form.draft.saving", "Enregistrement…")
+                : t("project_form.draft.save", "Enregistrer comme brouillon")}
+            </button>
+
+            <button type="submit" className={styles.saveBtn} disabled={loading}>
+              <FiSend />
+              {loading ? t("project_form.buttons.processing") : t("project_form.buttons.submit")}
+            </button>
+          </div>
 
         </form>
       </div>
