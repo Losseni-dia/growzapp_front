@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { FiClipboard, FiDownload, FiSearch } from "react-icons/fi";
+import {
+  FiClipboard,
+  FiDownload,
+  FiSearch,
+  FiArchive,
+  FiRotateCcw,
+} from "react-icons/fi";
 import { format } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
 import { api } from "../../../service/Api";
@@ -19,6 +25,8 @@ interface FactureAdmin {
   datePaiement?: string;
   investisseurNom: string;
   investisseurEmail: string;
+  type?: "DIVIDENDE" | "PREMIUM";
+  projetLibelle?: string;
 }
 
 interface FacturesPage {
@@ -32,20 +40,23 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 export default function FacturesAdminPage() {
   const { t, i18n } = useTranslation();
   const { format: formatCurrency } = useCurrency();
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const [statut, setStatut] = useState("");
   const [downloadingId, setDownloadingId] = useState<number | null>(null);
+  const [viewArchive, setViewArchive] = useState(false);
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
   const { data, isLoading, isError } = useQuery<FacturesPage>({
-    queryKey: ["admin-factures", page, search, statut],
+    queryKey: ["admin-factures", page, search, statut, viewArchive],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         size: "20",
+        archive: viewArchive.toString(),
         ...(search && { search }),
         ...(statut && { statut }),
       });
@@ -55,6 +66,18 @@ export default function FacturesAdminPage() {
       return res.data;
     },
   });
+
+  const toggleArchiver = async (f: FactureAdmin) => {
+    try {
+      await api.post(
+        `/api/admin/factures/${f.id}/${viewArchive ? "desarchiver" : "archiver"}`,
+      );
+      toast.success(viewArchive ? "Facture désarchivée" : "Facture archivée");
+      queryClient.invalidateQueries({ queryKey: ["admin-factures"] });
+    } catch (err: any) {
+      toast.error(err.message || "Erreur");
+    }
+  };
 
   const factures = data?.content ?? [];
   const totalPages = data?.totalPages ?? 1;
@@ -121,6 +144,21 @@ export default function FacturesAdminPage() {
             onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            setViewArchive((v) => !v);
+            setPage(0);
+          }}
+          className={styles.downloadBtn}
+          style={
+            viewArchive
+              ? { background: "#b45309", color: "#fff", padding: "0.4rem 0.8rem" }
+              : { padding: "0.4rem 0.8rem" }
+          }
+        >
+          <FiArchive size={14} /> {viewArchive ? "Archivées" : "Voir archives"}
+        </button>
         <select
           value={statut}
           onChange={(e) => handleStatutChange(e.target.value)}
@@ -140,6 +178,7 @@ export default function FacturesAdminPage() {
           <thead>
             <tr>
               <th>{t("admin.invoices.table.number")}</th>
+              <th>Type</th>
               <th>{t("admin.invoices.table.investor")}</th>
               <th>{t("admin.invoices.table.amount")}</th>
               <th>{t("admin.invoices.table.status")}</th>
@@ -150,19 +189,19 @@ export default function FacturesAdminPage() {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={6} className={styles.loading}>
+                <td colSpan={7} className={styles.loading}>
                   {t("common.loading")}
                 </td>
               </tr>
             ) : isError ? (
               <tr>
-                <td colSpan={6} className={styles.loading}>
+                <td colSpan={7} className={styles.loading}>
                   {t("admin.invoices.load_error")}
                 </td>
               </tr>
             ) : factures.length === 0 ? (
               <tr>
-                <td colSpan={6} className={styles.loading}>
+                <td colSpan={7} className={styles.loading}>
                   {t("admin.invoices.empty")}
                 </td>
               </tr>
@@ -170,6 +209,11 @@ export default function FacturesAdminPage() {
               factures.map((f) => (
                 <tr key={f.id}>
                   <td>{f.numeroFacture}</td>
+                  <td>
+                    {f.type === "PREMIUM"
+                      ? `⭐ Premium${f.projetLibelle ? " — " + f.projetLibelle : ""}`
+                      : "Dividende"}
+                  </td>
                   <td>
                     <div>{f.investisseurNom}</div>
                     <div className={styles.email}>{f.investisseurEmail}</div>
@@ -191,6 +235,17 @@ export default function FacturesAdminPage() {
                       title={t("admin.invoices.download")}
                     >
                       <FiDownload size={14} />
+                    </button>
+                    <button
+                      className={styles.downloadBtn}
+                      onClick={() => toggleArchiver(f)}
+                      title={viewArchive ? "Désarchiver" : "Archiver"}
+                    >
+                      {viewArchive ? (
+                        <FiRotateCcw size={14} />
+                      ) : (
+                        <FiArchive size={14} />
+                      )}
                     </button>
                   </td>
                 </tr>

@@ -2,7 +2,19 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { FiX, FiUsers, FiDollarSign, FiGift, FiTarget, FiSend, FiArrowRightCircle, FiUpload } from "react-icons/fi";
+import {
+  FiX,
+  FiUsers,
+  FiDollarSign,
+  FiGift,
+  FiTarget,
+  FiSend,
+  FiArrowRightCircle,
+  FiUpload,
+  FiCreditCard,
+  FiSmartphone,
+} from "react-icons/fi";
+import { BsStarFill } from "react-icons/bs";
 import {
   AreaChart,
   Area,
@@ -25,7 +37,9 @@ interface Props {
   onActionDone: () => void;
 }
 
-type PanelType = "retrait" | "transfert" | "document" | null;
+type PanelType = "retrait" | "transfert" | "document" | "premium" | null;
+
+const PRIX_PREMIUM = 5000;
 
 export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone }: Props) {
   const { t } = useTranslation();
@@ -39,6 +53,7 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
   const [docFile, setDocFile] = useState<File | null>(null);
   const [docNom, setDocNom] = useState("");
   const [docDescription, setDocDescription] = useState("");
+  const [premiumLoading, setPremiumLoading] = useState<string | null>(null);
 
   const resetPanel = () => {
     setPanel(null);
@@ -135,6 +150,31 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
     }
   };
 
+  const acheterPremium = async (methode: "wallet" | "carte" | "mobile") => {
+    setPremiumLoading(methode);
+    try {
+      if (methode === "wallet") {
+        await api.post(`/api/projets/${ligne.projetId}/premium/wallet`);
+        toast.success("Statut Premium activé !");
+        resetPanel();
+        onActionDone();
+      } else {
+        const response = await api.post<{ redirectUrl?: string; error?: string }>(
+          `/api/projets/${ligne.projetId}/premium/${methode}`,
+        );
+        if (response.redirectUrl) {
+          window.location.href = response.redirectUrl;
+        } else {
+          toast.error(response.error || "Erreur lors de la redirection");
+        }
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de l'activation du Premium");
+    } finally {
+      setPremiumLoading(null);
+    }
+  };
+
   const collecteChart = ligne.historiqueCollecte.map((s) => ({
     dateLabel: new Date(s.date).toLocaleDateString("fr-FR", {
       day: "2-digit",
@@ -169,6 +209,25 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
             <div>
               <h2>{ligne.projetLibelleTradu || ligne.projetLibelle}</h2>
               <span className={styles.statutBadge}>{statutLabel}</span>
+              {ligne.premiumActif && (
+                <span
+                  style={{
+                    marginLeft: 8,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
+                    color: "#ffc107",
+                    padding: "3px 9px",
+                    borderRadius: 999,
+                    fontSize: "0.7rem",
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  <BsStarFill size={10} /> Premium
+                </span>
+              )}
             </div>
           </div>
           <button className={styles.closeBtn} onClick={onClose}>
@@ -263,7 +322,26 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
             >
               <FiUpload size={14} /> {t("porteur.documents.upload_btn")}
             </button>
+            {ligne.statutProjet === "VALIDE" && !ligne.premiumActif && (
+              <button
+                className={styles.walletActionBtn}
+                style={{
+                  background: "linear-gradient(135deg, #1b5e20, #2e7d32)",
+                  color: "#ffc107",
+                  border: "none",
+                }}
+                onClick={() => setPanel(panel === "premium" ? null : "premium")}
+              >
+                <BsStarFill size={14} /> Passer en Premium
+              </button>
+            )}
           </div>
+          {ligne.premiumActif && ligne.premiumFin && (
+            <p style={{ fontSize: "0.82rem", color: "#666", margin: "-8px 0 4px" }}>
+              Premium actif jusqu'au{" "}
+              {new Date(ligne.premiumFin).toLocaleDateString("fr-FR")}
+            </p>
+          )}
 
           {panel === "retrait" && (
             <div className={styles.walletPanel}>
@@ -345,6 +423,47 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
                   {submitting
                     ? t("porteur.wallet.processing")
                     : t("porteur.documents.confirm_upload")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {panel === "premium" && (
+            <div className={styles.walletPanel}>
+              <p className={styles.walletPanelHint}>
+                Mets ce projet en tête du catalogue pendant <strong>3 mois</strong> pour{" "}
+                <strong>{PRIX_PREMIUM.toLocaleString("fr-FR")} FCFA</strong>.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
+                <button
+                  onClick={() => acheterPremium("wallet")}
+                  disabled={premiumLoading !== null}
+                  className={styles.walletPanelConfirm}
+                  style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}
+                >
+                  <FiDollarSign size={14} />
+                  {premiumLoading === "wallet" ? "Traitement..." : "Payer avec mon Wallet GrowzApp"}
+                </button>
+                <button
+                  onClick={() => acheterPremium("mobile")}
+                  disabled={premiumLoading !== null}
+                  className={styles.walletPanelConfirm}
+                  style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}
+                >
+                  <FiSmartphone size={14} />
+                  {premiumLoading === "mobile" ? "Redirection..." : "Payer par Mobile Money"}
+                </button>
+                <button
+                  onClick={() => acheterPremium("carte")}
+                  disabled={premiumLoading !== null}
+                  className={styles.walletPanelConfirm}
+                  style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}
+                >
+                  <FiCreditCard size={14} />
+                  {premiumLoading === "carte" ? "Redirection..." : "Payer par carte bancaire"}
+                </button>
+                <button onClick={resetPanel} className={styles.walletPanelCancel}>
+                  {t("porteur.wallet.cancel")}
                 </button>
               </div>
             </div>

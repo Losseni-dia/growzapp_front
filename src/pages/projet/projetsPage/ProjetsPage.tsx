@@ -43,9 +43,11 @@ export default function ProjetsPage() {
   const [secteurFilter, setSecteurFilter] = useState<string>("");
   const [prixMin, setPrixMin] = useState("");
   const [prixMax, setPrixMax] = useState("");
+  // Par défaut : financement décroissant, avec les plus récents en
+  // départage — conforme à la règle catalogue Premium > financement > récent.
   const [sortBy, setSortBy] = useState<
     "recent" | "financement" | "prixAsc" | "prixDesc"
-  >("recent");
+  >("financement");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -100,7 +102,7 @@ export default function ProjetsPage() {
       filtered = filtered.filter((p) => p.prixUnePart <= Number(prixMax));
 
     // ── Tri ──────────────────────────────────────────────────────────────────
-    return [...filtered].sort((a, b) => {
+    const comparer = (a: ProjetDTO, b: ProjetDTO) => {
       switch (sortBy) {
         case "recent":
           return (
@@ -113,7 +115,10 @@ export default function ProjetsPage() {
           const pB = b.objectifFinancement
             ? b.montantCollecte / b.objectifFinancement
             : 0;
-          return pB - pA;
+          if (pB !== pA) return pB - pA;
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         }
         case "prixAsc":
           return a.prixUnePart - b.prixUnePart;
@@ -122,7 +127,14 @@ export default function ProjetsPage() {
         default:
           return 0;
       }
-    });
+    };
+
+    // Règle métier : les projets Premium sont toujours groupés en tête du
+    // catalogue, quel que soit le tri choisi par l'utilisateur — celui-ci ne
+    // s'applique qu'à l'intérieur de chaque groupe (Premium / non-Premium).
+    const premium = filtered.filter((p) => p.premiumActif);
+    const autres = filtered.filter((p) => !p.premiumActif);
+    return [...premium.sort(comparer), ...autres.sort(comparer)];
   }, [projects, search, secteurFilter, prixMin, prixMax, sortBy]);
 
   if (loading)

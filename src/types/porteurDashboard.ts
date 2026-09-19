@@ -23,6 +23,8 @@ export interface PorteurProjetLigneDTO {
   totalDividendesVerses: number;
   historiqueCollecte: ValorisationSnapshotDTO[];
   vitesseLevee: VelocitePointDTO[];
+  premiumActif: boolean;
+  premiumFin?: string;
 }
 
 export interface PorteurDashboardDTO {

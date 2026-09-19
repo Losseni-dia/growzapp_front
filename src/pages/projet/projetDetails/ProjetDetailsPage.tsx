@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { BsShieldCheck } from "react-icons/bs";
+import { BsShieldCheck, BsStarFill } from "react-icons/bs";
 import {
   FiClock,
   FiDollarSign,
@@ -40,6 +40,7 @@ export default function ProjetDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [canSeeDocs, setCanSeeDocs] = useState(true);
   const [showInvestModal, setShowInvestModal] = useState(false);
+  const [fichePorteur, setFichePorteur] = useState<any | null>(null);
 
   const translateData = (
     category: "sectors" | "countries" | "cities",
@@ -102,10 +103,47 @@ export default function ProjetDetailsPage() {
     loadProjet();
   }, [id, i18n.language]);
 
+  // Fiche de présentation du porteur — visible des investisseurs connectés
+  // uniquement, jamais aux visiteurs anonymes (cf demande produit).
+  useEffect(() => {
+    if (!user || !projet?.porteurId) {
+      setFichePorteur(null);
+      return;
+    }
+    api
+      .get<ApiResponse<any>>(`api/porteur/fiche/${projet.porteurId}/publique`)
+      .then((res) => setFichePorteur(res.data))
+      .catch(() => setFichePorteur(null));
+  }, [user, projet?.porteurId]);
+
   // Ouvrir modal si ?action=invest
   useEffect(() => {
     if (isInvestMode) setShowInvestModal(true);
   }, [isInvestMode]);
+
+  // Retour de paiement Premium (Mobile Money/Carte) : on vérifie tout de
+  // suite auprès du fournisseur au lieu d'attendre le webhook — évite de
+  // rester bloqué "en attente" si le webhook n'a jamais pu joindre le
+  // backend (cas fréquent en dev local sans tunnel actif).
+  useEffect(() => {
+    const premiumParam = searchParams.get("premium");
+    if (!premiumParam || !projet?.id) return;
+
+    if (premiumParam === "success") {
+      api
+        .post<{ resultat?: string }>(`api/projets/${projet.id}/premium/verifier`)
+        .then((res) => {
+          if (res.resultat === "CONFIRME") {
+            toast.success("Paiement confirmé — statut Premium activé !");
+            loadProjet();
+          } else if (res.resultat === "ANNULE") {
+            toast.error("Le paiement n'a pas pu être confirmé — achat annulé.");
+          }
+        })
+        .catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projet?.id, searchParams]);
 
   if (loading)
     return (
@@ -171,16 +209,16 @@ export default function ProjetDetailsPage() {
         )}
         <div className={styles.heroOverlay} />
 
-        {projet.certifiedAt && (
+        {projet.premiumActif && (
           <div className={styles.certifiedBadge}>
-            <BsShieldCheck /> {t("project_details.certified")}
+            <BsStarFill /> {t("project_details.premium") || "Premium"}
           </div>
         )}
 
         <div className={styles.heroContent}>
           <div className={styles.heroMeta}>
             <span className={styles.sectorTag}>
-              {translateData("sectors", projet.secteurNom)}
+              {projet.secteurNomTradu || translateData("sectors", projet.secteurNom)}
             </span>
             <span
               className={`${styles.statutTag} ${
@@ -201,8 +239,7 @@ export default function ProjetDetailsPage() {
           <h1 className={styles.heroTitle}>{libelleAffiche}</h1>
           <div className={styles.heroInfos}>
             <span>
-              <FiMapPin /> {projet.siteNom},{" "}
-              {translateData("cities", projet.localiteNom)}
+              <FiMapPin /> {translateData("cities", projet.localiteNom)}
             </span>
             <span>
               <FiUsers />{" "}
@@ -219,6 +256,47 @@ export default function ProjetDetailsPage() {
       <div className={styles.body}>
         {/* COLONNE GAUCHE */}
         <div className={styles.mainCol}>
+          {/* Fiche de présentation du porteur — investisseurs connectés uniquement */}
+          {user && fichePorteur && (
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>
+                🧑‍💼 {t("project_details.porteur_card_title", "À propos du porteur")}
+              </h2>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
+                {fichePorteur.photoUrl && (
+                  <img
+                    src={buildFileUrl(fichePorteur.photoUrl)}
+                    alt={fichePorteur.nomComplet}
+                    style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+                  />
+                )}
+                <div>
+                  <p style={{ fontWeight: 700, display: "flex", alignItems: "center", gap: 6, margin: "0 0 4px" }}>
+                    {fichePorteur.nomComplet}
+                    {fichePorteur.verifie && (
+                      <span title="Porteur vérifié par GrowzApp" style={{ color: "#1B5E20" }}>
+                        <BsShieldCheck />
+                      </span>
+                    )}
+                  </p>
+                  <p style={{ fontSize: "0.85rem", color: "#666", margin: "0 0 8px" }}>
+                    {fichePorteur.statutJuridique === "SOCIETE"
+                      ? fichePorteur.raisonSociale || "Société"
+                      : "Entrepreneur individuel"}
+                    {fichePorteur.anneesExperience != null &&
+                      ` · ${fichePorteur.anneesExperience} an(s) d'expérience`}
+                  </p>
+                  <p style={{ fontSize: "0.9rem", lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{fichePorteur.bio}</p>
+                  {fichePorteur.projetsPrecedents && (
+                    <p style={{ fontSize: "0.85rem", color: "#555", marginTop: 8, whiteSpace: "pre-wrap" }}>
+                      <strong>Projets précédents :</strong> {fichePorteur.projetsPrecedents}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Progression financement */}
           <div className={styles.card}>
             <h2 className={styles.cardTitle}>

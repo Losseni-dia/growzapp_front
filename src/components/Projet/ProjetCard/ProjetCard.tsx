@@ -6,7 +6,7 @@ import {
   FiMapPin,
   FiTrendingUp,
 } from "react-icons/fi";
-import { BsShieldCheck } from "react-icons/bs";
+import { BsStarFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { ProjetDTO } from "../../../types/projet";
 import { useCurrency } from "../../Context/CurrencyContext";
@@ -77,13 +77,13 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
   return (
     <div className={styles.card}>
       <div className={styles.posterWrapper}>
-        {projet.certifiedAt && (
+        {projet.premiumActif && (
           <div
             className={styles.certifiedBadge}
-            title="Projet audité et certifié sur l'honneur"
+            title="Projet mis en avant — statut Premium"
           >
-            <BsShieldCheck className={styles.checkIcon} />
-            <span>{t("project_card.certified") || "Certifié Growzapp"}</span>
+            <BsStarFill className={styles.checkIcon} />
+            <span>{t("project_card.premium") || "Premium"}</span>
           </div>
         )}
 
@@ -128,7 +128,7 @@ export default function ProjectCard({ projet }: ProjectCardProps) {
         </div>
         <p className={styles.sector}>
           <strong>{t("project_details.sector")} :</strong>{" "}
-          {translateData("sectors", projet.secteurNom ?? "")}
+          {projet.secteurNomTradu || translateData("sectors", projet.secteurNom ?? "")}
         </p>
         <p className={styles.description}>
           {descriptionAffichée}

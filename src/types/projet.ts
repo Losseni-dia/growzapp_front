@@ -21,7 +21,8 @@ export interface ProjetDTO {
   montantCollecte: number;
 
   currencyCode: string;
-  certifiedAt?: string;
+  premiumActif?: boolean;
+  premiumFin?: string;
 
   dateDebut?: string;
   dateFin?: string;
@@ -48,6 +49,7 @@ export interface ProjetDTO {
   // ── Traductions ──────────────────────────────────────────────
   libelleTradu?: string;
   descriptionTradu?: string;
+  secteurNomTradu?: string;
 }
 
 // Optionnel : Mise à jour du résumé si tu l'utilises
@@ -69,7 +71,8 @@ export interface ProjetSummary {
   paysNom: string;
   secteurNom?: string;
   siteNom?: string;
-  certifiedAt?: string;
+  premiumActif?: boolean;
+  premiumFin?: string;
 }
 
 // Pour créer/éditer un projet
@@ -87,7 +90,6 @@ export interface ProjetCreateRequest {
   dureeMois?: number;
   siteId?: number;
   secteurId?: number;
-  certifiedAt?: string;
   googleMapsLink ?: string;
 }
 
@@ -102,4 +104,11 @@ export const getProjetLibelle = (projet: ProjetDTO | ProjetSummary): string => {
 export const getProjetDescription = (projet: ProjetDTO): string => {
   if (projet.descriptionTradu) return projet.descriptionTradu;
   return projet.description;
+};
+
+// Helper — retourne le nom de secteur traduit (DeepL) si disponible, sinon
+// undefined pour laisser l'appelant retomber sur son propre dictionnaire de
+// traduction statique (translateData) pour les secteurs prédéfinis connus.
+export const getProjetSecteurTradu = (projet: ProjetDTO): string | undefined => {
+  return projet.secteurNomTradu;
 };
