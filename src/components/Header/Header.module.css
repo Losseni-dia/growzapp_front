@@ -199,6 +199,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 700;
+  text-decoration: none;
 }
 
 .adminMenu {
@@ -389,6 +390,25 @@
   letter-spacing: 0.04em;
   color: var(--growz-slate-700);
   opacity: 0.6;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.profileMenuLabel:hover {
+  opacity: 0.9;
+  background: var(--growz-surface);
+}
+
+.sectionChevron {
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+}
+
+.sectionChevronOpen {
+  transform: rotate(-180deg);
 }
 
 .profileMenuOptions {

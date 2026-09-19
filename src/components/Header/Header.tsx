@@ -4,14 +4,11 @@ import {
   FiChevronDown,
   FiDollarSign,
   FiGlobe,
-  FiLayout,
   FiLogIn,
   FiLogOut,
   FiMapPin,
-  FiPackage,
   FiPlusCircle,
   FiSearch,
-  FiSettings,
   FiShield,
   FiUser,
   FiCheck,
@@ -35,11 +32,12 @@ export default function Header() {
   const { t, i18n } = useTranslation();
   const { currency, setCurrency, rates } = useCurrency();
 
-  const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [openSection, setOpenSection] = useState<"espace" | "devise" | "langue" | null>(null);
+  const toggleSection = (section: "espace" | "devise" | "langue") =>
+    setOpenSection((prev) => (prev === section ? null : section));
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const adminRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = useMemo(
@@ -74,8 +72,6 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (adminRef.current && !adminRef.current.contains(e.target as Node))
-        setShowAdminMenu(false);
       if (profileRef.current && !profileRef.current.contains(e.target as Node))
         setShowProfileMenu(false);
     };
@@ -132,55 +128,9 @@ export default function Header() {
                 <span>{t("header.financed_projects")}</span>
               </Link>
               {isAdmin && (
-                <div className={styles.adminWrapper} ref={adminRef}>
-                  <button
-                    onClick={() => setShowAdminMenu(!showAdminMenu)}
-                    className={`${styles.adminBtn} ${showAdminMenu ? styles.active : ""}`}
-                  >
-                    <FiShield /> <span>{t("admin_space")}</span>{" "}
-                    <FiChevronDown />
-                  </button>
-                  {showAdminMenu && (
-                    <div className={styles.adminMenu}>
-                      <Link to="/admin" onClick={() => setShowAdminMenu(false)}>
-                        <FiLayout /> {t("admin.dashboard.title")}
-                      </Link>
-                      <Link
-                        to="/admin/settings"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiSettings />{" "}
-                        {t("admin.projects.project_config") || "Config Projets"}
-                      </Link>
-                      <Link
-                        to="/admin/kyc"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiShield /> Validation KYC
-                      </Link>
-                      <Link
-                        to="/admin/users"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiUser /> Gestion Users
-                      </Link>
-                      <div className={styles.divider}></div>
-                      <Link
-                        to="/admin/projets"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiPackage /> Voir Projets
-                      </Link>
-                      <Link
-                        to="/admin/project-wallets"
-                        onClick={() => setShowAdminMenu(false)}
-                      >
-                        <FiDollarSign />{" "}
-                        {t("admin.wallets.title") || "Wallets Projets"}
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                <Link to="/admin" className={styles.adminBtn}>
+                  <FiShield /> <span>{t("admin_space")}</span>
+                </Link>
               )}
             </>
           )}
@@ -212,52 +162,90 @@ export default function Header() {
 
                   {showProfileMenu && (
                     <div className={styles.profileMenu}>
-                      <Link
-                        to="/mon-espace"
-                        className={styles.profileMenuItem}
-                        onClick={() => setShowProfileMenu(false)}
+                      {/* ── MON ESPACE ── */}
+                      <button
+                        type="button"
+                        className={styles.profileMenuLabel}
+                        onClick={() => toggleSection("espace")}
                       >
-                        <FiUser /> Mon espace
-                      </Link>
+                        <FiChevronDown
+                          size={13}
+                          className={`${styles.sectionChevron} ${openSection === "espace" ? styles.sectionChevronOpen : ""}`}
+                        />
+                        <FiUser size={13} /> Mon espace
+                      </button>
+                      {openSection === "espace" && (
+                        <div className={styles.profileMenuOptions}>
+                          <Link
+                            to="/mon-espace"
+                            className={styles.profileMenuItem}
+                            onClick={() => setShowProfileMenu(false)}
+                          >
+                            Accéder à mon espace
+                          </Link>
+                        </div>
+                      )}
 
                       <div className={styles.divider}></div>
 
-                      <div className={styles.profileMenuLabel}>
-                        <FiDollarSign size={13} /> Devise
-                      </div>
-                      <div className={styles.profileMenuOptions}>
-                        {availableCurrencies.map((c) => (
-                          <button
-                            key={c}
-                            className={`${styles.profileMenuOption} ${currency === c ? styles.optionActive : ""}`}
-                            onClick={() => setCurrency(c)}
-                          >
-                            {c}
-                            {currency === c && <FiCheck size={13} />}
-                          </button>
-                        ))}
-                      </div>
+                      {/* ── DEVISE ── */}
+                      <button
+                        type="button"
+                        className={styles.profileMenuLabel}
+                        onClick={() => toggleSection("devise")}
+                      >
+                        <FiChevronDown
+                          size={13}
+                          className={`${styles.sectionChevron} ${openSection === "devise" ? styles.sectionChevronOpen : ""}`}
+                        />
+                        <FiDollarSign size={13} /> Devise ({currency})
+                      </button>
+                      {openSection === "devise" && (
+                        <div className={styles.profileMenuOptions}>
+                          {availableCurrencies.map((c) => (
+                            <button
+                              key={c}
+                              className={`${styles.profileMenuOption} ${currency === c ? styles.optionActive : ""}`}
+                              onClick={() => setCurrency(c)}
+                            >
+                              {c}
+                              {currency === c && <FiCheck size={13} />}
+                            </button>
+                          ))}
+                        </div>
+                      )}
 
-                      <div className={styles.profileMenuLabel}>
+                      {/* ── LANGUE ── */}
+                      <button
+                        type="button"
+                        className={styles.profileMenuLabel}
+                        onClick={() => toggleSection("langue")}
+                      >
+                        <FiChevronDown
+                          size={13}
+                          className={`${styles.sectionChevron} ${openSection === "langue" ? styles.sectionChevronOpen : ""}`}
+                        />
                         <FiGlobe size={13} /> Langue
-                      </div>
-                      <div className={styles.profileMenuOptions}>
-                        {languages.map((lang) => (
-                          <button
-                            key={lang.code}
-                            className={`${styles.profileMenuOption} ${i18n.language === lang.code ? styles.optionActive : ""}`}
-                            onClick={() => {
-                              i18n.changeLanguage(lang.code);
-                              localStorage.setItem("i18nextLng", lang.code);
-                            }}
-                          >
-                            {lang.label}
-                            {i18n.language === lang.code && (
-                              <FiCheck size={13} />
-                            )}
-                          </button>
-                        ))}
-                      </div>
+                      </button>
+                      {openSection === "langue" && (
+                        <div className={styles.profileMenuOptions}>
+                          {languages.map((lang) => (
+                            <button
+                              key={lang.code}
+                              className={`${styles.profileMenuOption} ${i18n.language === lang.code ? styles.optionActive : ""}`}
+                              onClick={() => {
+                                i18n.changeLanguage(lang.code);
+                                localStorage.setItem("i18nextLng", lang.code);
+                              }}
+                            >
+                              {lang.label}
+                              {i18n.language === lang.code && (
+                                <FiCheck size={13} />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
 
                       <div className={styles.divider}></div>
 

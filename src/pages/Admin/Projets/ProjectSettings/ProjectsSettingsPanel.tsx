@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FiMapPin, FiGrid, FiMap, FiTrendingUp } from "react-icons/fi";
+import { FiMapPin, FiGrid, FiMap, FiTrendingUp, FiDollarSign } from "react-icons/fi";
 import SecteurManager from "../SecteurManager/SecteurManager";
 import LocaliteManager from "../LocalitesManager/LocaliteManager";
 import LocalisationManager from "../LocalisationManager/LocalisationManager";
+import DeviseManager from "../../Devises/DeviseManager";
 import AdminStatsPanel from "../../GlobalStatsGraphiques/GlobalStats"; // Nouveau composant
 import styles from "./ProjectSettingsPanel.module.css";
 
 // Mise à jour du type pour inclure "stats"
-type Tab = "secteurs" | "localites" | "localisations" | "stats";
+type Tab = "secteurs" | "localites" | "localisations" | "devises" | "stats";
 
 export default function ProjectSettingsPanel() {
   const { t } = useTranslation();
@@ -41,11 +42,18 @@ export default function ProjectSettingsPanel() {
             <FiMap /> {t("admin.settings.localities") || "Villes / Localités"}
           </button>
 
-          <button 
-            className={activeTab === "localisations" ? styles.activeTab : ""} 
+          <button
+            className={activeTab === "localisations" ? styles.activeTab : ""}
             onClick={() => setActiveTab("localisations")}
           >
             <FiMapPin /> {t("admin.settings.sites") || "Sites Projets"}
+          </button>
+
+          <button
+            className={activeTab === "devises" ? styles.activeTab : ""}
+            onClick={() => setActiveTab("devises")}
+          >
+            <FiDollarSign /> {t("admin.settings.currencies") || "Devises"}
           </button>
         </div>
       </header>
@@ -56,6 +64,7 @@ export default function ProjectSettingsPanel() {
         {activeTab === "secteurs" && <SecteurManager />}
         {activeTab === "localites" && <LocaliteManager />}
         {activeTab === "localisations" && <LocalisationManager />}
+        {activeTab === "devises" && <DeviseManager />}
       </main>
     </div>
   );
