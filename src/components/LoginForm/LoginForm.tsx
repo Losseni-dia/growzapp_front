@@ -16,9 +16,8 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lockMessage, setLockMessage] = useState<string | null>(null);
-  const [credentialsError, setCredentialsError] = useState<string | null>(
-    null,
-  );
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
@@ -34,7 +33,8 @@ export default function LoginForm() {
     if (loading) return;
     setLoading(true);
     setLockMessage(null);
-    setCredentialsError(null);
+    setLoginError(null);
+    setPasswordError(null);
 
     try {
       const response = await api.post<any>("/api/auth/login", {
@@ -72,9 +72,18 @@ export default function LoginForm() {
           }),
         );
       } else if (err.status === 401) {
-        setCredentialsError(
-          err.message || t("login_page.toast_error_credentials"),
-        );
+        const field = err.data?.field;
+        if (field === "login") {
+          setLoginError(err.message || t("login_page.error_login_invalid"));
+        } else if (field === "password") {
+          setPasswordError(
+            err.message || t("login_page.error_password_invalid"),
+          );
+        } else {
+          // Ancien format de réponse (sans champ "field") — message générique
+          // affiché sous le mot de passe par défaut.
+          setPasswordError(err.message || t("login_page.toast_error_credentials"));
+        }
       } else {
         toast.error(err.message || t("login_page.toast_error_credentials"));
       }
@@ -99,11 +108,22 @@ export default function LoginForm() {
         value={login}
         onChange={(e) => {
           setLogin(e.target.value);
-          if (credentialsError) setCredentialsError(null);
+          if (loginError) setLoginError(null);
         }}
-        aria-invalid={credentialsError ? true : undefined}
+        aria-invalid={loginError ? true : undefined}
         required
       />
+      {loginError && (
+        <p
+          style={{
+            color: "#dc2626",
+            fontSize: "0.85rem",
+            margin: "0.35rem 0 0",
+          }}
+        >
+          {loginError}
+        </p>
+      )}
 
       <div className={styles.passwordContainer}>
         <div style={{ position: "relative" }}>
@@ -113,9 +133,9 @@ export default function LoginForm() {
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
-              if (credentialsError) setCredentialsError(null);
+              if (passwordError) setPasswordError(null);
             }}
-            aria-invalid={credentialsError ? true : undefined}
+            aria-invalid={passwordError ? true : undefined}
             required
           />
           <button
@@ -126,7 +146,7 @@ export default function LoginForm() {
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
-        {credentialsError && (
+        {passwordError && (
           <p
             style={{
               color: "#dc2626",
@@ -134,7 +154,7 @@ export default function LoginForm() {
               margin: "0.35rem 0 0",
             }}
           >
-            {credentialsError}
+            {passwordError}
           </p>
         )}
         <div className={styles.forgotPasswordWrapper}>

@@ -118,12 +118,13 @@ if (response.status === 401) {
     // ========================================================================
 if (!response.ok) {
   let msg = "Erreur serveur";
+  let parsed: any = null;
   try {
     const text = await response.text();
     if (text) {
       try {
-        const json = JSON.parse(text);
-        msg = json?.message || json?.error || json?.detail || text;
+        parsed = JSON.parse(text);
+        msg = parsed?.message || parsed?.error || parsed?.detail || text;
       } catch {
         msg = text;
       }
@@ -131,6 +132,7 @@ if (!response.ok) {
   } catch {}
   const error: any = new Error(msg);
   error.status = response.status;
+  error.data = parsed;
   throw error;
 }
 
