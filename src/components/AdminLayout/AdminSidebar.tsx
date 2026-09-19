@@ -18,6 +18,7 @@ import {
   FiBell,
   FiActivity,
 } from "react-icons/fi";
+import { BsStarFill } from "react-icons/bs";
 import styles from "./AdminLayout.module.css";
 
 interface AdminSidebarProps {
@@ -73,6 +74,11 @@ export default function AdminSidebar({
           label: t("admin.sidebar.kyc"),
           icon: <FiCheckCircle size={16} />,
         },
+        {
+          to: "/admin/fiches-porteur",
+          label: t("admin.sidebar.fiches_porteur", "Fiches porteur"),
+          icon: <FiCheckCircle size={16} />,
+        },
       ],
     });
 
@@ -98,6 +104,11 @@ export default function AdminSidebar({
           to: "/admin/documents",
           label: t("admin.sidebar.documents"),
           icon: <FiFileText size={16} />,
+        },
+        {
+          to: "/admin/premium",
+          label: t("admin.sidebar.premium", "Premium"),
+          icon: <BsStarFill size={14} />,
         },
       ],
     });

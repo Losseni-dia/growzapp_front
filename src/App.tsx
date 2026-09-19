@@ -13,6 +13,7 @@ import { HelmetProvider } from "react-helmet-async";
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
 import AdminRoute from "./components/ProtectedRoutes/AdminRoutes";
 import AdminLayout from "./components/AdminLayout/AdminLayout";
+import UserSpaceLayout from "./components/UserSpaceLayout/UserSpaceLayout";
 
 // === PAGES — chargement différé (code splitting) ===
 // Pages publiques
@@ -44,6 +45,9 @@ const ForgotPassword = lazy(
 );
 const ResetPassword = lazy(
   () => import("./pages/reset-password/ResetPassword"),
+);
+const ChangePasswordRequired = lazy(
+  () => import("./pages/reset-password/ChangePasswordRequired"),
 );
 const MentionsLegales = lazy(
   () => import("./pages/LegalPages/MentionsLegales"),
@@ -84,6 +88,7 @@ const ProfileUpdateForm = lazy(
   () => import("./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm"),
 );
 const KYCUploadForm = lazy(() => import("./components/kyc/KycUploadForm"));
+const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
 const ContratPage = lazy(
   () => import("./pages/Contrat/ContratsPage/ContratPage"),
 );
@@ -116,10 +121,16 @@ const ProjetAdminDetail = lazy(
 const AdminProjetsList = lazy(
   () => import("./pages/Admin/Projets/AdminProjetsList"),
 );
+const PremiumAdminPage = lazy(
+  () => import("./pages/Admin/Premium/PremiumAdminPage"),
+);
 const KycAdminPanel = lazy(() =>
   import("./pages/Admin/Kyc/KycAdminPanel").then((m) => ({
     default: m.KycAdminPanel,
   })),
+);
+const FichePorteurAdminPanel = lazy(
+  () => import("./pages/Admin/FichePorteur/FichePorteurAdminPanel"),
 );
 const ProjectSettingsPanel = lazy(
   () => import("./pages/Admin/Projets/ProjectSettings/ProjectsSettingsPanel"),
@@ -217,34 +228,9 @@ function App() {
 
               {/* ==================== ROUTES UTILISATEUR CONNECTÉ ==================== */}
               <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/mon-espace" element={<Dashboard />} />
-                <Route path="/profile/edit" element={<ProfileUpdateForm />} />
-                <Route path="/profile/kyc" element={<KYCUploadForm />} />
-                <Route path="/projet/creer" element={<ProjectForm />} />
-                <Route path="/projet/edit/:id" element={<ProjectForm />} />
-                <Route path="/wallet" element={<WalletPage />} />
-                <Route path="/depot" element={<DepotPage />} />
-                <Route path="/depot/success" element={<DepositSuccess />} />
-                <Route path="/depot/cancel" element={<DepositCancel />} />
                 <Route
-                  path="/mes-investissements"
-                  element={<MesInvestissementsPage />}
-                />
-                <Route
-                  path="/mes-projets"
-                  element={<Navigate to="/mon-dashboard-porteur" replace />}
-                />
-                <Route path="/mes-dividendes" element={<MesDividendesPage />} />
-                <Route path="/mes-contrats" element={<MesContratsPage />} />
-                <Route
-                  path="/mon-dashboard-porteur"
-                  element={<MonDashboardPorteurPage />}
-                />
-                <Route path="/mes-factures" element={<MesFacturesPage />} />
-                <Route
-                  path="/mon-portefeuille"
-                  element={<MonPortefeuillePage />}
+                  path="/changer-mot-de-passe"
+                  element={<ChangePasswordRequired />}
                 />
                 <Route path="/contrat/:numero" element={<ContratPage />} />
                 <Route
@@ -252,6 +238,40 @@ function App() {
                   element={<ContratViewer />}
                 />
                 <Route path="/projets/proximite" element={<ProjetsProches />} />
+
+                {/* ==================== ESPACE UTILISATEUR (tiroir latéral) ==================== */}
+                <Route element={<UserSpaceLayout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/mon-espace" element={<Dashboard />} />
+                  <Route path="/profile/edit" element={<ProfileUpdateForm />} />
+                  <Route path="/profile/kyc" element={<KYCUploadForm />} />
+                  <Route path="/profile/fiche-porteur" element={<FichePorteurForm />} />
+                  <Route path="/projet/creer" element={<ProjectForm />} />
+                  <Route path="/projet/edit/:id" element={<ProjectForm />} />
+                  <Route path="/wallet" element={<WalletPage />} />
+                  <Route path="/depot" element={<DepotPage />} />
+                  <Route path="/depot/success" element={<DepositSuccess />} />
+                  <Route path="/depot/cancel" element={<DepositCancel />} />
+                  <Route
+                    path="/mes-investissements"
+                    element={<MesInvestissementsPage />}
+                  />
+                  <Route
+                    path="/mes-projets"
+                    element={<Navigate to="/mon-dashboard-porteur" replace />}
+                  />
+                  <Route path="/mes-dividendes" element={<MesDividendesPage />} />
+                  <Route path="/mes-contrats" element={<MesContratsPage />} />
+                  <Route
+                    path="/mon-dashboard-porteur"
+                    element={<MonDashboardPorteurPage />}
+                  />
+                  <Route path="/mes-factures" element={<MesFacturesPage />} />
+                  <Route
+                    path="/mon-portefeuille"
+                    element={<MonPortefeuillePage />}
+                  />
+                </Route>
               </Route>
 
               {/* ==================== ROUTES ADMIN ==================== */}
@@ -284,6 +304,10 @@ function App() {
                       element={<ProjetAdminDetail />}
                     />
                     <Route
+                      path="/admin/premium"
+                      element={<PremiumAdminPage />}
+                    />
+                    <Route
                       path="/admin/projets/edit/:id"
                       element={<EditProjetPage />}
                     />
@@ -291,6 +315,7 @@ function App() {
                     {/* 3. UTILISATEURS & KYC */}
                     <Route path="/admin/users" element={<UsersAdminPage />} />
                     <Route path="/admin/kyc" element={<KycAdminPanel />} />
+                    <Route path="/admin/fiches-porteur" element={<FichePorteurAdminPanel />} />
 
                     {/* 4. INVESTISSEMENTS & DIVIDENDES */}
                     <Route
