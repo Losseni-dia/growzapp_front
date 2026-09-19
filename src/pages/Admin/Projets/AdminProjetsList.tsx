@@ -9,7 +9,7 @@ import {
   FiRotateCcw,
   FiAlertTriangle,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api, buildFileUrl, buildProjetUrl } from "../../../service/Api";
 import styles from "./AdminProjetsList.module.css";
@@ -40,7 +40,13 @@ export default function AdminProjetsList() {
   const queryClient = useQueryClient();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("TOUS");
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(
+    initialTab && ["TOUS", "SOUMIS", "VALIDE", "REJETE"].includes(initialTab)
+      ? initialTab
+      : "TOUS",
+  );
   const [sortKey, setSortKey] = useState<SortKey>("recent");
   const [secteurFilter, setSecteurFilter] = useState("TOUS");
   const [viewMode, setViewMode] = useState<"active" | "corbeille">("active");

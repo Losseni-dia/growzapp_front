@@ -695,7 +695,9 @@
       "pending_action_plural": "acciones pendientes de validación",
       "manage_projects": "Gestionar proyectos",
       "verify_identities": "Verificar identidades",
-      "project_treasury": "Tesorería de proyectos"
+      "project_treasury": "Tesorería de proyectos",
+      "projects_pending": "Proyectos enviados",
+      "validate_projects": "Validar proyectos enviados"
     },
     "projects_list": {
       "search_placeholder": "Nombre, promotor, ciudad, sector...",

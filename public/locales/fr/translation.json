@@ -696,7 +696,9 @@
       "pending_action_plural": "actions en attente de votre validation",
       "manage_projects": "Gérer les projets",
       "verify_identities": "Vérifier les identités",
-      "project_treasury": "Trésorerie des projets"
+      "project_treasury": "Trésorerie des projets",
+      "projects_pending": "Projets soumis",
+      "validate_projects": "Valider les projets soumis"
     },
     "wallets": {
       "title": "Trésorerie des Projets",

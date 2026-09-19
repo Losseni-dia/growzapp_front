@@ -697,7 +697,9 @@
       "pending_action_plural": "actions awaiting your validation",
       "manage_projects": "Manage projects",
       "verify_identities": "Verify identities",
-      "project_treasury": "Project treasury"
+      "project_treasury": "Project treasury",
+      "projects_pending": "Submitted projects",
+      "validate_projects": "Validate submitted projects"
     },
     "kyc": {
       "pending_action_hint": "Please verify your identity to unlock all withdrawal and investment features.",

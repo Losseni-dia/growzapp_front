@@ -8,6 +8,7 @@ import {
   FiArrowRight,
   FiShield,
   FiCheckCircle,
+  FiClock,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
@@ -26,6 +27,7 @@ export default function DashboardAdmin() {
     montantCollecteSequestre: 0,
     montantCollecteAffiche: 0,
     kycEnAttente: 0,
+    projetsSoumis: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +44,7 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, invCounts, s, a, k] = await Promise.all([
+      const [u, invCounts, s, a, k, p] = await Promise.all([
         api
           .get<any>("/api/admin/users?page=0&size=1")
           .catch(() => ({ data: { totalElements: 0 } })),
@@ -54,7 +56,10 @@ export default function DashboardAdmin() {
           .get<any>("/api/admin/projet-wallet/montant-total-collecte")
           .catch(() => 0),
         api.get<any>("/api/kyc/admin/en-attente").catch(() => ({ data: [] })),
+        api.get<any>("/api/admin/projets").catch(() => ({ data: [] })),
       ]);
+
+      const projets = Array.isArray(p.data) ? p.data : [];
 
       setStats({
         totalUsers: u.data?.totalElements || 0,
@@ -66,6 +71,9 @@ export default function DashboardAdmin() {
         // sur cet objet valait toujours undefined, d'où un compteur figé à 0
         // malgré des dizaines de dossiers réellement en attente.
         kycEnAttente: k.data?.totalElements ?? 0,
+        projetsSoumis: projets.filter(
+          (proj: any) => proj.statutProjet === "SOUMIS",
+        ).length,
       });
     } finally {
       setLoading(false);
@@ -81,7 +89,8 @@ export default function DashboardAdmin() {
     );
   }
 
-  const pendingTotal = stats.investissementsEnAttente + stats.kycEnAttente;
+  const pendingTotal =
+    stats.investissementsEnAttente + stats.kycEnAttente + stats.projetsSoumis;
 
   return (
     <div className={styles.page}>
@@ -174,6 +183,21 @@ export default function DashboardAdmin() {
             </span>
           </div>
         </Link>
+
+        <Link
+          to="/admin/projets?tab=SOUMIS"
+          className={`${styles.statCard} ${stats.projetsSoumis > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiClock size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.projetsSoumis}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.projects_pending")}
+            </span>
+          </div>
+        </Link>
       </section>
 
       {/* ═══════════ ACTIONS RAPIDES ═══════════ */}
@@ -188,6 +212,21 @@ export default function DashboardAdmin() {
             </span>
             <span className={styles.actionLabel}>
               {t("admin.dashboard.manage_projects")}
+            </span>
+            <FiArrowRight size={15} className={styles.actionArrow} />
+          </Link>
+
+          <Link to="/admin/projets?tab=SOUMIS" className={styles.actionRow}>
+            <span className={styles.actionIcon}>
+              <FiClock size={16} />
+            </span>
+            <span className={styles.actionLabel}>
+              {t("admin.dashboard.validate_projects")}
+              {stats.projetsSoumis > 0 && (
+                <span className={styles.actionBadge}>
+                  {stats.projetsSoumis}
+                </span>
+              )}
             </span>
             <FiArrowRight size={15} className={styles.actionArrow} />
           </Link>
