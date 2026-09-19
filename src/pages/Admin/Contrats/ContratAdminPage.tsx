@@ -10,6 +10,8 @@ import {
   FiFilter,
   FiRefreshCw,
   FiSearch,
+  FiArchive,
+  FiRotateCcw,
 } from "react-icons/fi";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api"; // Import getFreshToken
@@ -44,6 +46,7 @@ const ContratsAdmin: React.FC = () => {
   const [dateFin, setDateFin] = useState("");
   const [statut, setStatut] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [viewArchive, setViewArchive] = useState(false);
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
@@ -56,6 +59,7 @@ const ContratsAdmin: React.FC = () => {
     const params = new URLSearchParams({
       page: page.toString(),
       size: "20",
+      archive: viewArchive.toString(),
       ...(search && { search }),
       ...(dateDebut && { dateDebut }),
       ...(dateFin && { dateFin }),
@@ -71,7 +75,17 @@ const ContratsAdmin: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, search, dateDebut, dateFin, statut, t]);
+  }, [page, search, dateDebut, dateFin, statut, viewArchive, t]);
+
+  const toggleArchiver = async (c: ContratAdmin) => {
+    try {
+      await api.post(`/api/contrats/admin/${c.id}/${viewArchive ? "desarchiver" : "archiver"}`);
+      toast.success(viewArchive ? "Contrat désarchivé" : "Contrat archivé");
+      fetchContrats();
+    } catch (err: any) {
+      toast.error(err.message || "Erreur");
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => fetchContrats(), 300);
@@ -183,6 +197,16 @@ const handleDownload = async (numero: string) => {
             />
           </div>
           <div className={styles.actions}>
+            <button
+              onClick={() => {
+                setViewArchive((v) => !v);
+                setPage(0);
+              }}
+              className={styles.btnFilter}
+              style={viewArchive ? { background: "#b45309", color: "#fff" } : undefined}
+            >
+              <FiArchive size={16} /> {viewArchive ? "Archivés" : "Voir archives"}
+            </button>
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={styles.btnFilter}
@@ -329,6 +353,13 @@ const handleDownload = async (numero: string) => {
                           ) : (
                             <FiDownload />
                           )}
+                        </button>
+                        <button
+                          onClick={() => toggleArchiver(c)}
+                          className={styles.actionBtn}
+                          title={viewArchive ? "Désarchiver" : "Archiver"}
+                        >
+                          {viewArchive ? <FiRotateCcw /> : <FiArchive />}
                         </button>
                       </div>
                     </td>

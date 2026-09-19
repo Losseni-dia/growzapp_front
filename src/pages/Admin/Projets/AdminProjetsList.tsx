@@ -4,7 +4,10 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
   FiCheckCircle,
-  FiXCircle
+  FiXCircle,
+  FiTrash2,
+  FiRotateCcw,
+  FiAlertTriangle,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
@@ -40,15 +43,30 @@ export default function AdminProjetsList() {
   const [activeTab, setActiveTab] = useState("TOUS");
   const [sortKey, setSortKey] = useState<SortKey>("recent");
   const [secteurFilter, setSecteurFilter] = useState("TOUS");
-
+  const [viewMode, setViewMode] = useState<"active" | "corbeille">("active");
 
   const { data: projetsData, isLoading } = useQuery({
-    queryKey: ["admin-projets", i18n.language],
+    queryKey: ["admin-projets", i18n.language, viewMode],
     queryFn: () =>
-      api.get<{ data: ProjetAdmin[] }>(buildProjetUrl("/api/admin/projets")),
+      api.get<{ data: ProjetAdmin[] }>(
+        buildProjetUrl(
+          viewMode === "active"
+            ? "/api/admin/projets"
+            : "/api/admin/projets/corbeille",
+        ),
+      ),
   });
 
   const projets = projetsData?.data || [];
+
+  const { data: corbeilleCountData } = useQuery({
+    queryKey: ["admin-projets-corbeille-count"],
+    queryFn: () =>
+      api.get<{ data: ProjetAdmin[] }>(
+        buildProjetUrl("/api/admin/projets/corbeille"),
+      ),
+  });
+  const corbeilleCount = corbeilleCountData?.data.length ?? 0;
 
   const secteurs = useMemo(() => {
     const s = new Set(projets.map((p) => p.secteurNom).filter(Boolean));
@@ -100,6 +118,7 @@ export default function AdminProjetsList() {
     onSuccess: () => {
       toast.success(t("admin.withdrawals.toast.validate_success"));
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projets-corbeille-count"] });
     },
   });
 
@@ -108,8 +127,60 @@ export default function AdminProjetsList() {
     onSuccess: () => {
       toast.success(t("admin.withdrawals.toast.reject_success"));
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projets-corbeille-count"] });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: ({ id, motif }: { id: number; motif: string }) => {
+      const params = new URLSearchParams();
+      if (motif) params.set("motif", motif);
+      return api.delete(`/api/admin/projets/${id}?${params}`);
+    },
+    onSuccess: () => {
+      toast.success("Projet déplacé dans la corbeille");
+      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projets-corbeille-count"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Erreur"),
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: (id: number) => api.post(`/api/admin/projets/${id}/restaurer`),
+    onSuccess: () => {
+      toast.success("Projet restauré");
+      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projets-corbeille-count"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Erreur"),
+  });
+
+  const purgeMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/api/admin/projets/${id}/purger`),
+    onSuccess: () => {
+      toast.success("Projet supprimé définitivement");
+      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-projets-corbeille-count"] });
+    },
+    onError: (err: any) => toast.error(err.message || "Erreur"),
+  });
+
+  const handleDelete = (p: ProjetAdmin) => {
+    if (!window.confirm(`Déplacer « ${p.libelle} » dans la corbeille ?`)) return;
+    const motif = window.prompt("Motif de suppression (facultatif) :") || "";
+    deleteMutation.mutate({ id: p.id, motif });
+  };
+
+  const handlePurge = (p: ProjetAdmin) => {
+    const confirmText = window.prompt(
+      `Action irréversible. Tapez "${p.libelle}" pour confirmer la suppression définitive :`,
+    );
+    if (confirmText !== p.libelle) {
+      if (confirmText !== null) toast.error("Confirmation invalide");
+      return;
+    }
+    purgeMutation.mutate(p.id);
+  };
 
 
   const getStatutClass = (statut: string) => {
@@ -168,7 +239,42 @@ export default function AdminProjetsList() {
         </div>
       </div>
 
+      {/* ── ONGLETS ACTIFS / CORBEILLE ──────────────────────────────────── */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        <button
+          type="button"
+          onClick={() => setViewMode("active")}
+          className={`${styles.tabButton} ${viewMode === "active" ? styles.activeTab : ""}`}
+        >
+          Actifs
+        </button>
+        <button
+          type="button"
+          onClick={() => setViewMode("corbeille")}
+          className={`${styles.tabButton} ${viewMode === "corbeille" ? styles.activeTab : ""}`}
+          style={{ display: "flex", alignItems: "center", gap: 6 }}
+        >
+          <FiTrash2 size={14} /> Corbeille
+          {corbeilleCount > 0 && (
+            <span
+              style={{
+                background: viewMode === "corbeille" ? "#fff" : "#b45309",
+                color: viewMode === "corbeille" ? "#b45309" : "#fff",
+                borderRadius: "999px",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                padding: "1px 7px",
+                marginLeft: 4,
+              }}
+            >
+              {corbeilleCount}
+            </span>
+          )}
+        </button>
+      </div>
+
       {/* ── FILTRES & TRI ─────────────────────────────────────────────────── */}
+      {viewMode === "active" && (
       <div className={styles.filtersBar}>
         <div className={styles.tabsWrapper}>
           {["TOUS", "SOUMIS", "VALIDE", "REJETE"].map((tab) => (
@@ -222,6 +328,7 @@ export default function AdminProjetsList() {
           </select>
         </div>
       </div>
+      )}
 
       {/* ── GRILLE ───────────────────────────────────────────────────────── */}
       <div className={styles.grid}>
@@ -334,8 +441,9 @@ export default function AdminProjetsList() {
                   </Link>
                 </div>
 
-                {(p.statutProjet === "SOUMIS" ||
-                  p.statutProjet === "EN_ATTENTE") && (
+                {viewMode === "active" &&
+                  (p.statutProjet === "SOUMIS" ||
+                    p.statutProjet === "EN_ATTENTE") && (
                   <div className={styles.statusActions}>
                     <button
                       onClick={() => validerMutation.mutate(p.id)}
@@ -348,6 +456,32 @@ export default function AdminProjetsList() {
                       className={styles.btnRejeter}
                     >
                       <FiXCircle /> {t("admin.projects.btn_reject")}
+                    </button>
+                  </div>
+                )}
+
+                {viewMode === "active" ? (
+                  <div className={styles.statusActions}>
+                    <button
+                      onClick={() => handleDelete(p)}
+                      className={styles.btnRejeter}
+                    >
+                      <FiTrash2 /> Supprimer
+                    </button>
+                  </div>
+                ) : (
+                  <div className={styles.statusActions}>
+                    <button
+                      onClick={() => restoreMutation.mutate(p.id)}
+                      className={styles.btnValider}
+                    >
+                      <FiRotateCcw /> Restaurer
+                    </button>
+                    <button
+                      onClick={() => handlePurge(p)}
+                      className={styles.btnRejeter}
+                    >
+                      <FiAlertTriangle /> Purger
                     </button>
                   </div>
                 )}
