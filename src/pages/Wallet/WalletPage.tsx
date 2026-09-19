@@ -11,12 +11,14 @@ import {
   RefreshCw,
   Send,
   Smartphone,
+  Star,
   TrendingUp,
   Wallet as WalletIcon,
   X,
   XCircle,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../components/Context/AuthContext";
@@ -57,6 +59,7 @@ const TX_CONFIG: Record<string, { icon: any; key: string; outbound: boolean }> =
   REMBOURSEMENT: { icon: RefreshCw, key: "refund", outbound: false },
   DIVIDENDE: { icon: Gift, key: "dividend", outbound: false },
   VERSEMENT_DIVIDENDE: { icon: Gift, key: "dividend", outbound: false },
+  PREMIUM_PROJET: { icon: Star, key: "premium", outbound: true },
 };
 
 function getTxConfig(type: string) {
@@ -72,10 +75,15 @@ export default function WalletPage() {
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as Tab) || "deposit";
+
   const [wallet, setWallet] = useState<WalletDTO | null>(null);
   const [transactions, setTransactions] = useState<TransactionDTO[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<Tab>("deposit");
+  const [activeTab, setActiveTab] = useState<Tab>(
+    ["deposit", "withdraw", "transfer"].includes(initialTab) ? initialTab : "deposit",
+  );
 
   // Historique : pagination + filtre
   const [historyLimit, setHistoryLimit] = useState(10);
