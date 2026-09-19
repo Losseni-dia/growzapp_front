@@ -52,9 +52,6 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
   const [loadingSolde, setLoadingSolde] = useState(true);
   const [consentRisks, setConsentRisks] = useState(false);
   const [consentInsurance, setConsentInsurance] = useState(false);
-  const [mobileOperator, setMobileOperator] = useState<
-    "orange" | "mtn" | "wave"
-  >("orange");
 
   const isKycVerified = user?.kycStatus === "VALIDE";
   const maxParts = Math.max(0, projet.partsDisponible - projet.partsPrises);
@@ -122,13 +119,10 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
         toast.success("Investissement validé ! Contrat envoyé par email.");
         onSuccess?.();
       } else if (selectedMethod === "mobile") {
-        toast.loading("Redirection vers PayDunya...");
+        toast.loading("Redirection vers l'agrégateur de paiement...");
         const response = await api.post<{ redirectUrl: string }>(
           `${BACKEND_URL}/api/projets/${projet.id}/investir-mobile`,
-          {
-            nombreParts: parts,
-            operator: mobileOperator,
-          },
+          { nombreParts: parts },
         );
         if (response.redirectUrl) window.location.href = response.redirectUrl;
         else toast.error("Erreur de redirection Mobile Money");
@@ -327,30 +321,6 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
               )}
             </button>
 
-            {/* Mobile Money détails */}
-            {selectedMethod === "mobile" && (
-              <div className={styles.mobileDetails}>
-                <div className={styles.operatorRow}>
-                  {(
-                    [
-                      { key: "orange", label: "🟠 Orange Money" },
-                      { key: "mtn", label: "🟡 MTN MoMo" },
-                      { key: "wave", label: "🔵 Wave" },
-                    ] as const
-                  ).map((op) => (
-                    <button
-                      key={op.key}
-                      type="button"
-                      onClick={() => setMobileOperator(op.key)}
-                      className={`${styles.operatorBtn} ${mobileOperator === op.key ? styles.operatorActive : ""}`}
-                    >
-                      {op.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* CARTE BANCAIRE */}
             <button
               type="button"
@@ -407,7 +377,7 @@ export default function InvestForm({ projet, onSuccess }: InvestFormProps) {
                 {selectedMethod === "wallet"
                   ? "Portefeuille GrowzApp"
                   : selectedMethod === "mobile"
-                    ? `Mobile Money (${mobileOperator === "orange" ? "Orange Money" : mobileOperator === "mtn" ? "MTN MoMo" : "Wave"})`
+                    ? "Mobile Money"
                     : "Carte bancaire (Stripe)"}
               </strong>
             </div>

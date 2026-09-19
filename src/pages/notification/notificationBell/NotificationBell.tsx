@@ -91,7 +91,16 @@ const NotificationBell = () => {
     return "Motif";
   };
 
-  // Détermine si c'est une notification d'actualité (projetSlug commence par /news/)
+  // projetSlug peut contenir soit un simple slug de projet ("ferme-solaire"),
+  // soit un chemin absolu complet ("/news/12", "/admin/investissements") —
+  // dans ce second cas on navigue directement dessus sans le préfixer par
+  // "/projet/". Généralisé au-delà du seul cas "/news/" pour permettre aux
+  // notifications admin (ex: investissement en attente) de pointer
+  // précisément vers l'écran d'action concerné plutôt que la fiche projet.
+  const isAbsolutePathNotif = (n: Notification) =>
+    n.projetSlug?.startsWith("/") ?? false;
+
+  // Sous-cas spécifique pour le libellé du bouton ("Lire l'article")
   const isNewsNotif = (n: Notification) =>
     n.projetSlug?.startsWith("/news/") ?? false;
 
@@ -112,8 +121,9 @@ const NotificationBell = () => {
       return;
     }
 
-    // Notification actualité → /news/{id}
-    if (isNewsNotif(n)) {
+    // Chemin absolu déjà fourni (actualité "/news/{id}", écran admin
+    // "/admin/investissements", etc.) → navigation directe sans préfixe
+    if (isAbsolutePathNotif(n)) {
       navigate(n.projetSlug!);
       setIsOpen(false);
       return;
@@ -144,7 +154,7 @@ const NotificationBell = () => {
     if (!popupNotif) return;
     setPopupNotif(null);
 
-    if (isNewsNotif(popupNotif)) {
+    if (isAbsolutePathNotif(popupNotif)) {
       navigate(popupNotif.projetSlug!);
       return;
     }
@@ -169,6 +179,7 @@ const NotificationBell = () => {
     if (n.factureId) return "Ouvrir la facture →";
     if (n.motif) return "Voir le motif →";
     if (isNewsNotif(n)) return "Lire l'article →";
+    if (isAbsolutePathNotif(n)) return "Voir →";
     if (n.projetId || n.projetSlug) return "Voir le projet →";
     return null;
   };
@@ -176,6 +187,7 @@ const NotificationBell = () => {
   // Label du bouton popup
   const getPopupBtnLabel = (n: Notification) => {
     if (isNewsNotif(n)) return "Lire l'article";
+    if (isAbsolutePathNotif(n)) return "Voir";
     return "Voir le projet";
   };
 

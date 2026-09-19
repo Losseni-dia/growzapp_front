@@ -24,6 +24,7 @@ interface TransactionAdmin {
   utilisateurEmail?: string;
   projetLibelle?: string;
   destinataireNom?: string;
+  sourcePaiement?: "WALLET_GROWZAPP" | "MOBILE_MONEY" | "CARTE_BANCAIRE";
 }
 
 interface TransactionsPage {
@@ -46,7 +47,29 @@ const TYPE_OPTIONS = [
   "TRANSFER_IN",
   "CREDIT_PROJET",
   "RETRAIT_ADMIN",
+  "PREMIUM_PROJET",
 ];
+
+const SOURCE_OPTIONS: {
+  value: "WALLET_GROWZAPP" | "MOBILE_MONEY" | "CARTE_BANCAIRE";
+  label: string;
+}[] = [
+  { value: "WALLET_GROWZAPP", label: "Wallet GrowzApp" },
+  { value: "MOBILE_MONEY", label: "Mobile Money" },
+  { value: "CARTE_BANCAIRE", label: "Carte bancaire" },
+];
+
+const sourceLabel = (source?: string) =>
+  SOURCE_OPTIONS.find((o) => o.value === source)?.label || "—";
+
+const sourceBadgeClass = (
+  source: string | undefined,
+  styles: Record<string, string>,
+) => {
+  if (source === "CARTE_BANCAIRE") return styles.badgeInvest;
+  if (source === "MOBILE_MONEY") return styles.badgeOwner;
+  return styles.badgeOther;
+};
 
 const STATUT_OPTIONS = [
   "SUCCESS",
@@ -84,6 +107,7 @@ export default function TransactionsAdminPage() {
   const [type, setType] = useState("");
   const [walletType, setWalletType] = useState("");
   const [statut, setStatut] = useState("");
+  const [sourcePaiement, setSourcePaiement] = useState("");
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
@@ -102,7 +126,15 @@ export default function TransactionsAdminPage() {
   };
 
   const { data, isLoading, isError } = useQuery<TransactionsPage>({
-    queryKey: ["admin-transactions", page, debouncedSearch, type, walletType, statut],
+    queryKey: [
+      "admin-transactions",
+      page,
+      debouncedSearch,
+      type,
+      walletType,
+      statut,
+      sourcePaiement,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -111,6 +143,7 @@ export default function TransactionsAdminPage() {
         ...(type && { type }),
         ...(walletType && { walletType }),
         ...(statut && { statut }),
+        ...(sourcePaiement && { sourcePaiement }),
       });
       const res = await api.get<{ data: TransactionsPage }>(
         `/api/admin/transactions?${params}`,
@@ -186,6 +219,17 @@ export default function TransactionsAdminPage() {
             </option>
           ))}
         </select>
+        <select
+          value={sourcePaiement}
+          onChange={(e) => changeFilter(setSourcePaiement, e.target.value)}
+        >
+          <option value="">Toutes les sources</option>
+          {SOURCE_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.tableWrap}>
@@ -197,6 +241,7 @@ export default function TransactionsAdminPage() {
               <th>{t("admin.transactions.table.party")}</th>
               <th>{t("admin.transactions.table.destinataire")}</th>
               <th>{t("admin.transactions.table.amount")}</th>
+              <th>Source</th>
               <th>{t("admin.transactions.table.status")}</th>
               <th>{t("admin.transactions.table.reference")}</th>
               <th>{t("admin.transactions.table.description")}</th>
@@ -247,6 +292,11 @@ export default function TransactionsAdminPage() {
                   <td>{tx.destinataireNom || "—"}</td>
                   <td className={styles.amountCell}>
                     {formatCurrency(tx.montant, "XOF")}
+                  </td>
+                  <td>
+                    <span className={sourceBadgeClass(tx.sourcePaiement, styles)}>
+                      {sourceLabel(tx.sourcePaiement)}
+                    </span>
                   </td>
                   <td>
                     <span className={statutBadgeClass(tx.statut, styles)}>
