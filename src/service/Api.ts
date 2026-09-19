@@ -96,8 +96,15 @@ if (response.status === 401) {
   // bouton "Retour" du navigateur (URL /login empilée après la page
   // publique dans l'historique).
   const isProjectDocumentsRoute = url.includes("/api/documents/projet/");
+  // La tentative de connexion elle-même : un 401 ici veut dire
+  // "identifiants incorrects", pas "session expirée" — il n'y a pas
+  // encore de session à ce stade. Sans cette exclusion, le message
+  // clair renvoyé par le backend ("Identifiants incorrects") était
+  // écrasé par un redirect vers /login avant même d'atteindre le
+  // formulaire.
+  const isLoginRoute = url.includes("/api/auth/login");
 
-  if (!isVerifyRoute && !isProjectDocumentsRoute) {
+  if (!isVerifyRoute && !isProjectDocumentsRoute && !isLoginRoute) {
     console.error("401 Unauthorized – Session expirée sur :", url);
     localStorage.removeItem("user");
     localStorage.removeItem("token");

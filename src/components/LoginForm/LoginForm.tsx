@@ -16,6 +16,9 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lockMessage, setLockMessage] = useState<string | null>(null);
+  const [credentialsError, setCredentialsError] = useState<string | null>(
+    null,
+  );
 
   const { login: authLogin } = useAuth();
   const navigate = useNavigate();
@@ -31,6 +34,7 @@ export default function LoginForm() {
     if (loading) return;
     setLoading(true);
     setLockMessage(null);
+    setCredentialsError(null);
 
     try {
       const response = await api.post<any>("/api/auth/login", {
@@ -67,6 +71,10 @@ export default function LoginForm() {
             email: "losdiakite@gmail.com",
           }),
         );
+      } else if (err.status === 401) {
+        setCredentialsError(
+          err.message || t("login_page.toast_error_credentials"),
+        );
       } else {
         toast.error(err.message || t("login_page.toast_error_credentials"));
       }
@@ -89,7 +97,11 @@ export default function LoginForm() {
         type="text"
         placeholder={t("login_page.placeholder_login")}
         value={login}
-        onChange={(e) => setLogin(e.target.value)}
+        onChange={(e) => {
+          setLogin(e.target.value);
+          if (credentialsError) setCredentialsError(null);
+        }}
+        aria-invalid={credentialsError ? true : undefined}
         required
       />
 
@@ -99,7 +111,11 @@ export default function LoginForm() {
             type={showPassword ? "text" : "password"}
             placeholder={t("login_page.placeholder_password")}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (credentialsError) setCredentialsError(null);
+            }}
+            aria-invalid={credentialsError ? true : undefined}
             required
           />
           <button
@@ -110,6 +126,17 @@ export default function LoginForm() {
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
+        {credentialsError && (
+          <p
+            style={{
+              color: "#dc2626",
+              fontSize: "0.85rem",
+              margin: "0.35rem 0 0",
+            }}
+          >
+            {credentialsError}
+          </p>
+        )}
         <div className={styles.forgotPasswordWrapper}>
           <Link to="/forgot-password" className={styles.forgotPasswordLink}>
             {t("login_page.forgot_password")}
