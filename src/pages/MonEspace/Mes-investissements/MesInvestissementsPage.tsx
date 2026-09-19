@@ -27,7 +27,7 @@ export default function MesInvestissementsPage() {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
   const { t, i18n } = useTranslation();
-  const { format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
+  const { currency, format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
@@ -49,7 +49,7 @@ export default function MesInvestissementsPage() {
       setDownloading(numeroContrat);
       const lang = i18n.language || "fr";
       const response = await fetch(
-        `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}`,
+        `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}&currency=${currency}`,
         {
           method: "GET",
           credentials: "include",
@@ -70,7 +70,7 @@ export default function MesInvestissementsPage() {
      setDownloading(numeroContrat);
      const lang = i18n.language || "fr";
      const response = await fetch(
-       `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
+       `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}&currency=${currency}`,
        {
          method: "GET",
          credentials: "include",

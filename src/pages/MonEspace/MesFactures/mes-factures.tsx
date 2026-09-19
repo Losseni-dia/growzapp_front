@@ -9,16 +9,30 @@ import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api, buildProjetUrl } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
-import { DividendeDTO } from "../../../types/dividende";
 import styles from "./mes-factures.module.css";
+
+interface FactureDTO {
+  id: number;
+  numeroFacture: string;
+  montantHT: number;
+  tva: number;
+  montantTTC: number;
+  dateEmission: string;
+  datePaiement?: string;
+  statut: string;
+  fichierUrl?: string;
+  type: "DIVIDENDE" | "PREMIUM";
+  libelle?: string;
+  projetLibelle?: string;
+}
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export default function MesFacturesPage() {
   const { t, i18n } = useTranslation();
-  const { format: formatCurrency } = useCurrency();
+  const { currency, format: formatCurrency } = useCurrency();
 
-  const [factures, setFactures] = useState<any[]>([]);
+  const [factures, setFactures] = useState<FactureDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<number | null>(null);
 
@@ -27,22 +41,8 @@ export default function MesFacturesPage() {
 
   useEffect(() => {
     api
-      .get<ApiResponse<DividendeDTO[]>>(
-        buildProjetUrl("/api/dividendes/mes-dividendes"),
-      )
-      .then((res) => {
-        const data = res.data || [];
-        const withInvoices = data
-          .map((dto: any) => ({
-            ...dto,
-            factureId: dto.facture ? dto.facture.id : null,
-            numeroFacture: dto.facture
-              ? dto.facture.numeroFacture
-              : `DIV-${dto.id}`,
-          }))
-          .filter((d: any) => !!d.factureId);
-        setFactures(withInvoices);
-      })
+      .get<ApiResponse<FactureDTO[]>>(buildProjetUrl("/api/factures/mes-factures"))
+      .then((res) => setFactures(res.data || []))
       .catch(() => toast.error(t("dividends.toast_error")))
       .finally(() => setLoading(false));
   }, [t]);
@@ -52,7 +52,7 @@ export default function MesFacturesPage() {
      setDownloading(factureId);
      const lang = i18n.language || "fr";
      const response = await fetch(
-       `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}`,
+       `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}&currency=${currency}`,
        {
          method: "GET",
          credentials: "include",
@@ -114,7 +114,11 @@ export default function MesFacturesPage() {
               {factures.map((f) => (
                 <tr key={f.id}>
                   <td className={styles.mono}>{f.numeroFacture}</td>
-                  <td>{f.projetLibelleTradu || f.projetLibelle || "—"}</td>
+                  <td>
+                    {f.type === "PREMIUM"
+                      ? t("my_invoices.premium_label", { project: f.projetLibelle || "" })
+                      : f.projetLibelle || "—"}
+                  </td>
                   <td>
                     {f.datePaiement
                       ? formatDate(new Date(f.datePaiement), "dd MMM yyyy", {
@@ -122,7 +126,7 @@ export default function MesFacturesPage() {
                         })
                       : "-"}
                   </td>
-                  <td>{formatCurrency(Number(f.montantTotal), "XOF")}</td>
+                  <td>{formatCurrency(Number(f.montantTTC), "XOF")}</td>
                   <td>
                     <span className={styles.badge}>
                       {t("dividends.table.status_paid")}
@@ -130,14 +134,12 @@ export default function MesFacturesPage() {
                   </td>
                   <td>
                     <button
-                      onClick={() =>
-                        downloadFacture(f.factureId, f.numeroFacture)
-                      }
-                      disabled={downloading === f.factureId}
+                      onClick={() => downloadFacture(f.id, f.numeroFacture)}
+                      disabled={downloading === f.id}
                       className={styles.btnAction}
                       title={t("my_invoices.btn_download") as string}
                     >
-                      {downloading === f.factureId ? (
+                      {downloading === f.id ? (
                         <FiRefreshCw size={16} className={styles.spin} />
                       ) : (
                         <FiDownload size={16} />

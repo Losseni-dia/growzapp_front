@@ -13,7 +13,7 @@ import styles from "./mes-contrats.module.css";
 
 export default function MesContratsPage() {
   const { t, i18n } = useTranslation();
-  const { format: formatCurrency } = useCurrency();
+  const { currency, format: formatCurrency } = useCurrency();
 
   const [contrats, setContrats] = useState<InvestissementDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ export default function MesContratsPage() {
      setDownloading(numeroContrat);
      const lang = i18n.language || "fr";
      const response = await fetch(
-       `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}`,
+       `${BASE_URL}/api/contrats/${numeroContrat}?lang=${lang}&currency=${currency}`,
        {
          method: "GET",
          credentials: "include",
@@ -64,7 +64,7 @@ export default function MesContratsPage() {
      setDownloading(numeroContrat);
      const lang = i18n.language || "fr";
      const response = await fetch(
-       `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}`,
+       `${BASE_URL}/api/contrats/${numeroContrat}/download?lang=${lang}&currency=${currency}`,
        {
          method: "GET",
          credentials: "include",

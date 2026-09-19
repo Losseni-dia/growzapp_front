@@ -23,7 +23,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 export default function MesDividendesPage() {
   const { user } = useAuth();
   const { t, i18n } = useTranslation();
-  const { format } = useCurrency(); // <--- HOOK MONNAIE
+  const { format, currency } = useCurrency(); // <--- HOOK MONNAIE
   const [dividendes, setDividendes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,7 +73,7 @@ export default function MesDividendesPage() {
    try {
      const lang = i18n.language || "fr";
      const response = await fetch(
-       `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}`,
+       `${API_BASE_URL}/api/factures/${factureId}/download?lang=${lang}&currency=${currency}`,
        {
          method: "GET",
          credentials: "include",
