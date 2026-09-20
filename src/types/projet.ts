@@ -42,6 +42,8 @@ export interface ProjetDTO {
   paysId?: number;
   paysNom?: string;
   googleMapsUrl?: string;
+  latitude?: number;
+  longitude?: number;
 
   documents: DocumentDTO[];
   investissements: InvestissementDTO[];

@@ -123,6 +123,8 @@
       "search_placeholder": "Name, city, country, sector...",
       "sector_label": "Sector",
       "all_sectors": "All",
+      "country_label": "Country",
+      "all_countries": "All countries",
       "price_label": "Price per share",
       "price_min": "Min",
       "price_max": "Max",
@@ -137,6 +139,13 @@
     "empty": {
       "title": "No projects found",
       "subtitle": "Change your filters"
+    },
+    "view": {
+      "grid": "Grid",
+      "map": "Map",
+      "map_pick_country_title": "Choose a country",
+      "map_pick_country_subtitle": "Select a country in the filters to display the map of projects located there.",
+      "map_no_points": "No geolocated project for this country yet."
     },
     "toast_error": "Unable to load projects"
   },
@@ -400,6 +409,9 @@
       "validated": "Validated",
       "rejected": "Rejected"
     },
+    "search_placeholder": "Search a project...",
+    "filter_all_status": "All statuses",
+    "no_results": "No investment matches your search",
     "card": {
       "parts": "shares",
       "invested": "invested",

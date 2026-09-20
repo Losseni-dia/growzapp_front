@@ -189,6 +189,38 @@
   margin: 0 auto;
 }
 
+.viewToggle {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 1600px;
+  margin: 0 auto 1.5rem;
+}
+
+.viewToggle button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.55rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.viewToggle button:hover {
+  border-color: var(--growz-primary, #1a6b3c);
+}
+
+.viewToggleActive {
+  background: var(--growz-primary, #1a6b3c) !important;
+  color: white !important;
+  border-color: var(--growz-primary, #1a6b3c) !important;
+}
+
 .empty, .loading {
   text-align: center;
   padding: 10rem 2rem;

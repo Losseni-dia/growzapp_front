@@ -6,9 +6,12 @@ import { useTranslation } from "react-i18next";
 import {
   FiChevronLeft,
   FiFilter,
+  FiGrid,
+  FiMap,
   FiSliders,
   FiX,
 } from "react-icons/fi";
+import ProjectsMap from "../../../components/Map/ProjectsMap";
 import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
 import { api, buildProjetUrl } from "../../../service/Api";
 import { ProjetDTO } from "../../../types/projet";
@@ -41,6 +44,8 @@ export default function ProjetsPage() {
 
   const [search, setSearch] = useState("");
   const [secteurFilter, setSecteurFilter] = useState<string>("");
+  const [paysFilter, setPaysFilter] = useState<string>("");
+  const [viewMode, setViewMode] = useState<"grille" | "carte">("grille");
   const [prixMin, setPrixMin] = useState("");
   const [prixMax, setPrixMax] = useState("");
   // Par défaut : financement décroissant, avec les plus récents en
@@ -69,8 +74,12 @@ export default function ProjetsPage() {
 
   const filtresUniques = useMemo(() => {
     const secteurs = new Set<string>();
-    projects.forEach((p) => p.secteurNom && secteurs.add(p.secteurNom));
-    return { secteurs: Array.from(secteurs).sort() };
+    const pays = new Set<string>();
+    projects.forEach((p) => {
+      if (p.secteurNom) secteurs.add(p.secteurNom);
+      if (p.paysNom) pays.add(p.paysNom);
+    });
+    return { secteurs: Array.from(secteurs).sort(), pays: Array.from(pays).sort() };
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
@@ -93,6 +102,12 @@ export default function ProjetsPage() {
     if (secteurFilter)
       filtered = filtered.filter(
         (p) => normalize(p.secteurNom || "") === normalize(secteurFilter),
+      );
+
+    // ── Filtre pays insensible aux accents ───────────────────────────────────
+    if (paysFilter)
+      filtered = filtered.filter(
+        (p) => normalize(p.paysNom || "") === normalize(paysFilter),
       );
 
     // ── Filtre prix ──────────────────────────────────────────────────────────
@@ -135,7 +150,22 @@ export default function ProjetsPage() {
     const premium = filtered.filter((p) => p.premiumActif);
     const autres = filtered.filter((p) => !p.premiumActif);
     return [...premium.sort(comparer), ...autres.sort(comparer)];
-  }, [projects, search, secteurFilter, prixMin, prixMax, sortBy]);
+  }, [projects, search, secteurFilter, paysFilter, prixMin, prixMax, sortBy]);
+
+  const mapPoints = useMemo(
+    () =>
+      filteredProjects
+        .filter((p) => p.latitude != null && p.longitude != null)
+        .map((p) => ({
+          id: p.id,
+          slug: p.slug,
+          libelle: p.libelleTradu || p.libelle,
+          latitude: p.latitude as number,
+          longitude: p.longitude as number,
+          localiteNom: p.localiteNom,
+        })),
+    [filteredProjects],
+  );
 
   if (loading)
     return <div className={styles.loading}>{t("projects_page.loading")}</div>;
@@ -214,6 +244,23 @@ export default function ProjetsPage() {
             </select>
           </div>
 
+          {/* Pays */}
+          <div className={styles.filterGroup}>
+            <label>{t("projects_page.filters.country_label")}</label>
+            <select
+              value={paysFilter}
+              onChange={(e) => setPaysFilter(e.target.value)}
+              className={styles.select}
+            >
+              <option value="">{t("projects_page.filters.all_countries")}</option>
+              {filtresUniques.pays.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Prix */}
           <div className={styles.filterGroup}>
             <label>{t("projects_page.filters.price_label")}</label>
@@ -273,7 +320,30 @@ export default function ProjetsPage() {
 
       {/* ── MAIN CONTENT ─────────────────────────────────────────────────── */}
       <main className={styles.main}>
-        {filteredProjects.length === 0 ? (
+        <div className={styles.viewToggle}>
+          <button
+            className={viewMode === "grille" ? styles.viewToggleActive : ""}
+            onClick={() => setViewMode("grille")}
+          >
+            <FiGrid size={16} /> {t("projects_page.view.grid")}
+          </button>
+          <button
+            className={viewMode === "carte" ? styles.viewToggleActive : ""}
+            onClick={() => setViewMode("carte")}
+          >
+            <FiMap size={16} /> {t("projects_page.view.map")}
+          </button>
+        </div>
+
+        {viewMode === "carte" ? (
+          mapPoints.length === 0 ? (
+            <div className={styles.empty}>
+              <h3>{t("projects_page.view.map_no_points")}</h3>
+            </div>
+          ) : (
+            <ProjectsMap points={mapPoints} height={560} />
+          )
+        ) : filteredProjects.length === 0 ? (
           <div className={styles.empty}>
             <h3>{t("projects_page.empty.title")}</h3>
             <p>{t("projects_page.empty.subtitle")}</p>

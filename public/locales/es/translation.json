@@ -124,6 +124,8 @@
       "search_placeholder": "Nombre, ciudad, país, sector...",
       "sector_label": "Sector",
       "all_sectors": "Todos",
+      "country_label": "País",
+      "all_countries": "Todos los países",
       "price_label": "Precio por acción",
       "price_min": "Mín",
       "price_max": "Máx",
@@ -138,6 +140,13 @@
     "empty": {
       "title": "No se encontraron proyectos",
       "subtitle": "Modifica tus filtros"
+    },
+    "view": {
+      "grid": "Cuadrícula",
+      "map": "Mapa",
+      "map_pick_country_title": "Elige un país",
+      "map_pick_country_subtitle": "Selecciona un país en los filtros para mostrar el mapa de los proyectos ubicados allí.",
+      "map_no_points": "Ningún proyecto geolocalizado para este país por el momento."
     },
     "toast_error": "Imposible cargar proyectos"
   },
@@ -399,6 +408,9 @@
       "validated": "Validado",
       "rejected": "Rechazado"
     },
+    "search_placeholder": "Buscar un proyecto...",
+    "filter_all_status": "Todos los estados",
+    "no_results": "Ninguna inversión coincide con su búsqueda",
     "card": {
       "parts": "acciones",
       "invested": "invertidos",

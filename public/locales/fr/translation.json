@@ -123,6 +123,8 @@
       "search_placeholder": "Nom, ville, pays, secteur...",
       "sector_label": "Secteur",
       "all_sectors": "Tous",
+      "country_label": "Pays",
+      "all_countries": "Tous les pays",
       "price_label": "Prix par part",
       "price_min": "Min",
       "price_max": "Max",
@@ -137,6 +139,13 @@
     "empty": {
       "title": "Aucun projet trouvé",
       "subtitle": "Modifiez vos filtres"
+    },
+    "view": {
+      "grid": "Grille",
+      "map": "Carte",
+      "map_pick_country_title": "Choisissez un pays",
+      "map_pick_country_subtitle": "Sélectionnez un pays dans les filtres pour afficher la carte des projets qui s'y trouvent.",
+      "map_no_points": "Aucun projet géolocalisé pour ce pays pour le moment."
     },
     "toast_error": "Impossible de charger les projets"
   },
@@ -399,6 +408,9 @@
       "validated": "Validé",
       "rejected": "Refusé"
     },
+    "search_placeholder": "Rechercher un projet...",
+    "filter_all_status": "Tous les statuts",
+    "no_results": "Aucun investissement ne correspond à votre recherche",
     "card": {
       "parts": "parts",
       "invested": "investis",

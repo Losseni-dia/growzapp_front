@@ -19,6 +19,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../../components/Context/AuthContext";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import InvestForm from "../../../components/Investissement/InvestForm/InvestForm";
+import SingleLocationMap from "../../../components/Map/SingleLocationMap";
 import { api, buildProjetUrl } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
 import { DocumentDTO } from "../../../types/document";
@@ -483,6 +484,15 @@ export default function ProjetDetailsPage() {
                 </div>
               )}
             </div>
+
+            {projet.latitude != null && projet.longitude != null && (
+              <div style={{ marginTop: "1rem" }}>
+                <SingleLocationMap
+                  latitude={projet.latitude}
+                  longitude={projet.longitude}
+                />
+              </div>
+            )}
           </div>
 
           {/* Bouton investir */}

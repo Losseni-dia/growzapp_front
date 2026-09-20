@@ -4,11 +4,14 @@ import toast from "react-hot-toast";
 import {
   FiCamera,
   FiInfo,
+  FiMapPin,
   FiSave,
   FiTag,
   FiUpload
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
+import LocationPickerMap from "../../../../components/Map/LocationPickerMap";
+import { reverseGeocode } from "../../../../service/Geocoding";
 import ComboBox from "../../../../components/ui/ComboBox/ComboBox";
 import { api } from "../../../../service/Api";
 import type { SecteurDTO } from "../../../../types/secteur";
@@ -44,6 +47,7 @@ export default function EditProjetPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [projet, setProjet] = useState<any>(null);
+  const [guessingCountry, setGuessingCountry] = useState(false);
 
   // ── SECTEURS (liste + création à la volée, même pattern que ProjetForm) ────
   const [secteurs, setSecteurs] = useState<string[]>([]);
@@ -106,6 +110,19 @@ export default function EditProjetPage() {
         setPartsDisponibleDisplay(toDisplay(parts));
         setPartsALeverDisplay(toDisplay(pct));
         setValuationDisplay(toDisplay(valuation));
+
+        // Rattrapage : des coordonnées existent déjà (saisies avant que le
+        // pays ne soit exploité côté backend) mais aucun pays n'est
+        // enregistré — devine-le automatiquement au chargement pour ne pas
+        // obliger l'admin à ressaisir manuellement chaque projet concerné.
+        if (data.latitude != null && data.longitude != null && !data.paysNom) {
+          reverseGeocode(data.latitude, data.longitude).then((geo) => {
+            if (!geo.pays) return;
+            setProjet((prev: any) =>
+              prev ? { ...prev, paysNom: prev.paysNom || geo.pays } : prev,
+            );
+          });
+        }
       })
       .catch(() => {
         toast.error("Impossible de charger le projet");
@@ -256,6 +273,25 @@ export default function EditProjetPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  // ── LOCALISATION ──────────────────────────────────────────────────────────
+  // À chaque placement/déplacement du marqueur, on devine le pays (et la
+  // ville si elle est vide) par géocodage inverse — l'admin garde la main
+  // pour corriger manuellement ensuite si le résultat est imprécis.
+  const handleLocationChange = (lat: number, lng: number) => {
+    setProjet((prev: any) => ({ ...prev, latitude: lat, longitude: lng }));
+    setGuessingCountry(true);
+    reverseGeocode(lat, lng)
+      .then((geo) => {
+        if (!geo.pays && !geo.ville) return;
+        setProjet((prev: any) => ({
+          ...prev,
+          paysNom: geo.pays || prev.paysNom,
+          localiteNom: prev.localiteNom || geo.ville || prev.localiteNom,
+        }));
+      })
+      .finally(() => setGuessingCountry(false));
   };
 
   if (loading) return <div className={styles.loader}>Chargement...</div>;
@@ -557,6 +593,83 @@ export default function EditProjetPage() {
                   Le changement de statut est appliqué immédiatement et
                   séparément du bouton "Enregistrer".
                 </p>
+              </div>
+            </div>
+
+            {/* 4. Localisation exacte */}
+            <div className={styles.fieldGroup}>
+              <h4>
+                <FiMapPin style={{ verticalAlign: "middle" }} /> 4. Localisation exacte du site
+              </h4>
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label>Ville / Localité</label>
+                  <input
+                    type="text"
+                    placeholder="Ex : Abidjan"
+                    value={projet.localiteNom || ""}
+                    onChange={(e) =>
+                      setProjet({ ...projet, localiteNom: e.target.value })
+                    }
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Pays</label>
+                  <input
+                    type="text"
+                    placeholder="Ex : Côte d'Ivoire"
+                    value={projet.paysNom || ""}
+                    onChange={(e) =>
+                      setProjet({ ...projet, paysNom: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <p className={styles.statutHint}>
+                Cliquez sur la carte (ou déplacez le marqueur) pour placer le
+                site exact du projet — zoomez jusqu'à l'adresse précise.
+              </p>
+              <LocationPickerMap
+                latitude={projet.latitude ?? null}
+                longitude={projet.longitude ?? null}
+                onChange={handleLocationChange}
+              />
+              {guessingCountry && (
+                <p className={styles.statutHint}>Détection du pays...</p>
+              )}
+              <div className={styles.row} style={{ marginTop: "0.75rem" }}>
+                <div className={styles.field}>
+                  <label>Latitude</label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Ex : 5.359951"
+                    value={projet.latitude ?? ""}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9.\-]/g, "");
+                      setProjet({
+                        ...projet,
+                        latitude: v === "" ? null : parseFloat(v),
+                      });
+                    }}
+                  />
+                </div>
+                <div className={styles.field}>
+                  <label>Longitude</label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Ex : -4.008256"
+                    value={projet.longitude ?? ""}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9.\-]/g, "");
+                      setProjet({
+                        ...projet,
+                        longitude: v === "" ? null : parseFloat(v),
+                      });
+                    }}
+                  />
+                </div>
               </div>
             </div>
 

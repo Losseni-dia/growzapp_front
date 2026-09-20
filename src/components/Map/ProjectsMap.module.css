@@ -1,0 +1,35 @@
+.wrapper {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Le reset global `img { max-width: 100%; height: auto }` (src/index.css)
+   casse le calcul de grille des tuiles Leaflet (chaque tuile est un <img>
+   avec une taille pixel exacte imposée par Leaflet) — sans ce correctif,
+   les tuiles se déforment et le glisser-déposer à la souris devient
+   imprécis ou inopérant selon l'endroit cliqué. */
+.wrapper :global(.leaflet-container img) {
+  max-width: none;
+}
+
+.wrapper :global(.leaflet-container) {
+  cursor: grab;
+}
+
+.wrapper :global(.leaflet-container.leaflet-drag-target),
+.wrapper :global(.leaflet-dragging .leaflet-container) {
+  cursor: grabbing;
+}
+
+.wrapper :global(.leaflet-popup-content) {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+}
+
+.wrapper :global(.leaflet-popup-content a) {
+  color: var(--growz-primary, #1a6b3c);
+  font-weight: 600;
+}
