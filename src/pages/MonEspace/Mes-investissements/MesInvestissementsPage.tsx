@@ -1,7 +1,7 @@
 // src/pages/MonEspace/Mes-investissements/MesInvestissementsPage.tsx
 import { format as formatDate } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -12,6 +12,7 @@ import {
   FiDownload,
   FiEye,
   FiMapPin,
+  FiSearch,
   FiXCircle,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
@@ -26,6 +27,8 @@ export default function MesInvestissementsPage() {
   );
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statutFilter, setStatutFilter] = useState("TOUS");
   const { t, i18n } = useTranslation();
   const { currency, format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
 
@@ -121,6 +124,26 @@ export default function MesInvestissementsPage() {
     }
   };
 
+  const visibleInvestissements = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return investissements
+      .filter((inv) => {
+        const matchesStatut =
+          statutFilter === "TOUS" ||
+          inv.statutPartInvestissement === statutFilter;
+        const libelle = (
+          inv.projetLibelleTradu ||
+          inv.projetLibelle ||
+          ""
+        ).toLowerCase();
+        const matchesSearch = !term || libelle.includes(term);
+        return matchesStatut && matchesSearch;
+      })
+      .sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      );
+  }, [investissements, searchTerm, statutFilter]);
+
   if (loading)
     return <div className={styles.loading}>{t("dashboard.loading")}</div>;
 
@@ -143,8 +166,45 @@ export default function MesInvestissementsPage() {
           </Link>
         </div>
       ) : (
+        <>
+          <div className={styles.toolbar}>
+            <div className={styles.searchBox}>
+              <FiSearch size={18} />
+              <input
+                type="text"
+                placeholder={t("user_investments.search_placeholder") as string}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <select
+              className={styles.statutSelect}
+              value={statutFilter}
+              onChange={(e) => setStatutFilter(e.target.value)}
+            >
+              <option value="TOUS">
+                {t("user_investments.filter_all_status")}
+              </option>
+              <option value="EN_ATTENTE">
+                {t("user_investments.status.pending")}
+              </option>
+              <option value="VALIDE">
+                {t("user_investments.status.validated")}
+              </option>
+              <option value="REJETE">
+                {t("user_investments.status.rejected")}
+              </option>
+            </select>
+          </div>
+
+          {visibleInvestissements.length === 0 ? (
+            <div className={styles.emptyState}>
+              <FiSearch size={64} />
+              <h2>{t("user_investments.no_results")}</h2>
+            </div>
+          ) : (
         <div className={styles.grid}>
-          {investissements.map((inv) => {
+          {visibleInvestissements.map((inv) => {
             const config = getStatutConfig(inv.statutPartInvestissement);
             const Icon = config.icon;
             return (
@@ -235,6 +295,8 @@ export default function MesInvestissementsPage() {
             );
           })}
         </div>
+          )}
+        </>
       )}
     </div>
   );
