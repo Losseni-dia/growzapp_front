@@ -115,11 +115,21 @@ export default function EditProjetPage() {
         // pays ne soit exploité côté backend) mais aucun pays n'est
         // enregistré — devine-le automatiquement au chargement pour ne pas
         // obliger l'admin à ressaisir manuellement chaque projet concerné.
-        if (data.latitude != null && data.longitude != null && !data.paysNom) {
+        if (
+          data.latitude != null &&
+          data.longitude != null &&
+          (!data.paysNom || !data.adresse)
+        ) {
           reverseGeocode(data.latitude, data.longitude).then((geo) => {
-            if (!geo.pays) return;
+            if (!geo.pays && !geo.adresse) return;
             setProjet((prev: any) =>
-              prev ? { ...prev, paysNom: prev.paysNom || geo.pays } : prev,
+              prev
+                ? {
+                    ...prev,
+                    paysNom: prev.paysNom || geo.pays,
+                    adresse: prev.adresse || geo.adresse,
+                  }
+                : prev,
             );
           });
         }
@@ -284,11 +294,12 @@ export default function EditProjetPage() {
     setGuessingCountry(true);
     reverseGeocode(lat, lng)
       .then((geo) => {
-        if (!geo.pays && !geo.ville) return;
+        if (!geo.pays && !geo.ville && !geo.adresse) return;
         setProjet((prev: any) => ({
           ...prev,
           paysNom: geo.pays || prev.paysNom,
           localiteNom: prev.localiteNom || geo.ville || prev.localiteNom,
+          adresse: geo.adresse || prev.adresse,
         }));
       })
       .finally(() => setGuessingCountry(false));
@@ -625,9 +636,22 @@ export default function EditProjetPage() {
                   />
                 </div>
               </div>
+              <div className={styles.field}>
+                <label>Adresse</label>
+                <input
+                  type="text"
+                  placeholder="Détectée automatiquement, modifiable"
+                  value={projet.adresse || ""}
+                  onChange={(e) =>
+                    setProjet({ ...projet, adresse: e.target.value })
+                  }
+                />
+              </div>
               <p className={styles.statutHint}>
                 Cliquez sur la carte (ou déplacez le marqueur) pour placer le
                 site exact du projet — zoomez jusqu'à l'adresse précise.
+                L'adresse ci-dessus est détectée automatiquement (même sans
+                adressage formel) mais reste modifiable.
               </p>
               <LocationPickerMap
                 latitude={projet.latitude ?? null}

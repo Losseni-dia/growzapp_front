@@ -12,11 +12,14 @@ import {
   FiDownload,
   FiEye,
   FiMapPin,
+  FiNavigation,
   FiSearch,
+  FiX,
   FiXCircle,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext"; // <--- IMPORT
+import SingleLocationMap from "../../../components/Map/SingleLocationMap";
 import { api, buildFileUrl, buildProjetUrl } from "../../../service/Api";
 import { InvestissementDTO } from "../../../types/investissement";
 import styles from "./MesInvestissementsPage.module.css";
@@ -29,6 +32,9 @@ export default function MesInvestissementsPage() {
   const [downloading, setDownloading] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statutFilter, setStatutFilter] = useState("TOUS");
+  const [mapModalInv, setMapModalInv] = useState<InvestissementDTO | null>(
+    null,
+  );
   const { t, i18n } = useTranslation();
   const { currency, format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
 
@@ -277,17 +283,29 @@ export default function MesInvestissementsPage() {
                       {t("user_investments.card.btn_view_project")}
                     </Link>
 
-                    {/* BOUTON GPS (JAUNE) */}
-                    {inv.googleMapsUrl && (
-                      <a
-                        href={inv.googleMapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    {/* BOUTON GPS (JAUNE) — ouvre la carte intégrée ; à
+                        défaut de coordonnées, retombe sur le lien externe */}
+                    {inv.latitude != null && inv.longitude != null ? (
+                      <button
+                        type="button"
+                        onClick={() => setMapModalInv(inv)}
                         className={styles.btnGPS}
                         title={t("user_investments.card.view_on_map") || "GPS"}
                       >
                         <FiMapPin size={20} />
-                      </a>
+                      </button>
+                    ) : (
+                      inv.googleMapsUrl && (
+                        <a
+                          href={inv.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.btnGPS}
+                          title={t("user_investments.card.view_on_map") || "GPS"}
+                        >
+                          <FiMapPin size={20} />
+                        </a>
+                      )
                     )}
                   </div>
                 </div>
@@ -297,6 +315,52 @@ export default function MesInvestissementsPage() {
         </div>
           )}
         </>
+      )}
+
+      {mapModalInv && (
+        <div
+          className={styles.mapModalOverlay}
+          onClick={() => setMapModalInv(null)}
+        >
+          <div
+            className={styles.mapModalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.mapModalHeader}>
+              <h3>
+                {mapModalInv.projetLibelleTradu || mapModalInv.projetLibelle}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setMapModalInv(null)}
+                className={styles.mapModalClose}
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+            {mapModalInv.adresse && (
+              <p className={styles.mapModalAddress}>
+                <FiMapPin size={14} /> {mapModalInv.adresse}
+              </p>
+            )}
+            <SingleLocationMap
+              latitude={mapModalInv.latitude!}
+              longitude={mapModalInv.longitude!}
+              height={320}
+            />
+            {mapModalInv.googleMapsUrl && (
+              <a
+                href={mapModalInv.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.mapModalDirections}
+              >
+                <FiNavigation size={16} />{" "}
+                {t("user_investments.card.get_directions")}
+              </a>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

@@ -32,6 +32,9 @@ export interface InvestissementDTO {
   statutGlobalDividendes: string;
 
   googleMapsUrl: string; // Ajouté pour le lien Google Maps
+  latitude?: number;
+  longitude?: number;
+  adresse?: string;
 
   projetLibelleTradu?: string;
 }

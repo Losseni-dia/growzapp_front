@@ -172,6 +172,8 @@
     "not_provided": "No proporcionado"
   },
   "project_details": {
+    "view_on_maps": "Cómo llegar",
+    "address": "Dirección",
     "equity_to_raise": "Acciones a captar",
     "loading": "Cargando proyecto...",
     "error_not_found": "Proyecto no encontrado",
@@ -418,7 +420,9 @@
       "btn_download": "Descargar",
       "btn_unavailable": "No disponible",
       "btn_view_project": "Ver el proyecto",
-      "validation_delay": "Validación en menos de 48h"
+      "validation_delay": "Validación en menos de 48h",
+      "view_on_map": "Ver en el mapa",
+      "get_directions": "Cómo llegar al sitio"
     }
   },
   "dividends": {

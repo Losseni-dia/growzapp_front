@@ -7,6 +7,22 @@
 export interface ReverseGeocodeResult {
   pays?: string;
   ville?: string;
+  adresse?: string;
+}
+
+// Construit une adresse lisible même sans adressage formel (fréquent en
+// zone rurale/périurbaine ouest-africaine) : à défaut de numéro+rue,
+// retombe sur le quartier, puis la localité, puis le nom générique du lieu
+// — Nominatim renvoie presque toujours quelque chose d'exploitable, même
+// approximatif, plutôt que rien du tout.
+function buildAdresse(address: Record<string, string>): string | undefined {
+  const rue = [address.house_number, address.road].filter(Boolean).join(" ");
+  const parts = [
+    rue || undefined,
+    address.suburb || address.neighbourhood || address.quarter,
+    address.city || address.town || address.village || address.county,
+  ].filter(Boolean);
+  return parts.length > 0 ? parts.join(", ") : undefined;
 }
 
 export async function reverseGeocode(
@@ -15,7 +31,7 @@ export async function reverseGeocode(
 ): Promise<ReverseGeocodeResult> {
   try {
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=10&addressdetails=1`,
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
     );
     if (!response.ok) return {};
     const data = await response.json();
@@ -23,6 +39,7 @@ export async function reverseGeocode(
     return {
       pays: address.country,
       ville: address.city || address.town || address.village || address.county,
+      adresse: buildAdresse(address) || data?.display_name,
     };
   } catch {
     // Silencieux : le géocodage est une commodité, pas une dépendance

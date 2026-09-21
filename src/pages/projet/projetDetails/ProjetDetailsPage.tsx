@@ -470,6 +470,12 @@ export default function ProjetDetailsPage() {
                 <span>{t("project_details.end_date")}</span>
                 <strong>{formatDate(projet.dateFin)}</strong>
               </div>
+              {projet.adresse && (
+                <div className={styles.detailRow}>
+                  <span>{t("project_details.address")}</span>
+                  <strong>{projet.adresse}</strong>
+                </div>
+              )}
               {projet.googleMapsUrl && (
                 <div className={styles.detailRow}>
                   <span>{t("project_details.location")}</span>

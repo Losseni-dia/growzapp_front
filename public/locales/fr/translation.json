@@ -172,7 +172,8 @@
   },
   "project_details": {
     "owner": "Porteur du projet",
-    "view_on_maps": "Voir sur la carte",
+    "view_on_maps": "Itinéraire",
+    "address": "Adresse",
     "equity_to_raise": "Parts à lever",
     "loading": "Chargement du projet...",
     "error_not_found": "Projet introuvable",
@@ -418,7 +419,9 @@
       "btn_download": "Télécharger",
       "btn_unavailable": "Indisponible",
       "btn_view_project": "Voir le projet",
-      "validation_delay": "Validation sous 48h"
+      "validation_delay": "Validation sous 48h",
+      "view_on_map": "Voir sur la carte",
+      "get_directions": "Itinéraire jusqu'au site"
     }
   },
   "dividends": {

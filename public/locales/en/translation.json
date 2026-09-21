@@ -172,7 +172,8 @@
   },
   "project_details": {
     "owner": "Project Owner",
-    "view_on_maps": "View on maps",
+    "view_on_maps": "Directions",
+    "address": "Address",
     "equity_to_raise": "Equity to raise",
     "loading": "Loading project...",
     "error_not_found": "Project not found",
@@ -419,7 +420,9 @@
       "btn_download": "Download",
       "btn_unavailable": "Unavailable",
       "btn_view_project": "View project",
-      "validation_delay": "Validation within 48h"
+      "validation_delay": "Validation within 48h",
+      "view_on_map": "View on map",
+      "get_directions": "Directions to the site"
     }
   },
   "dividends": {

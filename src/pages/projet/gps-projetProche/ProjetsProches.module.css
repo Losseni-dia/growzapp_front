@@ -29,6 +29,45 @@
     gap: 2.5rem;
 }
 
+.viewToggle {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.viewToggle button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.55rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.viewToggle button:hover {
+    border-color: var(--growz-primary);
+}
+
+.viewToggleActive {
+    background: var(--growz-primary) !important;
+    color: white !important;
+    border-color: var(--growz-primary) !important;
+}
+
+.addressText {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 0.8rem;
+    padding: 0 1rem 0.5rem;
+}
+
 /* --- CARD WRAPPER (Le secret pour éviter les débordements) --- */
 .cardWrapper {
     position: relative;

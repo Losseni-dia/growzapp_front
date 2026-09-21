@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  CircleMarker,
   MapContainer,
   Marker,
   Popup,
@@ -18,38 +19,54 @@ export interface ProjectMapPoint {
   latitude: number;
   longitude: number;
   localiteNom?: string;
+  distanceKm?: number;
 }
 
 interface ProjectsMapProps {
   points: ProjectMapPoint[];
   height?: number | string;
+  userPosition?: { lat: number; lng: number };
 }
 
-// Recentre/zoome automatiquement sur l'ensemble des marqueurs affichés —
-// nécessaire à chaque changement de filtre (ex: changement de pays), car
-// MapContainer ne recalcule pas ses bounds tout seul après son montage.
-function FitBounds({ points }: { points: ProjectMapPoint[] }) {
+// Recentre/zoome automatiquement sur l'ensemble des marqueurs affichés (et
+// la position de l'utilisateur si fournie) — nécessaire à chaque
+// changement de filtre (ex: changement de pays), car MapContainer ne
+// recalcule pas ses bounds tout seul après son montage.
+function FitBounds({
+  points,
+  userPosition,
+}: {
+  points: ProjectMapPoint[];
+  userPosition?: { lat: number; lng: number };
+}) {
   const map = useMap();
 
   useEffect(() => {
     map.invalidateSize();
-    if (points.length === 0) return;
-    if (points.length === 1) {
-      map.setView([points[0].latitude, points[0].longitude], 13);
-      return;
-    }
-    const bounds = points.map(
+    const bounds: [number, number][] = points.map(
       (p) => [p.latitude, p.longitude] as [number, number],
     );
+    if (userPosition) bounds.push([userPosition.lat, userPosition.lng]);
+
+    if (bounds.length === 0) return;
+    if (bounds.length === 1) {
+      map.setView(bounds[0], 13);
+      return;
+    }
     map.fitBounds(bounds, { padding: [40, 40] });
-  }, [points, map]);
+  }, [points, userPosition, map]);
 
   return null;
 }
 
-export default function ProjectsMap({ points, height = 480 }: ProjectsMapProps) {
-  const defaultCenter: [number, number] =
-    points.length > 0
+export default function ProjectsMap({
+  points,
+  height = 480,
+  userPosition,
+}: ProjectsMapProps) {
+  const defaultCenter: [number, number] = userPosition
+    ? [userPosition.lat, userPosition.lng]
+    : points.length > 0
       ? [points[0].latitude, points[0].longitude]
       : [7.539989, -5.54708]; // Centre approximatif Côte d'Ivoire, fallback
 
@@ -65,7 +82,21 @@ export default function ProjectsMap({ points, height = 480 }: ProjectsMapProps) 
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <FitBounds points={points} />
+        <FitBounds points={points} userPosition={userPosition} />
+        {userPosition && (
+          <CircleMarker
+            center={[userPosition.lat, userPosition.lng]}
+            radius={9}
+            pathOptions={{
+              color: "#1565C0",
+              fillColor: "#42A5F5",
+              fillOpacity: 0.9,
+              weight: 2,
+            }}
+          >
+            <Popup>Vous êtes ici</Popup>
+          </CircleMarker>
+        )}
         {points.map((p) => (
           <Marker key={p.id} position={[p.latitude, p.longitude]}>
             <Popup>
@@ -74,6 +105,12 @@ export default function ProjectsMap({ points, height = 480 }: ProjectsMapProps) 
                 <>
                   <br />
                   {p.localiteNom}
+                </>
+              )}
+              {p.distanceKm != null && (
+                <>
+                  <br />
+                  {p.distanceKm.toFixed(1)} km
                 </>
               )}
               <br />

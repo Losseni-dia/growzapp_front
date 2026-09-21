@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { FiMapPin, FiNavigation, FiCompass } from "react-icons/fi";
+import { useEffect, useMemo, useState } from "react";
+import { FiGrid, FiMap, FiMapPin, FiNavigation, FiCompass } from "react-icons/fi";
 import { useTranslation } from "react-i18next"; // Import pour les traductions
+import ProjectsMap from "../../../components/Map/ProjectsMap";
 import ProjectCard from "../../../components/Projet/ProjetCard/ProjetCard";
 import { api, buildProjetUrl } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
@@ -33,6 +34,7 @@ const ProjetsProches = () => {
   const { coords, error, getLocation } = useUserLocation();
   const [projets, setProjets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<"grille" | "carte">("grille");
 
   useEffect(() => {
     if (coords) {
@@ -64,6 +66,26 @@ const ProjetsProches = () => {
     }
   }, [coords]);
 
+  const mapPoints = useMemo(
+    () =>
+      projets
+        .filter((p) => p.latitude != null && p.longitude != null)
+        .map((p) => ({
+          id: p.id,
+          slug: p.slug,
+          libelle: p.libelleTradu || p.libelle,
+          latitude: p.latitude,
+          longitude: p.longitude,
+          localiteNom: p.localiteNom,
+          distanceKm: coords
+            ? parseFloat(
+                getDistance(coords.lat, coords.lon, p.latitude, p.longitude),
+              )
+            : undefined,
+        })),
+    [projets, coords],
+  );
+
   // Écran d'activation GPS (Empty State)
   if (!coords && !loading) {
     return (
@@ -85,18 +107,40 @@ const ProjetsProches = () => {
         <h2 className={styles.sectionTitle}>
           <FiMapPin /> {t("projets_proches.title")}
         </h2>
+        <div className={styles.viewToggle}>
+          <button
+            className={viewMode === "grille" ? styles.viewToggleActive : ""}
+            onClick={() => setViewMode("grille")}
+          >
+            <FiGrid size={16} /> {t("projects_page.view.grid")}
+          </button>
+          <button
+            className={viewMode === "carte" ? styles.viewToggleActive : ""}
+            onClick={() => setViewMode("carte")}
+          >
+            <FiMap size={16} /> {t("projects_page.view.map")}
+          </button>
+        </div>
       </div>
 
-      <div className={styles.grid}>
-        {loading && (
-          <div className={styles.loaderContainer}>
-            <div className={styles.radar}></div>
-            <p>{t("projets_proches.scanning")}</p>
-          </div>
-        )}
+      {loading && (
+        <div className={styles.loaderContainer}>
+          <div className={styles.radar}></div>
+          <p>{t("projets_proches.scanning")}</p>
+        </div>
+      )}
 
-        {!loading &&
-          projets.map((p) => (
+      {!loading && viewMode === "carte" && (
+        <ProjectsMap
+          points={mapPoints}
+          height={520}
+          userPosition={coords ? { lat: coords.lat, lng: coords.lon } : undefined}
+        />
+      )}
+
+      {!loading && viewMode === "grille" && (
+        <div className={styles.grid}>
+          {projets.map((p) => (
             <div key={p.id} className={styles.cardWrapper}>
               <div className={styles.distanceBadge}>
                 <FiNavigation />
@@ -114,10 +158,16 @@ const ProjetsProches = () => {
 
               <ProjectCard projet={p} />
 
+              {p.adresse && (
+                <p className={styles.addressText}>
+                  <FiMapPin size={12} /> {p.adresse}
+                </p>
+              )}
+
               {p.googleMapsUrl && (
                 <a
                   href={p.googleMapsUrl}
-                  target="_self" // Ouvre dans la même fenêtre
+                  target="_blank"
                   rel="noreferrer"
                   className={styles.gpsButton}
                 >
@@ -126,7 +176,8 @@ const ProjetsProches = () => {
               )}
             </div>
           ))}
-      </div>
+        </div>
+      )}
 
       {!loading && projets.length === 0 && coords && (
         <p className={styles.noProjectsText}>

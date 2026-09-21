@@ -215,11 +215,13 @@
   color: var(--growz-primary);
   width: 40px;
   height: 40px;
+  border: none;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  cursor: pointer;
   /* Garde sa taille carrée */
   transition: transform 0.2s, background 0.2s;
   box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
@@ -228,6 +230,87 @@
 .btnGPS:hover {
   background: var(--growz-gold-dark);
   transform: scale(1.05);
+}
+
+/* ── MODAL CARTE ─────────────────────────────────────────────────────── */
+.mapModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.mapModalContent {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.mapModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.mapModalHeader h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #1e293b;
+}
+
+.mapModalClose {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.mapModalClose:hover {
+  background: #e2e8f0;
+}
+
+.mapModalAddress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 0 0 0.75rem;
+}
+
+.mapModalDirections {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 0.9rem;
+  background: var(--growz-primary);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.mapModalDirections:hover {
+  background: #2d6a2f;
 }
 
 /* États vides et chargement */
