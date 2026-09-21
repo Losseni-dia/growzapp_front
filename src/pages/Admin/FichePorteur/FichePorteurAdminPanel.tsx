@@ -33,6 +33,14 @@ interface UserSearchResult {
   login: string;
 }
 
+interface PorteurProjet {
+  id: number;
+  libelle: string;
+  statutProjet: string;
+  montantCollecte: number;
+  objectifFinancement: number;
+}
+
 interface ListPage {
   content: FicheAdmin[];
   totalPages: number;
@@ -71,6 +79,8 @@ export default function FichePorteurAdminPanel() {
   const [saving, setSaving] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [porteurProjets, setPorteurProjets] = useState<PorteurProjet[]>([]);
+  const [selectedProjetIds, setSelectedProjetIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -127,7 +137,60 @@ export default function FichePorteurAdminPanel() {
     setForm({ ...emptyForm });
     setPhotoFile(null);
     setPhotoPreview(null);
+    setPorteurProjets([]);
+    setSelectedProjetIds(new Set());
     setShowModal(true);
+  };
+
+  // Charge les projets du porteur pour lui permettre de choisir lesquels
+  // mettre en avant dans "Projets précédents", plutôt que de les retaper
+  // à la main (le porteur est identifié par son ID utilisateur, pas
+  // ressaisi manuellement).
+  const loadPorteurProjets = async (userId: number) => {
+    try {
+      const res = await api.get<{ data: PorteurProjet[] }>(
+        `/api/admin/projets/porteur/${userId}`,
+      );
+      setPorteurProjets(res.data || []);
+    } catch {
+      setPorteurProjets([]);
+    }
+  };
+
+  const formatProjetLigne = (p: PorteurProjet) => {
+    const pct =
+      p.objectifFinancement > 0
+        ? Math.round((p.montantCollecte / p.objectifFinancement) * 100)
+        : 0;
+    return `• ${p.libelle} — ${p.statutProjet} (${pct}% financé)`;
+  };
+
+  const toggleProjet = (p: PorteurProjet) => {
+    const ligne = formatProjetLigne(p);
+    const estCoche = selectedProjetIds.has(p.id);
+
+    const next = new Set(selectedProjetIds);
+    if (estCoche) next.delete(p.id);
+    else next.add(p.id);
+    setSelectedProjetIds(next);
+
+    // Appelé séparément (pas imbriqué dans le setSelectedProjetIds
+    // ci-dessus) : en StrictMode, React invoque deux fois la fonction de
+    // mise à jour d'un setState — un setForm imbriqué dans cet appel se
+    // déclenchait donc deux fois, dupliquant la ligne ajoutée. La
+    // vérification anti-doublon ci-dessous rend en plus l'ajout idempotent
+    // par sécurité, même hors de ce cas précis.
+    setForm((f) => {
+      const lignes = f.projetsPrecedents.split("\n").map((l) => l.trim());
+      if (estCoche) {
+        return { ...f, projetsPrecedents: lignes.filter((l) => l !== ligne).join("\n").trim() };
+      }
+      if (lignes.includes(ligne)) return f;
+      return {
+        ...f,
+        projetsPrecedents: [f.projetsPrecedents.trim(), ligne].filter(Boolean).join("\n"),
+      };
+    });
   };
 
   const openEdit = async (fiche: FicheAdmin) => {
@@ -136,6 +199,8 @@ export default function FichePorteurAdminPanel() {
     setUserSearchTerm("");
     setUserSearchResults([]);
     setPhotoFile(null);
+    setSelectedProjetIds(new Set());
+    loadPorteurProjets(fiche.userId);
     try {
       const res = await api.get<{ data: any }>(`/api/porteur/fiche/admin/${fiche.userId}`);
       const f = res.data;
@@ -165,6 +230,8 @@ export default function FichePorteurAdminPanel() {
     setUserSearchTerm("");
     setPhotoFile(null);
     setPhotoPreview(null);
+    setSelectedProjetIds(new Set());
+    loadPorteurProjets(u.id);
     // Précharge le contact déjà saisi à l'inscription (email, téléphone),
     // pour ne pas forcer l'admin à ressaisir une info déjà connue.
     try {
@@ -460,6 +527,44 @@ export default function FichePorteurAdminPanel() {
                   value={form.anneesExperience}
                   onChange={(e) => setForm({ ...form, anneesExperience: e.target.value })}
                 />
+                {porteurProjets.length > 0 && (
+                  <div style={{ marginTop: "0.2rem" }}>
+                    <label style={{ fontSize: "0.82rem", fontWeight: 700, display: "block", marginBottom: 4 }}>
+                      Mettre en avant l'un de ses projets existants (coche pour l'ajouter au texte ci-dessous)
+                    </label>
+                    <div
+                      style={{
+                        border: "1px solid #e2e8f0",
+                        borderRadius: 8,
+                        maxHeight: 150,
+                        overflowY: "auto",
+                        padding: "0.4rem 0.6rem",
+                      }}
+                    >
+                      {porteurProjets.map((p) => (
+                        <label
+                          key={p.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "0.35rem 0",
+                            fontSize: "0.85rem",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedProjetIds.has(p.id)}
+                            onChange={() => toggleProjet(p)}
+                          />
+                          {p.libelle}{" "}
+                          <span style={{ color: "#888" }}>({p.statutProjet})</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <textarea
                   className={styles.modalTextarea}
                   placeholder="Projets précédents (facultatif)"
