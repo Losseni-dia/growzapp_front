@@ -72,6 +72,11 @@ export default function EditProjetPage() {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // ── GALERIE DE PHOTOS ADDITIONNELLES ────────────────────────────────────
+  const [existingPhotos, setExistingPhotos] = useState<{ id: number; url: string }[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+
 
   // ── DISPLAYS NUMÉRIQUES ───────────────────────────────────────────────────
   const [objectifDisplay, setObjectifDisplay] = useState("");
@@ -133,6 +138,11 @@ export default function EditProjetPage() {
             );
           });
         }
+
+        api
+          .get<ApiWrapper<{ id: number; url: string }[]>>(`/api/projets/${data.id}/photos`)
+          .then((r) => setExistingPhotos(r.data ?? []))
+          .catch(() => setExistingPhotos([]));
       })
       .catch(() => {
         toast.error("Impossible de charger le projet");
@@ -251,6 +261,30 @@ export default function EditProjetPage() {
   };
 
   // ── SAUVEGARDE ────────────────────────────────────────────────────────────
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (files.length === 0) return;
+    setGalleryFiles((prev) => [...prev, ...files]);
+    setGalleryPreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+  };
+
+  const removeGalleryFile = (index: number) => {
+    setGalleryFiles((prev) => prev.filter((_, i) => i !== index));
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingPhoto = async (photoId: number) => {
+    if (!projet) return;
+    try {
+      await api.delete(`/api/admin/projets/${projet.id}/photos/${photoId}`);
+      setExistingPhotos((prev) => prev.filter((p) => p.id !== photoId));
+      toast.success("Photo supprimée");
+    } catch (err: any) {
+      toast.error(err.message || "Erreur lors de la suppression");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projet) return;
@@ -275,6 +309,7 @@ export default function EditProjetPage() {
         ),
       );
       if (posterFile) formData.append("poster", posterFile);
+      galleryFiles.forEach((f) => formData.append("photos", f));
       await api.put(`/api/admin/projets/${projet.id}`, formData, true);
       toast.success("Projet enregistré !");
       navigate("/admin/projets");
@@ -447,6 +482,59 @@ export default function EditProjetPage() {
               accept="image/*"
               onChange={handlePhotoChange}
             />
+          </section>
+
+          {/* GALERIE */}
+          <section className={styles.section}>
+            <h3>
+              <FiCamera /> Galerie (photos additionnelles)
+            </h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+              {existingPhotos.map((p) => (
+                <div key={p.id} style={{ position: "relative", width: 70, height: 70 }}>
+                  <img
+                    src={p.url}
+                    alt=""
+                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 6 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExistingPhoto(p.id)}
+                    style={{
+                      position: "absolute", top: -5, right: -5, width: 18, height: 18, borderRadius: "50%",
+                      background: "#c62828", color: "white", border: "none", cursor: "pointer", fontSize: "0.65rem", lineHeight: 1,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              {galleryPreviews.map((src, i) => (
+                <div key={i} style={{ position: "relative", width: 70, height: 70 }}>
+                  <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 6 }} />
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryFile(i)}
+                    style={{
+                      position: "absolute", top: -5, right: -5, width: 18, height: 18, borderRadius: "50%",
+                      background: "#c62828", color: "white", border: "none", cursor: "pointer", fontSize: "0.65rem", lineHeight: 1,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <label
+                style={{
+                  width: 70, height: 70, borderRadius: 6, border: "2px dashed #ccc",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", color: "#888", fontSize: "1.4rem",
+                }}
+              >
+                +
+                <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleGalleryChange} />
+              </label>
+            </div>
           </section>
         </aside>
 

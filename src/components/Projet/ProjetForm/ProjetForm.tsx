@@ -81,6 +81,13 @@ export default function ProjectForm() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
+  // Galerie de photos additionnelles — distinctes du poster (épinglé,
+  // affiché en vignette catalogue), simplement consultables sur la page
+  // détail. Pas de recadrage ici, contrairement au poster.
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+  const [existingPhotos, setExistingPhotos] = useState<{ id: number; url: string }[]>([]);
+
   useEffect(() => {
     setLoadingSecteurs(true);
     api.get<ApiWrapper<SecteurDTO[]>>("/api/secteurs")
@@ -132,6 +139,11 @@ export default function ProjectForm() {
         if (draft.valuation) { setValuation(draft.valuation); setValuationDisplay(String(draft.valuation)); }
         if (draft.roiProjete) { setRoi(draft.roiProjete); setRoiDisplay(String(draft.roiProjete)); }
         if (draft.poster) setPreview(draft.poster);
+
+        api
+          .get<ApiWrapper<{ id: number; url: string }[]>>(`/api/projets/${draft.id}/photos`)
+          .then((r) => setExistingPhotos(r.data ?? []))
+          .catch(() => setExistingPhotos([]));
       })
       .catch(() => toast.error(t("project_form.draft.not_found", "Brouillon introuvable")))
       .finally(() => setLoadingDraft(false));
@@ -213,6 +225,28 @@ export default function ProjectForm() {
     setZoom(1);
   };
 
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (files.length === 0) return;
+    setGalleryFiles((prev) => [...prev, ...files]);
+    setGalleryPreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+  };
+
+  const removeGalleryFile = (index: number) => {
+    setGalleryFiles((prev) => prev.filter((_, i) => i !== index));
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingPhoto = async (photoId: number, projetId: number) => {
+    try {
+      await api.delete(`/api/projets/${projetId}/photos/${photoId}`);
+      setExistingPhotos((prev) => prev.filter((p) => p.id !== photoId));
+    } catch (err: any) {
+      toast.error(err.message || t("project_form.errors.server"));
+    }
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
@@ -254,12 +288,24 @@ export default function ProjectForm() {
       const formData = new FormData();
       formData.append("projet", new Blob([JSON.stringify(buildBrouillonPayload())], { type: "application/json" }));
       if (posterFile) formData.append("poster", posterFile);
+      galleryFiles.forEach((f) => formData.append("photos", f));
 
       const res: any = draftId
         ? await api.put(`/api/projets/brouillon/${draftId}`, formData, true)
         : await api.post("/api/projets/brouillon", formData, true);
 
       if (res?.data?.id) setDraftId(res.data.id);
+      // Les fichiers en attente viennent d'être envoyés et persistés côté
+      // serveur — on vide la file locale pour ne pas les renvoyer en
+      // double au prochain enregistrement.
+      setGalleryFiles([]);
+      setGalleryPreviews([]);
+      if (res?.data?.id) {
+        api
+          .get<ApiWrapper<{ id: number; url: string }[]>>(`/api/projets/${res.data.id}/photos`)
+          .then((r) => setExistingPhotos(r.data ?? []))
+          .catch(() => {});
+      }
       toast.success(t("project_form.draft.saved", "Brouillon enregistré"));
     } catch (err: any) {
       toast.error(err.message || t("project_form.errors.server"));
@@ -280,6 +326,7 @@ export default function ProjectForm() {
       const formData = new FormData();
       formData.append("projet", new Blob([JSON.stringify(buildBrouillonPayload())], { type: "application/json" }));
       if (posterFile) formData.append("poster", posterFile);
+      galleryFiles.forEach((f) => formData.append("photos", f));
 
       const draftRes: any = draftId
         ? await api.put(`/api/projets/brouillon/${draftId}`, formData, true)
@@ -440,6 +487,65 @@ export default function ProjectForm() {
                 reader.onload = () => { setRawPreview(reader.result as string); setShowCropper(true); };
                 reader.readAsDataURL(file);
               }} />
+          </div>
+
+          {/* ── GALERIE DE PHOTOS ADDITIONNELLES ── */}
+          <div className={styles.sectionLabel}>
+            🖼️ {t("project_form.sections.gallery", "Photos supplémentaires (facultatif)")}
+          </div>
+          <div className={styles.photoSection} style={{ flexDirection: "column", alignItems: "flex-start", gap: "0.6rem" }}>
+            <p style={{ fontSize: "0.85rem", color: "#666", margin: 0 }}>
+              {t(
+                "project_form.gallery.hint",
+                "Le poster ci-dessus reste l'image mise en avant. Ajoutez ici d'autres photos consultables dans le détail du projet (chantier, produits, équipe...).",
+              )}
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem" }}>
+              {existingPhotos.map((p) => (
+                <div key={p.id} style={{ position: "relative", width: 90, height: 90 }}>
+                  <img
+                    src={p.url}
+                    alt=""
+                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => draftId && removeExistingPhoto(p.id, draftId)}
+                    style={{
+                      position: "absolute", top: -6, right: -6, width: 22, height: 22, borderRadius: "50%",
+                      background: "#c62828", color: "white", border: "none", cursor: "pointer", fontSize: "0.75rem",
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              {galleryPreviews.map((src, i) => (
+                <div key={i} style={{ position: "relative", width: 90, height: 90 }}>
+                  <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} />
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryFile(i)}
+                    style={{
+                      position: "absolute", top: -6, right: -6, width: 22, height: 22, borderRadius: "50%",
+                      background: "#c62828", color: "white", border: "none", cursor: "pointer", fontSize: "0.75rem",
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <label
+                style={{
+                  width: 90, height: 90, borderRadius: 8, border: "2px dashed #ccc",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", color: "#888", fontSize: "1.6rem",
+                }}
+              >
+                +
+                <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleGalleryChange} />
+              </label>
+            </div>
           </div>
 
           {/* ── PRÉSENTATION ── */}

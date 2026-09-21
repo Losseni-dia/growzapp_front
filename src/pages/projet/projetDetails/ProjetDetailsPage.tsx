@@ -42,6 +42,8 @@ export default function ProjetDetailsPage() {
   const [canSeeDocs, setCanSeeDocs] = useState(true);
   const [showInvestModal, setShowInvestModal] = useState(false);
   const [fichePorteur, setFichePorteur] = useState<any | null>(null);
+  const [photos, setPhotos] = useState<{ id: number; url: string }[]>([]);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   const translateData = (
     category: "sectors" | "countries" | "cities",
@@ -92,6 +94,15 @@ export default function ProjetDetailsPage() {
         if (e.message?.includes("403") || e.status === 403) {
           setCanSeeDocs(false);
         }
+      }
+
+      try {
+        const photosRes = await api.get<ApiResponse<{ id: number; url: string }[]>>(
+          buildProjetUrl(`api/projets/${projetData.id}/photos`),
+        );
+        setPhotos(photosRes?.data ?? []);
+      } catch {
+        setPhotos([]);
       }
     } catch {
       toast.error(t("project_details.error_not_found"));
@@ -252,6 +263,57 @@ export default function ProjetDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* ── GALERIE DE PHOTOS ADDITIONNELLES ─────────────────── */}
+      {photos.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            gap: "0.6rem",
+            overflowX: "auto",
+            padding: "1rem 1.5rem",
+          }}
+        >
+          {photos.map((p) => (
+            <img
+              key={p.id}
+              src={buildFileUrl(p.url)}
+              alt=""
+              onClick={() => setLightboxUrl(buildFileUrl(p.url))}
+              style={{
+                width: 110,
+                height: 80,
+                objectFit: "cover",
+                borderRadius: 10,
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {lightboxUrl && (
+        <div
+          onClick={() => setLightboxUrl(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.85)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 2000,
+            cursor: "zoom-out",
+          }}
+        >
+          <img
+            src={lightboxUrl}
+            alt=""
+            style={{ maxWidth: "90vw", maxHeight: "90vh", borderRadius: 8 }}
+          />
+        </div>
+      )}
 
       {/* ── CORPS ──────────────────────────────────────────── */}
       <div className={styles.body}>
