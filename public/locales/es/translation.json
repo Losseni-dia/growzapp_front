@@ -221,11 +221,13 @@
     "title": "Proyectos cercanos",
     "discover_title": "Descubre proyectos a tu autour",
     "discover_text": "Activa tu ubicación pour ver las oportunidades de inversión cercanas.",
+    "requesting_location": "Localizando...",
     "btn_activate": "Activar geolocalización",
     "scanning": "Escaneando oportunidades locales...",
     "no_projects": "No se encontraron proyectos en un radio de 100km.",
     "distance_prefix": "A",
-    "gps_label": "Ruta GPS"
+    "gps_label": "Ruta GPS",
+    "low_accuracy": "Ubicación aproximada (precisión ±{{km}} km) — su dispositivo no pudo obtener una posición precisa (GPS no disponible). Las distancias mostradas pueden ser incorrectas."
   },
   "project_form": {
     "title": "Enviar un proyecto",

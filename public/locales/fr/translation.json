@@ -305,11 +305,13 @@
     "title": "Projets à proximité",
     "discover_title": "Découvrir les projets autour de vous",
     "discover_text": "Activez votre position pour voir les opportunités d'investissement à proximité.",
+    "requesting_location": "Localisation en cours...",
     "btn_activate": "Activer la géolocalisation",
     "scanning": "Scan des opportunités locales...",
     "no_projects": "Aucun projet trouvé dans un rayon de 100km.",
     "distance_prefix": "À",
-    "gps_label": "Itinéraire GPS"
+    "gps_label": "Itinéraire GPS",
+    "low_accuracy": "Position approximative (précision ±{{km}} km) — votre appareil n'a pas pu obtenir une position précise (GPS indisponible). Les distances affichées peuvent être fausses."
   },
   "data": {
     "countries": {

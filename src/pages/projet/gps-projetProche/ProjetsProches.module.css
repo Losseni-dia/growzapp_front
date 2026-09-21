@@ -59,6 +59,16 @@
     border-color: var(--growz-primary) !important;
 }
 
+.accuracyWarning {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    color: #7a5c00;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
 .addressText {
     display: flex;
     align-items: center;
@@ -89,24 +99,20 @@
     border-color: var(--growz-primary);
 }
 
-/* --- BADGE DE DISTANCE --- */
+/* --- BADGE DE DISTANCE ---
+   En bandeau statique au-dessus de la carte plutôt qu'en incrustation
+   absolue : le badge de statut du projet (Financé/En cours) occupe déjà
+   le coin supérieur droit du poster, un second badge absolu au même
+   endroit se superposait et rendait les deux illisibles. */
 .distanceBadge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 10;
-    background: rgba(27, 94, 32, 0.9);
+    background: rgba(27, 94, 32, 0.95);
     color: var(--growz-gold);
     padding: 8px 16px;
-    border-radius: 50px;
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 800;
     font-size: 0.85rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 /* --- BOUTON GPS (PARFAITEMENT INTÉGRÉ) --- */

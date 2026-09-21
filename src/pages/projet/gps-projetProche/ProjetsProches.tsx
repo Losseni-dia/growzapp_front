@@ -31,10 +31,19 @@ const getDistance = (
 
 const ProjetsProches = () => {
   const { t } = useTranslation(); // Hook de traduction
-  const { coords, error, getLocation } = useUserLocation();
+  const { coords, accuracy, error, getLocation } = useUserLocation();
   const [projets, setProjets] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"grille" | "carte">("grille");
+
+  // Demande la position dès l'arrivée sur la page — plus besoin de cliquer
+  // sur "Activer la géolocalisation" en plus du clic sur "Autour de moi"
+  // dans le header. Le bouton reste affiché uniquement en cas d'échec
+  // (refus, timeout) pour permettre de réessayer.
+  useEffect(() => {
+    getLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (coords) {
@@ -86,8 +95,20 @@ const ProjetsProches = () => {
     [projets, coords],
   );
 
-  // Écran d'activation GPS (Empty State)
-  if (!coords && !loading) {
+  // En attente de la réponse du navigateur (popup d'autorisation en cours,
+  // ou géolocalisation en train de résoudre) — pas encore d'erreur ni de
+  // position : on ne montre pas le bouton "Activer", juste un indicateur.
+  if (!coords && !loading && !error) {
+    return (
+      <div className={styles.emptyState}>
+        <div className={styles.radar}></div>
+        <p>{t("projets_proches.requesting_location")}</p>
+      </div>
+    );
+  }
+
+  // Échec (refus, timeout, indisponible) — on propose de réessayer.
+  if (!coords && !loading && error) {
     return (
       <div className={styles.emptyState}>
         <FiCompass className={styles.iconLarge} />
@@ -96,7 +117,7 @@ const ProjetsProches = () => {
         <button onClick={getLocation} className={styles.btnActivate}>
           <FiNavigation /> {t("projets_proches.btn_activate")}
         </button>
-        {error && <div className={styles.errorMessage}>⚠️ {error}</div>}
+        <div className={styles.errorMessage}>⚠️ {error}</div>
       </div>
     );
   }
@@ -122,6 +143,12 @@ const ProjetsProches = () => {
           </button>
         </div>
       </div>
+
+      {accuracy != null && accuracy > 5000 && (
+        <p className={styles.accuracyWarning}>
+          ⚠️ {t("projets_proches.low_accuracy", { km: (accuracy / 1000).toFixed(0) })}
+        </p>
+      )}
 
       {loading && (
         <div className={styles.loaderContainer}>

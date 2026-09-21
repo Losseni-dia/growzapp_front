@@ -221,11 +221,13 @@
     "title": "Projects nearby",
     "discover_title": "Discover projects around you",
     "discover_text": "Enable your location to see investment opportunities nearby.",
+    "requesting_location": "Locating you...",
     "btn_activate": "Enable geolocation",
     "scanning": "Scanning local opportunities...",
     "no_projects": "No projects found within 100km.",
     "distance_prefix": "At",
-    "gps_label": "GPS Directions"
+    "gps_label": "GPS Directions",
+    "low_accuracy": "Approximate location (±{{km}} km accuracy) — your device could not get a precise position (GPS unavailable). Displayed distances may be inaccurate."
   },
   "project_form": {
     "title": "Submit a project",
