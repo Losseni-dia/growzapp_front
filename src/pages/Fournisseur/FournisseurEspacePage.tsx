@@ -405,9 +405,13 @@ export default function FournisseurEspacePage() {
           )}
           <div>
             <label className={styles.photoLabel}>
-              {savingLogo
-                ? t("fournisseur.espace.btn_saving", "Enregistrement...")
-                : t("fournisseur.espace.field_logo", "Ajouter/changer mon logo")}
+              {savingLogo ? (
+                t("fournisseur.espace.btn_saving", "Enregistrement...")
+              ) : fournisseur.logoUrl ? (
+                <FiEdit2 size={14} />
+              ) : (
+                t("fournisseur.espace.field_logo", "Ajouter/changer mon logo")
+              )}
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
@@ -415,12 +419,14 @@ export default function FournisseurEspacePage() {
                 disabled={savingLogo}
               />
             </label>
-            <p className={styles.logoHint}>
-              {t(
-                "fournisseur.espace.logo_hint",
-                "Affiché publiquement dans la section « Nos partenaires » du site.",
-              )}
-            </p>
+            {!fournisseur.logoUrl && (
+              <p className={styles.logoHint}>
+                {t(
+                  "fournisseur.espace.logo_hint",
+                  "Affiché publiquement dans la section « Nos partenaires » du site.",
+                )}
+              </p>
+            )}
           </div>
         </div>
       </div>

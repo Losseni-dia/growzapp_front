@@ -111,7 +111,7 @@
 .articlePhoto {
   width: calc(100% + 2rem);
   margin: -1rem -1rem 0.8rem;
-  height: 140px;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
   background: #fafafa;
   display: block;
