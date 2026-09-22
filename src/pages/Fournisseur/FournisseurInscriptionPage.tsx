@@ -1,7 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiTruck } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiTruck } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import ComboBox from "../../components/ui/ComboBox/ComboBox";
 import { api } from "../../service/Api";
@@ -30,6 +30,7 @@ export default function FournisseurInscriptionPage() {
   const [telephone, setTelephone] = useState("");
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
+  const [accepteReglement, setAccepteReglement] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,6 +41,10 @@ export default function FournisseurInscriptionPage() {
     }
     if (!secteurNom.trim() || !ville.trim() || !pays.trim()) {
       toast.error(t("fournisseur.inscription.toast_validation_error", "Secteur, ville et pays sont obligatoires"));
+      return;
+    }
+    if (!accepteReglement) {
+      toast.error(t("fournisseur.inscription.toast_reglement_required", "Vous devez accepter le règlement avant de soumettre votre inscription"));
       return;
     }
     setSaving(true);
@@ -186,7 +191,33 @@ export default function FournisseurInscriptionPage() {
           />
         </div>
 
-        <button type="submit" className={styles.btnSubmit} disabled={saving}>
+        <div className={styles.warningBox}>
+          <FiAlertTriangle size={20} className={styles.warningIcon} />
+          <div>
+            <p className={styles.warningTitle}>
+              {t("fournisseur.inscription.warning_title", "Avertissement important")}
+            </p>
+            <p className={styles.warningText}>
+              {t(
+                "fournisseur.inscription.warning_text",
+                "Toute fausse facture, surfacturation, ou commande fictive (produit/service non réellement livré) constitue une fraude. GrowzApp se réserve le droit de suspendre définitivement votre compte, de rembourser les fonds concernés au projet lésé, et de transmettre le dossier aux autorités compétentes en cas de préjudice avéré. En vous inscrivant, vous vous engagez à ne fournir que des informations exactes et à honorer chaque commande validée.",
+              )}
+            </p>
+            <label className={styles.warningCheckbox}>
+              <input
+                type="checkbox"
+                checked={accepteReglement}
+                onChange={(e) => setAccepteReglement(e.target.checked)}
+              />
+              {t(
+                "fournisseur.inscription.warning_checkbox",
+                "J'ai lu et j'accepte ces règles, et je certifie que les informations fournies sont exactes.",
+              )}
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" className={styles.btnSubmit} disabled={saving || !accepteReglement}>
           {saving ? t("fournisseur.inscription.btn_sending", "Envoi...") : t("fournisseur.inscription.btn_send", "Soumettre mon inscription")}
         </button>
       </form>

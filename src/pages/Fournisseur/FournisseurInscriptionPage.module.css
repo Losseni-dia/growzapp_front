@@ -105,6 +105,48 @@
   border-color: var(--growz-primary);
 }
 
+.warningBox {
+  display: flex;
+  gap: 0.8rem;
+  background: #fff8e1;
+  border: 1.5px solid #f0c14b;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+
+.warningIcon {
+  color: #b8860b;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.warningTitle {
+  font-weight: 700;
+  color: #7a5c00;
+  margin: 0 0 0.4rem;
+}
+
+.warningText {
+  font-size: 0.85rem;
+  color: #5a4600;
+  margin: 0 0 0.8rem;
+  line-height: 1.5;
+}
+
+.warningCheckbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5a4600;
+  cursor: pointer;
+}
+
+.warningCheckbox input {
+  margin-top: 3px;
+}
+
 .btnSubmit {
   background: var(--growz-primary);
   color: white;
