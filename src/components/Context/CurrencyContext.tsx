@@ -119,12 +119,21 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
       const noDecimals = ["XOF", "XAF", "GNF", "NGN", "KES", "GHS"];
       const decimals = noDecimals.includes(currency) ? 0 : 2;
 
-      return new Intl.NumberFormat(FORMAT_LOCALE, {
+      const formatted = new Intl.NumberFormat(FORMAT_LOCALE, {
         style: "currency",
         currency: currency,
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       }).format(convertedAmount);
+
+      // Intl sépare le montant du symbole monétaire par une espace
+      // insécable (comme les espaces entre groupes de chiffres) : sur un
+      // conteneur étroit, ça empêchait tout retour à la ligne propre et
+      // forçait le CSS à casser le texte n'importe où (ex. "F" et "CFA"
+      // séparés). On rend cassable uniquement cette espace-là, pour que le
+      // symbole (ex. "F CFA") bascule en bloc à la ligne suivante si besoin,
+      // sans jamais scinder le montant ni le symbole lui-même.
+      return formatted.replace(/[  ](?=\D+$)/, " ");
     },
     [currency],
   );

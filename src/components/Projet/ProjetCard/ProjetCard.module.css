@@ -113,18 +113,24 @@
 }
 
 .infoItem strong {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .equityValue {
   color: var(--growz-primary);
   font-weight: bold;
   font-size: clamp(0.85rem, 4vw, 1.1rem);
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .infoItem > span {
-  overflow-wrap: anywhere;
+  /* break-word (pas "anywhere") : le montant et le symbole monétaire
+     contiennent des espaces insécables (voir CurrencyContext.format) pour
+     ne jamais se couper en plein milieu (ex. "F" / "CFA" séparés) — seule
+     l'espace ajoutée juste avant le symbole est cassable, donc le symbole
+     entier bascule en bloc à la ligne suivante si la carte est trop
+     étroite, au lieu d'être tronché n'importe où. */
+  overflow-wrap: break-word;
   font-size: clamp(0.8rem, 3.5vw, 1rem);
 }
 
