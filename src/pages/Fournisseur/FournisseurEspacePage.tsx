@@ -1,6 +1,6 @@
 import { format as formatDate } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -14,6 +14,7 @@ import {
   FiPackage,
   FiPhone,
   FiPlus,
+  FiSearch,
   FiTrash2,
   FiTruck,
   FiXCircle,
@@ -226,6 +227,31 @@ export default function FournisseurEspacePage() {
   };
 
   const [activeTab, setActiveTab] = useState<"fiche" | "catalogue" | "commandes">("catalogue");
+
+  const [articleSearch, setArticleSearch] = useState("");
+  const [articleFilter, setArticleFilter] = useState<"ALL" | "DISPONIBLE" | "INDISPONIBLE">("ALL");
+
+  const filteredArticles = useMemo(() => {
+    const q = articleSearch.trim().toLowerCase();
+    return articles.filter((a) => {
+      if (articleFilter === "DISPONIBLE" && !a.disponible) return false;
+      if (articleFilter === "INDISPONIBLE" && a.disponible) return false;
+      if (q && !a.nom.toLowerCase().includes(q) && !(a.description || "").toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [articles, articleSearch, articleFilter]);
+
+  const [commandeSearch, setCommandeSearch] = useState("");
+  const [commandeStatutFilter, setCommandeStatutFilter] = useState<string>("ALL");
+
+  const filteredCommandes = useMemo(() => {
+    const q = commandeSearch.trim().toLowerCase();
+    return commandes.filter((c) => {
+      if (commandeStatutFilter !== "ALL" && c.statut !== commandeStatutFilter) return false;
+      if (q && !c.projetLibelle.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [commandes, commandeSearch, commandeStatutFilter]);
 
   const [expeditionId, setExpeditionId] = useState<number | null>(null);
   const [expeditionSending, setExpeditionSending] = useState(false);
@@ -467,6 +493,25 @@ export default function FournisseurEspacePage() {
         </button>
       </div>
 
+      {articles.length > 0 && (
+        <div className={styles.filterBar}>
+          <div className={styles.searchInput}>
+            <FiSearch size={15} />
+            <input
+              type="text"
+              value={articleSearch}
+              onChange={(e) => setArticleSearch(e.target.value)}
+              placeholder={t("fournisseur.espace.search_article", "Rechercher un article...") as string}
+            />
+          </div>
+          <select value={articleFilter} onChange={(e) => setArticleFilter(e.target.value as any)}>
+            <option value="ALL">{t("fournisseur.espace.filter_all", "Tous")}</option>
+            <option value="DISPONIBLE">{t("fournisseur.espace.badge_available", "Disponible")}</option>
+            <option value="INDISPONIBLE">{t("fournisseur.espace.badge_unavailable", "Indisponible")}</option>
+          </select>
+        </div>
+      )}
+
       {showForm && (
         <form onSubmit={handleSaveArticle} className={styles.articleForm}>
           <div className={styles.fieldRow}>
@@ -545,9 +590,13 @@ export default function FournisseurEspacePage() {
         <div className={styles.emptyState}>
           <p>{t("fournisseur.espace.catalogue_empty", "Aucun article dans votre catalogue pour le moment.")}</p>
         </div>
+      ) : filteredArticles.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>{t("fournisseur.espace.no_results", "Aucun résultat pour cette recherche/filtre.")}</p>
+        </div>
       ) : (
         <div className={styles.articleGrid}>
-          {articles.map((a) => (
+          {filteredArticles.map((a) => (
             <div key={a.id} className={styles.articleCard}>
               {a.photoUrl && <img src={buildFileUrl(a.photoUrl)} alt={a.nom} className={styles.articlePhoto} />}
               <div className={styles.articleCardHeader}>
@@ -588,13 +637,39 @@ export default function FournisseurEspacePage() {
         <FiTruck /> {t("fournisseur.espace.commandes_title", "Commandes reçues")}
       </h2>
 
+      {commandes.length > 0 && (
+        <div className={styles.filterBar}>
+          <div className={styles.searchInput}>
+            <FiSearch size={15} />
+            <input
+              type="text"
+              value={commandeSearch}
+              onChange={(e) => setCommandeSearch(e.target.value)}
+              placeholder={t("fournisseur.espace.search_commande", "Rechercher un projet...") as string}
+            />
+          </div>
+          <select value={commandeStatutFilter} onChange={(e) => setCommandeStatutFilter(e.target.value)}>
+            <option value="ALL">{t("fournisseur.espace.filter_all", "Tous")}</option>
+            {Object.entries(STATUT_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {commandes.length === 0 ? (
         <div className={styles.emptyState}>
           <p>{t("fournisseur.espace.commandes_empty", "Aucune commande reçue pour le moment.")}</p>
         </div>
+      ) : filteredCommandes.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>{t("fournisseur.espace.no_results", "Aucun résultat pour cette recherche/filtre.")}</p>
+        </div>
       ) : (
         <div className={styles.commandeList}>
-          {commandes.map((c) => (
+          {filteredCommandes.map((c) => (
             <div key={c.id} className={styles.commandeCard}>
               <div className={styles.commandeCardHeader}>
                 <div>
