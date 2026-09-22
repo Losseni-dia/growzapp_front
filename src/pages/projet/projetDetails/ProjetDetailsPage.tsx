@@ -442,7 +442,7 @@ export default function ProjetDetailsPage() {
                         </small>
                       </div>
                       <a
-                        href={`${import.meta.env.VITE_API_URL}/api/documents/${doc.id}/download`}
+                        href={buildFileUrl(`/api/documents/${doc.id}/download`)}
                         className={styles.downloadBtn}
                         target="_blank"
                         rel="noopener noreferrer"
