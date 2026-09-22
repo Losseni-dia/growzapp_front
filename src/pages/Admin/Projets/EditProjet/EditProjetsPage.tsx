@@ -14,6 +14,7 @@ import LocationPickerMap from "../../../../components/Map/LocationPickerMap";
 import { reverseGeocode } from "../../../../service/Geocoding";
 import ComboBox from "../../../../components/ui/ComboBox/ComboBox";
 import { api } from "../../../../service/Api";
+import { queryClient } from "../../../../lib/QueryClient";
 import type { SecteurDTO } from "../../../../types/secteur";
 import {
   dataURLtoFile,
@@ -311,6 +312,12 @@ export default function EditProjetPage() {
       if (posterFile) formData.append("poster", posterFile);
       galleryFiles.forEach((f) => formData.append("photos", f));
       await api.put(`/api/admin/projets/${projet.id}`, formData, true);
+      // La liste admin (AdminProjetsList) met le résultat en cache 5 min
+      // (staleTime de queryClient) sous la clé "admin-projets" — sans
+      // invalidation ici, revenir sur la liste juste après l'édition
+      // réaffichait l'ancien nom/valeurs tant que le cache n'expirait pas,
+      // d'où l'impression que le renommage "marchait parfois, parfois pas".
+      queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
       toast.success("Projet enregistré !");
       navigate("/admin/projets");
     } catch (err: any) {
