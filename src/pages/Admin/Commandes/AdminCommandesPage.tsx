@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
-  FiAlertTriangle,
   FiCheckCircle,
+  FiCreditCard,
   FiEye,
   FiFileText,
   FiMail,
@@ -16,6 +16,7 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import CommandeTimeline from "../../../components/Commande/CommandeTimeline";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api";
 import styles from "./AdminCommandesPage.module.css";
@@ -41,15 +42,24 @@ interface CommandeDTO {
   statut: string;
   dateCommande: string;
   dateValidationAdmin: string | null;
-  dateLivraison: string | null;
+  dateAcceptation: string | null;
+  dateExpedition: string | null;
   dateConfirmationReception: string | null;
+  datePaiement: string | null;
   motifRejet: string | null;
+  motifRefus: string | null;
   motifLitige: string | null;
   factureUrl: string | null;
   lignes: CommandeLigneDTO[];
 }
 
-type Onglet = "EN_ATTENTE" | "LITIGES";
+type Onglet = "EN_ATTENTE" | "A_PAYER" | "LITIGES";
+
+const ENDPOINTS: Record<Onglet, string> = {
+  EN_ATTENTE: "/api/admin/commandes/en-attente",
+  A_PAYER: "/api/admin/commandes/a-payer",
+  LITIGES: "/api/admin/commandes/litiges",
+};
 
 export default function AdminCommandesPage() {
   const { t } = useTranslation();
@@ -63,12 +73,12 @@ export default function AdminCommandesPage() {
   const [arbitrageId, setArbitrageId] = useState<number | null>(null);
   const [motifArbitrage, setMotifArbitrage] = useState("");
   const [detail, setDetail] = useState<CommandeDTO | null>(null);
+  const [payingId, setPayingId] = useState<number | null>(null);
 
   const load = () => {
     setLoading(true);
-    const url = onglet === "EN_ATTENTE" ? "/api/admin/commandes/en-attente" : "/api/admin/commandes/litiges";
     api
-      .get<{ data: CommandeDTO[] }>(url)
+      .get<{ data: CommandeDTO[] }>(ENDPOINTS[onglet])
       .then((res) => setCommandes(res.data || []))
       .catch(() => toast.error(t("admin.commandes.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
@@ -82,7 +92,7 @@ export default function AdminCommandesPage() {
   const handleValider = async (id: number) => {
     try {
       await api.post(`/api/admin/commandes/${id}/valider`);
-      toast.success(t("admin.commandes.toast_validated", "Commande validée, fonds séquestrés au fournisseur"));
+      toast.success(t("admin.commandes.toast_validated", "Commande validée, transmise au fournisseur"));
       setCommandes((prev) => prev.filter((c) => c.id !== id));
     } catch (err: any) {
       toast.error(err.message || t("admin.commandes.toast_error", "Erreur"));
@@ -124,6 +134,20 @@ export default function AdminCommandesPage() {
     }
   };
 
+  const handlePayer = async (id: number) => {
+    if (!window.confirm(t("admin.commandes.confirm_pay", "Exécuter le paiement ? Cette action débite le wallet du projet et crédite le wallet du fournisseur.") as string)) return;
+    setPayingId(id);
+    try {
+      await api.post(`/api/admin/commandes/${id}/payer`);
+      toast.success(t("admin.commandes.toast_paid", "Paiement exécuté"));
+      setCommandes((prev) => prev.filter((c) => c.id !== id));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.commandes.toast_error", "Erreur"));
+    } finally {
+      setPayingId(null);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -138,6 +162,12 @@ export default function AdminCommandesPage() {
           onClick={() => setOnglet("EN_ATTENTE")}
         >
           {t("admin.commandes.tab_pending", "En attente de validation")}
+        </button>
+        <button
+          className={`${styles.tabBtn} ${onglet === "A_PAYER" ? styles.tabBtnActive : ""}`}
+          onClick={() => setOnglet("A_PAYER")}
+        >
+          {t("admin.commandes.tab_to_pay", "À payer")}
         </button>
         <button
           className={`${styles.tabBtn} ${onglet === "LITIGES" ? styles.tabBtnActive : ""}`}
@@ -174,11 +204,7 @@ export default function AdminCommandesPage() {
                 ))}
               </ul>
 
-              {onglet === "LITIGES" && c.motifLitige && (
-                <p className={styles.motifLitige}>
-                  <FiAlertTriangle size={14} /> {c.motifLitige}
-                </p>
-              )}
+              {onglet === "LITIGES" && c.motifLitige && <p className={styles.motifLitige}>{c.motifLitige}</p>}
 
               {c.factureUrl && (
                 <Link to={`/commandes/${c.id}/facture`} className={styles.btnFacture}>
@@ -190,7 +216,7 @@ export default function AdminCommandesPage() {
                 <button className={styles.btnDetail} onClick={() => setDetail(c)}>
                   <FiEye size={14} /> {t("admin.commandes.btn_details", "Détails")}
                 </button>
-                {onglet === "EN_ATTENTE" ? (
+                {onglet === "EN_ATTENTE" && (
                   <>
                     <button className={styles.btnValider} onClick={() => handleValider(c.id)}>
                       <FiCheckCircle size={14} /> {t("admin.commandes.btn_validate", "Valider")}
@@ -199,7 +225,20 @@ export default function AdminCommandesPage() {
                       <FiXCircle size={14} /> {t("admin.commandes.btn_reject", "Rejeter")}
                     </button>
                   </>
-                ) : (
+                )}
+                {onglet === "A_PAYER" && (
+                  <button
+                    className={styles.btnValider}
+                    onClick={() => handlePayer(c.id)}
+                    disabled={payingId === c.id}
+                  >
+                    <FiCreditCard size={14} />{" "}
+                    {payingId === c.id
+                      ? t("admin.commandes.btn_paying", "Paiement...")
+                      : t("admin.commandes.btn_pay", "Exécuter le paiement")}
+                  </button>
+                )}
+                {onglet === "LITIGES" && (
                   <button className={styles.btnValider} onClick={() => setArbitrageId(c.id)}>
                     {t("admin.commandes.btn_arbitrate", "Arbitrer")}
                   </button>
@@ -213,9 +252,7 @@ export default function AdminCommandesPage() {
       {detail !== null && (
         <div className={styles.modalOverlay} onClick={() => setDetail(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>
-              {t("admin.commandes.detail_title", "Commande #{{id}}", { id: detail.id })}
-            </h2>
+            <h2>{t("admin.commandes.detail_title", "Commande #{{id}}", { id: detail.id })}</h2>
 
             <div className={styles.detailSection}>
               <p className={styles.detailLabel}>
@@ -268,36 +305,7 @@ export default function AdminCommandesPage() {
 
             <div className={styles.detailSection}>
               <p className={styles.detailLabel}>{t("admin.commandes.detail_chronologie", "Chronologie")}</p>
-              <ul className={styles.detailTimeline}>
-                <li>
-                  {t("admin.commandes.detail_commandee", "Commandée le")}{" "}
-                  {formatDate(new Date(detail.dateCommande), "dd MMM yyyy HH:mm", { locale: fr })}
-                </li>
-                {detail.dateValidationAdmin && (
-                  <li>
-                    {t("admin.commandes.detail_validee", "Validée le")}{" "}
-                    {formatDate(new Date(detail.dateValidationAdmin), "dd MMM yyyy HH:mm", { locale: fr })}
-                  </li>
-                )}
-                {detail.dateLivraison && (
-                  <li>
-                    {t("admin.commandes.detail_livree", "Livrée le")}{" "}
-                    {formatDate(new Date(detail.dateLivraison), "dd MMM yyyy HH:mm", { locale: fr })}
-                  </li>
-                )}
-                {detail.dateConfirmationReception && (
-                  <li>
-                    {t("admin.commandes.detail_confirmee", "Confirmée le")}{" "}
-                    {formatDate(new Date(detail.dateConfirmationReception), "dd MMM yyyy HH:mm", { locale: fr })}
-                  </li>
-                )}
-              </ul>
-              {detail.motifRejet && <p className={styles.motifLitige}>{detail.motifRejet}</p>}
-              {detail.motifLitige && (
-                <p className={styles.motifLitige}>
-                  <FiAlertTriangle size={14} /> {detail.motifLitige}
-                </p>
-              )}
+              <CommandeTimeline commande={detail} />
             </div>
 
             {detail.factureUrl && (
@@ -348,7 +356,7 @@ export default function AdminCommandesPage() {
                 {t("admin.commandes.btn_cancel", "Annuler")}
               </button>
               <button className={styles.btnRejeter} onClick={() => handleArbitrer(false)}>
-                {t("admin.commandes.btn_favor_porteur", "En faveur du porteur (remboursement)")}
+                {t("admin.commandes.btn_favor_porteur", "En faveur du porteur (annulée)")}
               </button>
               <button className={styles.btnValider} onClick={() => handleArbitrer(true)}>
                 {t("admin.commandes.btn_favor_fournisseur", "En faveur du fournisseur")}

@@ -19,6 +19,7 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import CommandeTimeline from "../../components/Commande/CommandeTimeline";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api, buildFileUrl } from "../../service/Api";
 import styles from "./FournisseurEspacePage.module.css";
@@ -44,6 +45,7 @@ interface ArticleDTO {
   prix: number;
   unite: string;
   disponible: boolean;
+  stock: number | null;
   photoUrl: string | null;
 }
 
@@ -53,8 +55,29 @@ interface CommandeDTO {
   montantTotal: number;
   statut: string;
   dateCommande: string;
+  dateValidationAdmin: string | null;
+  dateAcceptation: string | null;
+  dateExpedition: string | null;
+  dateConfirmationReception: string | null;
+  datePaiement: string | null;
+  motifRejet: string | null;
+  motifRefus: string | null;
+  motifLitige: string | null;
   factureUrl: string | null;
 }
+
+const STATUT_LABELS: Record<string, string> = {
+  EN_ATTENTE_VALIDATION: "En attente de validation admin",
+  REJETEE: "Rejetée",
+  EN_ATTENTE_ACCEPTATION: "À accepter",
+  REFUSEE: "Refusée",
+  ACCEPTEE: "Acceptée — à expédier",
+  EXPEDIEE: "Expédiée",
+  LITIGE: "En litige",
+  ANNULEE: "Annulée",
+  LIVREE: "Livrée — en attente de paiement",
+  PAYEE: "Payée",
+};
 
 export default function FournisseurEspacePage() {
   const { t } = useTranslation();
@@ -72,6 +95,7 @@ export default function FournisseurEspacePage() {
   const [prix, setPrix] = useState("");
   const [unite, setUnite] = useState("");
   const [disponible, setDisponible] = useState(true);
+  const [stock, setStock] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -107,6 +131,7 @@ export default function FournisseurEspacePage() {
     setPrix("");
     setUnite("");
     setDisponible(true);
+    setStock("");
     setPhotoFile(null);
     setPhotoPreview(null);
     setShowForm(false);
@@ -119,6 +144,7 @@ export default function FournisseurEspacePage() {
     setPrix(String(a.prix));
     setUnite(a.unite);
     setDisponible(a.disponible);
+    setStock(a.stock !== null ? String(a.stock) : "");
     setPhotoFile(null);
     setPhotoPreview(a.photoUrl ? buildFileUrl(a.photoUrl) : null);
     setShowForm(true);
@@ -139,12 +165,14 @@ export default function FournisseurEspacePage() {
     }
     setSaving(true);
     try {
+      const stockNum = stock.trim() === "" ? null : parseInt(stock, 10);
       const formData = new FormData();
       formData.append(
         "article",
-        new Blob([JSON.stringify({ nom, description: description || null, prix: prixNum, unite, disponible })], {
-          type: "application/json",
-        }),
+        new Blob(
+          [JSON.stringify({ nom, description: description || null, prix: prixNum, unite, disponible, stock: stockNum })],
+          { type: "application/json" },
+        ),
       );
       if (photoFile) formData.append("photo", photoFile);
 
@@ -174,28 +202,56 @@ export default function FournisseurEspacePage() {
     }
   };
 
-  const [livraisonId, setLivraisonId] = useState<number | null>(null);
+  const [expeditionId, setExpeditionId] = useState<number | null>(null);
   const [factureFile, setFactureFile] = useState<File | null>(null);
-  const [livraisonSending, setLivraisonSending] = useState(false);
+  const [expeditionSending, setExpeditionSending] = useState(false);
+  const [refusId, setRefusId] = useState<number | null>(null);
+  const [motifRefus, setMotifRefus] = useState("");
 
-  const handleConfirmerLivraison = async () => {
-    if (!livraisonId || !factureFile) {
+  const handleAccepter = async (id: number) => {
+    try {
+      await api.post(`/api/commandes/${id}/accepter`);
+      toast.success(t("fournisseur.espace.toast_accepted", "Commande acceptée"));
+      loadAll();
+    } catch (err: any) {
+      toast.error(err.message || t("fournisseur.espace.toast_error", "Erreur"));
+    }
+  };
+
+  const handleRefuser = async () => {
+    if (!refusId || motifRefus.trim().length < 3) {
+      toast.error(t("fournisseur.espace.toast_motif_required", "Le motif est obligatoire (3 caractères min.)"));
+      return;
+    }
+    try {
+      await api.post(`/api/commandes/${refusId}/refuser`, { motif: motifRefus });
+      toast.success(t("fournisseur.espace.toast_refused", "Commande refusée"));
+      setRefusId(null);
+      setMotifRefus("");
+      loadAll();
+    } catch (err: any) {
+      toast.error(err.message || t("fournisseur.espace.toast_error", "Erreur"));
+    }
+  };
+
+  const handleConfirmerExpedition = async () => {
+    if (!expeditionId || !factureFile) {
       toast.error(t("fournisseur.espace.toast_facture_required", "La facture est obligatoire"));
       return;
     }
-    setLivraisonSending(true);
+    setExpeditionSending(true);
     try {
       const formData = new FormData();
       formData.append("facture", factureFile);
-      await api.post(`/api/commandes/${livraisonId}/livrer`, formData, true);
-      toast.success(t("fournisseur.espace.toast_delivered", "Commande marquée comme livrée, facture transmise aux investisseurs"));
-      setLivraisonId(null);
+      await api.post(`/api/commandes/${expeditionId}/expedier`, formData, true);
+      toast.success(t("fournisseur.espace.toast_expedited", "Commande marquée comme expédiée"));
+      setExpeditionId(null);
       setFactureFile(null);
       loadAll();
     } catch (err: any) {
-      toast.error(err.message || t("fournisseur.espace.toast_delivered_error", "Erreur"));
+      toast.error(err.message || t("fournisseur.espace.toast_error", "Erreur"));
     } finally {
-      setLivraisonSending(false);
+      setExpeditionSending(false);
     }
   };
 
@@ -367,6 +423,15 @@ export default function FournisseurEspacePage() {
               {t("fournisseur.espace.field_disponible", "Disponible")}
             </label>
           </div>
+          <div className={styles.fieldRow}>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={stock}
+              onChange={(e) => setStock(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder={t("fournisseur.espace.field_stock", "Stock (vide = illimité)") as string}
+            />
+          </div>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -419,6 +484,11 @@ export default function FournisseurEspacePage() {
               <p className={styles.articlePrix}>
                 {format(Number(a.prix), "XOF")} / {a.unite}
               </p>
+              {a.stock !== null && (
+                <p className={styles.articleStock}>
+                  {t("fournisseur.espace.stock_restant", "{{count}} en stock", { count: a.stock })}
+                </p>
+              )}
               <div className={styles.articleActions}>
                 <button className={styles.btnEdit} onClick={() => openEdit(a)}>
                   {t("fournisseur.espace.btn_edit", "Modifier")}
@@ -441,53 +511,84 @@ export default function FournisseurEspacePage() {
           <p>{t("fournisseur.espace.commandes_empty", "Aucune commande reçue pour le moment.")}</p>
         </div>
       ) : (
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>{t("fournisseur.espace.table_projet", "Projet")}</th>
-                <th>{t("fournisseur.espace.table_montant", "Montant")}</th>
-                <th>{t("fournisseur.espace.table_date", "Date")}</th>
-                <th>{t("fournisseur.espace.table_statut", "Statut")}</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {commandes.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.projetLibelle}</td>
-                  <td>{format(Number(c.montantTotal), "XOF")}</td>
-                  <td>{formatDate(new Date(c.dateCommande), "dd MMM yyyy", { locale: fr })}</td>
-                  <td>
-                    <span className={styles.badge}>{c.statut}</span>
-                  </td>
-                  <td>
-                    {c.statut === "VALIDEE" && (
-                      <button className={styles.btnAction} onClick={() => setLivraisonId(c.id)}>
-                        <FiCheckCircle size={14} /> {t("fournisseur.espace.btn_livrer", "Marquer livrée")}
-                      </button>
-                    )}
-                    {c.factureUrl && (
-                      <Link to={`/commandes/${c.id}/facture`} className={styles.btnAction}>
-                        {t("fournisseur.espace.btn_voir_facture", "Voir la facture")}
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className={styles.commandeList}>
+          {commandes.map((c) => (
+            <div key={c.id} className={styles.commandeCard}>
+              <div className={styles.commandeCardHeader}>
+                <div>
+                  <strong>{c.projetLibelle}</strong>
+                  <span className={styles.commandeDate}>
+                    {" "}
+                    — {formatDate(new Date(c.dateCommande), "dd MMM yyyy", { locale: fr })}
+                  </span>
+                </div>
+                <span className={styles.articlePrix}>{format(Number(c.montantTotal), "XOF")}</span>
+              </div>
+              <span className={`${styles.badge} ${styles.commandeStatutBadge}`}>
+                {STATUT_LABELS[c.statut] || c.statut}
+              </span>
+
+              <CommandeTimeline commande={c} />
+
+              {c.factureUrl && (
+                <Link to={`/commandes/${c.id}/facture`} className={styles.btnAction}>
+                  {t("fournisseur.espace.btn_voir_facture", "Voir la facture")}
+                </Link>
+              )}
+
+              {c.statut === "EN_ATTENTE_ACCEPTATION" && (
+                <div className={styles.commandeActions}>
+                  <button className={styles.btnAction} onClick={() => handleAccepter(c.id)}>
+                    <FiCheckCircle size={14} /> {t("fournisseur.espace.btn_accepter", "Accepter")}
+                  </button>
+                  <button className={styles.btnDanger} onClick={() => setRefusId(c.id)}>
+                    <FiXCircle size={14} /> {t("fournisseur.espace.btn_refuser", "Refuser")}
+                  </button>
+                </div>
+              )}
+              {c.statut === "ACCEPTEE" && (
+                <div className={styles.commandeActions}>
+                  <button className={styles.btnAction} onClick={() => setExpeditionId(c.id)}>
+                    <FiTruck size={14} /> {t("fournisseur.espace.btn_expedier", "Marquer expédiée")}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
 
-      {livraisonId !== null && (
-        <div className={styles.modalOverlay} onClick={() => setLivraisonId(null)}>
+      {refusId !== null && (
+        <div className={styles.modalOverlay} onClick={() => setRefusId(null)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>{t("fournisseur.espace.facture_title", "Confirmer la livraison")}</h2>
+            <h2>{t("fournisseur.espace.refus_title", "Motif du refus")}</h2>
+            <textarea
+              value={motifRefus}
+              onChange={(e) => setMotifRefus(e.target.value)}
+              placeholder={t("fournisseur.espace.refus_placeholder", "Expliquez pourquoi vous refusez cette commande...") as string}
+              rows={4}
+              maxLength={500}
+            />
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setRefusId(null)}>
+                {t("fournisseur.espace.btn_cancel", "Annuler")}
+              </button>
+              <button className={styles.btnDanger} onClick={handleRefuser}>
+                {t("fournisseur.espace.btn_confirm_refus", "Refuser la commande")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {expeditionId !== null && (
+        <div className={styles.modalOverlay} onClick={() => setExpeditionId(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("fournisseur.espace.facture_title", "Confirmer l'expédition")}</h2>
             <p className={styles.warningText}>
               {t(
                 "fournisseur.espace.facture_notice",
-                "La facture est obligatoire — elle sera transmise automatiquement aux investisseurs du projet pour traçabilité.",
+                "La facture est obligatoire — elle sera transmise au porteur et aux investisseurs du projet une fois le paiement exécuté.",
               )}
             </p>
             <input
@@ -496,17 +597,17 @@ export default function FournisseurEspacePage() {
               onChange={(e) => setFactureFile(e.target.files?.[0] || null)}
             />
             <div className={styles.modalFooter}>
-              <button className={styles.btnCancel} onClick={() => setLivraisonId(null)}>
+              <button className={styles.btnCancel} onClick={() => setExpeditionId(null)}>
                 {t("fournisseur.espace.btn_cancel", "Annuler")}
               </button>
               <button
                 className={styles.btnSubmit}
-                onClick={handleConfirmerLivraison}
-                disabled={livraisonSending || !factureFile}
+                onClick={handleConfirmerExpedition}
+                disabled={expeditionSending || !factureFile}
               >
-                {livraisonSending
+                {expeditionSending
                   ? t("fournisseur.espace.btn_saving", "Enregistrement...")
-                  : t("fournisseur.espace.btn_confirm_livraison", "Confirmer la livraison")}
+                  : t("fournisseur.espace.btn_confirm_expedition", "Confirmer l'expédition")}
               </button>
             </div>
           </div>

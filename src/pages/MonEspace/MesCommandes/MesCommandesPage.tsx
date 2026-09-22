@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { FiAlertTriangle, FiArrowLeft, FiCheckCircle, FiFileText, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import CommandeTimeline from "../../../components/Commande/CommandeTimeline";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api";
 import styles from "./MesCommandesPage.module.css";
@@ -24,18 +25,29 @@ interface CommandeDTO {
   montantTotal: number;
   statut: string;
   dateCommande: string;
+  dateValidationAdmin: string | null;
+  dateAcceptation: string | null;
+  dateExpedition: string | null;
+  dateConfirmationReception: string | null;
+  datePaiement: string | null;
   motifRejet: string | null;
+  motifRefus: string | null;
+  motifLitige: string | null;
   factureUrl: string | null;
   lignes: CommandeLigneDTO[];
 }
 
 const STATUT_LABELS: Record<string, string> = {
-  EN_ATTENTE_VALIDATION: "En attente de validation",
-  VALIDEE: "Validée — en préparation",
+  EN_ATTENTE_VALIDATION: "En attente de validation admin",
   REJETEE: "Rejetée",
-  LIVREE: "Livrée — à confirmer",
-  CONFIRMEE: "Confirmée",
+  EN_ATTENTE_ACCEPTATION: "En attente d'acceptation fournisseur",
+  REFUSEE: "Refusée par le fournisseur",
+  ACCEPTEE: "Acceptée — en préparation",
+  EXPEDIEE: "Expédiée — à confirmer",
   LITIGE: "En litige",
+  ANNULEE: "Annulée",
+  LIVREE: "Livrée — paiement en attente",
+  PAYEE: "Payée",
 };
 
 export default function MesCommandesPage() {
@@ -61,7 +73,7 @@ export default function MesCommandesPage() {
   }, []);
 
   const handleConfirmer = async (id: number) => {
-    if (!window.confirm(t("mes_commandes.confirm_reception", "Confirmer avoir bien reçu cette commande ? Les fonds seront libérés au fournisseur.") as string)) return;
+    if (!window.confirm(t("mes_commandes.confirm_reception", "Confirmer avoir bien reçu cette commande ? L'équipe GrowzApp sera alertée pour exécuter le paiement au fournisseur.") as string)) return;
     try {
       await api.post(`/api/commandes/${id}/confirmer-reception`);
       toast.success(t("mes_commandes.toast_confirmed", "Réception confirmée"));
@@ -139,7 +151,10 @@ export default function MesCommandesPage() {
                 </span>
               </div>
 
+              <CommandeTimeline commande={c} />
+
               {c.motifRejet && <p className={styles.motif}>{c.motifRejet}</p>}
+              {c.motifRefus && <p className={styles.motif}>{c.motifRefus}</p>}
 
               {c.factureUrl && (
                 <Link to={`/commandes/${c.id}/facture`} className={styles.btnFacture}>
@@ -147,7 +162,7 @@ export default function MesCommandesPage() {
                 </Link>
               )}
 
-              {c.statut === "LIVREE" && (
+              {c.statut === "EXPEDIEE" && (
                 <div className={styles.actions}>
                   <button className={styles.btnConfirm} onClick={() => handleConfirmer(c.id)}>
                     <FiCheckCircle size={14} /> {t("mes_commandes.btn_confirm", "Confirmer la réception")}

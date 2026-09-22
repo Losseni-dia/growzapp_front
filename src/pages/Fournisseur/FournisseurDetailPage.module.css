@@ -112,7 +112,8 @@
   width: calc(100% + 2rem);
   margin: -1rem -1rem 0.8rem;
   height: 140px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #fafafa;
   display: block;
 }
 
