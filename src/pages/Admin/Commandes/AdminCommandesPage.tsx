@@ -1,6 +1,6 @@
 import { format as formatDate } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,9 +8,11 @@ import {
   FiCreditCard,
   FiEye,
   FiFileText,
+  FiList,
   FiMail,
   FiMapPin,
   FiPhone,
+  FiSearch,
   FiShoppingBag,
   FiUser,
   FiXCircle,
@@ -53,12 +55,26 @@ interface CommandeDTO {
   lignes: CommandeLigneDTO[];
 }
 
-type Onglet = "EN_ATTENTE" | "A_PAYER" | "LITIGES";
+type Onglet = "EN_ATTENTE" | "A_PAYER" | "LITIGES" | "TOUTES";
 
 const ENDPOINTS: Record<Onglet, string> = {
   EN_ATTENTE: "/api/admin/commandes/en-attente",
   A_PAYER: "/api/admin/commandes/a-payer",
   LITIGES: "/api/admin/commandes/litiges",
+  TOUTES: "/api/admin/commandes/toutes",
+};
+
+const STATUT_LABELS: Record<string, string> = {
+  EN_ATTENTE_VALIDATION: "En attente de validation admin",
+  REJETEE: "Rejetée",
+  EN_ATTENTE_ACCEPTATION: "En attente d'acceptation fournisseur",
+  REFUSEE: "Refusée par le fournisseur",
+  ACCEPTEE: "Acceptée — en préparation",
+  EXPEDIEE: "Expédiée — à confirmer",
+  LITIGE: "En litige",
+  ANNULEE: "Annulée",
+  LIVREE: "Livrée — paiement en attente",
+  PAYEE: "Payée",
 };
 
 export default function AdminCommandesPage() {
@@ -74,6 +90,24 @@ export default function AdminCommandesPage() {
   const [motifArbitrage, setMotifArbitrage] = useState("");
   const [detail, setDetail] = useState<CommandeDTO | null>(null);
   const [payingId, setPayingId] = useState<number | null>(null);
+
+  const [search, setSearch] = useState("");
+  const [statutFilter, setStatutFilter] = useState<string>("ALL");
+
+  const filteredCommandes = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return commandes.filter((c) => {
+      if (onglet === "TOUTES" && statutFilter !== "ALL" && c.statut !== statutFilter) return false;
+      if (
+        q &&
+        !c.projetLibelle.toLowerCase().includes(q) &&
+        !c.fournisseurNom.toLowerCase().includes(q) &&
+        !(c.porteurNom || "").toLowerCase().includes(q)
+      )
+        return false;
+      return true;
+    });
+  }, [commandes, search, statutFilter, onglet]);
 
   const load = () => {
     setLoading(true);
@@ -175,6 +209,34 @@ export default function AdminCommandesPage() {
         >
           {t("admin.commandes.tab_litiges", "Litiges")}
         </button>
+        <button
+          className={`${styles.tabBtn} ${onglet === "TOUTES" ? styles.tabBtnActive : ""}`}
+          onClick={() => setOnglet("TOUTES")}
+        >
+          <FiList size={13} /> {t("admin.commandes.tab_toutes", "Toutes / historique")}
+        </button>
+      </div>
+
+      <div className={styles.filterBar}>
+        <div className={styles.searchInput}>
+          <FiSearch size={15} />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("admin.commandes.search_placeholder", "Rechercher par projet, fournisseur, porteur...") as string}
+          />
+        </div>
+        {onglet === "TOUTES" && (
+          <select value={statutFilter} onChange={(e) => setStatutFilter(e.target.value)}>
+            <option value="ALL">{t("admin.commandes.filter_all", "Tous les statuts")}</option>
+            {Object.entries(STATUT_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {loading ? (
@@ -184,9 +246,13 @@ export default function AdminCommandesPage() {
           <FiShoppingBag size={48} />
           <p>{t("admin.commandes.empty", "Rien à traiter ici pour le moment.")}</p>
         </div>
+      ) : filteredCommandes.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>{t("admin.commandes.no_results", "Aucun résultat pour cette recherche/filtre.")}</p>
+        </div>
       ) : (
         <div className={styles.list}>
-          {commandes.map((c) => (
+          {filteredCommandes.map((c) => (
             <div key={c.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>
@@ -195,6 +261,9 @@ export default function AdminCommandesPage() {
                 </div>
                 <span className={styles.total}>{format(Number(c.montantTotal), "XOF")}</span>
               </div>
+              {onglet === "TOUTES" && (
+                <span className={styles.badgeStatut}>{STATUT_LABELS[c.statut] || c.statut}</span>
+              )}
               <p className={styles.date}>{formatDate(new Date(c.dateCommande), "dd MMM yyyy", { locale: fr })}</p>
               <ul className={styles.lignes}>
                 {c.lignes.map((l) => (
