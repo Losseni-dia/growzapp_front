@@ -96,6 +96,7 @@ const FournisseurDetailPage = lazy(() => import("./pages/Fournisseur/Fournisseur
 const MesCommandesPage = lazy(() => import("./pages/MonEspace/MesCommandes/MesCommandesPage"));
 const AdminFournisseursPage = lazy(() => import("./pages/Admin/Fournisseurs/AdminFournisseursPage"));
 const AdminCommandesPage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesPage"));
+const CommandeFacturePage = lazy(() => import("./pages/Commandes/CommandeFacturePage"));
 const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
 const ContratPage = lazy(
   () => import("./pages/Contrat/ContratsPage/ContratPage"),
@@ -285,6 +286,7 @@ function App() {
                   <Route path="/fournisseurs" element={<FournisseurRecherchePage />} />
                   <Route path="/fournisseurs/:id" element={<FournisseurDetailPage />} />
                   <Route path="/mes-commandes" element={<MesCommandesPage />} />
+                  <Route path="/commandes/:id/facture" element={<CommandeFacturePage />} />
                 </Route>
               </Route>
 

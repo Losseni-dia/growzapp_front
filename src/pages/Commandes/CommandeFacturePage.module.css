@@ -1,0 +1,80 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--growz-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  color: var(--growz-primary);
+  margin: 0 0 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: #666;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  color: #999;
+  background: #fafafa;
+  border-radius: 16px;
+  border: 2px dashed #e0e0e0;
+  text-align: center;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.iframe {
+  width: 100%;
+  height: 75vh;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.image {
+  max-width: 100%;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.btnDownload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--growz-primary);
+  color: white;
+  border-radius: 10px;
+  padding: 0.7rem 1.4rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.btnDownload:hover {
+  background: var(--growz-primary-pressed);
+}

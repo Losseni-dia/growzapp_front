@@ -3,7 +3,8 @@ import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiAlertTriangle, FiCheckCircle, FiShoppingBag, FiXCircle } from "react-icons/fi";
+import { FiAlertTriangle, FiCheckCircle, FiFileText, FiShoppingBag, FiXCircle } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api";
 import styles from "./AdminCommandesPage.module.css";
@@ -23,6 +24,7 @@ interface CommandeDTO {
   statut: string;
   dateCommande: string;
   motifLitige: string | null;
+  factureUrl: string | null;
   lignes: CommandeLigneDTO[];
 }
 
@@ -154,6 +156,12 @@ export default function AdminCommandesPage() {
                 <p className={styles.motifLitige}>
                   <FiAlertTriangle size={14} /> {c.motifLitige}
                 </p>
+              )}
+
+              {c.factureUrl && (
+                <Link to={`/commandes/${c.id}/facture`} className={styles.btnFacture}>
+                  <FiFileText size={14} /> {t("admin.commandes.btn_facture", "Voir la facture")}
+                </Link>
               )}
 
               <div className={styles.actions}>

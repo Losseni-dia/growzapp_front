@@ -44,6 +44,7 @@ interface CommandeDTO {
   montantTotal: number;
   statut: string;
   dateCommande: string;
+  factureUrl: string | null;
 }
 
 export default function FournisseurEspacePage() {
@@ -144,13 +145,28 @@ export default function FournisseurEspacePage() {
     }
   };
 
-  const handleLivrer = async (id: number) => {
+  const [livraisonId, setLivraisonId] = useState<number | null>(null);
+  const [factureFile, setFactureFile] = useState<File | null>(null);
+  const [livraisonSending, setLivraisonSending] = useState(false);
+
+  const handleConfirmerLivraison = async () => {
+    if (!livraisonId || !factureFile) {
+      toast.error(t("fournisseur.espace.toast_facture_required", "La facture est obligatoire"));
+      return;
+    }
+    setLivraisonSending(true);
     try {
-      await api.post(`/api/commandes/${id}/livrer`);
-      toast.success(t("fournisseur.espace.toast_delivered", "Commande marquée comme livrée"));
+      const formData = new FormData();
+      formData.append("facture", factureFile);
+      await api.post(`/api/commandes/${livraisonId}/livrer`, formData, true);
+      toast.success(t("fournisseur.espace.toast_delivered", "Commande marquée comme livrée, facture transmise aux investisseurs"));
+      setLivraisonId(null);
+      setFactureFile(null);
       loadAll();
     } catch (err: any) {
       toast.error(err.message || t("fournisseur.espace.toast_delivered_error", "Erreur"));
+    } finally {
+      setLivraisonSending(false);
     }
   };
 
@@ -337,15 +353,53 @@ export default function FournisseurEspacePage() {
                   </td>
                   <td>
                     {c.statut === "VALIDEE" && (
-                      <button className={styles.btnAction} onClick={() => handleLivrer(c.id)}>
+                      <button className={styles.btnAction} onClick={() => setLivraisonId(c.id)}>
                         <FiCheckCircle size={14} /> {t("fournisseur.espace.btn_livrer", "Marquer livrée")}
                       </button>
+                    )}
+                    {c.factureUrl && (
+                      <Link to={`/commandes/${c.id}/facture`} className={styles.btnAction}>
+                        {t("fournisseur.espace.btn_voir_facture", "Voir la facture")}
+                      </Link>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {livraisonId !== null && (
+        <div className={styles.modalOverlay} onClick={() => setLivraisonId(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("fournisseur.espace.facture_title", "Confirmer la livraison")}</h2>
+            <p className={styles.warningText}>
+              {t(
+                "fournisseur.espace.facture_notice",
+                "La facture est obligatoire — elle sera transmise automatiquement aux investisseurs du projet pour traçabilité.",
+              )}
+            </p>
+            <input
+              type="file"
+              accept="application/pdf,image/jpeg,image/png,image/webp"
+              onChange={(e) => setFactureFile(e.target.files?.[0] || null)}
+            />
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setLivraisonId(null)}>
+                {t("fournisseur.espace.btn_cancel", "Annuler")}
+              </button>
+              <button
+                className={styles.btnSubmit}
+                onClick={handleConfirmerLivraison}
+                disabled={livraisonSending || !factureFile}
+              >
+                {livraisonSending
+                  ? t("fournisseur.espace.btn_saving", "Enregistrement...")
+                  : t("fournisseur.espace.btn_confirm_livraison", "Confirmer la livraison")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

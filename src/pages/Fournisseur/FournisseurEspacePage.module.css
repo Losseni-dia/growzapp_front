@@ -315,3 +315,49 @@
     grid-template-columns: 1fr;
   }
 }
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal {
+  background: white;
+  border-radius: 18px;
+  padding: 1.6rem;
+  max-width: 480px;
+  width: 100%;
+}
+
+.modal h2 {
+  margin: 0 0 0.8rem;
+  color: var(--growz-primary);
+}
+
+.modal input[type="file"] {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.warningText {
+  font-size: 0.85rem;
+  color: #7a5c00;
+  background: #fff8e1;
+  border: 1.5px solid #f0c14b;
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin: 0;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}

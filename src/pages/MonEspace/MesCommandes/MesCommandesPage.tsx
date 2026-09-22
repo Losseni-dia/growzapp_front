@@ -3,7 +3,7 @@ import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiAlertTriangle, FiArrowLeft, FiCheckCircle, FiShoppingBag } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiCheckCircle, FiFileText, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api";
@@ -25,6 +25,7 @@ interface CommandeDTO {
   statut: string;
   dateCommande: string;
   motifRejet: string | null;
+  factureUrl: string | null;
   lignes: CommandeLigneDTO[];
 }
 
@@ -139,6 +140,12 @@ export default function MesCommandesPage() {
               </div>
 
               {c.motifRejet && <p className={styles.motif}>{c.motifRejet}</p>}
+
+              {c.factureUrl && (
+                <Link to={`/commandes/${c.id}/facture`} className={styles.btnFacture}>
+                  <FiFileText size={14} /> {t("mes_commandes.btn_facture", "Voir la facture")}
+                </Link>
+              )}
 
               {c.statut === "LIVREE" && (
                 <div className={styles.actions}>
