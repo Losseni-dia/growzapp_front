@@ -91,8 +91,11 @@
 
 .infoGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* Garde 2 colonnes, créera 2 lignes pour 4 items */
+  /* minmax(0, 1fr) plutôt que 1fr seul : par défaut une piste de grille a
+     une largeur minimale "auto" (= largeur du contenu), donc un gros
+     montant non-coupable (ex. "200 000 000 F CFA") forçait la piste, et
+     donc la carte entière, à déborder au lieu de se réduire. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin: 1rem 0;
 }
@@ -106,22 +109,35 @@
   /* Optionnel : pour aligner label et valeur */
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+}
+
+.infoItem strong {
+  overflow-wrap: anywhere;
 }
 
 .equityValue {
   color: var(--growz-primary);
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: clamp(0.85rem, 4vw, 1.1rem);
+  overflow-wrap: anywhere;
+}
+
+.infoItem > span {
+  overflow-wrap: anywhere;
+  font-size: clamp(0.8rem, 3.5vw, 1rem);
 }
 
 .highlight {
   color: var(--growz-primary);
-  font-size: 1.3rem;
+  font-size: clamp(0.95rem, 4.5vw, 1.3rem);
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  overflow-wrap: anywhere;
 }
 
 /* ==================== PROGRESSION ==================== */
