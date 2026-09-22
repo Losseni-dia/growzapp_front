@@ -504,7 +504,27 @@
     "my_invoices": "Mis facturas",
     "section_account": "Cuenta",
     "profile": "Mi perfil",
-    "kyc": "Verificación de identidad (KYC)"
+    "kyc": "Verificación de identidad (KYC)",
+    "contact": "Contacto / Soporte"
+  },
+  "contact_page": {
+    "title": "Contacto / Soporte",
+    "subtitle": "¿Una pregunta, un problema? Escríbenos, nuestro equipo te responderá por correo.",
+    "field_subject": "Asunto",
+    "field_subject_placeholder": "Ej. Problema con un depósito",
+    "field_message": "Mensaje",
+    "field_message_placeholder": "Describe tu problema o pregunta en detalle...",
+    "btn_send": "Enviar",
+    "btn_sending": "Enviando...",
+    "toast_validation_error": "El asunto (mín. 3 caracteres) y el mensaje (mín. 10 caracteres) son obligatorios",
+    "toast_sent": "Mensaje enviado, nuestro equipo te responderá por correo",
+    "toast_send_error": "Error al enviar el mensaje",
+    "toast_load_error": "Error al cargar tus mensajes",
+    "history_title": "Mis mensajes",
+    "empty": "Aún no has enviado ningún mensaje",
+    "status_new": "Pendiente",
+    "status_treated": "Respondido",
+    "reply_label": "Respuesta de {{name}}:"
   },
   "admin": {
     "sidebar": {
@@ -556,8 +576,27 @@
     },
     "contact": {
       "title": "Mensajes de contacto",
-      "placeholder_title": "Próximamente",
-      "placeholder_body": "El formulario de contacto aún no existe — GrowzApp solo muestra una dirección de correo electrónico. Esta página listará los mensajes recibidos una vez implementado el formulario."
+      "subtitle": "{{count}} mensaje(s) pendiente(s)",
+      "empty": "Aún no hay mensajes",
+      "toast_load_error": "Error al cargar los mensajes",
+      "toast_validation_error": "La respuesta debe tener al menos 3 caracteres",
+      "toast_sent": "Respuesta enviada",
+      "toast_send_error": "Error al enviar la respuesta",
+      "filter_tous": "Todos",
+      "filter_nouveau": "Nuevos",
+      "filter_traite": "Respondidos",
+      "table": {
+        "user": "Usuario",
+        "subject": "Asunto",
+        "date": "Fecha",
+        "status": "Estado"
+      },
+      "btn_open": "Abrir",
+      "field_reply": "Tu respuesta",
+      "field_reply_placeholder": "Escribe tu respuesta — se enviará por correo al usuario.",
+      "already_treated": "Ya respondido por {{name}}",
+      "btn_cancel": "Cancelar",
+      "btn_reply": "Enviar respuesta"
     },
     "notifications": {
       "title": "Notificaciones enviadas",

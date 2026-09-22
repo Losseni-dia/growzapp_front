@@ -503,7 +503,27 @@
     "my_invoices": "Mes factures",
     "section_account": "Compte",
     "profile": "Mon profil",
-    "kyc": "Vérification d'identité (KYC)"
+    "kyc": "Vérification d'identité (KYC)",
+    "contact": "Contact / Support"
+  },
+  "contact_page": {
+    "title": "Contact / Support",
+    "subtitle": "Une question, un problème ? Écrivez-nous, notre équipe vous répond par email.",
+    "field_subject": "Sujet",
+    "field_subject_placeholder": "Ex. Problème lors d'un dépôt",
+    "field_message": "Message",
+    "field_message_placeholder": "Décrivez votre problème ou votre question en détail...",
+    "btn_send": "Envoyer",
+    "btn_sending": "Envoi...",
+    "toast_validation_error": "Le sujet (3 caractères min.) et le message (10 caractères min.) sont obligatoires",
+    "toast_sent": "Message envoyé, notre équipe vous répondra par email",
+    "toast_send_error": "Erreur lors de l'envoi du message",
+    "toast_load_error": "Erreur lors du chargement de vos messages",
+    "history_title": "Mes messages",
+    "empty": "Vous n'avez envoyé aucun message pour le moment",
+    "status_new": "En attente",
+    "status_treated": "Traité",
+    "reply_label": "Réponse de {{name}} :"
   },
   "admin": {
     "sidebar": {
@@ -555,8 +575,27 @@
     },
     "contact": {
       "title": "Messages de contact",
-      "placeholder_title": "Fonctionnalité à venir",
-      "placeholder_body": "Le formulaire de contact n'existe pas encore — GrowzApp affiche uniquement une adresse email brute aujourd'hui. Cette page listera les messages reçus une fois le formulaire de contact implémenté."
+      "subtitle": "{{count}} message(s) en attente",
+      "empty": "Aucun message pour le moment",
+      "toast_load_error": "Erreur lors du chargement des messages",
+      "toast_validation_error": "La réponse doit contenir au moins 3 caractères",
+      "toast_sent": "Réponse envoyée",
+      "toast_send_error": "Erreur lors de l'envoi de la réponse",
+      "filter_tous": "Tous",
+      "filter_nouveau": "Nouveaux",
+      "filter_traite": "Traités",
+      "table": {
+        "user": "Utilisateur",
+        "subject": "Sujet",
+        "date": "Date",
+        "status": "Statut"
+      },
+      "btn_open": "Ouvrir",
+      "field_reply": "Votre réponse",
+      "field_reply_placeholder": "Rédigez votre réponse — elle sera envoyée par email à l'utilisateur.",
+      "already_treated": "Déjà traité par {{name}}",
+      "btn_cancel": "Annuler",
+      "btn_reply": "Envoyer la réponse"
     },
     "notifications": {
       "title": "Notifications envoyées",

@@ -504,7 +504,27 @@
     "my_invoices": "My invoices",
     "section_account": "Account",
     "profile": "My profile",
-    "kyc": "Identity verification (KYC)"
+    "kyc": "Identity verification (KYC)",
+    "contact": "Contact / Support"
+  },
+  "contact_page": {
+    "title": "Contact / Support",
+    "subtitle": "A question, an issue? Write to us, our team will reply by email.",
+    "field_subject": "Subject",
+    "field_subject_placeholder": "E.g. Issue with a deposit",
+    "field_message": "Message",
+    "field_message_placeholder": "Describe your issue or question in detail...",
+    "btn_send": "Send",
+    "btn_sending": "Sending...",
+    "toast_validation_error": "Subject (min. 3 characters) and message (min. 10 characters) are required",
+    "toast_sent": "Message sent, our team will reply by email",
+    "toast_send_error": "Error sending the message",
+    "toast_load_error": "Error loading your messages",
+    "history_title": "My messages",
+    "empty": "You haven't sent any messages yet",
+    "status_new": "Pending",
+    "status_treated": "Answered",
+    "reply_label": "Reply from {{name}}:"
   },
   "admin": {
     "sidebar": {
@@ -556,8 +576,27 @@
     },
     "contact": {
       "title": "Contact messages",
-      "placeholder_title": "Coming soon",
-      "placeholder_body": "The contact form does not exist yet — GrowzApp currently only shows a plain email address. This page will list received messages once the contact form is implemented."
+      "subtitle": "{{count}} pending message(s)",
+      "empty": "No messages yet",
+      "toast_load_error": "Error loading messages",
+      "toast_validation_error": "The reply must contain at least 3 characters",
+      "toast_sent": "Reply sent",
+      "toast_send_error": "Error sending the reply",
+      "filter_tous": "All",
+      "filter_nouveau": "New",
+      "filter_traite": "Answered",
+      "table": {
+        "user": "User",
+        "subject": "Subject",
+        "date": "Date",
+        "status": "Status"
+      },
+      "btn_open": "Open",
+      "field_reply": "Your reply",
+      "field_reply_placeholder": "Write your reply — it will be sent by email to the user.",
+      "already_treated": "Already answered by {{name}}",
+      "btn_cancel": "Cancel",
+      "btn_reply": "Send reply"
     },
     "notifications": {
       "title": "Sent notifications",

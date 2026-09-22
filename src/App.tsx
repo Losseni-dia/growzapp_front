@@ -88,6 +88,7 @@ const ProfileUpdateForm = lazy(
   () => import("./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm"),
 );
 const KYCUploadForm = lazy(() => import("./components/kyc/KycUploadForm"));
+const ContactPage = lazy(() => import("./pages/MonEspace/Contact/ContactPage"));
 const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
 const ContratPage = lazy(
   () => import("./pages/Contrat/ContratsPage/ContratPage"),
@@ -271,6 +272,7 @@ function App() {
                     path="/mon-portefeuille"
                     element={<MonPortefeuillePage />}
                   />
+                  <Route path="/mon-espace/contact" element={<ContactPage />} />
                 </Route>
               </Route>
 

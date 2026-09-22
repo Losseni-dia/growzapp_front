@@ -14,6 +14,7 @@ import {
   FiDownload,
   FiArrowUpCircle,
   FiRepeat,
+  FiMail,
 } from "react-icons/fi";
 import styles from "./UserSpaceLayout.module.css";
 
@@ -156,6 +157,11 @@ export default function UserSpaceSidebar({
         to: "/profile/kyc",
         label: t("user_sidebar.kyc", "Vérification d'identité (KYC)"),
         icon: <FiCheckCircle size={16} />,
+      },
+      {
+        to: "/mon-espace/contact",
+        label: t("user_sidebar.contact", "Contact / Support"),
+        icon: <FiMail size={16} />,
       },
     ],
   });
