@@ -3,9 +3,18 @@ import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiCheckCircle, FiClock, FiMail, FiSend } from "react-icons/fi";
+import { FiCheckCircle, FiClock, FiMail, FiSend, FiTrash2 } from "react-icons/fi";
 import { api } from "../../../service/Api";
 import styles from "./ContactAdminPage.module.css";
+
+interface ContactReplyDTO {
+  id: number;
+  auteurId: number;
+  auteurNom: string;
+  isAdmin: boolean;
+  contenu: string;
+  dateEnvoi: string;
+}
 
 interface ContactMessageDTO {
   id: number;
@@ -15,10 +24,8 @@ interface ContactMessageDTO {
   sujet: string;
   message: string;
   statut: "NOUVEAU" | "TRAITE";
-  reponse: string | null;
-  responduPar: string | null;
   dateEnvoi: string;
-  dateReponse: string | null;
+  reponses: ContactReplyDTO[];
 }
 
 type Filtre = "TOUS" | "NOUVEAU" | "TRAITE";
@@ -26,32 +33,32 @@ type Filtre = "TOUS" | "NOUVEAU" | "TRAITE";
 export default function ContactAdminPage() {
   const { t } = useTranslation();
 
-  const [messages, setMessages] = useState<ContactMessageDTO[]>([]);
+  const [threads, setThreads] = useState<ContactMessageDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [filtre, setFiltre] = useState<Filtre>("TOUS");
   const [selected, setSelected] = useState<ContactMessageDTO | null>(null);
   const [reponseTexte, setReponseTexte] = useState("");
   const [sending, setSending] = useState(false);
 
-  const loadMessages = () => {
+  const loadThreads = () => {
     setLoading(true);
     const url =
       filtre === "TOUS" ? "/api/admin/contact" : `/api/admin/contact?statut=${filtre}`;
     api
       .get<{ data: ContactMessageDTO[] }>(url)
-      .then((res) => setMessages(res.data || []))
+      .then((res) => setThreads(res.data || []))
       .catch(() => toast.error(t("admin.contact.toast_load_error")))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    loadMessages();
+    loadThreads();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtre]);
 
-  const openMessage = (msg: ContactMessageDTO) => {
-    setSelected(msg);
-    setReponseTexte(msg.reponse || "");
+  const openThread = (th: ContactMessageDTO) => {
+    setSelected(th);
+    setReponseTexte("");
   };
 
   const handleRepondre = async () => {
@@ -66,7 +73,7 @@ export default function ContactAdminPage() {
       });
       toast.success(t("admin.contact.toast_sent"));
       setSelected(null);
-      loadMessages();
+      loadThreads();
     } catch (err: any) {
       toast.error(err.message || t("admin.contact.toast_send_error"));
     } finally {
@@ -74,7 +81,20 @@ export default function ContactAdminPage() {
     }
   };
 
-  const nouveauxCount = messages.filter((m) => m.statut === "NOUVEAU").length;
+  const handleDelete = async (id: number, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (!window.confirm(t("admin.contact.confirm_delete") as string)) return;
+    try {
+      await api.delete(`/api/admin/contact/${id}`);
+      setThreads((prev) => prev.filter((th) => th.id !== id));
+      if (selected?.id === id) setSelected(null);
+      toast.success(t("admin.contact.toast_deleted"));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.contact.toast_delete_error"));
+    }
+  };
+
+  const nouveauxCount = threads.filter((m) => m.statut === "NOUVEAU").length;
 
   return (
     <div className={styles.container}>
@@ -99,7 +119,7 @@ export default function ContactAdminPage() {
 
       {loading ? (
         <div className={styles.loading}>{t("dashboard.loading")}</div>
-      ) : messages.length === 0 ? (
+      ) : threads.length === 0 ? (
         <div className={styles.emptyState}>
           <FiMail size={48} />
           <p>{t("admin.contact.empty")}</p>
@@ -117,23 +137,23 @@ export default function ContactAdminPage() {
               </tr>
             </thead>
             <tbody>
-              {messages.map((m) => (
-                <tr key={m.id} onClick={() => openMessage(m)} className={styles.row}>
+              {threads.map((th) => (
+                <tr key={th.id} onClick={() => openThread(th)} className={styles.row}>
                   <td>
-                    <div>{m.userNom}</div>
-                    <div className={styles.userEmail}>{m.userEmail}</div>
+                    <div>{th.userNom}</div>
+                    <div className={styles.userEmail}>{th.userEmail}</div>
                   </td>
-                  <td>{m.sujet}</td>
+                  <td>{th.sujet}</td>
                   <td>
-                    {formatDate(new Date(m.dateEnvoi), "dd MMM yyyy HH:mm", { locale: fr })}
+                    {formatDate(new Date(th.dateEnvoi), "dd MMM yyyy HH:mm", { locale: fr })}
                   </td>
                   <td>
                     <span
                       className={`${styles.badge} ${
-                        m.statut === "TRAITE" ? styles.badgeTraite : styles.badgeNouveau
+                        th.statut === "TRAITE" ? styles.badgeTraite : styles.badgeNouveau
                       }`}
                     >
-                      {m.statut === "TRAITE" ? (
+                      {th.statut === "TRAITE" ? (
                         <>
                           <FiCheckCircle size={12} /> {t("admin.contact.filter_traite")}
                         </>
@@ -144,8 +164,15 @@ export default function ContactAdminPage() {
                       )}
                     </span>
                   </td>
-                  <td>
+                  <td className={styles.actionsCell}>
                     <button className={styles.btnOpen}>{t("admin.contact.btn_open")}</button>
+                    <button
+                      className={styles.btnDelete}
+                      onClick={(e) => handleDelete(th.id, e)}
+                      title={t("admin.contact.btn_delete") as string}
+                    >
+                      <FiTrash2 size={14} />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -164,23 +191,28 @@ export default function ContactAdminPage() {
             </p>
             <div className={styles.originalMessage}>{selected.message}</div>
 
+            {selected.reponses.map((r) => (
+              <div
+                key={r.id}
+                className={r.isAdmin ? styles.adminReply : styles.userReply}
+              >
+                <p className={styles.replyMeta}>
+                  <strong>{r.isAdmin ? r.auteurNom : selected.userNom}</strong> —{" "}
+                  {formatDate(new Date(r.dateEnvoi), "dd MMM yyyy HH:mm", { locale: fr })}
+                </p>
+                <p className={styles.replyContenu}>{r.contenu}</p>
+              </div>
+            ))}
+
             <label className={styles.reponseLabel}>{t("admin.contact.field_reply")}</label>
             <textarea
               className={styles.reponseInput}
-              rows={5}
+              rows={4}
               value={reponseTexte}
               onChange={(e) => setReponseTexte(e.target.value)}
               placeholder={t("admin.contact.field_reply_placeholder") as string}
               maxLength={3000}
             />
-
-            {selected.statut === "TRAITE" && (
-              <p className={styles.dejaTraite}>
-                {t("admin.contact.already_treated", {
-                  name: selected.responduPar || "—",
-                })}
-              </p>
-            )}
 
             <div className={styles.modalFooter}>
               <button className={styles.btnCancel} onClick={() => setSelected(null)}>

@@ -525,7 +525,14 @@
     "empty": "You haven't sent any messages yet",
     "status_new": "Pending",
     "status_treated": "Answered",
-    "reply_label": "Reply from {{name}}:"
+    "reply_label": "Reply from {{name}}:",
+    "my_reply_label": "Your message:",
+    "reply_placeholder": "Continue the conversation...",
+    "toast_reply_validation_error": "The message must contain at least 3 characters",
+    "btn_delete": "Delete on my side",
+    "confirm_delete": "Delete this thread on your side? It will remain visible to the GrowzApp team.",
+    "toast_deleted": "Message deleted on your side",
+    "toast_delete_error": "Error while deleting"
   },
   "admin": {
     "sidebar": {
@@ -597,7 +604,11 @@
       "field_reply_placeholder": "Write your reply — it will be sent by email to the user.",
       "already_treated": "Already answered by {{name}}",
       "btn_cancel": "Cancel",
-      "btn_reply": "Send reply"
+      "btn_reply": "Send reply",
+      "btn_delete": "Delete on my side",
+      "confirm_delete": "Delete this thread on the admin side? It will remain visible to the user.",
+      "toast_deleted": "Message deleted on the admin side",
+      "toast_delete_error": "Error while deleting"
     },
     "notifications": {
       "title": "Sent notifications",

@@ -525,7 +525,14 @@
     "empty": "Aún no has enviado ningún mensaje",
     "status_new": "Pendiente",
     "status_treated": "Respondido",
-    "reply_label": "Respuesta de {{name}}:"
+    "reply_label": "Respuesta de {{name}}:",
+    "my_reply_label": "Tu mensaje:",
+    "reply_placeholder": "Continuar la conversación...",
+    "toast_reply_validation_error": "El mensaje debe contener al menos 3 caracteres",
+    "btn_delete": "Eliminar de mi lado",
+    "confirm_delete": "¿Eliminar este hilo de tu lado? Seguirá visible para el equipo de GrowzApp.",
+    "toast_deleted": "Mensaje eliminado de tu lado",
+    "toast_delete_error": "Error al eliminar"
   },
   "admin": {
     "sidebar": {
@@ -597,7 +604,11 @@
       "field_reply_placeholder": "Escribe tu respuesta — se enviará por correo al usuario.",
       "already_treated": "Ya respondido por {{name}}",
       "btn_cancel": "Cancelar",
-      "btn_reply": "Enviar respuesta"
+      "btn_reply": "Enviar respuesta",
+      "btn_delete": "Eliminar de mi lado",
+      "confirm_delete": "¿Eliminar este hilo del lado admin? Seguirá visible para el usuario.",
+      "toast_deleted": "Mensaje eliminado del lado admin",
+      "toast_delete_error": "Error al eliminar"
     },
     "notifications": {
       "title": "Notificaciones enviadas",

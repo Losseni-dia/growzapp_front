@@ -148,6 +148,29 @@
   background: var(--growz-gold);
 }
 
+.actionsCell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btnDelete {
+  border: none;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.btnDelete:hover {
+  color: #c62828;
+  background: #fff0f0;
+}
+
 /* ==================== MODAL ==================== */
 .modalOverlay {
   position: fixed;
@@ -194,12 +217,43 @@
   margin-bottom: 1.2rem;
 }
 
+.adminReply {
+  background: var(--growz-mint-50);
+  border-left: 4px solid var(--growz-primary);
+  border-radius: 0 10px 10px 0;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.userReply {
+  background: #f5f5f5;
+  border-left: 4px solid #bbb;
+  border-radius: 0 10px 10px 0;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.8rem;
+  margin-left: 1.5rem;
+}
+
+.replyMeta {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 0 0 0.3rem;
+}
+
+.replyContenu {
+  margin: 0;
+  color: #333;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
 .reponseLabel {
   display: block;
   font-weight: 700;
   color: var(--growz-primary);
   font-size: 0.85rem;
   margin-bottom: 0.4rem;
+  margin-top: 1.2rem;
 }
 
 .reponseInput {

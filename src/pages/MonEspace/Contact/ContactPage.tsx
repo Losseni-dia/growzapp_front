@@ -3,11 +3,28 @@ import { enUS, es, fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiCheckCircle, FiClock, FiMail, FiPhone, FiSend } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiCheckCircle,
+  FiClock,
+  FiMail,
+  FiPhone,
+  FiSend,
+  FiTrash2,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { api } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
 import styles from "./ContactPage.module.css";
+
+interface ContactReplyDTO {
+  id: number;
+  auteurId: number;
+  auteurNom: string;
+  isAdmin: boolean;
+  contenu: string;
+  dateEnvoi: string;
+}
 
 interface ContactMessageDTO {
   id: number;
@@ -17,34 +34,34 @@ interface ContactMessageDTO {
   sujet: string;
   message: string;
   statut: "NOUVEAU" | "TRAITE";
-  reponse: string | null;
-  responduPar: string | null;
   dateEnvoi: string;
-  dateReponse: string | null;
+  reponses: ContactReplyDTO[];
 }
 
 export default function ContactPage() {
   const { t, i18n } = useTranslation();
 
-  const [messages, setMessages] = useState<ContactMessageDTO[]>([]);
+  const [threads, setThreads] = useState<ContactMessageDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [sujet, setSujet] = useState("");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
+  const [replyingId, setReplyingId] = useState<number | null>(null);
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
 
-  const loadMessages = () => {
+  const loadThreads = () => {
     api
       .get<ApiResponse<ContactMessageDTO[]>>("/api/contact/mes-messages")
-      .then((res) => setMessages(res.data || []))
+      .then((res) => setThreads(res.data || []))
       .catch(() => toast.error(t("contact_page.toast_load_error")))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    loadMessages();
+    loadThreads();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -60,11 +77,40 @@ export default function ContactPage() {
       toast.success(t("contact_page.toast_sent"));
       setSujet("");
       setMessage("");
-      loadMessages();
+      loadThreads();
     } catch (err: any) {
       toast.error(err.message || t("contact_page.toast_send_error"));
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleReply = async (threadId: number) => {
+    const contenu = (replyDrafts[threadId] || "").trim();
+    if (contenu.length < 3) {
+      toast.error(t("contact_page.toast_reply_validation_error"));
+      return;
+    }
+    setReplyingId(threadId);
+    try {
+      await api.post(`/api/contact/${threadId}/repondre`, { message: contenu });
+      setReplyDrafts((prev) => ({ ...prev, [threadId]: "" }));
+      loadThreads();
+    } catch (err: any) {
+      toast.error(err.message || t("contact_page.toast_send_error"));
+    } finally {
+      setReplyingId(null);
+    }
+  };
+
+  const handleDelete = async (threadId: number) => {
+    if (!window.confirm(t("contact_page.confirm_delete") as string)) return;
+    try {
+      await api.delete(`/api/contact/${threadId}`);
+      setThreads((prev) => prev.filter((th) => th.id !== threadId));
+      toast.success(t("contact_page.toast_deleted"));
+    } catch (err: any) {
+      toast.error(err.message || t("contact_page.toast_delete_error"));
     }
   };
 
@@ -123,48 +169,87 @@ export default function ContactPage() {
 
       {loading ? (
         <div className={styles.loading}>{t("dashboard.loading")}</div>
-      ) : messages.length === 0 ? (
+      ) : threads.length === 0 ? (
         <div className={styles.emptyState}>
           <FiMail size={48} />
           <p>{t("contact_page.empty")}</p>
         </div>
       ) : (
         <div className={styles.messageList}>
-          {messages.map((m) => (
-            <div key={m.id} className={styles.messageCard}>
+          {threads.map((th) => (
+            <div key={th.id} className={styles.messageCard}>
               <div className={styles.messageHeader}>
-                <strong>{m.sujet}</strong>
-                <span
-                  className={`${styles.badge} ${
-                    m.statut === "TRAITE" ? styles.badgeTraite : styles.badgeNouveau
-                  }`}
-                >
-                  {m.statut === "TRAITE" ? (
-                    <>
-                      <FiCheckCircle size={12} /> {t("contact_page.status_treated")}
-                    </>
-                  ) : (
-                    <>
-                      <FiClock size={12} /> {t("contact_page.status_new")}
-                    </>
-                  )}
-                </span>
+                <strong>{th.sujet}</strong>
+                <div className={styles.messageHeaderRight}>
+                  <span
+                    className={`${styles.badge} ${
+                      th.statut === "TRAITE" ? styles.badgeTraite : styles.badgeNouveau
+                    }`}
+                  >
+                    {th.statut === "TRAITE" ? (
+                      <>
+                        <FiCheckCircle size={12} /> {t("contact_page.status_treated")}
+                      </>
+                    ) : (
+                      <>
+                        <FiClock size={12} /> {t("contact_page.status_new")}
+                      </>
+                    )}
+                  </span>
+                  <button
+                    className={styles.btnDelete}
+                    onClick={() => handleDelete(th.id)}
+                    title={t("contact_page.btn_delete") as string}
+                  >
+                    <FiTrash2 size={14} />
+                  </button>
+                </div>
               </div>
-              <p className={styles.messageBody}>{m.message}</p>
+              <p className={styles.messageBody}>{th.message}</p>
               <p className={styles.messageDate}>
-                {formatDate(new Date(m.dateEnvoi), "dd MMM yyyy 'à' HH:mm", {
+                {formatDate(new Date(th.dateEnvoi), "dd MMM yyyy 'à' HH:mm", {
                   locale: currentLocale,
                 })}
               </p>
 
-              {m.reponse && (
-                <div className={styles.reponseBlock}>
+              {th.reponses.map((r) => (
+                <div
+                  key={r.id}
+                  className={r.isAdmin ? styles.reponseBlock : styles.userReplyBlock}
+                >
                   <p className={styles.reponseLabel}>
-                    {t("contact_page.reply_label", { name: m.responduPar || "GrowzApp" })}
+                    {r.isAdmin
+                      ? t("contact_page.reply_label", { name: r.auteurNom || "GrowzApp" })
+                      : t("contact_page.my_reply_label")}
                   </p>
-                  <p className={styles.reponseTexte}>{m.reponse}</p>
+                  <p className={styles.reponseTexte}>{r.contenu}</p>
+                  <p className={styles.messageDate}>
+                    {formatDate(new Date(r.dateEnvoi), "dd MMM yyyy 'à' HH:mm", {
+                      locale: currentLocale,
+                    })}
+                  </p>
                 </div>
-              )}
+              ))}
+
+              <div className={styles.replyForm}>
+                <textarea
+                  className={styles.replyInput}
+                  rows={2}
+                  value={replyDrafts[th.id] || ""}
+                  onChange={(e) =>
+                    setReplyDrafts((prev) => ({ ...prev, [th.id]: e.target.value }))
+                  }
+                  placeholder={t("contact_page.reply_placeholder") as string}
+                  maxLength={3000}
+                />
+                <button
+                  className={styles.btnReplySmall}
+                  onClick={() => handleReply(th.id)}
+                  disabled={replyingId === th.id}
+                >
+                  <FiSend size={14} />
+                </button>
+              </div>
             </div>
           ))}
         </div>

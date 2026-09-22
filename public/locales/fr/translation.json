@@ -524,7 +524,14 @@
     "empty": "Vous n'avez envoyé aucun message pour le moment",
     "status_new": "En attente",
     "status_treated": "Traité",
-    "reply_label": "Réponse de {{name}} :"
+    "reply_label": "Réponse de {{name}} :",
+    "my_reply_label": "Votre message :",
+    "reply_placeholder": "Continuer la conversation...",
+    "toast_reply_validation_error": "Le message doit contenir au moins 3 caractères",
+    "btn_delete": "Supprimer de mon côté",
+    "confirm_delete": "Supprimer ce fil de votre côté ? Il restera visible pour l'équipe GrowzApp.",
+    "toast_deleted": "Message supprimé de votre côté",
+    "toast_delete_error": "Erreur lors de la suppression"
   },
   "admin": {
     "sidebar": {
@@ -596,7 +603,11 @@
       "field_reply_placeholder": "Rédigez votre réponse — elle sera envoyée par email à l'utilisateur.",
       "already_treated": "Déjà traité par {{name}}",
       "btn_cancel": "Annuler",
-      "btn_reply": "Envoyer la réponse"
+      "btn_reply": "Envoyer la réponse",
+      "btn_delete": "Supprimer de mon côté",
+      "confirm_delete": "Supprimer ce fil côté admin ? Il restera visible pour l'utilisateur.",
+      "toast_deleted": "Message supprimé côté admin",
+      "toast_delete_error": "Erreur lors de la suppression"
     },
     "notifications": {
       "title": "Notifications envoyées",
