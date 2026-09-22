@@ -698,6 +698,7 @@
       "type_credit_projet": "Project credit",
       "type_retrait_admin": "Withdrawal (admin)",
       "type_premium_projet": "Premium purchase",
+      "type_paiement_fournisseur": "Supplier payment",
       "table": {
         "date": "Date",
         "type": "Type",
@@ -1379,7 +1380,8 @@
       "investment": "Investment",
       "refund": "Refund",
       "dividend": "Dividend",
-      "premium": "Premium purchase"
+      "premium": "Premium purchase",
+      "supplier_payment": "Supplier payment"
     },
     "toast": {
       "invalid_amount": "Invalid amount",
@@ -1603,7 +1605,8 @@
         "FRAIS_PLATEFORME": "Platform fee",
         "RETRAIT": "Withdrawal",
         "DEPOT": "Deposit",
-        "INVESTISSEMENT": "Investment"
+        "INVESTISSEMENT": "Investment",
+        "PAIEMENT_FOURNISSEUR": "Supplier payment"
       }
     }
   },

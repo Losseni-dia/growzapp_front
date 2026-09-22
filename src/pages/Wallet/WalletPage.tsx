@@ -60,6 +60,7 @@ const TX_CONFIG: Record<string, { icon: any; key: string; outbound: boolean }> =
   DIVIDENDE: { icon: Gift, key: "dividend", outbound: false },
   VERSEMENT_DIVIDENDE: { icon: Gift, key: "dividend", outbound: false },
   PREMIUM_PROJET: { icon: Star, key: "premium", outbound: true },
+  PAIEMENT_FOURNISSEUR: { icon: CreditCard, key: "supplier_payment", outbound: false },
 };
 
 function getTxConfig(type: string) {

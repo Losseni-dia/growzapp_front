@@ -23,6 +23,7 @@ const OUTBOUND_TYPES = [
   "RETRAIT_ADMIN",
   "FRAIS_PLATEFORME",
   "RETRAIT",
+  "PAIEMENT_FOURNISSEUR",
 ];
 
 export default function ProjectWalletDetails() {

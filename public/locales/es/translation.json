@@ -698,6 +698,7 @@
       "type_credit_projet": "Crédito de proyecto",
       "type_retrait_admin": "Retiro (admin)",
       "type_premium_projet": "Compra Premium",
+      "type_paiement_fournisseur": "Pago a proveedor",
       "table": {
         "date": "Fecha",
         "type": "Tipo",
@@ -1377,7 +1378,8 @@
       "investment": "Inversión",
       "refund": "Reembolso",
       "dividend": "Dividendo",
-      "premium": "Compra Premium"
+      "premium": "Compra Premium",
+      "supplier_payment": "Pago a proveedor"
     },
     "toast": {
       "invalid_amount": "Monto inválido",
@@ -1601,7 +1603,8 @@
         "FRAIS_PLATEFORME": "Comisión de plataforma",
         "RETRAIT": "Retiro",
         "DEPOT": "Depósito",
-        "INVESTISSEMENT": "Inversión"
+        "INVESTISSEMENT": "Inversión",
+        "PAIEMENT_FOURNISSEUR": "Pago a proveedor"
       }
     }
   },

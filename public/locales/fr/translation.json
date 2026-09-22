@@ -697,6 +697,7 @@
       "type_credit_projet": "Crédit projet",
       "type_retrait_admin": "Retrait (admin)",
       "type_premium_projet": "Achat Premium",
+      "type_paiement_fournisseur": "Paiement fournisseur",
       "table": {
         "date": "Date",
         "type": "Type",
@@ -1382,7 +1383,8 @@
       "investment": "Investissement",
       "refund": "Remboursement",
       "dividend": "Dividende",
-      "premium": "Achat Premium"
+      "premium": "Achat Premium",
+      "supplier_payment": "Paiement fournisseur"
     },
     "toast": {
       "invalid_amount": "Montant invalide",
@@ -1607,7 +1609,8 @@
         "FRAIS_PLATEFORME": "Frais plateforme",
         "RETRAIT": "Retrait",
         "DEPOT": "Dépôt",
-        "INVESTISSEMENT": "Investissement"
+        "INVESTISSEMENT": "Investissement",
+        "PAIEMENT_FOURNISSEUR": "Paiement fournisseur"
       }
     }
   },
