@@ -30,7 +30,8 @@
   "header": {
     "news": "News",
     "nearby": "Near me",
-    "financed_projects": "Financed Projects"
+    "financed_projects": "Financed Projects",
+    "contact_us": "Contact us"
   },
   "financed_projects_page": {
     "title": "Financed Projects",
@@ -757,7 +758,9 @@
       "verify_identities": "Verify identities",
       "project_treasury": "Project treasury",
       "projects_pending": "Submitted projects",
-      "validate_projects": "Validate submitted projects"
+      "validate_projects": "Validate submitted projects",
+      "messages_pending": "Pending messages",
+      "answer_messages": "Answer contact messages"
     },
     "kyc": {
       "pending_action_hint": "Please verify your identity to unlock all withdrawal and investment features.",

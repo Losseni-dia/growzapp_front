@@ -30,7 +30,8 @@
   "header": {
     "news": "Noticias",
     "nearby": "Cerca de mí",
-    "financed_projects": "Proyectos financiados"
+    "financed_projects": "Proyectos financiados",
+    "contact_us": "Contáctanos"
   },
   "financed_projects_page": {
     "title": "Proyectos financiados",
@@ -756,7 +757,9 @@
       "verify_identities": "Verificar identidades",
       "project_treasury": "Tesorería de proyectos",
       "projects_pending": "Proyectos enviados",
-      "validate_projects": "Validar proyectos enviados"
+      "validate_projects": "Validar proyectos enviados",
+      "messages_pending": "Mensajes pendientes",
+      "answer_messages": "Responder mensajes de contacto"
     },
     "projects_list": {
       "search_placeholder": "Nombre, promotor, ciudad, sector...",

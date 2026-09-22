@@ -99,12 +99,15 @@ export default function Footer() {
               <a href="#faq" onClick={openCrispFAQ} className={styles.link}>
                 Aide & FAQ
               </a>
+              <Link to="/mon-espace/contact" className={styles.link}>
+                Contactez-nous
+              </Link>
             </div>
           </nav>
         </div>
 
         <div className={styles.bottomSection}>
-          <p>© {currentYear} GrowzApp – Tous droits réservés 🇨🇲</p>
+          <p>© {currentYear} GrowzApp – Tous droits réservés </p>
           <div className={styles.secure}>
             <FiShield /> Transactions Sécurisées
           </div>

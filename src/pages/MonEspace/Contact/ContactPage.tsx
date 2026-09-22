@@ -3,7 +3,7 @@ import { enUS, es, fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiCheckCircle, FiClock, FiMail, FiSend } from "react-icons/fi";
+import { FiArrowLeft, FiCheckCircle, FiClock, FiMail, FiPhone, FiSend } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { api } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
@@ -79,6 +79,14 @@ export default function ContactPage() {
           <FiMail /> {t("contact_page.title")}
         </h1>
         <p>{t("contact_page.subtitle")}</p>
+        <div className={styles.directContact}>
+          <a href="mailto:losdiakite@gmail.com" className={styles.directContactItem}>
+            <FiMail /> losdiakite@gmail.com
+          </a>
+          <a href="tel:0465202022" className={styles.directContactItem}>
+            <FiPhone /> 04 65 20 20 22
+          </a>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className={styles.form}>

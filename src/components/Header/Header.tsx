@@ -16,6 +16,7 @@ import {
   FiRss,
   FiMenu,
   FiX,
+  FiMail,
 } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
@@ -126,6 +127,10 @@ export default function Header() {
               <Link to="/projets-finances" className={styles.navLink}>
                 <FiCheckCircle />
                 <span>{t("header.financed_projects")}</span>
+              </Link>
+              <Link to="/mon-espace/contact" className={styles.navLink}>
+                <FiMail />
+                <span>{t("header.contact_us")}</span>
               </Link>
               {isAdmin && (
                 <Link to="/admin" className={styles.adminBtn}>

@@ -9,6 +9,7 @@ import {
   FiShield,
   FiCheckCircle,
   FiClock,
+  FiMail,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
@@ -28,6 +29,7 @@ export default function DashboardAdmin() {
     montantCollecteAffiche: 0,
     kycEnAttente: 0,
     projetsSoumis: 0,
+    messagesEnAttente: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +46,7 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, invCounts, s, a, k, p] = await Promise.all([
+      const [u, invCounts, s, a, k, p, c] = await Promise.all([
         api
           .get<any>("/api/admin/users?page=0&size=1")
           .catch(() => ({ data: { totalElements: 0 } })),
@@ -57,9 +59,13 @@ export default function DashboardAdmin() {
           .catch(() => 0),
         api.get<any>("/api/kyc/admin/en-attente").catch(() => ({ data: [] })),
         api.get<any>("/api/admin/projets").catch(() => ({ data: [] })),
+        api
+          .get<any>("/api/admin/contact?statut=NOUVEAU")
+          .catch(() => ({ data: [] })),
       ]);
 
       const projets = Array.isArray(p.data) ? p.data : [];
+      const messages = Array.isArray(c.data) ? c.data : [];
 
       setStats({
         totalUsers: u.data?.totalElements || 0,
@@ -74,6 +80,7 @@ export default function DashboardAdmin() {
         projetsSoumis: projets.filter(
           (proj: any) => proj.statutProjet === "SOUMIS",
         ).length,
+        messagesEnAttente: messages.length,
       });
     } finally {
       setLoading(false);
@@ -90,7 +97,10 @@ export default function DashboardAdmin() {
   }
 
   const pendingTotal =
-    stats.investissementsEnAttente + stats.kycEnAttente + stats.projetsSoumis;
+    stats.investissementsEnAttente +
+    stats.kycEnAttente +
+    stats.projetsSoumis +
+    stats.messagesEnAttente;
 
   return (
     <div className={styles.page}>
@@ -198,6 +208,21 @@ export default function DashboardAdmin() {
             </span>
           </div>
         </Link>
+
+        <Link
+          to="/admin/contact"
+          className={`${styles.statCard} ${stats.messagesEnAttente > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiMail size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.messagesEnAttente}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.messages_pending")}
+            </span>
+          </div>
+        </Link>
       </section>
 
       {/* ═══════════ ACTIONS RAPIDES ═══════════ */}
@@ -250,6 +275,21 @@ export default function DashboardAdmin() {
             </span>
             <span className={styles.actionLabel}>
               {t("admin.dashboard.validate_investments")}
+            </span>
+            <FiArrowRight size={15} className={styles.actionArrow} />
+          </Link>
+
+          <Link to="/admin/contact" className={styles.actionRow}>
+            <span className={styles.actionIcon}>
+              <FiMail size={16} />
+            </span>
+            <span className={styles.actionLabel}>
+              {t("admin.dashboard.answer_messages")}
+              {stats.messagesEnAttente > 0 && (
+                <span className={styles.actionBadge}>
+                  {stats.messagesEnAttente}
+                </span>
+              )}
             </span>
             <FiArrowRight size={15} className={styles.actionArrow} />
           </Link>

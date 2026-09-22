@@ -33,6 +33,30 @@
   margin: 0;
 }
 
+.directContact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+
+.directContactItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--growz-primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  background: var(--growz-mint-50);
+  border-radius: 50px;
+  padding: 6px 14px;
+}
+
+.directContactItem:hover {
+  background: var(--growz-gold);
+}
+
 .form {
   background: white;
   border-radius: 18px;

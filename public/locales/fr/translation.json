@@ -30,7 +30,8 @@
   "header": {
     "news": "Actualités",
     "nearby": "Autour de moi",
-    "financed_projects": "Projets financés"
+    "financed_projects": "Projets financés",
+    "contact_us": "Contactez-nous"
   },
   "financed_projects_page": {
     "title": "Projets financés",
@@ -756,7 +757,9 @@
       "verify_identities": "Vérifier les identités",
       "project_treasury": "Trésorerie des projets",
       "projects_pending": "Projets soumis",
-      "validate_projects": "Valider les projets soumis"
+      "validate_projects": "Valider les projets soumis",
+      "messages_pending": "Messages en attente",
+      "answer_messages": "Répondre aux messages de contact"
     },
     "wallets": {
       "title": "Trésorerie des Projets",
