@@ -275,9 +275,14 @@ export default function FournisseurEspacePage() {
       </div>
 
       <div className={styles.ficheCard}>
-        <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>
-          {t("fournisseur.espace.fiche_title", "Ma fiche")}
-        </h2>
+        <div className={styles.ficheCardHeader}>
+          <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>
+            {t("fournisseur.espace.fiche_title", "Ma fiche")}
+          </h2>
+          <Link to="/devenir-fournisseur" className={styles.btnEdit}>
+            <FiEdit2 size={13} /> {t("fournisseur.espace.btn_edit_fiche", "Modifier")}
+          </Link>
+        </div>
         <div className={styles.ficheGrid}>
           <div>
             <span className={styles.ficheLabel}>{t("fournisseur.espace.fiche_type", "Type")}</span>

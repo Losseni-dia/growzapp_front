@@ -48,17 +48,20 @@ export default function FournisseurInscriptionPage() {
   const [accepteReglement, setAccepteReglement] = useState(false);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [dejaValide, setDejaValide] = useState(false);
 
   useEffect(() => {
     api
       .get<{ data: FournisseurDTO }>("/api/fournisseurs/moi")
       .then((res) => {
         const f = res.data;
-        if (f.statut === "EN_ATTENTE" || f.statut === "VALIDE") {
-          // Rien à faire ici — fiche déjà soumise/validée, gérée dans l'espace fournisseur.
+        if (f.statut === "EN_ATTENTE") {
+          // En attente du premier examen admin — pas de modification possible
+          // depuis cet écran tant que ce n'est pas traité.
           navigate("/mon-espace/fournisseur");
           return;
         }
+        setDejaValide(f.statut === "VALIDE");
         if (f.statutJuridique) setType(f.statutJuridique as "INDIVIDUEL" | "ENTREPRISE");
         setRaisonSociale(f.raisonSociale || "");
         setSecteurNom(f.secteurNom || "");
@@ -108,6 +111,24 @@ export default function FournisseurInscriptionPage() {
       toast.error(t("fournisseur.inscription.toast_validation_error", "Secteur, ville et pays sont obligatoires"));
       return;
     }
+
+    // Une fiche déjà validée se met simplement à jour, sans repasser par
+    // une nouvelle demande d'agrément ni le règlement (déjà accepté une
+    // première fois à l'inscription).
+    if (dejaValide) {
+      setSubmitting(true);
+      try {
+        await api.put("/api/fournisseurs/moi", buildPayload());
+        toast.success(t("fournisseur.inscription.toast_updated", "Fiche mise à jour"));
+        navigate("/mon-espace/fournisseur");
+      } catch (err: any) {
+        toast.error(err.message || t("fournisseur.inscription.toast_error", "Erreur lors de la mise à jour"));
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
+
     if (!accepteReglement) {
       toast.error(t("fournisseur.inscription.toast_reglement_required", "Vous devez accepter le règlement avant de soumettre votre inscription"));
       return;
@@ -259,43 +280,56 @@ export default function FournisseurInscriptionPage() {
           />
         </div>
 
-        <div className={styles.warningBox}>
-          <FiAlertTriangle size={20} className={styles.warningIcon} />
-          <div>
-            <p className={styles.warningTitle}>
-              {t("fournisseur.inscription.warning_title", "Avertissement important")}
-            </p>
-            <p className={styles.warningText}>
-              {t(
-                "fournisseur.inscription.warning_text",
-                "Toute fausse facture, surfacturation, ou commande fictive (produit/service non réellement livré) constitue une fraude. GrowzApp se réserve le droit de suspendre définitivement votre compte, de rembourser les fonds concernés au projet lésé, et de transmettre le dossier aux autorités compétentes en cas de préjudice avéré. En vous inscrivant, vous vous engagez à ne fournir que des informations exactes et à honorer chaque commande validée.",
-              )}
-            </p>
-            <label className={styles.warningCheckbox}>
-              <input
-                type="checkbox"
-                checked={accepteReglement}
-                onChange={(e) => setAccepteReglement(e.target.checked)}
-              />
-              {t(
-                "fournisseur.inscription.warning_checkbox",
-                "J'ai lu et j'accepte ces règles, et je certifie que les informations fournies sont exactes.",
-              )}
-            </label>
+        {!dejaValide && (
+          <div className={styles.warningBox}>
+            <FiAlertTriangle size={20} className={styles.warningIcon} />
+            <div>
+              <p className={styles.warningTitle}>
+                {t("fournisseur.inscription.warning_title", "Avertissement important")}
+              </p>
+              <p className={styles.warningText}>
+                {t(
+                  "fournisseur.inscription.warning_text",
+                  "Toute fausse facture, surfacturation, ou commande fictive (produit/service non réellement livré) constitue une fraude. GrowzApp se réserve le droit de suspendre définitivement votre compte, de rembourser les fonds concernés au projet lésé, et de transmettre le dossier aux autorités compétentes en cas de préjudice avéré. En vous inscrivant, vous vous engagez à ne fournir que des informations exactes et à honorer chaque commande validée.",
+                )}
+              </p>
+              <label className={styles.warningCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={accepteReglement}
+                  onChange={(e) => setAccepteReglement(e.target.checked)}
+                />
+                {t(
+                  "fournisseur.inscription.warning_checkbox",
+                  "J'ai lu et j'accepte ces règles, et je certifie que les informations fournies sont exactes.",
+                )}
+              </label>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={styles.formActions}>
+          {!dejaValide && (
+            <button
+              type="button"
+              className={styles.btnDraft}
+              onClick={handleEnregistrerBrouillon}
+              disabled={saving || submitting}
+            >
+              <FiSave /> {saving ? t("fournisseur.inscription.btn_saving", "Enregistrement...") : t("fournisseur.inscription.btn_draft", "Enregistrer et continuer plus tard")}
+            </button>
+          )}
           <button
-            type="button"
-            className={styles.btnDraft}
-            onClick={handleEnregistrerBrouillon}
-            disabled={saving || submitting}
+            type="submit"
+            className={styles.btnSubmit}
+            disabled={saving || submitting || (!dejaValide && !accepteReglement)}
           >
-            <FiSave /> {saving ? t("fournisseur.inscription.btn_saving", "Enregistrement...") : t("fournisseur.inscription.btn_draft", "Enregistrer et continuer plus tard")}
-          </button>
-          <button type="submit" className={styles.btnSubmit} disabled={saving || submitting || !accepteReglement}>
-            <FiSend /> {submitting ? t("fournisseur.inscription.btn_sending", "Envoi...") : t("fournisseur.inscription.btn_send", "Soumettre mon inscription")}
+            <FiSend />{" "}
+            {submitting
+              ? t("fournisseur.inscription.btn_sending", "Envoi...")
+              : dejaValide
+                ? t("fournisseur.inscription.btn_update", "Enregistrer les modifications")
+                : t("fournisseur.inscription.btn_send", "Soumettre mon inscription")}
           </button>
         </div>
       </form>

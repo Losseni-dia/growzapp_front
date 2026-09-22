@@ -91,6 +91,7 @@
 
 .total {
   font-weight: 700;
+  font-size: 1.15rem;
   color: var(--growz-primary);
   white-space: nowrap;
 }
@@ -180,6 +181,72 @@
   background: #ffe0e0;
 }
 
+.btnDetail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  color: var(--growz-primary);
+  border: 1.5px solid var(--growz-mint-50);
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btnDetail:hover {
+  border-color: var(--growz-primary);
+}
+
+.detailSection {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detailSection:last-of-type {
+  border-bottom: none;
+}
+
+.detailLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #999;
+  margin: 0 0 0.4rem;
+}
+
+.detailValue {
+  margin: 0.1rem 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.detailSub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0.2rem 0;
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.detailTotal {
+  font-weight: 700;
+  color: var(--growz-primary);
+  margin-top: 0.5rem;
+}
+
+.detailTimeline {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #555;
+  font-size: 0.85rem;
+}
+
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -197,6 +264,8 @@
   padding: 1.6rem;
   max-width: 500px;
   width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
 }
 
 .modal h2 {

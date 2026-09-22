@@ -3,7 +3,18 @@ import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiAlertTriangle, FiCheckCircle, FiFileText, FiShoppingBag, FiXCircle } from "react-icons/fi";
+import {
+  FiAlertTriangle,
+  FiCheckCircle,
+  FiEye,
+  FiFileText,
+  FiMail,
+  FiMapPin,
+  FiPhone,
+  FiShoppingBag,
+  FiUser,
+  FiXCircle,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api";
@@ -19,10 +30,20 @@ interface CommandeLigneDTO {
 interface CommandeDTO {
   id: number;
   projetLibelle: string;
+  porteurNom: string | null;
+  porteurEmail: string | null;
   fournisseurNom: string;
+  fournisseurVille: string | null;
+  fournisseurPays: string | null;
+  fournisseurTelephone: string | null;
+  fournisseurEmail: string | null;
   montantTotal: number;
   statut: string;
   dateCommande: string;
+  dateValidationAdmin: string | null;
+  dateLivraison: string | null;
+  dateConfirmationReception: string | null;
+  motifRejet: string | null;
   motifLitige: string | null;
   factureUrl: string | null;
   lignes: CommandeLigneDTO[];
@@ -41,6 +62,7 @@ export default function AdminCommandesPage() {
   const [motif, setMotif] = useState("");
   const [arbitrageId, setArbitrageId] = useState<number | null>(null);
   const [motifArbitrage, setMotifArbitrage] = useState("");
+  const [detail, setDetail] = useState<CommandeDTO | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -165,6 +187,9 @@ export default function AdminCommandesPage() {
               )}
 
               <div className={styles.actions}>
+                <button className={styles.btnDetail} onClick={() => setDetail(c)}>
+                  <FiEye size={14} /> {t("admin.commandes.btn_details", "Détails")}
+                </button>
                 {onglet === "EN_ATTENTE" ? (
                   <>
                     <button className={styles.btnValider} onClick={() => handleValider(c.id)}>
@@ -182,6 +207,111 @@ export default function AdminCommandesPage() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {detail !== null && (
+        <div className={styles.modalOverlay} onClick={() => setDetail(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>
+              {t("admin.commandes.detail_title", "Commande #{{id}}", { id: detail.id })}
+            </h2>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>
+                <FiUser size={13} /> {t("admin.commandes.detail_porteur", "Porteur")}
+              </p>
+              <p className={styles.detailValue}>{detail.porteurNom || "—"}</p>
+              {detail.porteurEmail && (
+                <p className={styles.detailSub}>
+                  <FiMail size={12} /> {detail.porteurEmail}
+                </p>
+              )}
+              <p className={styles.detailValue}>{detail.projetLibelle}</p>
+            </div>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>
+                <FiUser size={13} /> {t("admin.commandes.detail_fournisseur", "Fournisseur")}
+              </p>
+              <p className={styles.detailValue}>{detail.fournisseurNom}</p>
+              {(detail.fournisseurVille || detail.fournisseurPays) && (
+                <p className={styles.detailSub}>
+                  <FiMapPin size={12} /> {detail.fournisseurVille}, {detail.fournisseurPays}
+                </p>
+              )}
+              {detail.fournisseurTelephone && (
+                <p className={styles.detailSub}>
+                  <FiPhone size={12} /> {detail.fournisseurTelephone}
+                </p>
+              )}
+              {detail.fournisseurEmail && (
+                <p className={styles.detailSub}>
+                  <FiMail size={12} /> {detail.fournisseurEmail}
+                </p>
+              )}
+            </div>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>{t("admin.commandes.detail_lignes", "Articles commandés")}</p>
+              <ul className={styles.lignes}>
+                {detail.lignes.map((l) => (
+                  <li key={l.id}>
+                    {l.quantite} × {l.libelle} — {format(Number(l.sousTotal), "XOF")}
+                  </li>
+                ))}
+              </ul>
+              <p className={styles.detailTotal}>
+                {t("admin.commandes.detail_total", "Total")} : {format(Number(detail.montantTotal), "XOF")}
+              </p>
+            </div>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>{t("admin.commandes.detail_chronologie", "Chronologie")}</p>
+              <ul className={styles.detailTimeline}>
+                <li>
+                  {t("admin.commandes.detail_commandee", "Commandée le")}{" "}
+                  {formatDate(new Date(detail.dateCommande), "dd MMM yyyy HH:mm", { locale: fr })}
+                </li>
+                {detail.dateValidationAdmin && (
+                  <li>
+                    {t("admin.commandes.detail_validee", "Validée le")}{" "}
+                    {formatDate(new Date(detail.dateValidationAdmin), "dd MMM yyyy HH:mm", { locale: fr })}
+                  </li>
+                )}
+                {detail.dateLivraison && (
+                  <li>
+                    {t("admin.commandes.detail_livree", "Livrée le")}{" "}
+                    {formatDate(new Date(detail.dateLivraison), "dd MMM yyyy HH:mm", { locale: fr })}
+                  </li>
+                )}
+                {detail.dateConfirmationReception && (
+                  <li>
+                    {t("admin.commandes.detail_confirmee", "Confirmée le")}{" "}
+                    {formatDate(new Date(detail.dateConfirmationReception), "dd MMM yyyy HH:mm", { locale: fr })}
+                  </li>
+                )}
+              </ul>
+              {detail.motifRejet && <p className={styles.motifLitige}>{detail.motifRejet}</p>}
+              {detail.motifLitige && (
+                <p className={styles.motifLitige}>
+                  <FiAlertTriangle size={14} /> {detail.motifLitige}
+                </p>
+              )}
+            </div>
+
+            {detail.factureUrl && (
+              <Link to={`/commandes/${detail.id}/facture`} className={styles.btnFacture}>
+                <FiFileText size={14} /> {t("admin.commandes.btn_facture", "Voir la facture")}
+              </Link>
+            )}
+
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setDetail(null)}>
+                {t("admin.commandes.btn_close", "Fermer")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

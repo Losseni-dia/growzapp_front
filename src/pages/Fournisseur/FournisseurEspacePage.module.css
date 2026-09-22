@@ -230,6 +230,20 @@
   cursor: pointer;
 }
 
+.ficheCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ficheCardHeader .btnEdit {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+
 .ficheCard {
   background: white;
   border-radius: 16px;
