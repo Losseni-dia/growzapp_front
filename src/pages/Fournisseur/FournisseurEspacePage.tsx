@@ -226,7 +226,6 @@ export default function FournisseurEspacePage() {
   };
 
   const [expeditionId, setExpeditionId] = useState<number | null>(null);
-  const [factureFile, setFactureFile] = useState<File | null>(null);
   const [expeditionSending, setExpeditionSending] = useState(false);
   const [refusId, setRefusId] = useState<number | null>(null);
   const [motifRefus, setMotifRefus] = useState("");
@@ -258,18 +257,12 @@ export default function FournisseurEspacePage() {
   };
 
   const handleConfirmerExpedition = async () => {
-    if (!expeditionId || !factureFile) {
-      toast.error(t("fournisseur.espace.toast_facture_required", "La facture est obligatoire"));
-      return;
-    }
+    if (!expeditionId) return;
     setExpeditionSending(true);
     try {
-      const formData = new FormData();
-      formData.append("facture", factureFile);
-      await api.post(`/api/commandes/${expeditionId}/expedier`, formData, true);
+      await api.post(`/api/commandes/${expeditionId}/expedier`);
       toast.success(t("fournisseur.espace.toast_expedited", "Commande marquée comme expédiée"));
       setExpeditionId(null);
-      setFactureFile(null);
       loadAll();
     } catch (err: any) {
       toast.error(err.message || t("fournisseur.espace.toast_error", "Erreur"));
@@ -640,14 +633,9 @@ export default function FournisseurEspacePage() {
             <p className={styles.warningText}>
               {t(
                 "fournisseur.espace.facture_notice",
-                "La facture est obligatoire — elle sera transmise au porteur et aux investisseurs du projet une fois le paiement exécuté.",
+                "La facture sera générée automatiquement et transmise au porteur et aux investisseurs du projet une fois le paiement exécuté.",
               )}
             </p>
-            <input
-              type="file"
-              accept="application/pdf,image/jpeg,image/png,image/webp"
-              onChange={(e) => setFactureFile(e.target.files?.[0] || null)}
-            />
             <div className={styles.modalFooter}>
               <button className={styles.btnCancel} onClick={() => setExpeditionId(null)}>
                 {t("fournisseur.espace.btn_cancel", "Annuler")}
@@ -655,7 +643,7 @@ export default function FournisseurEspacePage() {
               <button
                 className={styles.btnSubmit}
                 onClick={handleConfirmerExpedition}
-                disabled={expeditionSending || !factureFile}
+                disabled={expeditionSending}
               >
                 {expeditionSending
                   ? t("fournisseur.espace.btn_saving", "Enregistrement...")
