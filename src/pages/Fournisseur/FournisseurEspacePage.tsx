@@ -225,6 +225,8 @@ export default function FournisseurEspacePage() {
     }
   };
 
+  const [activeTab, setActiveTab] = useState<"fiche" | "catalogue" | "commandes">("catalogue");
+
   const [expeditionId, setExpeditionId] = useState<number | null>(null);
   const [expeditionSending, setExpeditionSending] = useState(false);
   const [refusId, setRefusId] = useState<number | null>(null);
@@ -346,6 +348,28 @@ export default function FournisseurEspacePage() {
         </h1>
       </div>
 
+      <div className={styles.tabBar}>
+        <button
+          className={`${styles.tabBtn} ${activeTab === "fiche" ? styles.tabBtnActive : ""}`}
+          onClick={() => setActiveTab("fiche")}
+        >
+          {t("fournisseur.espace.tab_fiche", "Ma fiche")}
+        </button>
+        <button
+          className={`${styles.tabBtn} ${activeTab === "catalogue" ? styles.tabBtnActive : ""}`}
+          onClick={() => setActiveTab("catalogue")}
+        >
+          {t("fournisseur.espace.tab_catalogue", "Catalogue")} ({articles.length})
+        </button>
+        <button
+          className={`${styles.tabBtn} ${activeTab === "commandes" ? styles.tabBtnActive : ""}`}
+          onClick={() => setActiveTab("commandes")}
+        >
+          {t("fournisseur.espace.tab_commandes", "Commandes")} ({commandes.length})
+        </button>
+      </div>
+
+      {activeTab === "fiche" && (
       <div className={styles.ficheCard}>
         <div className={styles.ficheCardHeader}>
           <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>
@@ -430,7 +454,10 @@ export default function FournisseurEspacePage() {
           </div>
         </div>
       </div>
+      )}
 
+      {activeTab === "catalogue" && (
+      <div>
       <div className={styles.sectionHeader}>
         <h2>
           <FiPackage /> {t("fournisseur.espace.catalogue_title", "Mon catalogue")}
@@ -552,8 +579,12 @@ export default function FournisseurEspacePage() {
           ))}
         </div>
       )}
+      </div>
+      )}
 
-      <h2 className={styles.sectionTitle}>
+      {activeTab === "commandes" && (
+      <div>
+      <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>
         <FiTruck /> {t("fournisseur.espace.commandes_title", "Commandes reçues")}
       </h2>
 
@@ -607,6 +638,8 @@ export default function FournisseurEspacePage() {
             </div>
           ))}
         </div>
+      )}
+      </div>
       )}
 
       {refusId !== null && (
