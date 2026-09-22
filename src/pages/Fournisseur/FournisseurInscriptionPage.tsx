@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiAlertTriangle, FiArrowLeft, FiTruck } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiSave, FiSend, FiTruck } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import ComboBox from "../../components/ui/ComboBox/ComboBox";
 import { api } from "../../service/Api";
@@ -18,10 +18,25 @@ const SECTEURS_SUGGESTIONS = [
   "Informatique / Bureautique",
 ];
 
+interface FournisseurDTO {
+  statutJuridique: string | null;
+  raisonSociale: string | null;
+  secteurNom: string | null;
+  ville: string | null;
+  pays: string | null;
+  telephone: string | null;
+  email: string | null;
+  description: string | null;
+  statut: "BROUILLON" | "EN_ATTENTE" | "VALIDE" | "REJETE";
+  motifRejet: string | null;
+}
+
 export default function FournisseurInscriptionPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
+  const [motifRejet, setMotifRejet] = useState<string | null>(null);
   const [type, setType] = useState<"INDIVIDUEL" | "ENTREPRISE">("INDIVIDUEL");
   const [raisonSociale, setRaisonSociale] = useState("");
   const [secteurNom, setSecteurNom] = useState("");
@@ -32,8 +47,58 @@ export default function FournisseurInscriptionPage() {
   const [description, setDescription] = useState("");
   const [accepteReglement, setAccepteReglement] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    api
+      .get<{ data: FournisseurDTO }>("/api/fournisseurs/moi")
+      .then((res) => {
+        const f = res.data;
+        if (f.statut === "EN_ATTENTE" || f.statut === "VALIDE") {
+          // Rien à faire ici — fiche déjà soumise/validée, gérée dans l'espace fournisseur.
+          navigate("/mon-espace/fournisseur");
+          return;
+        }
+        if (f.statutJuridique) setType(f.statutJuridique as "INDIVIDUEL" | "ENTREPRISE");
+        setRaisonSociale(f.raisonSociale || "");
+        setSecteurNom(f.secteurNom || "");
+        setVille(f.ville || "");
+        setPays(f.pays || "");
+        setTelephone(f.telephone || "");
+        setEmail(f.email || "");
+        setDescription(f.description || "");
+        setMotifRejet(f.motifRejet);
+      })
+      .catch(() => {
+        // Pas encore de fiche — formulaire vierge, comportement normal.
+      })
+      .finally(() => setLoading(false));
+  }, [navigate]);
+
+  const buildPayload = () => ({
+    statutJuridique: type,
+    raisonSociale: type === "ENTREPRISE" ? raisonSociale : null,
+    secteurNom: secteurNom || null,
+    ville: ville || null,
+    pays: pays || null,
+    telephone: telephone || null,
+    email: email || null,
+    description: description || null,
+  });
+
+  const handleEnregistrerBrouillon = async () => {
+    setSaving(true);
+    try {
+      await api.put("/api/fournisseurs/moi", buildPayload());
+      toast.success(t("fournisseur.inscription.toast_draft_saved", "Brouillon enregistré — vous pourrez continuer plus tard"));
+    } catch (err: any) {
+      toast.error(err.message || t("fournisseur.inscription.toast_error", "Erreur lors de l'enregistrement"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSoumettre = async (e: React.FormEvent) => {
     e.preventDefault();
     if (type === "ENTREPRISE" && raisonSociale.trim().length < 2) {
       toast.error(t("fournisseur.inscription.toast_raison_sociale_required", "La raison sociale est obligatoire pour une entreprise"));
@@ -47,26 +112,20 @@ export default function FournisseurInscriptionPage() {
       toast.error(t("fournisseur.inscription.toast_reglement_required", "Vous devez accepter le règlement avant de soumettre votre inscription"));
       return;
     }
-    setSaving(true);
+    setSubmitting(true);
     try {
-      await api.post("/api/fournisseurs", {
-        statutJuridique: type,
-        raisonSociale: type === "ENTREPRISE" ? raisonSociale : null,
-        secteurNom,
-        ville,
-        pays,
-        telephone: telephone || null,
-        email: email || null,
-        description: description || null,
-      });
+      await api.put("/api/fournisseurs/moi", buildPayload());
+      await api.post("/api/fournisseurs/moi/soumettre");
       toast.success(t("fournisseur.inscription.toast_sent", "Inscription envoyée, en attente de validation par l'équipe GrowzApp"));
       navigate("/mon-espace/fournisseur");
     } catch (err: any) {
       toast.error(err.message || t("fournisseur.inscription.toast_error", "Erreur lors de l'inscription"));
     } finally {
-      setSaving(false);
+      setSubmitting(false);
     }
   };
+
+  if (loading) return <div className={styles.container}>{t("dashboard.loading")}</div>;
 
   return (
     <div className={styles.container}>
@@ -86,7 +145,20 @@ export default function FournisseurInscriptionPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
+      {motifRejet && (
+        <div className={styles.rejetBox}>
+          <FiAlertTriangle size={18} />
+          <div>
+            <strong>{t("fournisseur.inscription.rejet_title", "Votre précédente soumission a été rejetée")}</strong>
+            <p>{motifRejet}</p>
+            <p className={styles.rejetHint}>
+              {t("fournisseur.inscription.rejet_hint", "Corrigez les informations ci-dessous puis soumettez à nouveau.")}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSoumettre} className={styles.form}>
         <div className={styles.typeSwitch}>
           <button
             type="button"
@@ -113,7 +185,6 @@ export default function FournisseurInscriptionPage() {
               onChange={(e) => setRaisonSociale(e.target.value)}
               placeholder="Ex. SARL Matériaux Plus"
               maxLength={150}
-              required
             />
           </div>
         )}
@@ -125,7 +196,6 @@ export default function FournisseurInscriptionPage() {
             onChange={setSecteurNom}
             options={SECTEURS_SUGGESTIONS}
             placeholder="Ex. Matériaux de construction"
-            required
           />
         </div>
 
@@ -138,7 +208,6 @@ export default function FournisseurInscriptionPage() {
               onChange={(e) => setVille(e.target.value)}
               placeholder="Ex. Abidjan"
               maxLength={100}
-              required
             />
           </div>
           <div className={styles.field}>
@@ -149,7 +218,6 @@ export default function FournisseurInscriptionPage() {
               onChange={(e) => setPays(e.target.value)}
               placeholder="Ex. Côte d'Ivoire"
               maxLength={100}
-              required
             />
           </div>
         </div>
@@ -217,9 +285,19 @@ export default function FournisseurInscriptionPage() {
           </div>
         </div>
 
-        <button type="submit" className={styles.btnSubmit} disabled={saving || !accepteReglement}>
-          {saving ? t("fournisseur.inscription.btn_sending", "Envoi...") : t("fournisseur.inscription.btn_send", "Soumettre mon inscription")}
-        </button>
+        <div className={styles.formActions}>
+          <button
+            type="button"
+            className={styles.btnDraft}
+            onClick={handleEnregistrerBrouillon}
+            disabled={saving || submitting}
+          >
+            <FiSave /> {saving ? t("fournisseur.inscription.btn_saving", "Enregistrement...") : t("fournisseur.inscription.btn_draft", "Enregistrer et continuer plus tard")}
+          </button>
+          <button type="submit" className={styles.btnSubmit} disabled={saving || submitting || !accepteReglement}>
+            <FiSend /> {submitting ? t("fournisseur.inscription.btn_sending", "Envoi...") : t("fournisseur.inscription.btn_send", "Soumettre mon inscription")}
+          </button>
+        </div>
       </form>
     </div>
   );

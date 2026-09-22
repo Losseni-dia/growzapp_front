@@ -186,6 +186,87 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid #f0f0f0;
   padding: 1rem;
+  overflow: hidden;
+}
+
+.articlePhoto {
+  width: calc(100% + 2rem);
+  margin: -1rem -1rem 0.8rem;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.photoField {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.photoPreview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.photoPlaceholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  border: 1.5px dashed #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  flex-shrink: 0;
+}
+
+.photoLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  cursor: pointer;
+}
+
+.ficheCard {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 2rem;
+}
+
+.ficheGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.ficheLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #999;
+  margin-bottom: 0.2rem;
+}
+
+.ficheValue {
+  display: block;
+  color: #333;
+  font-weight: 600;
+}
+
+.ficheDescription {
+  margin: 1rem 0 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .articleCardHeader {

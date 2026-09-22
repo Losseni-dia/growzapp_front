@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiMapPin, FiMinus, FiPlus, FiShoppingCart, FiTruck } from "react-icons/fi";
+import { FiArrowLeft, FiMail, FiMapPin, FiMinus, FiPhone, FiPlus, FiShoppingCart, FiTruck } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api } from "../../service/Api";
+import { api, buildFileUrl } from "../../service/Api";
 import styles from "./FournisseurDetailPage.module.css";
 
 interface FournisseurDTO {
@@ -25,6 +25,7 @@ interface ArticleDTO {
   description: string | null;
   prix: number;
   unite: string;
+  photoUrl: string | null;
 }
 
 interface PorteurProjetLigneDTO {
@@ -135,6 +136,18 @@ export default function FournisseurDetailPage() {
           <FiMapPin size={14} /> {fournisseur.ville}, {fournisseur.pays}
         </p>
         {fournisseur.description && <p className={styles.description}>{fournisseur.description}</p>}
+        <div className={styles.contactRow}>
+          {fournisseur.telephone && (
+            <a href={`tel:${fournisseur.telephone}`} className={styles.contactItem}>
+              <FiPhone size={14} /> {fournisseur.telephone}
+            </a>
+          )}
+          {fournisseur.email && (
+            <a href={`mailto:${fournisseur.email}`} className={styles.contactItem}>
+              <FiMail size={14} /> {fournisseur.email}
+            </a>
+          )}
+        </div>
       </div>
 
       <h2 className={styles.sectionTitle}>{t("fournisseur.detail.catalogue_title", "Catalogue")}</h2>
@@ -147,6 +160,7 @@ export default function FournisseurDetailPage() {
         <div className={styles.articleGrid}>
           {articles.map((a) => (
             <div key={a.id} className={styles.articleCard}>
+              {a.photoUrl && <img src={buildFileUrl(a.photoUrl)} alt={a.nom} className={styles.articlePhoto} />}
               <strong>{a.nom}</strong>
               {a.description && <p className={styles.articleDesc}>{a.description}</p>}
               <p className={styles.articlePrix}>

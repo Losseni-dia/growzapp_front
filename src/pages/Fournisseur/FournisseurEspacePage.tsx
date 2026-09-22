@@ -7,7 +7,12 @@ import {
   FiArrowLeft,
   FiCheckCircle,
   FiClock,
+  FiEdit2,
+  FiImage,
+  FiMail,
+  FiMapPin,
   FiPackage,
+  FiPhone,
   FiPlus,
   FiTrash2,
   FiTruck,
@@ -15,17 +20,20 @@ import {
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api } from "../../service/Api";
+import { api, buildFileUrl } from "../../service/Api";
 import styles from "./FournisseurEspacePage.module.css";
 
 interface FournisseurDTO {
   id: number;
-  statutJuridique: string;
+  statutJuridique: string | null;
   raisonSociale: string | null;
   secteurNom: string | null;
-  ville: string;
-  pays: string;
-  statut: "EN_ATTENTE" | "VALIDE" | "REJETE";
+  ville: string | null;
+  pays: string | null;
+  telephone: string | null;
+  email: string | null;
+  description: string | null;
+  statut: "BROUILLON" | "EN_ATTENTE" | "VALIDE" | "REJETE";
   motifRejet: string | null;
 }
 
@@ -36,6 +44,7 @@ interface ArticleDTO {
   prix: number;
   unite: string;
   disponible: boolean;
+  photoUrl: string | null;
 }
 
 interface CommandeDTO {
@@ -63,6 +72,8 @@ export default function FournisseurEspacePage() {
   const [prix, setPrix] = useState("");
   const [unite, setUnite] = useState("");
   const [disponible, setDisponible] = useState(true);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
   const loadAll = async () => {
@@ -96,6 +107,8 @@ export default function FournisseurEspacePage() {
     setPrix("");
     setUnite("");
     setDisponible(true);
+    setPhotoFile(null);
+    setPhotoPreview(null);
     setShowForm(false);
   };
 
@@ -106,7 +119,15 @@ export default function FournisseurEspacePage() {
     setPrix(String(a.prix));
     setUnite(a.unite);
     setDisponible(a.disponible);
+    setPhotoFile(null);
+    setPhotoPreview(a.photoUrl ? buildFileUrl(a.photoUrl) : null);
     setShowForm(true);
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setPhotoFile(file);
+    setPhotoPreview(file ? URL.createObjectURL(file) : null);
   };
 
   const handleSaveArticle = async (e: React.FormEvent) => {
@@ -118,11 +139,19 @@ export default function FournisseurEspacePage() {
     }
     setSaving(true);
     try {
-      const payload = { nom, description: description || null, prix: prixNum, unite, disponible };
+      const formData = new FormData();
+      formData.append(
+        "article",
+        new Blob([JSON.stringify({ nom, description: description || null, prix: prixNum, unite, disponible })], {
+          type: "application/json",
+        }),
+      );
+      if (photoFile) formData.append("photo", photoFile);
+
       if (editingId) {
-        await api.put(`/api/fournisseurs/moi/articles/${editingId}`, payload);
+        await api.put(`/api/fournisseurs/moi/articles/${editingId}`, formData, true);
       } else {
-        await api.post("/api/fournisseurs/moi/articles", payload);
+        await api.post("/api/fournisseurs/moi/articles", formData, true);
       }
       toast.success(t("fournisseur.espace.toast_article_saved", "Article enregistré"));
       resetForm();
@@ -189,6 +218,23 @@ export default function FournisseurEspacePage() {
     );
   }
 
+  if (fournisseur.statut === "BROUILLON") {
+    return (
+      <div className={styles.container}>
+        <Link to="/mon-espace" className={styles.backLink}>
+          <FiArrowLeft /> {t("my_profile")}
+        </Link>
+        <div className={styles.emptyState}>
+          <FiEdit2 size={48} />
+          <p>{t("fournisseur.espace.status_draft", "Votre fiche fournisseur est en brouillon — terminez-la pour la soumettre.")}</p>
+          <Link to="/devenir-fournisseur" className={styles.btnSubmit}>
+            {t("fournisseur.espace.btn_continue_draft", "Continuer mon inscription")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (fournisseur.statut !== "VALIDE") {
     return (
       <div className={styles.container}>
@@ -206,6 +252,9 @@ export default function FournisseurEspacePage() {
               <FiXCircle size={48} />
               <p>{t("fournisseur.espace.status_rejected", "Votre inscription a été rejetée.")}</p>
               {fournisseur.motifRejet && <p className={styles.motif}>{fournisseur.motifRejet}</p>}
+              <Link to="/devenir-fournisseur" className={styles.btnSubmit}>
+                {t("fournisseur.espace.btn_edit_and_resubmit", "Corriger et resoumettre")}
+              </Link>
             </>
           )}
         </div>
@@ -223,9 +272,51 @@ export default function FournisseurEspacePage() {
         <h1>
           <FiTruck /> {fournisseur.raisonSociale || t("fournisseur.espace.title", "Mon espace fournisseur")}
         </h1>
-        <p>
-          {fournisseur.secteurNom} — {fournisseur.ville}, {fournisseur.pays}
-        </p>
+      </div>
+
+      <div className={styles.ficheCard}>
+        <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>
+          {t("fournisseur.espace.fiche_title", "Ma fiche")}
+        </h2>
+        <div className={styles.ficheGrid}>
+          <div>
+            <span className={styles.ficheLabel}>{t("fournisseur.espace.fiche_type", "Type")}</span>
+            <span className={styles.ficheValue}>
+              {fournisseur.statutJuridique === "ENTREPRISE"
+                ? t("fournisseur.inscription.type_entreprise", "Entreprise")
+                : t("fournisseur.inscription.type_individuel", "Individuel")}
+            </span>
+          </div>
+          <div>
+            <span className={styles.ficheLabel}>{t("fournisseur.espace.fiche_secteur", "Secteur")}</span>
+            <span className={styles.ficheValue}>{fournisseur.secteurNom || "—"}</span>
+          </div>
+          <div>
+            <span className={styles.ficheLabel}>
+              <FiMapPin size={13} /> {t("fournisseur.espace.fiche_location", "Localisation")}
+            </span>
+            <span className={styles.ficheValue}>
+              {fournisseur.ville}, {fournisseur.pays}
+            </span>
+          </div>
+          {fournisseur.telephone && (
+            <div>
+              <span className={styles.ficheLabel}>
+                <FiPhone size={13} /> {t("fournisseur.espace.fiche_telephone", "Téléphone")}
+              </span>
+              <span className={styles.ficheValue}>{fournisseur.telephone}</span>
+            </div>
+          )}
+          {fournisseur.email && (
+            <div>
+              <span className={styles.ficheLabel}>
+                <FiMail size={13} /> {t("fournisseur.espace.fiche_email", "Email")}
+              </span>
+              <span className={styles.ficheValue}>{fournisseur.email}</span>
+            </div>
+          )}
+        </div>
+        {fournisseur.description && <p className={styles.ficheDescription}>{fournisseur.description}</p>}
       </div>
 
       <div className={styles.sectionHeader}>
@@ -278,6 +369,19 @@ export default function FournisseurEspacePage() {
             maxLength={1000}
             rows={2}
           />
+          <div className={styles.photoField}>
+            {photoPreview ? (
+              <img src={photoPreview} alt="" className={styles.photoPreview} />
+            ) : (
+              <div className={styles.photoPlaceholder}>
+                <FiImage size={22} />
+              </div>
+            )}
+            <label className={styles.photoLabel}>
+              {t("fournisseur.espace.field_photo", "Photo (facultatif)")}
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} />
+            </label>
+          </div>
           <div className={styles.formActions}>
             <button type="button" className={styles.btnCancel} onClick={resetForm}>
               {t("fournisseur.espace.btn_cancel", "Annuler")}
@@ -297,6 +401,7 @@ export default function FournisseurEspacePage() {
         <div className={styles.articleGrid}>
           {articles.map((a) => (
             <div key={a.id} className={styles.articleCard}>
+              {a.photoUrl && <img src={buildFileUrl(a.photoUrl)} alt={a.nom} className={styles.articlePhoto} />}
               <div className={styles.articleCardHeader}>
                 <strong>{a.nom}</strong>
                 <span className={`${styles.badge} ${a.disponible ? styles.badgeOk : styles.badgeOff}`}>
