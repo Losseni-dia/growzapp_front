@@ -89,6 +89,13 @@ const ProfileUpdateForm = lazy(
 );
 const KYCUploadForm = lazy(() => import("./components/kyc/KycUploadForm"));
 const ContactPage = lazy(() => import("./pages/MonEspace/Contact/ContactPage"));
+const FournisseurInscriptionPage = lazy(() => import("./pages/Fournisseur/FournisseurInscriptionPage"));
+const FournisseurEspacePage = lazy(() => import("./pages/Fournisseur/FournisseurEspacePage"));
+const FournisseurRecherchePage = lazy(() => import("./pages/Fournisseur/FournisseurRecherchePage"));
+const FournisseurDetailPage = lazy(() => import("./pages/Fournisseur/FournisseurDetailPage"));
+const MesCommandesPage = lazy(() => import("./pages/MonEspace/MesCommandes/MesCommandesPage"));
+const AdminFournisseursPage = lazy(() => import("./pages/Admin/Fournisseurs/AdminFournisseursPage"));
+const AdminCommandesPage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesPage"));
 const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
 const ContratPage = lazy(
   () => import("./pages/Contrat/ContratsPage/ContratPage"),
@@ -273,6 +280,11 @@ function App() {
                     element={<MonPortefeuillePage />}
                   />
                   <Route path="/mon-espace/contact" element={<ContactPage />} />
+                  <Route path="/devenir-fournisseur" element={<FournisseurInscriptionPage />} />
+                  <Route path="/mon-espace/fournisseur" element={<FournisseurEspacePage />} />
+                  <Route path="/fournisseurs" element={<FournisseurRecherchePage />} />
+                  <Route path="/fournisseurs/:id" element={<FournisseurDetailPage />} />
+                  <Route path="/mes-commandes" element={<MesCommandesPage />} />
                 </Route>
               </Route>
 
@@ -356,6 +368,14 @@ function App() {
                     <Route
                       path="/admin/contact"
                       element={<ContactAdminPage />}
+                    />
+                    <Route
+                      path="/admin/fournisseurs"
+                      element={<AdminFournisseursPage />}
+                    />
+                    <Route
+                      path="/admin/commandes"
+                      element={<AdminCommandesPage />}
                     />
                     <Route
                       path="/admin/notifications"

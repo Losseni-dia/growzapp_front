@@ -17,6 +17,8 @@ import {
   FiSettings,
   FiBell,
   FiActivity,
+  FiTruck,
+  FiShoppingBag,
 } from "react-icons/fi";
 import { BsStarFill } from "react-icons/bs";
 import styles from "./AdminLayout.module.css";
@@ -159,6 +161,16 @@ export default function AdminSidebar({
         to: "/admin/contact",
         label: t("admin.sidebar.contact"),
         icon: <FiMail size={16} />,
+      },
+      {
+        to: "/admin/fournisseurs",
+        label: t("admin.sidebar.fournisseurs", "Fournisseurs"),
+        icon: <FiTruck size={16} />,
+      },
+      {
+        to: "/admin/commandes",
+        label: t("admin.sidebar.commandes", "Commandes"),
+        icon: <FiShoppingBag size={16} />,
       },
       {
         to: "/admin/notifications",

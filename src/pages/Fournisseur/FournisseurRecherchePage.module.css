@@ -1,0 +1,141 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--growz-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  color: var(--growz-primary);
+  margin: 0 0 0.4rem;
+}
+
+.header p {
+  color: #666;
+  margin: 0;
+}
+
+.filters {
+  display: flex;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filters input {
+  flex: 1;
+  min-width: 160px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.filters input:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+}
+
+.btnSearch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--growz-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnSearch:hover {
+  background: var(--growz-primary-pressed);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  color: #999;
+  background: #fafafa;
+  border-radius: 16px;
+  border: 2px dashed #e0e0e0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 1.2rem;
+  text-decoration: none;
+  color: inherit;
+  transition: 0.2s;
+  display: block;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  margin: 0 0 0.3rem;
+  color: var(--growz-primary);
+  font-size: 1.1rem;
+}
+
+.secteur {
+  color: var(--growz-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 0 0 0.4rem;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 0;
+}

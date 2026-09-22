@@ -10,6 +10,8 @@ import {
   FiCheckCircle,
   FiClock,
   FiMail,
+  FiTruck,
+  FiShoppingBag,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
@@ -30,6 +32,8 @@ export default function DashboardAdmin() {
     kycEnAttente: 0,
     projetsSoumis: 0,
     messagesEnAttente: 0,
+    fournisseursEnAttente: 0,
+    commandesEnAttente: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +50,7 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, invCounts, s, a, k, p, c] = await Promise.all([
+      const [u, invCounts, s, a, k, p, c, fo, cmd] = await Promise.all([
         api
           .get<any>("/api/admin/users?page=0&size=1")
           .catch(() => ({ data: { totalElements: 0 } })),
@@ -62,10 +66,18 @@ export default function DashboardAdmin() {
         api
           .get<any>("/api/admin/contact?statut=NOUVEAU")
           .catch(() => ({ data: [] })),
+        api
+          .get<any>("/api/admin/fournisseurs/en-attente")
+          .catch(() => ({ data: [] })),
+        api
+          .get<any>("/api/admin/commandes/en-attente")
+          .catch(() => ({ data: [] })),
       ]);
 
       const projets = Array.isArray(p.data) ? p.data : [];
       const messages = Array.isArray(c.data) ? c.data : [];
+      const fournisseurs = Array.isArray(fo.data) ? fo.data : [];
+      const commandesEnAttente = Array.isArray(cmd.data) ? cmd.data : [];
 
       setStats({
         totalUsers: u.data?.totalElements || 0,
@@ -81,6 +93,8 @@ export default function DashboardAdmin() {
           (proj: any) => proj.statutProjet === "SOUMIS",
         ).length,
         messagesEnAttente: messages.length,
+        fournisseursEnAttente: fournisseurs.length,
+        commandesEnAttente: commandesEnAttente.length,
       });
     } finally {
       setLoading(false);
@@ -100,7 +114,9 @@ export default function DashboardAdmin() {
     stats.investissementsEnAttente +
     stats.kycEnAttente +
     stats.projetsSoumis +
-    stats.messagesEnAttente;
+    stats.messagesEnAttente +
+    stats.fournisseursEnAttente +
+    stats.commandesEnAttente;
 
   return (
     <div className={styles.page}>
@@ -220,6 +236,36 @@ export default function DashboardAdmin() {
             <span className={styles.statNumber}>{stats.messagesEnAttente}</span>
             <span className={styles.statLabel}>
               {t("admin.dashboard.messages_pending")}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          to="/admin/fournisseurs"
+          className={`${styles.statCard} ${stats.fournisseursEnAttente > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiTruck size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.fournisseursEnAttente}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.fournisseurs_pending", "Fournisseurs en attente")}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          to="/admin/commandes"
+          className={`${styles.statCard} ${stats.commandesEnAttente > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiShoppingBag size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.commandesEnAttente}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.commandes_pending", "Commandes en attente")}
             </span>
           </div>
         </Link>

@@ -1,0 +1,132 @@
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--growz-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  color: var(--growz-primary);
+  margin: 0 0 0.4rem;
+}
+
+.header p {
+  color: #666;
+  margin: 0;
+}
+
+.form {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.typeSwitch {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.typeBtn {
+  flex: 1;
+  border: 1.5px solid #e0e0e0;
+  background: white;
+  border-radius: 12px;
+  padding: 0.8rem;
+  font-weight: 700;
+  color: #666;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.typeBtn:hover {
+  border-color: var(--growz-primary);
+}
+
+.typeBtnActive {
+  background: var(--growz-primary);
+  border-color: var(--growz-primary);
+  color: white;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field label {
+  font-weight: 700;
+  color: var(--growz-primary);
+  font-size: 0.9rem;
+}
+
+.field input,
+.field textarea {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--growz-primary);
+}
+
+.btnSubmit {
+  background: var(--growz-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btnSubmit:hover:not(:disabled) {
+  background: var(--growz-primary-pressed);
+}
+
+.btnSubmit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}

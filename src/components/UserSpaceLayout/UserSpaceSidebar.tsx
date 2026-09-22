@@ -15,6 +15,8 @@ import {
   FiArrowUpCircle,
   FiRepeat,
   FiMail,
+  FiTruck,
+  FiShoppingBag,
 } from "react-icons/fi";
 import styles from "./UserSpaceLayout.module.css";
 
@@ -75,6 +77,16 @@ export default function UserSpaceSidebar({
         to: "/profile/fiche-porteur",
         label: t("user_sidebar.fiche_porteur", "Ma fiche porteur"),
         icon: <FiCheckCircle size={16} />,
+      },
+      {
+        to: "/fournisseurs",
+        label: t("user_sidebar.fournisseurs", "Trouver un fournisseur"),
+        icon: <FiTruck size={16} />,
+      },
+      {
+        to: "/mes-commandes",
+        label: t("user_sidebar.mes_commandes", "Mes commandes"),
+        icon: <FiShoppingBag size={16} />,
       },
     ],
   });
@@ -162,6 +174,11 @@ export default function UserSpaceSidebar({
         to: "/mon-espace/contact",
         label: t("user_sidebar.contact", "Contact / Support"),
         icon: <FiMail size={16} />,
+      },
+      {
+        to: "/mon-espace/fournisseur",
+        label: t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur"),
+        icon: <FiTruck size={16} />,
       },
     ],
   });
