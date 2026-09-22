@@ -36,6 +36,7 @@ interface FournisseurDTO {
   description: string | null;
   statut: "BROUILLON" | "EN_ATTENTE" | "VALIDE" | "REJETE";
   motifRejet: string | null;
+  logoUrl: string | null;
 }
 
 interface ArticleDTO {
@@ -199,6 +200,28 @@ export default function FournisseurEspacePage() {
       toast.success(t("fournisseur.espace.toast_article_deleted", "Article supprimé"));
     } catch (err: any) {
       toast.error(err.message || t("fournisseur.espace.toast_article_error", "Erreur"));
+    }
+  };
+
+  const [savingLogo, setSavingLogo] = useState(false);
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setSavingLogo(true);
+    try {
+      const formData = new FormData();
+      formData.append("logo", file);
+      await api.post("/api/fournisseurs/moi/logo", formData, true);
+      toast.success(
+        t("fournisseur.espace.toast_logo_saved", "Logo enregistré — il apparaîtra parmi nos partenaires"),
+      );
+      loadAll();
+    } catch (err: any) {
+      toast.error(err.message || t("fournisseur.espace.toast_logo_error", "Erreur lors de l'enregistrement du logo"));
+    } finally {
+      setSavingLogo(false);
     }
   };
 
@@ -378,6 +401,35 @@ export default function FournisseurEspacePage() {
           )}
         </div>
         {fournisseur.description && <p className={styles.ficheDescription}>{fournisseur.description}</p>}
+
+        <div className={styles.logoField}>
+          {fournisseur.logoUrl ? (
+            <img src={buildFileUrl(fournisseur.logoUrl)} alt="" className={styles.logoPreview} />
+          ) : (
+            <div className={styles.photoPlaceholder}>
+              <FiImage size={22} />
+            </div>
+          )}
+          <div>
+            <label className={styles.photoLabel}>
+              {savingLogo
+                ? t("fournisseur.espace.btn_saving", "Enregistrement...")
+                : t("fournisseur.espace.field_logo", "Ajouter/changer mon logo")}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleLogoChange}
+                disabled={savingLogo}
+              />
+            </label>
+            <p className={styles.logoHint}>
+              {t(
+                "fournisseur.espace.logo_hint",
+                "Affiché publiquement dans la section « Nos partenaires » du site.",
+              )}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className={styles.sectionHeader}>

@@ -284,6 +284,30 @@
   line-height: 1.5;
 }
 
+.logoField {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.logoPreview {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.logoHint {
+  font-size: 0.78rem;
+  color: #999;
+  margin: 0.2rem 0 0;
+}
+
 .articleCardHeader {
   display: flex;
   justify-content: space-between;

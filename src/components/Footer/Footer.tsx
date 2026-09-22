@@ -1,13 +1,29 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Footer.module.css";
 import { FiShield, FiLinkedin, FiFacebook, FiInstagram } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { Rss } from "lucide-react";
+import { api, buildFileUrl } from "../../service/Api";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
+interface PartenaireDTO {
+  id: number;
+  nom: string;
+  logoUrl: string;
+}
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [partenaires, setPartenaires] = useState<PartenaireDTO[]>([]);
+
+  useEffect(() => {
+    api
+      .get<PartenaireDTO[]>("/api/fournisseurs/partenaires")
+      .then((data) => setPartenaires(data || []))
+      .catch(() => setPartenaires([]));
+  }, []);
 
   // Fonction pour ouvrir la recherche FAQ dans Crisp
   const openCrispFAQ = (e: React.MouseEvent) => {
@@ -105,6 +121,23 @@ export default function Footer() {
             </div>
           </nav>
         </div>
+
+        {partenaires.length > 0 && (
+          <div className={styles.partenaires}>
+            <h4>Nos partenaires</h4>
+            <div className={styles.partenairesList}>
+              {partenaires.map((p) => (
+                <img
+                  key={p.id}
+                  src={buildFileUrl(p.logoUrl)}
+                  alt={p.nom}
+                  title={p.nom}
+                  className={styles.partenaireLogo}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className={styles.bottomSection}>
           <p>© {currentYear} GrowzApp – Tous droits réservés </p>
