@@ -20,8 +20,8 @@ export default function Footer() {
 
   useEffect(() => {
     api
-      .get<PartenaireDTO[]>("/api/fournisseurs/partenaires")
-      .then((data) => setPartenaires(data || []))
+      .get<{ data: PartenaireDTO[] }>("/api/fournisseurs/partenaires")
+      .then((res) => setPartenaires(res.data || []))
       .catch(() => setPartenaires([]));
   }, []);
 
