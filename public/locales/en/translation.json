@@ -704,6 +704,7 @@
       "type_retrait_admin": "Withdrawal (admin)",
       "type_premium_projet": "Premium purchase",
       "type_paiement_fournisseur": "Supplier payment",
+      "type_vente_market": "GrowzMarket sale",
       "table": {
         "date": "Date",
         "type": "Type",
@@ -1445,7 +1446,8 @@
       "refund": "Refund",
       "dividend": "Dividend",
       "premium": "Premium purchase",
-      "supplier_payment": "Supplier payment"
+      "supplier_payment": "Supplier payment",
+      "market_purchase": "GrowzMarket purchase"
     },
     "toast": {
       "invalid_amount": "Invalid amount",
@@ -1672,7 +1674,8 @@
         "RETRAIT": "Withdrawal",
         "DEPOT": "Deposit",
         "INVESTISSEMENT": "Investment",
-        "PAIEMENT_FOURNISSEUR": "Supplier payment"
+        "PAIEMENT_FOURNISSEUR": "Supplier payment",
+        "VENTE_MARKET": "GrowzMarket sale"
       }
     }
   },

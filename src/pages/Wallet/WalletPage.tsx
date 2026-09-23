@@ -10,6 +10,7 @@ import {
   Gift,
   RefreshCw,
   Send,
+  ShoppingBag,
   Smartphone,
   Star,
   TrendingUp,
@@ -61,6 +62,9 @@ const TX_CONFIG: Record<string, { icon: any; key: string; outbound: boolean }> =
   VERSEMENT_DIVIDENDE: { icon: Gift, key: "dividend", outbound: false },
   PREMIUM_PROJET: { icon: Star, key: "premium", outbound: true },
   PAIEMENT_FOURNISSEUR: { icon: CreditCard, key: "supplier_payment", outbound: false },
+  // N'apparaît que côté acheteur sur le wallet personnel (le côté vendeur
+  // crédite le wallet PROJET, pas un wallet USER — voir docs/GROWZMARKET_VISION.md).
+  VENTE_MARKET: { icon: ShoppingBag, key: "market_purchase", outbound: true },
 };
 
 function getTxConfig(type: string) {

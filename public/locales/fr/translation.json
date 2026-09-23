@@ -703,6 +703,7 @@
       "type_retrait_admin": "Retrait (admin)",
       "type_premium_projet": "Achat Premium",
       "type_paiement_fournisseur": "Paiement fournisseur",
+      "type_vente_market": "Vente GrowzMarket",
       "table": {
         "date": "Date",
         "type": "Type",
@@ -1449,7 +1450,8 @@
       "refund": "Remboursement",
       "dividend": "Dividende",
       "premium": "Achat Premium",
-      "supplier_payment": "Paiement fournisseur"
+      "supplier_payment": "Paiement fournisseur",
+      "market_purchase": "Achat GrowzMarket"
     },
     "toast": {
       "invalid_amount": "Montant invalide",
@@ -1677,7 +1679,8 @@
         "RETRAIT": "Retrait",
         "DEPOT": "Dépôt",
         "INVESTISSEMENT": "Investissement",
-        "PAIEMENT_FOURNISSEUR": "Paiement fournisseur"
+        "PAIEMENT_FOURNISSEUR": "Paiement fournisseur",
+        "VENTE_MARKET": "Vente GrowzMarket"
       }
     }
   },
