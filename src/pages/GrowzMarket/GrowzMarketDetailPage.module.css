@@ -251,3 +251,34 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.actionsRow {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.actionsRow .btnAcheter {
+  flex: 1;
+  width: auto;
+}
+
+.btnAddToCart {
+  flex: 1;
+  background: white;
+  color: var(--growz-primary);
+  border: 1.5px solid var(--growz-primary);
+  border-radius: 10px;
+  padding: 0.9rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btnAddToCart:hover:not(:disabled) {
+  background: var(--growz-mint-50, #f1f8e9);
+}
+
+.btnAddToCart:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

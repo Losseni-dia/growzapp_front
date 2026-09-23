@@ -15,6 +15,7 @@ import {
   FiCheckCircle,
   FiRss,
   FiShoppingBag,
+  FiShoppingCart,
   FiMenu,
   FiX,
   FiMail,
@@ -22,6 +23,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
 import { useAuth } from "../Context/AuthContext";
+import { useGrowzMarketCart } from "../Context/GrowzMarketCartContext";
 import { useCurrency } from "../Context/CurrencyContext";
 import styles from "./Header.module.css";
 
@@ -33,6 +35,7 @@ export default function Header() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { currency, setCurrency, rates } = useCurrency();
+  const { totalItems } = useGrowzMarketCart();
 
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [openSection, setOpenSection] = useState<"espace" | "devise" | "langue" | null>(null);
@@ -128,6 +131,38 @@ export default function Header() {
               <Link to="/growzmarket" className={styles.navLink}>
                 <FiShoppingBag />
                 <span>{t("header.growzmarket", "GrowzMarket")}</span>
+              </Link>
+              <Link
+                to="/growzmarket/panier"
+                className={styles.navLink}
+                aria-label={t("growzmarket.cart.nav_label", "Panier")}
+              >
+                <span style={{ position: "relative", display: "inline-flex" }}>
+                  <FiShoppingCart />
+                  {totalItems > 0 && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: -8,
+                        right: -10,
+                        background: "var(--growz-primary, #1B5E20)",
+                        color: "white",
+                        borderRadius: "50%",
+                        fontSize: "0.65rem",
+                        fontWeight: 700,
+                        minWidth: 16,
+                        height: 16,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 3px",
+                      }}
+                    >
+                      {totalItems}
+                    </span>
+                  )}
+                </span>
+                <span>{t("growzmarket.cart.nav_label", "Panier")}</span>
               </Link>
               <Link to="/projets-finances" className={styles.navLink}>
                 <FiCheckCircle />

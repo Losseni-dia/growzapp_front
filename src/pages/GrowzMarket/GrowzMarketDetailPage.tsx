@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
+import { useGrowzMarketCart } from "../../components/Context/GrowzMarketCartContext";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api, buildFileUrl } from "../../service/Api";
 import styles from "./GrowzMarketDetailPage.module.css";
@@ -39,6 +40,7 @@ export default function GrowzMarketDetailPage() {
   const { t } = useTranslation();
   const { format } = useCurrency();
   const { user } = useAuth();
+  const { addItem } = useGrowzMarketCart();
   const navigate = useNavigate();
 
   const [article, setArticle] = useState<ArticleMarketDTO | null>(null);
@@ -56,6 +58,28 @@ export default function GrowzMarketDetailPage() {
       .catch(() => toast.error(t("growzmarket.detail.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
   }, [id, t]);
+
+  const handleAjouterAuPanier = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (!article) return;
+    addItem(
+      {
+        articleId: article.id,
+        nom: article.nom,
+        prix: article.prix,
+        unite: article.unite,
+        photo: article.photos[0] || null,
+        projetId: article.projetId,
+        projetLibelle: article.projetLibelle,
+        pointRetrait: article.pointRetrait,
+        stock: article.stock,
+      },
+      quantite,
+    );
+  };
 
   const handleAcheter = async () => {
     if (!user) {
@@ -217,19 +241,28 @@ export default function GrowzMarketDetailPage() {
             </p>
           )}
 
-          <button
-            className={styles.btnAcheter}
-            onClick={handleAcheter}
-            disabled={user ? submitting || !confirmationLieu || stockInsuffisant || !article.disponible : false}
-          >
-            {!user
-              ? t("growzmarket.detail.btn_login_to_buy", "Se connecter pour acheter")
-              : submitting
-                ? t("growzmarket.detail.btn_buying", "Achat en cours...")
-                : t("growzmarket.detail.btn_buy", "Acheter — {{amount}}", {
-                    amount: format(Number(article.prix) * quantite, "XOF"),
-                  })}
-          </button>
+          <div className={styles.actionsRow}>
+            <button
+              className={styles.btnAddToCart}
+              onClick={handleAjouterAuPanier}
+              disabled={!user ? false : stockInsuffisant || !article.disponible}
+            >
+              {t("growzmarket.detail.btn_add_to_cart", "Ajouter au panier")}
+            </button>
+            <button
+              className={styles.btnAcheter}
+              onClick={handleAcheter}
+              disabled={user ? submitting || !confirmationLieu || stockInsuffisant || !article.disponible : false}
+            >
+              {!user
+                ? t("growzmarket.detail.btn_login_to_buy", "Se connecter pour acheter")
+                : submitting
+                  ? t("growzmarket.detail.btn_buying", "Achat en cours...")
+                  : t("growzmarket.detail.btn_buy", "Acheter — {{amount}}", {
+                      amount: format(Number(article.prix) * quantite, "XOF"),
+                    })}
+            </button>
+          </div>
         </div>
       </div>
     </div>

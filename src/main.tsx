@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./components/Context/AuthContext";
+import { GrowzMarketCartProvider } from "./components/Context/GrowzMarketCartContext";
 import GrowzToaster from "./components/ui/Toaster";
 import "./index.css";
 
@@ -26,8 +27,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
-            <App />
-            <GrowzToaster />
+            <GrowzMarketCartProvider>
+              <App />
+              <GrowzToaster />
+            </GrowzMarketCartProvider>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

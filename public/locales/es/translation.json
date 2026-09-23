@@ -1957,7 +1957,8 @@
       "stock_insuffisant": "Cantidad superior al stock disponible.",
       "btn_login_to_buy": "Iniciar sesión para comprar",
       "btn_buying": "Compra en curso...",
-      "btn_buy": "Comprar — {{amount}}"
+      "btn_buy": "Comprar — {{amount}}",
+      "btn_add_to_cart": "Añadir al carrito"
     },
     "boutique": {
       "toast_validation": "Proyecto, nombre, precio (positivo), unidad y punto de retiro son obligatorios",
@@ -2034,6 +2035,26 @@
       "title": "Factura GrowzMarket — Pedido #{{id}}",
       "error": "No se puede mostrar esta factura — todavía no existe o no tienes acceso a ella.",
       "btn_download": "Descargar"
+    },
+    "cart": {
+      "nav_label": "Carrito",
+      "title": "Mi carrito GrowzMarket",
+      "empty": "Tu carrito está vacío.",
+      "btn_catalogue": "Descubrir GrowzMarket",
+      "vendor_subtotal": "Subtotal",
+      "point_retrait_title": "Punto de recogida",
+      "point_retrait_grouped_hint": "Recogida agrupada en el punto indicado por el vendedor.",
+      "confirmation_label": "Confirmo que puedo venir a recoger este pedido en: {{lieu}}",
+      "confirmation_required_toast": "Confirma el punto de recogida de {{vendeur}} antes de pagar",
+      "total_general": "Total general",
+      "btn_remove": "Eliminar",
+      "btn_pay": "Pagar",
+      "btn_paying": "Pago en curso...",
+      "toast_added": "Añadido al carrito",
+      "toast_stock_max": "Cantidad limitada al stock disponible ({{count}})",
+      "toast_success": "Compra realizada con éxito",
+      "toast_vendor_success": "{{vendeur}}: compra realizada",
+      "toast_vendor_error": "{{vendeur}}: {{error}}"
     }
   }
 }

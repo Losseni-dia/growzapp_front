@@ -99,6 +99,7 @@ const AdminCommandesPage = lazy(() => import("./pages/Admin/Commandes/AdminComma
 const CommandeFacturePage = lazy(() => import("./pages/Commandes/CommandeFacturePage"));
 const GrowzMarketPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketPage"));
 const GrowzMarketDetailPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketDetailPage"));
+const GrowzMarketCartPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketCartPage"));
 const MaBoutiquePage = lazy(() => import("./pages/GrowzMarket/MaBoutiquePage"));
 const MesVentesMarketPage = lazy(() => import("./pages/GrowzMarket/MesVentesMarketPage"));
 const MesAchatsMarketPage = lazy(() => import("./pages/GrowzMarket/MesAchatsMarketPage"));
@@ -299,6 +300,7 @@ function App() {
                   <Route path="/mon-espace/ma-boutique" element={<MaBoutiquePage />} />
                   <Route path="/mon-espace/mes-ventes-market" element={<MesVentesMarketPage />} />
                   <Route path="/mon-espace/mes-achats-market" element={<MesAchatsMarketPage />} />
+                  <Route path="/growzmarket/panier" element={<GrowzMarketCartPage />} />
                   <Route path="/growzmarket/commandes/:id/facture" element={<MarketFacturePage />} />
                 </Route>
               </Route>

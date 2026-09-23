@@ -1959,7 +1959,8 @@
       "stock_insuffisant": "Quantity higher than available stock.",
       "btn_login_to_buy": "Log in to buy",
       "btn_buying": "Purchasing...",
-      "btn_buy": "Buy — {{amount}}"
+      "btn_buy": "Buy — {{amount}}",
+      "btn_add_to_cart": "Add to cart"
     },
     "boutique": {
       "toast_validation": "Project, name, price (positive), unit and pickup location are required",
@@ -2036,6 +2037,26 @@
       "title": "GrowzMarket Invoice — Order #{{id}}",
       "error": "Unable to display this invoice — it does not exist yet or you don't have access to it.",
       "btn_download": "Download"
+    },
+    "cart": {
+      "nav_label": "Cart",
+      "title": "My GrowzMarket cart",
+      "empty": "Your cart is empty.",
+      "btn_catalogue": "Discover GrowzMarket",
+      "vendor_subtotal": "Subtotal",
+      "point_retrait_title": "Pickup location",
+      "point_retrait_grouped_hint": "Grouped pickup at the location indicated by the seller.",
+      "confirmation_label": "I confirm I can come pick up this order at: {{lieu}}",
+      "confirmation_required_toast": "Confirm the pickup location for {{vendeur}} before paying",
+      "total_general": "Grand total",
+      "btn_remove": "Remove",
+      "btn_pay": "Pay",
+      "btn_paying": "Payment in progress...",
+      "toast_added": "Added to cart",
+      "toast_stock_max": "Quantity limited to available stock ({{count}})",
+      "toast_success": "Purchase successful",
+      "toast_vendor_success": "{{vendeur}}: purchase successful",
+      "toast_vendor_error": "{{vendeur}}: {{error}}"
     }
   }
 }
