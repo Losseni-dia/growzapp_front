@@ -154,6 +154,57 @@
   margin-top: 1rem;
 }
 
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  background: white;
+  color: #999;
+  margin-bottom: 1.2rem;
+}
+
+.searchBar input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.88rem;
+  color: #333;
+  background: transparent;
+}
+
+.numero {
+  font-weight: 800;
+  color: var(--growz-primary);
+}
+
+.numeroBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff8e1;
+  border: 1.5px solid #f0c14b;
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  margin: 0.8rem 0;
+  color: #7a5c00;
+}
+
+.numeroLabel {
+  margin: 0;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.numeroValue {
+  margin: 0.1rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
 .btnConfirm {
   display: flex;
   align-items: center;

@@ -3,7 +3,7 @@ import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiAlertTriangle, FiArrowLeft, FiCheckCircle, FiFileText, FiShoppingBag } from "react-icons/fi";
+import { FiAlertTriangle, FiArrowLeft, FiFileText, FiHash, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../components/Commande/CommandeMarketTimeline";
 import { useCurrency } from "../../components/Context/CurrencyContext";
@@ -64,22 +64,6 @@ export default function MesAchatsMarketPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleConfirmer = async (id: number) => {
-    if (
-      !window.confirm(
-        t("growzmarket.achats.confirm_retrait", "Confirmer avoir bien retiré cette commande ?") as string,
-      )
-    )
-      return;
-    try {
-      await api.post(`/api/market/commandes/${id}/confirmer-retrait`);
-      toast.success(t("growzmarket.achats.toast_confirmed", "Retrait confirmé"));
-      load();
-    } catch (err: any) {
-      toast.error(err.message || t("growzmarket.achats.toast_error", "Erreur"));
-    }
-  };
 
   const handleLitige = async () => {
     if (!litigeId || motifLitige.trim().length < 5) {
@@ -158,14 +142,22 @@ export default function MesAchatsMarketPage() {
               )}
 
               {c.statut === "PRETE_AU_RETRAIT" && (
-                <div className={styles.actions}>
-                  <button className={styles.btnConfirm} onClick={() => handleConfirmer(c.id)}>
-                    <FiCheckCircle size={14} /> {t("growzmarket.achats.btn_confirm", "Confirmer le retrait")}
-                  </button>
-                  <button className={styles.btnLitige} onClick={() => setLitigeId(c.id)}>
-                    <FiAlertTriangle size={14} /> {t("growzmarket.achats.btn_litige", "Signaler un problème")}
-                  </button>
-                </div>
+                <>
+                  <div className={styles.numeroBox}>
+                    <FiHash size={16} />
+                    <div>
+                      <p className={styles.numeroLabel}>
+                        {t("growzmarket.achats.numero_label", "Numéro à présenter au vendeur")}
+                      </p>
+                      <p className={styles.numeroValue}>#{c.id}</p>
+                    </div>
+                  </div>
+                  <div className={styles.actions}>
+                    <button className={styles.btnLitige} onClick={() => setLitigeId(c.id)}>
+                      <FiAlertTriangle size={14} /> {t("growzmarket.achats.btn_litige", "Signaler un problème")}
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           ))}

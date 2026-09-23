@@ -3,7 +3,7 @@ import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiCheckCircle, FiFileText, FiShoppingBag } from "react-icons/fi";
+import { FiArrowLeft, FiCheckCircle, FiFileText, FiSearch, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../components/Commande/CommandeMarketTimeline";
 import { useCurrency } from "../../components/Context/CurrencyContext";
@@ -51,6 +51,7 @@ export default function MesVentesMarketPage() {
   const [loading, setLoading] = useState(true);
   const [litigeId, setLitigeId] = useState<number | null>(null);
   const [motifLitige, setMotifLitige] = useState("");
+  const [recherche, setRecherche] = useState("");
 
   const load = () => {
     api
@@ -74,6 +75,35 @@ export default function MesVentesMarketPage() {
       toast.error(err.message || t("growzmarket.ventes.toast_error", "Erreur"));
     }
   };
+
+  const handleValiderRetrait = async (id: number) => {
+    if (
+      !window.confirm(
+        t(
+          "growzmarket.ventes.confirm_valider_retrait",
+          "Confirmer que l'acheteur a bien récupéré cette commande ?",
+        ) as string,
+      )
+    )
+      return;
+    try {
+      await api.post(`/api/market/commandes/${id}/valider-retrait`);
+      toast.success(t("growzmarket.ventes.toast_valider_retrait", "Retrait validé"));
+      load();
+    } catch (err: any) {
+      toast.error(err.message || t("growzmarket.ventes.toast_error", "Erreur"));
+    }
+  };
+
+  const commandesFiltrees = commandes.filter((c) => {
+    const q = recherche.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      String(c.id).includes(q) ||
+      c.acheteurNom.toLowerCase().includes(q) ||
+      c.projetLibelle.toLowerCase().includes(q)
+    );
+  });
 
   const handleLitige = async () => {
     if (!litigeId || motifLitige.trim().length < 5) {
@@ -115,12 +145,28 @@ export default function MesVentesMarketPage() {
           </Link>
         </div>
       ) : (
-        <div className={styles.list}>
-          {commandes.map((c) => (
+        <>
+          <div className={styles.searchBar}>
+            <FiSearch size={15} />
+            <input
+              type="text"
+              value={recherche}
+              onChange={(e) => setRecherche(e.target.value)}
+              placeholder={
+                t(
+                  "growzmarket.ventes.search_placeholder",
+                  "Rechercher par numéro de commande, acheteur, projet...",
+                ) as string
+              }
+            />
+          </div>
+          <div className={styles.list}>
+          {commandesFiltrees.map((c) => (
             <div key={c.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>
-                  <strong>{c.projetLibelle}</strong>
+                  <span className={styles.numero}>#{c.id}</span>
+                  <strong> {c.projetLibelle}</strong>
                   <span className={styles.acheteur}> — {c.acheteurNom}</span>
                 </div>
                 <span className={styles.badge}>{STATUT_LABELS[c.statut] || c.statut}</span>
@@ -158,6 +204,9 @@ export default function MesVentesMarketPage() {
               )}
               {c.statut === "PRETE_AU_RETRAIT" && (
                 <div className={styles.actions}>
+                  <button className={styles.btnConfirm} onClick={() => handleValiderRetrait(c.id)}>
+                    <FiCheckCircle size={14} /> {t("growzmarket.ventes.btn_valider_retrait", "Valider le retrait")}
+                  </button>
                   <button className={styles.btnLitige} onClick={() => setLitigeId(c.id)}>
                     {t("growzmarket.ventes.btn_litige", "Signaler un problème")}
                   </button>
@@ -165,7 +214,8 @@ export default function MesVentesMarketPage() {
               )}
             </div>
           ))}
-        </div>
+          </div>
+        </>
       )}
 
       {litigeId !== null && (

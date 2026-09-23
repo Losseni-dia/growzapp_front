@@ -488,6 +488,8 @@
     "section_overview": "Vue d'ensemble",
     "dashboard": "Tableau de bord",
     "section_porteur": "Porteur de projet",
+    "section_fournisseur": "Fournisseur",
+    "section_growzmarket": "GrowzMarket",
     "my_projects": "Mes projets",
     "create_project": "Créer un projet",
     "fiche_porteur": "Ma fiche porteur",
@@ -2020,12 +2022,17 @@
       "litige_title": "Signaler un problème",
       "litige_placeholder": "Décrivez le problème rencontré...",
       "btn_cancel": "Annuler",
-      "btn_send_litige": "Envoyer"
+      "btn_send_litige": "Envoyer",
+      "btn_valider_retrait": "Valider le retrait",
+      "confirm_valider_retrait": "Confirmer que l'acheteur a bien récupéré cette commande ?",
+      "toast_valider_retrait": "Retrait validé",
+      "search_placeholder": "Rechercher par numéro de commande, acheteur, projet..."
     },
     "achats": {
       "toast_load_error": "Erreur lors du chargement",
       "confirm_retrait": "Confirmer avoir bien retiré cette commande ?",
       "toast_confirmed": "Retrait confirmé",
+      "numero_label": "Numéro à présenter au vendeur",
       "toast_error": "Erreur",
       "toast_litige_validation": "Décrivez le problème (5 caractères min.)",
       "toast_litige_sent": "Litige ouvert, l'équipe GrowzApp va arbitrer",

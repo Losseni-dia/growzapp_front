@@ -57,9 +57,32 @@ export default function UserSpaceSidebar({
     ],
   });
 
+  sections.push({
+    title: t("user_sidebar.section_account", "Compte"),
+    links: [
+      {
+        to: "/profile/edit",
+        label: t("user_sidebar.profile", "Mon profil"),
+        icon: <FiUser size={16} />,
+      },
+      {
+        to: "/profile/kyc",
+        label: t("user_sidebar.kyc", "Vérification d'identité (KYC)"),
+        icon: <FiCheckCircle size={16} />,
+      },
+      {
+        to: "/mon-espace/contact",
+        label: t("user_sidebar.contact", "Contact / Support"),
+        icon: <FiMail size={16} />,
+      },
+    ],
+  });
+
   // Section porteur — toujours visible (permet de créer un premier projet
   // même avant d'avoir le rôle PORTEUR, qui n'est attribué qu'à la
-  // validation du premier projet).
+  // validation du projet). Uniquement la gestion du projet lui-même — le
+  // Fournisseur (B2B) et GrowzMarket (B2C) ont chacun leur propre section
+  // ci-dessous pour ne pas mélanger les genres.
   sections.push({
     title: t("user_sidebar.section_porteur", "Porteur de projet"),
     links: [
@@ -77,26 +100,6 @@ export default function UserSpaceSidebar({
         to: "/profile/fiche-porteur",
         label: t("user_sidebar.fiche_porteur", "Ma fiche porteur"),
         icon: <FiCheckCircle size={16} />,
-      },
-      {
-        to: "/fournisseurs",
-        label: t("user_sidebar.fournisseurs", "Trouver un fournisseur"),
-        icon: <FiTruck size={16} />,
-      },
-      {
-        to: "/mes-commandes",
-        label: t("user_sidebar.mes_commandes", "Mes commandes"),
-        icon: <FiShoppingBag size={16} />,
-      },
-      {
-        to: "/mon-espace/ma-boutique",
-        label: t("user_sidebar.ma_boutique", "Ma Boutique GrowzMarket"),
-        icon: <FiShoppingBag size={16} />,
-      },
-      {
-        to: "/mon-espace/mes-ventes-market",
-        label: t("user_sidebar.mes_ventes_market", "Mes ventes GrowzMarket"),
-        icon: <FiShoppingBag size={16} />,
       },
     ],
   });
@@ -148,10 +151,51 @@ export default function UserSpaceSidebar({
         label: t("user_sidebar.transfer", "Transférer des fonds"),
         icon: <FiRepeat size={16} />,
       },
+    ],
+  });
+
+  // GrowzMarket = module B2C (le porteur vend au grand public, paiement par
+  // wallet, retrait déclaratif) — distinct du module Fournisseur ci-dessous.
+  sections.push({
+    title: t("user_sidebar.section_growzmarket", "GrowzMarket"),
+    links: [
+      {
+        to: "/mon-espace/ma-boutique",
+        label: t("user_sidebar.ma_boutique", "Ma Boutique"),
+        icon: <FiShoppingBag size={16} />,
+      },
+      {
+        to: "/mon-espace/mes-ventes-market",
+        label: t("user_sidebar.mes_ventes_market", "Mes ventes"),
+        icon: <FiShoppingBag size={16} />,
+      },
       {
         to: "/mon-espace/mes-achats-market",
-        label: t("user_sidebar.mes_achats_market", "Mes achats GrowzMarket"),
+        label: t("user_sidebar.mes_achats_market", "Mes achats"),
         icon: <FiShoppingBag size={16} />,
+      },
+    ],
+  });
+
+  // Fournisseur = module B2B (achats de matières/services pour un projet,
+  // validés par l'admin, payés sur la trésorerie bloquée du projet).
+  sections.push({
+    title: t("user_sidebar.section_fournisseur", "Fournisseur"),
+    links: [
+      {
+        to: "/fournisseurs",
+        label: t("user_sidebar.fournisseurs", "Trouver un fournisseur"),
+        icon: <FiTruck size={16} />,
+      },
+      {
+        to: "/mes-commandes",
+        label: t("user_sidebar.mes_commandes", "Mes commandes fournisseur"),
+        icon: <FiShoppingBag size={16} />,
+      },
+      {
+        to: "/mon-espace/fournisseur",
+        label: t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur"),
+        icon: <FiTruck size={16} />,
       },
     ],
   });
@@ -168,32 +212,6 @@ export default function UserSpaceSidebar({
         to: "/mes-factures",
         label: t("user_sidebar.my_invoices", "Mes factures"),
         icon: <FiClipboard size={16} />,
-      },
-    ],
-  });
-
-  sections.push({
-    title: t("user_sidebar.section_account", "Compte"),
-    links: [
-      {
-        to: "/profile/edit",
-        label: t("user_sidebar.profile", "Mon profil"),
-        icon: <FiUser size={16} />,
-      },
-      {
-        to: "/profile/kyc",
-        label: t("user_sidebar.kyc", "Vérification d'identité (KYC)"),
-        icon: <FiCheckCircle size={16} />,
-      },
-      {
-        to: "/mon-espace/contact",
-        label: t("user_sidebar.contact", "Contact / Support"),
-        icon: <FiMail size={16} />,
-      },
-      {
-        to: "/mon-espace/fournisseur",
-        label: t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur"),
-        icon: <FiTruck size={16} />,
       },
     ],
   });

@@ -489,6 +489,8 @@
     "section_overview": "Overview",
     "dashboard": "Dashboard",
     "section_porteur": "Project owner",
+    "section_fournisseur": "Supplier",
+    "section_growzmarket": "GrowzMarket",
     "my_projects": "My projects",
     "create_project": "Create a project",
     "fiche_porteur": "My owner profile sheet",
@@ -2015,11 +2017,16 @@
       "litige_title": "Report an issue",
       "litige_placeholder": "Describe the issue encountered...",
       "btn_cancel": "Cancel",
-      "btn_send_litige": "Send"
+      "btn_send_litige": "Send",
+      "btn_valider_retrait": "Confirm pickup",
+      "confirm_valider_retrait": "Confirm that the buyer has picked up this order?",
+      "toast_valider_retrait": "Pickup confirmed",
+      "search_placeholder": "Search by order number, buyer, project..."
     },
     "achats": {
       "toast_load_error": "Error while loading",
       "confirm_retrait": "Confirm you have picked up this order?",
+      "numero_label": "Order number to show the seller",
       "toast_confirmed": "Pickup confirmed",
       "toast_error": "Error",
       "toast_litige_validation": "Describe the issue (5 characters min.)",

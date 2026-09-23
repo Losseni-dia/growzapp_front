@@ -56,7 +56,7 @@ export default function AdminGrowzMarketPage() {
   const { t } = useTranslation();
   const { format } = useCurrency();
 
-  const [onglet, setOnglet] = useState<Onglet>("LITIGES");
+  const [onglet, setOnglet] = useState<Onglet>("TOUTES");
   const [commandes, setCommandes] = useState<CommandeMarketDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [arbitrageId, setArbitrageId] = useState<number | null>(null);

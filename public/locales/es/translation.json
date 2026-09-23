@@ -489,6 +489,8 @@
     "section_overview": "Resumen",
     "dashboard": "Panel de control",
     "section_porteur": "Promotor de proyecto",
+    "section_fournisseur": "Proveedor",
+    "section_growzmarket": "GrowzMarket",
     "my_projects": "Mis proyectos",
     "create_project": "Crear un proyecto",
     "fiche_porteur": "Mi ficha de promotor",
@@ -2013,11 +2015,16 @@
       "litige_title": "Reportar un problema",
       "litige_placeholder": "Describe el problema encontrado...",
       "btn_cancel": "Cancelar",
-      "btn_send_litige": "Enviar"
+      "btn_send_litige": "Enviar",
+      "btn_valider_retrait": "Confirmar entrega",
+      "confirm_valider_retrait": "¿Confirmas que el comprador retiró este pedido?",
+      "toast_valider_retrait": "Entrega confirmada",
+      "search_placeholder": "Buscar por número de pedido, comprador, proyecto..."
     },
     "achats": {
       "toast_load_error": "Error al cargar",
       "confirm_retrait": "¿Confirmas haber retirado este pedido?",
+      "numero_label": "Número a mostrar al vendedor",
       "toast_confirmed": "Retiro confirmado",
       "toast_error": "Error",
       "toast_litige_validation": "Describe el problema (5 caracteres mín.)",

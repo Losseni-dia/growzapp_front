@@ -111,6 +111,10 @@ export default function Header() {
               <Link to="/projet/creer" className={styles.navLink}>
                 <FiPlusCircle /> <span>{t("create_project")}</span>
               </Link>
+              <Link to="/projets-finances" className={styles.navLink}>
+                <FiCheckCircle />
+                <span>{t("header.financed_projects")}</span>
+              </Link>
               <Link
                 to="/projets/proximite"
                 className={`${styles.navLink} ${styles.proximityLink}`}
@@ -127,6 +131,10 @@ export default function Header() {
               <Link to="/news" className={styles.navLink}>
                 <FiRss />
                 <span>{t("header.news")}</span>
+              </Link>
+              <Link to="/mon-espace/contact" className={styles.navLink}>
+                <FiMail />
+                <span>{t("header.contact_us")}</span>
               </Link>
               <Link to="/growzmarket" className={styles.navLink}>
                 <FiShoppingBag />
@@ -163,14 +171,6 @@ export default function Header() {
                   )}
                 </span>
                 <span>{t("growzmarket.cart.nav_label", "Panier")}</span>
-              </Link>
-              <Link to="/projets-finances" className={styles.navLink}>
-                <FiCheckCircle />
-                <span>{t("header.financed_projects")}</span>
-              </Link>
-              <Link to="/mon-espace/contact" className={styles.navLink}>
-                <FiMail />
-                <span>{t("header.contact_us")}</span>
               </Link>
               {isAdmin && (
                 <Link to="/admin" className={styles.adminBtn}>
