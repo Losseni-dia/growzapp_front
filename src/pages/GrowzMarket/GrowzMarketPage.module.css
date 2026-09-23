@@ -93,6 +93,7 @@
   text-decoration: none;
   color: inherit;
   display: block;
+  overflow: hidden;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
@@ -104,9 +105,8 @@
 .photo {
   width: calc(100% + 2rem);
   margin: -1rem -1rem 0.8rem;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  background: #fafafa;
+  height: 180px;
+  object-fit: cover;
   display: block;
 }
 
