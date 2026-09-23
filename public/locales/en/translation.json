@@ -31,7 +31,8 @@
     "news": "News",
     "nearby": "Near me",
     "financed_projects": "Financed Projects",
-    "contact_us": "Contact us"
+    "contact_us": "Contact us",
+    "growzmarket": "GrowzMarket"
   },
   "financed_projects_page": {
     "title": "Financed Projects",
@@ -491,6 +492,8 @@
     "my_projects": "My projects",
     "create_project": "Create a project",
     "fiche_porteur": "My owner profile sheet",
+    "ma_boutique": "My GrowzMarket Shop",
+    "mes_ventes_market": "My GrowzMarket sales",
     "section_investisseur": "Investor",
     "my_investments": "My investments",
     "my_portfolio": "My portfolio",
@@ -500,6 +503,7 @@
     "deposit": "Deposit funds",
     "withdraw": "Withdraw funds",
     "transfer": "Transfer funds",
+    "mes_achats_market": "My GrowzMarket purchases",
     "section_documents": "Documents",
     "my_contracts": "My contracts",
     "my_invoices": "My invoices",
@@ -562,7 +566,8 @@
       "section_referentiels": "Reference data",
       "referentiels": "Countries, sectors, sites",
       "section_config": "Configuration",
-      "parameters": "Settings"
+      "parameters": "Settings",
+      "growzmarket": "GrowzMarket"
     },
     "news": {
       "title": "News management",
@@ -1201,6 +1206,26 @@
       "arbitrate_placeholder": "Reason for the decision...",
       "btn_favor_porteur": "In favor of the project owner (cancelled)",
       "btn_favor_fournisseur": "In favor of the supplier"
+    },
+    "growzmarket": {
+      "toast_load_error": "Error loading data",
+      "toast_motif_required": "A reason is required",
+      "toast_arbitrated": "Dispute settled",
+      "toast_error": "Error",
+      "title": "GrowzMarket",
+      "tab_litiges": "Disputes",
+      "tab_toutes": "All / history",
+      "search_placeholder": "Search by project, owner, buyer...",
+      "filter_all": "All statuses",
+      "empty": "Nothing to handle here for now.",
+      "no_results": "No results for this search/filter.",
+      "btn_facture": "View invoice",
+      "btn_arbitrate": "Settle",
+      "arbitrate_title": "Settle the dispute",
+      "arbitrate_placeholder": "Reason for the decision...",
+      "btn_cancel": "Cancel",
+      "btn_favor_acheteur": "In favor of the buyer (refunded)",
+      "btn_favor_vendeur": "In favor of the seller"
     }
   },
   "contract_view": {
@@ -1893,5 +1918,124 @@
     "litige_placeholder": "Describe the issue encountered...",
     "btn_cancel": "Cancel",
     "btn_send_litige": "Send"
+  },
+  "growzmarket": {
+    "categorie": {
+      "ALIMENTATION": "Food",
+      "ARTISANAT": "Crafts",
+      "TEXTILE": "Textile",
+      "COSMETIQUE": "Cosmetics",
+      "AGRICULTURE": "Agriculture",
+      "SERVICE": "Service",
+      "AUTRE": "Other"
+    },
+    "timeline": {
+      "prete": "Ready for pickup",
+      "retiree": "Pickup confirmed",
+      "annulee": "Cancelled (dispute settled in favor of the buyer, refunded)",
+      "non_retiree": "Not picked up — awaiting arbitration"
+    },
+    "catalogue": {
+      "toast_error": "Error loading the catalogue",
+      "title": "GrowzMarket",
+      "subtitle": "Products and services from GrowzApp project owners — pay by wallet, pick up from the seller.",
+      "search_placeholder": "Search for a product or service...",
+      "filter_all": "All categories",
+      "empty": "No product available at the moment.",
+      "no_results": "No results for this search/filter."
+    },
+    "detail": {
+      "toast_load_error": "Error while loading",
+      "toast_confirmation_required": "You must confirm you can come pick up the order at the indicated location",
+      "toast_bought": "Purchase completed — the seller will prepare your order.",
+      "toast_error": "Error during purchase",
+      "back": "Back to catalogue",
+      "not_found": "Item not found.",
+      "sold_by": "Sold by",
+      "point_retrait_title": "Pickup location",
+      "point_retrait_hint": "No home delivery for now — the order must be picked up at this address.",
+      "stock_restant": "{{count}} in stock",
+      "confirmation_label": "I confirm I can come pick up this order at: {{lieu}}",
+      "stock_insuffisant": "Quantity higher than available stock.",
+      "btn_login_to_buy": "Log in to buy",
+      "btn_buying": "Purchasing...",
+      "btn_buy": "Buy — {{amount}}"
+    },
+    "boutique": {
+      "toast_validation": "Project, name, price (positive), unit and pickup location are required",
+      "toast_saved": "Item saved",
+      "toast_error": "Error while saving",
+      "confirm_delete": "Delete this item?",
+      "toast_deleted": "Item deleted",
+      "title": "My GrowzMarket Shop",
+      "subtitle": "Sell your products or services to the public — the revenue credits the chosen project's treasury.",
+      "no_projet": "You need a project to sell on GrowzMarket — the revenue from your sales credits that project's treasury.",
+      "btn_create_projet": "Create a project",
+      "catalogue_title": "My items",
+      "btn_add_article": "Add an item",
+      "field_projet": "Choose the selling project...",
+      "field_nom": "Name (e.g. Basket of dried mangoes)",
+      "field_unite": "Unit (e.g. basket, kg, hour)",
+      "field_prix": "Price (FCFA)",
+      "field_disponible": "Available",
+      "field_stock": "Stock (empty = unlimited)",
+      "field_delai": "Preparation time (e.g. Ready in 2 days)",
+      "field_description": "Description (optional)",
+      "field_point_retrait": "Pickup location (precise place)",
+      "field_telephone": "Contact phone (optional)",
+      "point_retrait_hint": "Shown to the buyer before payment — be precise (neighborhood, landmarks).",
+      "field_photos": "Photos (multiple allowed)",
+      "photos_selected": "{{count}} photo(s) selected",
+      "btn_cancel": "Cancel",
+      "btn_saving": "Saving...",
+      "btn_save": "Save",
+      "catalogue_empty": "No item in your shop yet.",
+      "badge_available": "Available",
+      "badge_unavailable": "Unavailable",
+      "stock_restant": "{{count}} in stock",
+      "btn_edit": "Edit"
+    },
+    "ventes": {
+      "toast_load_error": "Error while loading",
+      "toast_prepared": "Order marked as ready for pickup",
+      "toast_error": "Error",
+      "toast_litige_validation": "Describe the issue (5 characters min.)",
+      "toast_litige_sent": "Dispute opened, the GrowzApp team will arbitrate",
+      "title": "My GrowzMarket sales",
+      "subtitle": "Orders received on your GrowzMarket items.",
+      "empty": "No sale yet.",
+      "btn_boutique": "Manage my shop",
+      "btn_facture": "View invoice",
+      "btn_preparer": "Mark ready",
+      "btn_litige": "Report an issue",
+      "litige_title": "Report an issue",
+      "litige_placeholder": "Describe the issue encountered...",
+      "btn_cancel": "Cancel",
+      "btn_send_litige": "Send"
+    },
+    "achats": {
+      "toast_load_error": "Error while loading",
+      "confirm_retrait": "Confirm you have picked up this order?",
+      "toast_confirmed": "Pickup confirmed",
+      "toast_error": "Error",
+      "toast_litige_validation": "Describe the issue (5 characters min.)",
+      "toast_litige_sent": "Dispute opened, the GrowzApp team will arbitrate",
+      "title": "My GrowzMarket purchases",
+      "subtitle": "Track your GrowzMarket orders.",
+      "empty": "No purchase yet.",
+      "btn_catalogue": "Discover GrowzMarket",
+      "btn_facture": "View invoice",
+      "btn_confirm": "Confirm pickup",
+      "btn_litige": "Report an issue",
+      "litige_title": "Report an issue",
+      "litige_placeholder": "Describe the issue encountered...",
+      "btn_cancel": "Cancel",
+      "btn_send_litige": "Send"
+    },
+    "facture": {
+      "title": "GrowzMarket Invoice — Order #{{id}}",
+      "error": "Unable to display this invoice — it does not exist yet or you don't have access to it.",
+      "btn_download": "Download"
+    }
   }
 }

@@ -88,6 +88,16 @@ export default function UserSpaceSidebar({
         label: t("user_sidebar.mes_commandes", "Mes commandes"),
         icon: <FiShoppingBag size={16} />,
       },
+      {
+        to: "/mon-espace/ma-boutique",
+        label: t("user_sidebar.ma_boutique", "Ma Boutique GrowzMarket"),
+        icon: <FiShoppingBag size={16} />,
+      },
+      {
+        to: "/mon-espace/mes-ventes-market",
+        label: t("user_sidebar.mes_ventes_market", "Mes ventes GrowzMarket"),
+        icon: <FiShoppingBag size={16} />,
+      },
     ],
   });
 
@@ -137,6 +147,11 @@ export default function UserSpaceSidebar({
         to: "/wallet?tab=transfer",
         label: t("user_sidebar.transfer", "Transférer des fonds"),
         icon: <FiRepeat size={16} />,
+      },
+      {
+        to: "/mon-espace/mes-achats-market",
+        label: t("user_sidebar.mes_achats_market", "Mes achats GrowzMarket"),
+        icon: <FiShoppingBag size={16} />,
       },
     ],
   });

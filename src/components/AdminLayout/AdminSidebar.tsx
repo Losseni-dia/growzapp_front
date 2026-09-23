@@ -173,6 +173,11 @@ export default function AdminSidebar({
         icon: <FiShoppingBag size={16} />,
       },
       {
+        to: "/admin/growzmarket",
+        label: t("admin.sidebar.growzmarket", "GrowzMarket"),
+        icon: <FiShoppingBag size={16} />,
+      },
+      {
         to: "/admin/notifications",
         label: t("admin.sidebar.notifications"),
         icon: <FiBell size={16} />,

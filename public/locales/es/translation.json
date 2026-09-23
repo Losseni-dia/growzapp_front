@@ -31,7 +31,8 @@
     "news": "Noticias",
     "nearby": "Cerca de mí",
     "financed_projects": "Proyectos financiados",
-    "contact_us": "Contáctanos"
+    "contact_us": "Contáctanos",
+    "growzmarket": "GrowzMarket"
   },
   "financed_projects_page": {
     "title": "Proyectos financiados",
@@ -491,6 +492,8 @@
     "my_projects": "Mis proyectos",
     "create_project": "Crear un proyecto",
     "fiche_porteur": "Mi ficha de promotor",
+    "ma_boutique": "Mi Tienda GrowzMarket",
+    "mes_ventes_market": "Mis ventas GrowzMarket",
     "section_investisseur": "Inversor",
     "my_investments": "Mis inversiones",
     "my_portfolio": "Mi cartera",
@@ -500,6 +503,7 @@
     "deposit": "Depositar fondos",
     "withdraw": "Retirar fondos",
     "transfer": "Transferir fondos",
+    "mes_achats_market": "Mis compras GrowzMarket",
     "section_documents": "Documentos",
     "my_contracts": "Mis contratos",
     "my_invoices": "Mis facturas",
@@ -562,7 +566,8 @@
       "section_referentiels": "Datos de referencia",
       "referentiels": "Países, sectores, sitios",
       "section_config": "Configuración",
-      "parameters": "Ajustes"
+      "parameters": "Ajustes",
+      "growzmarket": "GrowzMarket"
     },
     "news": {
       "title": "Gestión de noticias",
@@ -1199,6 +1204,26 @@
       "arbitrate_placeholder": "Motivo de la decisión...",
       "btn_favor_porteur": "A favor del promotor (cancelado)",
       "btn_favor_fournisseur": "A favor del proveedor"
+    },
+    "growzmarket": {
+      "toast_load_error": "Error al cargar",
+      "toast_motif_required": "El motivo es obligatorio",
+      "toast_arbitrated": "Disputa resuelta",
+      "toast_error": "Error",
+      "title": "GrowzMarket",
+      "tab_litiges": "Disputas",
+      "tab_toutes": "Todas / historial",
+      "search_placeholder": "Buscar por proyecto, promotor, comprador...",
+      "filter_all": "Todos los estados",
+      "empty": "Nada que gestionar por ahora.",
+      "no_results": "Ningún resultado para esta búsqueda/filtro.",
+      "btn_facture": "Ver la factura",
+      "btn_arbitrate": "Arbitrar",
+      "arbitrate_title": "Arbitrar la disputa",
+      "arbitrate_placeholder": "Motivo de la decisión...",
+      "btn_cancel": "Cancelar",
+      "btn_favor_acheteur": "A favor del comprador (reembolsado)",
+      "btn_favor_vendeur": "A favor del vendedor"
     }
   },
   "portfolio": {
@@ -1891,5 +1916,124 @@
     "litige_placeholder": "Describe el problema encontrado...",
     "btn_cancel": "Cancelar",
     "btn_send_litige": "Enviar"
+  },
+  "growzmarket": {
+    "categorie": {
+      "ALIMENTATION": "Alimentación",
+      "ARTISANAT": "Artesanía",
+      "TEXTILE": "Textil",
+      "COSMETIQUE": "Cosmética",
+      "AGRICULTURE": "Agricultura",
+      "SERVICE": "Servicio",
+      "AUTRE": "Otro"
+    },
+    "timeline": {
+      "prete": "Lista para retirar",
+      "retiree": "Retiro confirmado",
+      "annulee": "Cancelada (disputa a favor del comprador, reembolsado)",
+      "non_retiree": "No retirada — a la espera de arbitraje"
+    },
+    "catalogue": {
+      "toast_error": "Error al cargar el catálogo",
+      "title": "GrowzMarket",
+      "subtitle": "Productos y servicios de los promotores de proyectos GrowzApp — pago por wallet, retiro donde el vendedor.",
+      "search_placeholder": "Buscar un producto o servicio...",
+      "filter_all": "Todas las categorías",
+      "empty": "Ningún producto disponible por el momento.",
+      "no_results": "Ningún resultado para esta búsqueda/filtro."
+    },
+    "detail": {
+      "toast_load_error": "Error al cargar",
+      "toast_confirmation_required": "Debes confirmar que puedes venir a retirar el pedido en el lugar indicado",
+      "toast_bought": "Compra realizada — el vendedor va a preparar tu pedido.",
+      "toast_error": "Error durante la compra",
+      "back": "Volver al catálogo",
+      "not_found": "Artículo no encontrado.",
+      "sold_by": "Vendido por",
+      "point_retrait_title": "Punto de retiro",
+      "point_retrait_hint": "Sin entrega a domicilio por ahora — el pedido debe retirarse en esta dirección.",
+      "stock_restant": "{{count}} en stock",
+      "confirmation_label": "Confirmo que puedo venir a retirar este pedido en: {{lieu}}",
+      "stock_insuffisant": "Cantidad superior al stock disponible.",
+      "btn_login_to_buy": "Iniciar sesión para comprar",
+      "btn_buying": "Compra en curso...",
+      "btn_buy": "Comprar — {{amount}}"
+    },
+    "boutique": {
+      "toast_validation": "Proyecto, nombre, precio (positivo), unidad y punto de retiro son obligatorios",
+      "toast_saved": "Artículo guardado",
+      "toast_error": "Error al guardar",
+      "confirm_delete": "¿Eliminar este artículo?",
+      "toast_deleted": "Artículo eliminado",
+      "title": "Mi Tienda GrowzMarket",
+      "subtitle": "Vende tus productos o servicios al público — el ingreso se acredita a la tesorería del proyecto elegido.",
+      "no_projet": "Necesitas un proyecto para vender en GrowzMarket — el ingreso de tus ventas se acredita a la tesorería de ese proyecto.",
+      "btn_create_projet": "Crear un proyecto",
+      "catalogue_title": "Mis artículos",
+      "btn_add_article": "Añadir un artículo",
+      "field_projet": "Elegir el proyecto vendedor...",
+      "field_nom": "Nombre (ej. Cesta de mangos secos)",
+      "field_unite": "Unidad (ej. cesta, kg, hora)",
+      "field_prix": "Precio (FCFA)",
+      "field_disponible": "Disponible",
+      "field_stock": "Stock (vacío = ilimitado)",
+      "field_delai": "Plazo de preparación (ej. Listo en 2 días)",
+      "field_description": "Descripción (opcional)",
+      "field_point_retrait": "Punto de retiro (lugar preciso)",
+      "field_telephone": "Teléfono de contacto (opcional)",
+      "point_retrait_hint": "Se muestra al comprador antes del pago — sé preciso (barrio, referencias).",
+      "field_photos": "Fotos (varias posibles)",
+      "photos_selected": "{{count}} foto(s) seleccionada(s)",
+      "btn_cancel": "Cancelar",
+      "btn_saving": "Guardando...",
+      "btn_save": "Guardar",
+      "catalogue_empty": "Ningún artículo en tu tienda por el momento.",
+      "badge_available": "Disponible",
+      "badge_unavailable": "No disponible",
+      "stock_restant": "{{count}} en stock",
+      "btn_edit": "Modificar"
+    },
+    "ventes": {
+      "toast_load_error": "Error al cargar",
+      "toast_prepared": "Pedido marcado como listo para retirar",
+      "toast_error": "Error",
+      "toast_litige_validation": "Describe el problema (5 caracteres mín.)",
+      "toast_litige_sent": "Disputa abierta, el equipo de GrowzApp arbitrará",
+      "title": "Mis ventas GrowzMarket",
+      "subtitle": "Pedidos recibidos en tus artículos GrowzMarket.",
+      "empty": "Todavía no hay ventas.",
+      "btn_boutique": "Gestionar mi tienda",
+      "btn_facture": "Ver la factura",
+      "btn_preparer": "Marcar como listo",
+      "btn_litige": "Reportar un problema",
+      "litige_title": "Reportar un problema",
+      "litige_placeholder": "Describe el problema encontrado...",
+      "btn_cancel": "Cancelar",
+      "btn_send_litige": "Enviar"
+    },
+    "achats": {
+      "toast_load_error": "Error al cargar",
+      "confirm_retrait": "¿Confirmas haber retirado este pedido?",
+      "toast_confirmed": "Retiro confirmado",
+      "toast_error": "Error",
+      "toast_litige_validation": "Describe el problema (5 caracteres mín.)",
+      "toast_litige_sent": "Disputa abierta, el equipo de GrowzApp arbitrará",
+      "title": "Mis compras GrowzMarket",
+      "subtitle": "Seguimiento de tus pedidos en GrowzMarket.",
+      "empty": "Todavía no hay compras.",
+      "btn_catalogue": "Descubrir GrowzMarket",
+      "btn_facture": "Ver la factura",
+      "btn_confirm": "Confirmar el retiro",
+      "btn_litige": "Reportar un problema",
+      "litige_title": "Reportar un problema",
+      "litige_placeholder": "Describe el problema encontrado...",
+      "btn_cancel": "Cancelar",
+      "btn_send_litige": "Enviar"
+    },
+    "facture": {
+      "title": "Factura GrowzMarket — Pedido #{{id}}",
+      "error": "No se puede mostrar esta factura — todavía no existe o no tienes acceso a ella.",
+      "btn_download": "Descargar"
+    }
   }
 }

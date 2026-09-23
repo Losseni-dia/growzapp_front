@@ -1,0 +1,151 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.header h1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.8rem;
+  color: var(--growz-primary);
+  margin: 0 0 0.4rem;
+}
+
+.header p {
+  color: #666;
+  margin: 0;
+}
+
+.filterBar {
+  display: flex;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.searchInput {
+  flex: 1 1 240px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  background: white;
+  color: #999;
+}
+
+.searchInput input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.88rem;
+  color: #333;
+  background: transparent;
+}
+
+.filterBar select {
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.88rem;
+  color: #333;
+  background: white;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: #666;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  color: #999;
+  background: #fafafa;
+  border-radius: 16px;
+  border: 2px dashed #e0e0e0;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+  transform: translateY(-2px);
+}
+
+.photo {
+  width: calc(100% + 2rem);
+  margin: -1rem -1rem 0.8rem;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #fafafa;
+  display: block;
+}
+
+.photoPlaceholder {
+  width: calc(100% + 2rem);
+  margin: -1rem -1rem 0.8rem;
+  aspect-ratio: 1 / 1;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+}
+
+.badgeCategorie {
+  display: inline-block;
+  background: var(--growz-mint-50);
+  color: var(--growz-primary);
+  border-radius: 50px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.card h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  color: #222;
+}
+
+.vendeur {
+  color: #888;
+  font-size: 0.82rem;
+  margin: 0 0 0.4rem;
+}
+
+.prix {
+  font-weight: 700;
+  color: var(--growz-primary);
+  margin: 0;
+}

@@ -1,0 +1,253 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--growz-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: #666;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  color: #999;
+  background: #fafafa;
+  border-radius: 16px;
+  border: 2px dashed #e0e0e0;
+  text-align: center;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 720px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mainPhoto {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #fafafa;
+  border-radius: 14px;
+  border: 1px solid #f0f0f0;
+}
+
+.photoPlaceholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #fafafa;
+  border-radius: 14px;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+}
+
+.thumbRow {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+}
+
+.thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.thumb:hover {
+  opacity: 1;
+}
+
+.thumbActive {
+  border-color: var(--growz-primary);
+  opacity: 1;
+}
+
+.info h1 {
+  font-size: 1.5rem;
+  color: #222;
+  margin: 0.4rem 0 0.3rem;
+}
+
+.badgeCategorie {
+  display: inline-block;
+  background: var(--growz-mint-50);
+  color: var(--growz-primary);
+  border-radius: 50px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.vendeur {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 0.8rem;
+}
+
+.description {
+  color: #555;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0 0 0.8rem;
+}
+
+.prix {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--growz-primary);
+  margin: 0 0 0.6rem;
+}
+
+.infoLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0.3rem 0;
+}
+
+.pointRetraitBox {
+  background: #fff8e1;
+  border: 1.5px solid #f0c14b;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  margin: 1rem 0;
+}
+
+.pointRetraitLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #7a5c00;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 0.3rem;
+}
+
+.pointRetraitValue {
+  color: #333;
+  font-weight: 600;
+  margin: 0 0 0.3rem;
+}
+
+.pointRetraitHint {
+  color: #7a5c00;
+  font-size: 0.78rem;
+  margin: 0.4rem 0 0;
+}
+
+.stockInfo {
+  color: #777;
+  font-size: 0.85rem;
+  margin: 0 0 0.6rem;
+}
+
+.qteControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.qteControl button {
+  border: none;
+  background: var(--growz-mint-50);
+  color: var(--growz-primary);
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.qteControl span {
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #333;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.checkboxLabel input {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.stockWarning {
+  color: #c62828;
+  font-size: 0.82rem;
+  margin: -0.5rem 0 1rem;
+}
+
+.btnAcheter {
+  width: 100%;
+  background: var(--growz-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.9rem;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btnAcheter:hover:not(:disabled) {
+  background: var(--growz-primary-pressed);
+}
+
+.btnAcheter:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

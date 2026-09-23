@@ -14,6 +14,7 @@ import {
   FiCheck,
   FiCheckCircle,
   FiRss,
+  FiShoppingBag,
   FiMenu,
   FiX,
   FiMail,
@@ -123,6 +124,10 @@ export default function Header() {
               <Link to="/news" className={styles.navLink}>
                 <FiRss />
                 <span>{t("header.news")}</span>
+              </Link>
+              <Link to="/growzmarket" className={styles.navLink}>
+                <FiShoppingBag />
+                <span>{t("header.growzmarket", "GrowzMarket")}</span>
               </Link>
               <Link to="/projets-finances" className={styles.navLink}>
                 <FiCheckCircle />

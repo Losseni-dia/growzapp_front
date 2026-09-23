@@ -97,6 +97,13 @@ const MesCommandesPage = lazy(() => import("./pages/MonEspace/MesCommandes/MesCo
 const AdminFournisseursPage = lazy(() => import("./pages/Admin/Fournisseurs/AdminFournisseursPage"));
 const AdminCommandesPage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesPage"));
 const CommandeFacturePage = lazy(() => import("./pages/Commandes/CommandeFacturePage"));
+const GrowzMarketPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketPage"));
+const GrowzMarketDetailPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketDetailPage"));
+const MaBoutiquePage = lazy(() => import("./pages/GrowzMarket/MaBoutiquePage"));
+const MesVentesMarketPage = lazy(() => import("./pages/GrowzMarket/MesVentesMarketPage"));
+const MesAchatsMarketPage = lazy(() => import("./pages/GrowzMarket/MesAchatsMarketPage"));
+const MarketFacturePage = lazy(() => import("./pages/GrowzMarket/MarketFacturePage"));
+const AdminGrowzMarketPage = lazy(() => import("./pages/Admin/GrowzMarket/AdminGrowzMarketPage"));
 const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
 const ContratPage = lazy(
   () => import("./pages/Contrat/ContratsPage/ContratPage"),
@@ -211,6 +218,8 @@ function App() {
                 element={<ProjetsFinancesPage />}
               />
               <Route path="/projet/:id" element={<ProjetDetailsPage />} />
+              <Route path="/growzmarket" element={<GrowzMarketPage />} />
+              <Route path="/growzmarket/:id" element={<GrowzMarketDetailPage />} />
               <Route path="/verifier-contrat" element={<VerifierContrat />} />
               <Route
                 path="/verifier-contrat/:code"
@@ -287,6 +296,10 @@ function App() {
                   <Route path="/fournisseurs/:id" element={<FournisseurDetailPage />} />
                   <Route path="/mes-commandes" element={<MesCommandesPage />} />
                   <Route path="/commandes/:id/facture" element={<CommandeFacturePage />} />
+                  <Route path="/mon-espace/ma-boutique" element={<MaBoutiquePage />} />
+                  <Route path="/mon-espace/mes-ventes-market" element={<MesVentesMarketPage />} />
+                  <Route path="/mon-espace/mes-achats-market" element={<MesAchatsMarketPage />} />
+                  <Route path="/growzmarket/commandes/:id/facture" element={<MarketFacturePage />} />
                 </Route>
               </Route>
 
@@ -378,6 +391,10 @@ function App() {
                     <Route
                       path="/admin/commandes"
                       element={<AdminCommandesPage />}
+                    />
+                    <Route
+                      path="/admin/growzmarket"
+                      element={<AdminGrowzMarketPage />}
                     />
                     <Route
                       path="/admin/notifications"
