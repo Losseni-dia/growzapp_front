@@ -548,6 +548,9 @@
       "section_overview": "Resumen",
       "dashboard": "Panel de control",
       "section_users": "Usuarios",
+      "section_porteur": "Promotor",
+      "section_fournisseur": "Proveedor",
+      "section_growzmarket": "GrowzMarket",
       "users": "Usuarios",
       "kyc": "KYC",
       "section_projects": "Proyectos e inversiones",
@@ -569,7 +572,8 @@
       "referentiels": "Países, sectores, sitios",
       "section_config": "Configuración",
       "parameters": "Ajustes",
-      "growzmarket": "GrowzMarket"
+      "growzmarket": "Pedidos GrowzMarket",
+      "commandes": "Pedidos a proveedores"
     },
     "news": {
       "title": "Gestión de noticias",

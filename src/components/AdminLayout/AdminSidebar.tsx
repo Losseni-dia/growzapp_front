@@ -76,17 +76,20 @@ export default function AdminSidebar({
           label: t("admin.sidebar.kyc"),
           icon: <FiCheckCircle size={16} />,
         },
+      ],
+    });
+
+    // Porteur — validation de fiche + gestion des projets. Distinct du
+    // Fournisseur (B2B) et de GrowzMarket (B2C) ci-dessous, pour ne pas
+    // mélanger les genres.
+    sections.push({
+      title: t("admin.sidebar.section_porteur", "Porteur"),
+      links: [
         {
           to: "/admin/fiches-porteur",
           label: t("admin.sidebar.fiches_porteur", "Fiches porteur"),
           icon: <FiCheckCircle size={16} />,
         },
-      ],
-    });
-
-    sections.push({
-      title: t("admin.sidebar.section_projects"),
-      links: [
         {
           to: "/admin/projets",
           label: t("admin.sidebar.projects"),
@@ -111,6 +114,36 @@ export default function AdminSidebar({
           to: "/admin/premium",
           label: t("admin.sidebar.premium", "Premium"),
           icon: <BsStarFill size={14} />,
+        },
+      ],
+    });
+
+    // Fournisseur = module B2B (achats de matières/services pour un projet).
+    sections.push({
+      title: t("admin.sidebar.section_fournisseur", "Fournisseur"),
+      links: [
+        {
+          to: "/admin/fournisseurs",
+          label: t("admin.sidebar.fournisseurs", "Fournisseurs"),
+          icon: <FiTruck size={16} />,
+        },
+        {
+          to: "/admin/commandes",
+          label: t("admin.sidebar.commandes", "Commandes fournisseur"),
+          icon: <FiShoppingBag size={16} />,
+        },
+      ],
+    });
+
+    // GrowzMarket = module B2C (le porteur vend au grand public) — distinct
+    // du module Fournisseur ci-dessus.
+    sections.push({
+      title: t("admin.sidebar.section_growzmarket", "GrowzMarket"),
+      links: [
+        {
+          to: "/admin/growzmarket",
+          label: t("admin.sidebar.growzmarket", "Commandes GrowzMarket"),
+          icon: <FiShoppingBag size={16} />,
         },
       ],
     });
@@ -161,21 +194,6 @@ export default function AdminSidebar({
         to: "/admin/contact",
         label: t("admin.sidebar.contact"),
         icon: <FiMail size={16} />,
-      },
-      {
-        to: "/admin/fournisseurs",
-        label: t("admin.sidebar.fournisseurs", "Fournisseurs"),
-        icon: <FiTruck size={16} />,
-      },
-      {
-        to: "/admin/commandes",
-        label: t("admin.sidebar.commandes", "Commandes"),
-        icon: <FiShoppingBag size={16} />,
-      },
-      {
-        to: "/admin/growzmarket",
-        label: t("admin.sidebar.growzmarket", "GrowzMarket"),
-        icon: <FiShoppingBag size={16} />,
       },
       {
         to: "/admin/notifications",
