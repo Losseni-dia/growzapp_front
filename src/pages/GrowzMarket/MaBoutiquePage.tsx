@@ -350,7 +350,7 @@ export default function MaBoutiquePage() {
             <div className={styles.articleGrid}>
               {articles.map((a) => (
                 <div key={a.id} className={styles.articleCard}>
-                  {a.photos.length > 0 ? (
+                  {(a.photos || []).length > 0 ? (
                     <img src={buildFileUrl(a.photos[0])} alt={a.nom} className={styles.articlePhoto} />
                   ) : (
                     <div className={styles.photoPlaceholder}>

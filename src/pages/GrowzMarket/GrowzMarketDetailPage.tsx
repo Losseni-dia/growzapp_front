@@ -52,7 +52,7 @@ export default function GrowzMarketDetailPage() {
     if (!id) return;
     api
       .get<{ data: ArticleMarketDTO }>(`/api/market/articles/${id}`)
-      .then((res) => setArticle(res.data))
+      .then((res) => setArticle({ ...res.data, photos: res.data.photos || [] }))
       .catch(() => toast.error(t("growzmarket.detail.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
   }, [id, t]);

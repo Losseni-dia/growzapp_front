@@ -102,7 +102,7 @@ export default function GrowzMarketPage() {
         <div className={styles.grid}>
           {filteredArticles.map((a) => (
             <Link key={a.id} to={`/growzmarket/${a.id}`} className={styles.card}>
-              {a.photos.length > 0 ? (
+              {(a.photos || []).length > 0 ? (
                 <img src={buildFileUrl(a.photos[0])} alt={a.nom} className={styles.photo} />
               ) : (
                 <div className={styles.photoPlaceholder}>
