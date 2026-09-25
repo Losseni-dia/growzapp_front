@@ -234,16 +234,17 @@ export default function Header() {
                           >
                             {t("header.go_to_my_space", "Accéder à mon espace")}
                           </Link>
-                          {isAdmin && (
-                            <Link
-                              to="/admin"
-                              className={styles.profileMenuItem}
-                              onClick={() => setShowProfileMenu(false)}
-                            >
-                              <FiShield size={14} /> {t("admin_space")}
-                            </Link>
-                          )}
                         </div>
+                      )}
+
+                      {isAdmin && (
+                        <Link
+                          to="/admin"
+                          className={styles.profileMenuLabel}
+                          onClick={() => setShowProfileMenu(false)}
+                        >
+                          <FiShield size={13} /> {t("admin_space")}
+                        </Link>
                       )}
 
                       <div className={styles.divider}></div>
