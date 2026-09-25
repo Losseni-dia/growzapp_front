@@ -153,38 +153,6 @@ export default function Header() {
                 <FiShoppingBag />
                 <span>{t("header.growzmarket", "GrowzMarket")}</span>
               </Link>
-              <Link
-                to="/growzmarket/panier"
-                className={styles.navLink}
-                aria-label={t("growzmarket.cart.nav_label", "Panier")}
-              >
-                <span style={{ position: "relative", display: "inline-flex" }}>
-                  <FiShoppingCart />
-                  {totalItems > 0 && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        top: -8,
-                        right: -10,
-                        background: "var(--growz-primary, #1B5E20)",
-                        color: "white",
-                        borderRadius: "50%",
-                        fontSize: "0.65rem",
-                        fontWeight: 700,
-                        minWidth: 16,
-                        height: 16,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "0 3px",
-                      }}
-                    >
-                      {totalItems}
-                    </span>
-                  )}
-                </span>
-                <span>{t("growzmarket.cart.nav_label", "Panier")}</span>
-              </Link>
             </>
           )}
         </div>
@@ -193,6 +161,16 @@ export default function Header() {
           <div className={styles.userSection}>
             {user ? (
               <>
+                <Link
+                  to="/growzmarket/panier"
+                  className={styles.cartIconBtn}
+                  aria-label={t("growzmarket.cart.nav_label", "Panier")}
+                >
+                  <FiShoppingCart size={22} />
+                  {totalItems > 0 && (
+                    <span className={styles.cartBadge}>{totalItems}</span>
+                  )}
+                </Link>
                 <NotificationBell />
 
                 <div className={styles.profileWrapper} ref={profileRef}>
