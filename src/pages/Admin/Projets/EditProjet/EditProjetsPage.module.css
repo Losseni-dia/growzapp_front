@@ -318,7 +318,8 @@
 }
 
 .field input,
-.field select {
+.field select,
+.field textarea {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e2e8f0;
@@ -328,6 +329,8 @@
   background: white;
   transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
+  font-family: inherit;
+  resize: vertical;
 }
 
 .statutHint {
@@ -343,7 +346,8 @@
 }
 
 .field input:focus,
-.field select:focus {
+.field select:focus,
+.field textarea:focus {
   outline: none;
   border-color: var(--growz-primary);
   box-shadow: 0 0 0 3px rgba(26, 107, 60, 0.08);

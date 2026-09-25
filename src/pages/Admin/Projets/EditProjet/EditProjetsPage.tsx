@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   FiCamera,
+  FiClock,
   FiInfo,
   FiMapPin,
   FiSave,
@@ -42,6 +44,7 @@ function parseInt_(raw: string): number {
 }
 
 export default function EditProjetPage() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -146,7 +149,7 @@ export default function EditProjetPage() {
           .catch(() => setExistingPhotos([]));
       })
       .catch(() => {
-        toast.error("Impossible de charger le projet");
+        toast.error(t("admin.edit_projet.toast_load_error", "Impossible de charger le projet"));
         navigate("/admin/projets");
       })
       .finally(() => setLoading(false));
@@ -220,9 +223,9 @@ export default function EditProjetPage() {
       setShowCropper(false);
       setCrop({ x: 0, y: 0 });
       setZoom(1);
-      toast.success("Poster mis à jour !");
+      toast.success(t("admin.edit_projet.toast_poster_updated", "Poster mis à jour !"));
     } catch {
-      toast.error("Erreur de recadrage");
+      toast.error(t("admin.edit_projet.toast_crop_error", "Erreur de recadrage"));
     }
   };
 
@@ -240,8 +243,13 @@ export default function EditProjetPage() {
 
     const estValidation = nouveauStatut === "VALIDE";
     const confirmMessage = estValidation
-      ? "Valider ce projet ? Tous les utilisateurs de la plateforme seront notifiés qu'un nouveau projet est disponible."
-      : `Changer le statut du projet en "${nouveauStatut}" ?`;
+      ? t(
+          "admin.edit_projet.confirm_validate",
+          "Valider ce projet ? Tous les utilisateurs de la plateforme seront notifiés qu'un nouveau projet est disponible."
+        )
+      : t("admin.edit_projet.confirm_change_statut", 'Changer le statut du projet en "{{statut}}" ?', {
+          statut: nouveauStatut,
+        });
     if (!window.confirm(confirmMessage)) return;
 
     const ancienStatut = projet.statutProjet;
@@ -252,9 +260,9 @@ export default function EditProjetPage() {
         nouveauStatut,
       );
       setProjet({ ...projet, statutProjet: nouveauStatut });
-      toast.success("Statut mis à jour");
+      toast.success(t("admin.edit_projet.toast_statut_updated", "Statut mis à jour"));
     } catch (err: any) {
-      toast.error("Erreur : " + err.message);
+      toast.error(t("admin.edit_projet.toast_error_prefix", "Erreur : {{message}}", { message: err.message }));
       setProjet({ ...projet, statutProjet: ancienStatut });
     } finally {
       setChangingStatut(false);
@@ -280,9 +288,9 @@ export default function EditProjetPage() {
     try {
       await api.delete(`/api/admin/projets/${projet.id}/photos/${photoId}`);
       setExistingPhotos((prev) => prev.filter((p) => p.id !== photoId));
-      toast.success("Photo supprimée");
+      toast.success(t("admin.edit_projet.toast_photo_deleted", "Photo supprimée"));
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la suppression");
+      toast.error(err.message || t("admin.edit_projet.toast_delete_error", "Erreur lors de la suppression"));
     }
   };
 
@@ -318,10 +326,10 @@ export default function EditProjetPage() {
       // réaffichait l'ancien nom/valeurs tant que le cache n'expirait pas,
       // d'où l'impression que le renommage "marchait parfois, parfois pas".
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
-      toast.success("Projet enregistré !");
+      toast.success(t("admin.edit_projet.toast_saved", "Projet enregistré !"));
       navigate("/admin/projets");
     } catch (err: any) {
-      toast.error("Erreur : " + err.message);
+      toast.error(t("admin.edit_projet.toast_error_prefix", "Erreur : {{message}}", { message: err.message }));
     } finally {
       setSaving(false);
     }
@@ -347,7 +355,7 @@ export default function EditProjetPage() {
       .finally(() => setGuessingCountry(false));
   };
 
-  if (loading) return <div className={styles.loader}>Chargement...</div>;
+  if (loading) return <div className={styles.loader}>{t("dashboard.loading", "Chargement...")}</div>;
 
   return (
     <div className={styles.container}>
@@ -427,7 +435,7 @@ export default function EditProjetPage() {
                 fontSize: "0.95rem",
               }}
             >
-              Annuler
+              {t("admin.edit_projet.btn_cancel_crop", "Annuler")}
             </button>
             <button
               type="button"
@@ -443,7 +451,7 @@ export default function EditProjetPage() {
                 fontSize: "1rem",
               }}
             >
-              ✓ Valider l'image
+              ✓ {t("admin.edit_projet.btn_confirm_crop", "Valider l'image")}
             </button>
           </div>
         </div>
@@ -451,10 +459,10 @@ export default function EditProjetPage() {
 
       <header className={styles.header}>
         <h1 className={styles.title}>
-          Expertise Technique : <span>{projet.libelle}</span>
+          {t("admin.edit_projet.header_title", "Expertise Technique")} : <span>{projet.libelle}</span>
         </h1>
         <div className={`${styles.statusBadge} ${styles[projet.statutProjet]}`}>
-          {projet.statutProjet}
+          {t(`admin.projects_list.status.${projet.statutProjet}`, { defaultValue: projet.statutProjet })}
         </div>
       </header>
 
@@ -464,23 +472,23 @@ export default function EditProjetPage() {
           {/* POSTER */}
           <section className={styles.section}>
             <h3>
-              <FiCamera /> Poster Officiel
+              <FiCamera /> {t("admin.edit_projet.poster_title", "Poster Officiel")}
             </h3>
             <div
               className={styles.posterBox}
               onClick={() => fileInputRef.current?.click()}
             >
               {preview ? (
-                <img src={preview} alt="Aperçu" />
+                <img src={preview} alt={t("admin.edit_projet.poster_alt", "Aperçu") as string} />
               ) : (
-                <div className={styles.noImg}>Aucun poster</div>
+                <div className={styles.noImg}>{t("admin.edit_projet.no_poster", "Aucun poster")}</div>
               )}
               <div className={styles.overlay}>
-                <FiUpload /> Modifier
+                <FiUpload /> {t("admin.edit_projet.btn_edit_poster", "Modifier")}
               </div>
             </div>
             {posterFile && (
-              <p className={styles.posterReady}>✓ Nouveau poster prêt</p>
+              <p className={styles.posterReady}>✓ {t("admin.edit_projet.poster_ready", "Nouveau poster prêt")}</p>
             )}
             <input
               ref={fileInputRef}
@@ -494,7 +502,7 @@ export default function EditProjetPage() {
           {/* GALERIE */}
           <section className={styles.section}>
             <h3>
-              <FiCamera /> Galerie (photos additionnelles)
+              <FiCamera /> {t("admin.edit_projet.gallery_title", "Galerie (photos additionnelles)")}
             </h3>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
               {existingPhotos.map((p) => (
@@ -550,10 +558,10 @@ export default function EditProjetPage() {
           <form onSubmit={handleSubmit} className={styles.form}>
             {/* 1. Infos de base */}
             <div className={styles.fieldGroup}>
-              <h4>1. Informations de base</h4>
+              <h4>1. {t("admin.edit_projet.section_infos", "Informations de base")}</h4>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Libellé</label>
+                  <label>{t("admin.edit_projet.label_libelle", "Libellé")}</label>
                   <input
                     type="text"
                     value={projet.libelle}
@@ -564,9 +572,9 @@ export default function EditProjetPage() {
                 </div>
                 <div className={styles.field}>
                   <ComboBox
-                    label="Secteur"
+                    label={t("admin.edit_projet.label_secteur", "Secteur") as string}
                     icon={<FiTag />}
-                    placeholder="Secteur d'activité"
+                    placeholder={t("admin.edit_projet.placeholder_secteur", "Secteur d'activité") as string}
                     value={projet.secteurNom || ""}
                     onChange={(v) =>
                       setProjet({ ...projet, secteurNom: v })
@@ -577,28 +585,39 @@ export default function EditProjetPage() {
                   />
                 </div>
               </div>
+              <div className={styles.field}>
+                <label>{t("admin.edit_projet.label_description", "Description")}</label>
+                <textarea
+                  rows={5}
+                  placeholder={t("admin.edit_projet.placeholder_description", "Description détaillée du projet") as string}
+                  value={projet.description || ""}
+                  onChange={(e) =>
+                    setProjet({ ...projet, description: e.target.value })
+                  }
+                />
+              </div>
             </div>
 
             {/* 2. Analyse financière */}
             <div className={styles.fieldGroup}>
-              <h4>2. Analyse Financière</h4>
+              <h4>2. {t("admin.edit_projet.section_finances", "Analyse Financière")}</h4>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Objectif Financement (FCFA)</label>
+                  <label>{t("admin.edit_projet.label_objectif", "Objectif Financement (FCFA)")}</label>
                   <input
                     type="text"
                     inputMode="numeric"
-                    placeholder="Ex : 5000000"
+                    placeholder={t("admin.edit_projet.placeholder_objectif", "Ex : 5000000") as string}
                     value={objectifDisplay}
                     onChange={(e) => updateFinances("objectif", e.target.value)}
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>Prix de la Part (FCFA)</label>
+                  <label>{t("admin.edit_projet.label_prix_part", "Prix de la Part (FCFA)")}</label>
                   <input
                     type="text"
                     inputMode="numeric"
-                    placeholder="Ex : 10000"
+                    placeholder={t("admin.edit_projet.placeholder_prix_part", "Ex : 10000") as string}
                     value={prixPartDisplay}
                     onChange={(e) => updateFinances("prix", e.target.value)}
                   />
@@ -607,21 +626,21 @@ export default function EditProjetPage() {
 
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Valorisation Totale (FCFA)</label>
+                  <label>{t("admin.edit_projet.label_valuation", "Valorisation Totale (FCFA)")}</label>
                   <input
                     type="text"
                     inputMode="numeric"
-                    placeholder="Ex : 25000000"
+                    placeholder={t("admin.edit_projet.placeholder_valuation", "Ex : 25000000") as string}
                     value={valuationDisplay}
                     onChange={(e) => updateValuation(e.target.value)}
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>ROI (%)</label>
+                  <label>{t("admin.edit_projet.label_roi", "ROI (%)")}</label>
                   <input
                     type="text"
                     inputMode="decimal"
-                    placeholder="Ex : 15"
+                    placeholder={t("admin.edit_projet.placeholder_roi", "Ex : 15") as string}
                     value={roiDisplay}
                     onChange={(e) => {
                       const raw = e.target.value.replace(/[^0-9.]/g, "");
@@ -634,23 +653,22 @@ export default function EditProjetPage() {
 
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Parts totales (auto)</label>
+                  <label>{t("admin.edit_projet.label_parts_totales", "Parts totales (auto)")}</label>
                   <div className={styles.autoCalculatedField}>
                     <FiInfo />
-                    {partsDisponibleDisplay
-                      ? Number(partsDisponibleDisplay).toLocaleString("fr-FR")
-                      : "0"}{" "}
-                    parts de {projet.prixUnePart?.toLocaleString("fr-FR") ?? 0}{" "}
-                    FCFA
+                    {t("admin.edit_projet.parts_totales_value", "{{parts}} parts de {{prix}} FCFA", {
+                      parts: partsDisponibleDisplay ? Number(partsDisponibleDisplay).toLocaleString("fr-FR") : "0",
+                      prix: projet.prixUnePart?.toLocaleString("fr-FR") ?? 0,
+                    })}
                   </div>
                 </div>
                 <div className={styles.field}>
-                  <label>Parts à lever (%) — auto</label>
+                  <label>{t("admin.edit_projet.label_parts_a_lever", "Parts à lever (%) — auto")}</label>
                   <div className={styles.autoCalculatedField}>
                     <FiInfo />
                     {partsALeverDisplay
                       ? `${partsALeverDisplay}%`
-                      : "Saisir objectif et valorisation"}
+                      : t("admin.edit_projet.parts_a_lever_hint", "Saisir objectif et valorisation")}
                   </div>
                 </div>
               </div>
@@ -658,10 +676,10 @@ export default function EditProjetPage() {
 
             {/* 3. Publication */}
             <div className={styles.fieldGroup}>
-              <h4>3. Publication</h4>
+              <h4>3. {t("admin.edit_projet.section_publication", "Publication")}</h4>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Date Début</label>
+                  <label>{t("admin.edit_projet.label_date_debut", "Date Début")}</label>
                   <input
                     type="date"
                     value={projet.dateDebut?.split("T")[0] || ""}
@@ -671,7 +689,7 @@ export default function EditProjetPage() {
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>Date Fin</label>
+                  <label>{t("admin.edit_projet.label_date_fin", "Date Fin")}</label>
                   <input
                     type="date"
                     value={projet.dateFin?.split("T")[0] || ""}
@@ -683,21 +701,41 @@ export default function EditProjetPage() {
                 </div>
               </div>
               <div className={styles.field}>
-                <label>Statut</label>
+                <label><FiClock style={{ verticalAlign: "middle" }} /> {t("admin.edit_projet.label_duree", "Durée (mois)")}</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder={t("admin.edit_projet.placeholder_duree", "Laisser vide pour une durée indéterminée") as string}
+                  value={projet.dureeMois ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, "");
+                    setProjet({ ...projet, dureeMois: val === "" ? null : parseInt(val, 10) });
+                  }}
+                />
+                {projet.dureeMois === null && (
+                  <p className={styles.statutHint}>
+                    ⏳ {t("admin.edit_projet.duree_indeterminee", "Durée indéterminée")}
+                  </p>
+                )}
+              </div>
+              <div className={styles.field}>
+                <label>{t("admin.edit_projet.label_statut", "Statut")}</label>
                 <select
                   value={projet.statutProjet}
                   disabled={changingStatut}
                   onChange={(e) => handleChangerStatut(e.target.value)}
                 >
-                  <option value="SOUMIS">🟠 Soumis</option>
-                  <option value="VALIDE">🟢 Validé</option>
-                  <option value="EN_COURS">🔵 En cours</option>
-                  <option value="TERMINE">🏁 Terminé</option>
-                  <option value="REJETE">🔴 Rejeté</option>
+                  <option value="SOUMIS">🟠 {t("admin.projects_list.status.SOUMIS", "Soumis")}</option>
+                  <option value="VALIDE">🟢 {t("admin.projects_list.status.VALIDE", "Validé")}</option>
+                  <option value="EN_COURS">🔵 {t("admin.projects_list.status.EN_COURS", "En cours")}</option>
+                  <option value="TERMINE">🏁 {t("admin.projects_list.status.TERMINE", "Terminé")}</option>
+                  <option value="REJETE">🔴 {t("admin.projects_list.status.REJETE", "Rejeté")}</option>
                 </select>
                 <p className={styles.statutHint}>
-                  Le changement de statut est appliqué immédiatement et
-                  séparément du bouton "Enregistrer".
+                  {t(
+                    "admin.edit_projet.statut_hint",
+                    'Le changement de statut est appliqué immédiatement et séparément du bouton "Enregistrer".'
+                  )}
                 </p>
               </div>
             </div>
@@ -705,14 +743,14 @@ export default function EditProjetPage() {
             {/* 4. Localisation exacte */}
             <div className={styles.fieldGroup}>
               <h4>
-                <FiMapPin style={{ verticalAlign: "middle" }} /> 4. Localisation exacte du site
+                <FiMapPin style={{ verticalAlign: "middle" }} /> 4. {t("admin.edit_projet.section_location", "Localisation exacte du site")}
               </h4>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Ville / Localité</label>
+                  <label>{t("admin.edit_projet.label_ville", "Ville / Localité")}</label>
                   <input
                     type="text"
-                    placeholder="Ex : Abidjan"
+                    placeholder={t("admin.edit_projet.placeholder_ville", "Ex : Abidjan") as string}
                     value={projet.localiteNom || ""}
                     onChange={(e) =>
                       setProjet({ ...projet, localiteNom: e.target.value })
@@ -720,10 +758,10 @@ export default function EditProjetPage() {
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>Pays</label>
+                  <label>{t("admin.edit_projet.label_pays", "Pays")}</label>
                   <input
                     type="text"
-                    placeholder="Ex : Côte d'Ivoire"
+                    placeholder={t("admin.edit_projet.placeholder_pays", "Ex : Côte d'Ivoire") as string}
                     value={projet.paysNom || ""}
                     onChange={(e) =>
                       setProjet({ ...projet, paysNom: e.target.value })
@@ -732,10 +770,10 @@ export default function EditProjetPage() {
                 </div>
               </div>
               <div className={styles.field}>
-                <label>Adresse</label>
+                <label>{t("admin.edit_projet.label_adresse", "Adresse")}</label>
                 <input
                   type="text"
-                  placeholder="Détectée automatiquement, modifiable"
+                  placeholder={t("admin.edit_projet.placeholder_adresse", "Détectée automatiquement, modifiable") as string}
                   value={projet.adresse || ""}
                   onChange={(e) =>
                     setProjet({ ...projet, adresse: e.target.value })
@@ -743,10 +781,10 @@ export default function EditProjetPage() {
                 />
               </div>
               <p className={styles.statutHint}>
-                Cliquez sur la carte (ou déplacez le marqueur) pour placer le
-                site exact du projet — zoomez jusqu'à l'adresse précise.
-                L'adresse ci-dessus est détectée automatiquement (même sans
-                adressage formel) mais reste modifiable.
+                {t(
+                  "admin.edit_projet.map_hint",
+                  "Cliquez sur la carte (ou déplacez le marqueur) pour placer le site exact du projet — zoomez jusqu'à l'adresse précise. L'adresse ci-dessus est détectée automatiquement (même sans adressage formel) mais reste modifiable."
+                )}
               </p>
               <LocationPickerMap
                 latitude={projet.latitude ?? null}
@@ -754,11 +792,11 @@ export default function EditProjetPage() {
                 onChange={handleLocationChange}
               />
               {guessingCountry && (
-                <p className={styles.statutHint}>Détection du pays...</p>
+                <p className={styles.statutHint}>{t("admin.edit_projet.detecting_country", "Détection du pays...")}</p>
               )}
               <div className={styles.row} style={{ marginTop: "0.75rem" }}>
                 <div className={styles.field}>
-                  <label>Latitude</label>
+                  <label>{t("admin.edit_projet.label_latitude", "Latitude")}</label>
                   <input
                     type="text"
                     inputMode="decimal"
@@ -774,7 +812,7 @@ export default function EditProjetPage() {
                   />
                 </div>
                 <div className={styles.field}>
-                  <label>Longitude</label>
+                  <label>{t("admin.edit_projet.label_longitude", "Longitude")}</label>
                   <input
                     type="text"
                     inputMode="decimal"
@@ -793,7 +831,7 @@ export default function EditProjetPage() {
             </div>
 
             <button type="submit" className={styles.btnSave} disabled={saving}>
-              <FiSave /> {saving ? "Sauvegarde..." : "Enregistrer"}
+              <FiSave /> {saving ? t("admin.edit_projet.saving", "Sauvegarde...") : t("admin.edit_projet.btn_save", "Enregistrer")}
             </button>
           </form>
         </main>
