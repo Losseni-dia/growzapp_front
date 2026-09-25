@@ -45,16 +45,27 @@ export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
+  // Sélecteur langue/devise pour les visiteurs non connectés — avant ce
+  // correctif, ces réglages n'existaient que dans le menu profil, donc
+  // inaccessibles à quiconque n'est pas connecté (faille UX remontée par
+  // des testeurs externes).
+  const [showGuestMenu, setShowGuestMenu] = useState(false);
+  const [guestSection, setGuestSection] = useState<"devise" | "langue" | null>(null);
+  const toggleGuestSection = (section: "devise" | "langue") =>
+    setGuestSection((prev) => (prev === section ? null : section));
+  const guestMenuRef = useRef<HTMLDivElement>(null);
+
   const isAdmin = useMemo(
     () => user?.roles?.includes("ADMIN") ?? false,
     [user],
   );
   const availableCurrencies = useMemo(() => Object.keys(rates), [rates]);
   const languages = [
-    { code: "fr", label: "Français" },
-    { code: "en", label: "English" },
-    { code: "es", label: "Español" },
+    { code: "fr", label: "Français", flag: "🇫🇷" },
+    { code: "en", label: "English", flag: "🇬🇧" },
+    { code: "es", label: "Español", flag: "🇪🇸" },
   ];
+  const currentLanguage = languages.find((l) => l.code === i18n.language) ?? languages[0];
 
   const handleLogout = () => {
     if (
@@ -79,6 +90,8 @@ export default function Header() {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node))
         setShowProfileMenu(false);
+      if (guestMenuRef.current && !guestMenuRef.current.contains(e.target as Node))
+        setShowGuestMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -283,7 +296,7 @@ export default function Header() {
                                 localStorage.setItem("i18nextLng", lang.code);
                               }}
                             >
-                              {lang.label}
+                              <span aria-hidden="true">{lang.flag}</span> {lang.label}
                               {i18n.language === lang.code && (
                                 <FiCheck size={13} />
                               )}
@@ -305,9 +318,86 @@ export default function Header() {
                 </div>
               </>
             ) : (
-              <Link to="/login" className={styles.loginBtn}>
-                <FiLogIn /> <span>{t("login")}</span>
-              </Link>
+              <>
+                <div className={styles.profileWrapper} ref={guestMenuRef}>
+                  <button
+                    onClick={() => setShowGuestMenu(!showGuestMenu)}
+                    className={`${styles.profileTrigger} ${showGuestMenu ? styles.active : ""}`}
+                    aria-label={t("header.settings", "Langue et devise")}
+                  >
+                    <span aria-hidden="true">{currentLanguage.flag}</span>
+                    <span className={styles.userName}>{currency}</span>
+                    <FiChevronDown className={styles.chevron} />
+                  </button>
+
+                  {showGuestMenu && (
+                    <div className={styles.profileMenu}>
+                      {/* ── DEVISE ── */}
+                      <button
+                        type="button"
+                        className={styles.profileMenuLabel}
+                        onClick={() => toggleGuestSection("devise")}
+                      >
+                        <FiChevronDown
+                          size={13}
+                          className={`${styles.sectionChevron} ${guestSection === "devise" ? styles.sectionChevronOpen : ""}`}
+                        />
+                        <FiDollarSign size={13} /> {t("header.currency", "Devise")} ({currency})
+                      </button>
+                      {guestSection === "devise" && (
+                        <div className={styles.profileMenuOptions}>
+                          {availableCurrencies.map((c) => (
+                            <button
+                              key={c}
+                              className={`${styles.profileMenuOption} ${currency === c ? styles.optionActive : ""}`}
+                              onClick={() => setCurrency(c)}
+                            >
+                              {c}
+                              {currency === c && <FiCheck size={13} />}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* ── LANGUE ── */}
+                      <button
+                        type="button"
+                        className={styles.profileMenuLabel}
+                        onClick={() => toggleGuestSection("langue")}
+                      >
+                        <FiChevronDown
+                          size={13}
+                          className={`${styles.sectionChevron} ${guestSection === "langue" ? styles.sectionChevronOpen : ""}`}
+                        />
+                        <FiGlobe size={13} /> {t("header.language", "Langue")}
+                      </button>
+                      {guestSection === "langue" && (
+                        <div className={styles.profileMenuOptions}>
+                          {languages.map((lang) => (
+                            <button
+                              key={lang.code}
+                              className={`${styles.profileMenuOption} ${i18n.language === lang.code ? styles.optionActive : ""}`}
+                              onClick={() => {
+                                i18n.changeLanguage(lang.code);
+                                localStorage.setItem("i18nextLng", lang.code);
+                              }}
+                            >
+                              <span aria-hidden="true">{lang.flag}</span> {lang.label}
+                              {i18n.language === lang.code && (
+                                <FiCheck size={13} />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <Link to="/login" className={styles.loginBtn}>
+                  <FiLogIn /> <span>{t("login")}</span>
+                </Link>
+              </>
             )}
           </div>
         </div>

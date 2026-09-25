@@ -172,8 +172,8 @@
 }
 
 .loginBtn {
-  background: var(--growz-primary);
-  color: white;
+  background: transparent;
+  color: var(--growz-primary);
   padding: 0.6rem 1.2rem;
   border-radius: 12px;
   text-decoration: none;
@@ -181,6 +181,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.loginBtn:hover {
+  background: var(--growz-primary);
+  color: white;
 }
 
 /* Admin Dropdown Styles */

@@ -32,7 +32,10 @@
     "nearby": "Near me",
     "financed_projects": "Financed Projects",
     "contact_us": "Contact us",
-    "growzmarket": "GrowzMarket"
+    "growzmarket": "GrowzMarket",
+    "settings": "Language and currency",
+    "currency": "Currency",
+    "language": "Language"
   },
   "financed_projects_page": {
     "title": "Financed Projects",
