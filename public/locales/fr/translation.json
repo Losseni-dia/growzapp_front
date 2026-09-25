@@ -211,6 +211,9 @@
     "back_to_details": "Retour aux détails du projet",
     "toast_invest_success": "Investissement pris en compte !",
     "financing": "Financement",
+    "porteur_card_title": "À propos du porteur",
+    "porteur_projets_precedents": "Projets précédents",
+    "financed_suffix": "financé",
     "collected_amount": "Collectés",
     "parts_prises": "parts prises",
     "parts_disponibles": "parts disponibles",
@@ -236,6 +239,12 @@
   "project_form": {
     "title": "Soumettre un projet",
     "subtitle": "Présentez votre idée en quelques étapes simples.",
+    "fiche_gate": {
+      "title": "Fiche de présentation requise",
+      "message": "Avant de pouvoir soumettre un projet, votre profil doit être vérifié par notre équipe (fiche de présentation professionnelle). Contactez GrowzApp pour engager cette vérification — elle rassure les investisseurs sur le sérieux des porteurs de projet.",
+      "message_rejected": "Votre fiche de présentation a été marquée non conforme par notre équipe. Contactez GrowzApp pour la faire corriger avant de pouvoir soumettre un projet.",
+      "cta": "Voir l'état de ma fiche"
+    },
     "sections": {
       "photo": "Photo de couverture",
       "presentation": "Présentation",
@@ -515,6 +524,8 @@
     "my_projects": "Mes projets",
     "create_project": "Créer un projet",
     "fiche_porteur": "Ma fiche porteur",
+    "fournisseurs": "Trouver un fournisseur",
+    "mon_espace_fournisseur": "Mon espace fournisseur",
     "ma_boutique": "Ma Boutique GrowzMarket",
     "mes_ventes_market": "Mes ventes GrowzMarket",
     "section_investisseur": "Investisseur",
@@ -534,6 +545,10 @@
     "profile": "Mon profil",
     "kyc": "Vérification d'identité (KYC)",
     "contact": "Contact / Support"
+  },
+  "fiche_porteur": {
+    "projets_precedents": "Projets précédents",
+    "financed_suffix": "financé"
   },
   "contact_page": {
     "title": "Contact / Support",
@@ -594,7 +609,9 @@
       "section_config": "Configuration",
       "parameters": "Paramètres",
       "growzmarket": "Commandes GrowzMarket",
-      "commandes": "Commandes fournisseur"
+      "commandes": "Commandes fournisseur",
+      "fiches_porteur": "Fiches porteur",
+      "fournisseurs": "Fournisseurs"
     },
     "news": {
       "title": "Gestion des actualités",

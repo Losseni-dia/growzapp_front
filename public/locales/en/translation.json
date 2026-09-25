@@ -212,6 +212,9 @@
     "back_to_details": "Back to project details",
     "toast_invest_success": "Investment recorded!",
     "financing": "Financing",
+    "porteur_card_title": "About the project owner",
+    "porteur_projets_precedents": "Previous projects",
+    "financed_suffix": "funded",
     "collected_amount": "Raised",
     "parts_prises": "shares taken",
     "parts_disponibles": "shares available",
@@ -249,6 +252,12 @@
   "project_form": {
     "title": "Submit a project",
     "subtitle": "Present your idea in a few simple steps.",
+    "fiche_gate": {
+      "title": "Profile sheet required",
+      "message": "Before you can submit a project, your profile must be verified by our team (professional profile sheet). Contact GrowzApp to start this verification — it reassures investors about the seriousness of project owners.",
+      "message_rejected": "Your profile sheet has been marked as non-compliant by our team. Contact GrowzApp to have it corrected before you can submit a project.",
+      "cta": "View my profile sheet status"
+    },
     "sections": {
       "photo": "Cover photo",
       "presentation": "Presentation",
@@ -517,6 +526,8 @@
     "my_projects": "My projects",
     "create_project": "Create a project",
     "fiche_porteur": "My owner profile sheet",
+    "fournisseurs": "Find a supplier",
+    "mon_espace_fournisseur": "My supplier space",
     "ma_boutique": "My GrowzMarket Shop",
     "mes_ventes_market": "My GrowzMarket sales",
     "section_investisseur": "Investor",
@@ -536,6 +547,10 @@
     "profile": "My profile",
     "kyc": "Identity verification (KYC)",
     "contact": "Contact / Support"
+  },
+  "fiche_porteur": {
+    "projets_precedents": "Previous projects",
+    "financed_suffix": "funded"
   },
   "contact_page": {
     "title": "Contact / Support",
@@ -596,7 +611,9 @@
       "section_config": "Configuration",
       "parameters": "Settings",
       "growzmarket": "GrowzMarket orders",
-      "commandes": "Supplier orders"
+      "commandes": "Supplier orders",
+      "fiches_porteur": "Project owner profiles",
+      "fournisseurs": "Suppliers"
     },
     "news": {
       "title": "News management",

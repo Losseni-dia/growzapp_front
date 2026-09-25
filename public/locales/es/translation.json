@@ -212,6 +212,9 @@
     "back_to_details": "Volver a los detalles del proyecto",
     "toast_invest_success": "¡Inversión registrada!",
     "financing": "Financiación",
+    "porteur_card_title": "Sobre el promotor",
+    "porteur_projets_precedents": "Proyectos anteriores",
+    "financed_suffix": "financiado",
     "collected_amount": "Recaudados",
     "parts_prises": "acciones tomadas",
     "parts_disponibles": "acciones disponibles",
@@ -249,6 +252,12 @@
   "project_form": {
     "title": "Enviar un proyecto",
     "subtitle": "Presente su idea en unos sencillos pasos.",
+    "fiche_gate": {
+      "title": "Ficha de presentación requerida",
+      "message": "Antes de poder enviar un proyecto, su perfil debe ser verificado por nuestro equipo (ficha de presentación profesional). Contacte a GrowzApp para iniciar esta verificación — tranquiliza a los inversores sobre la seriedad de los promotores de proyectos.",
+      "message_rejected": "Su ficha de presentación fue marcada como no conforme por nuestro equipo. Contacte a GrowzApp para corregirla antes de poder enviar un proyecto.",
+      "cta": "Ver el estado de mi ficha"
+    },
     "sections": {
       "photo": "Foto de portada",
       "presentation": "Presentación",
@@ -517,6 +526,8 @@
     "my_projects": "Mis proyectos",
     "create_project": "Crear un proyecto",
     "fiche_porteur": "Mi ficha de promotor",
+    "fournisseurs": "Buscar un proveedor",
+    "mon_espace_fournisseur": "Mi espacio de proveedor",
     "ma_boutique": "Mi Tienda GrowzMarket",
     "mes_ventes_market": "Mis ventas GrowzMarket",
     "section_investisseur": "Inversor",
@@ -536,6 +547,10 @@
     "profile": "Mi perfil",
     "kyc": "Verificación de identidad (KYC)",
     "contact": "Contacto / Soporte"
+  },
+  "fiche_porteur": {
+    "projets_precedents": "Proyectos anteriores",
+    "financed_suffix": "financiado"
   },
   "contact_page": {
     "title": "Contacto / Soporte",
@@ -596,7 +611,9 @@
       "section_config": "Configuración",
       "parameters": "Ajustes",
       "growzmarket": "Pedidos GrowzMarket",
-      "commandes": "Pedidos a proveedores"
+      "commandes": "Pedidos a proveedores",
+      "fiches_porteur": "Fichas de promotor",
+      "fournisseurs": "Proveedores"
     },
     "news": {
       "title": "Gestión de noticias",
