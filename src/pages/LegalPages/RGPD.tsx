@@ -1,7 +1,9 @@
 import styles from "./LegalPage.module.css";
 import { FiLock, FiShield } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 export default function RGPD() {
+  const { t } = useTranslation();
   return (
     <div className={styles.legalContainer}>
       <header
@@ -13,50 +15,34 @@ export default function RGPD() {
         <div className={styles.iconBox}>
           <FiLock />
         </div>
-        <h1>Protection des Données (RGPD)</h1>
-        <p>Souveraineté et sécurité des informations</p>
+        <h1>{t("legal_pages.rgpd.title", "Protection des Données (RGPD)")}</h1>
+        <p>{t("legal_pages.rgpd.subtitle", "Souveraineté et sécurité des informations")}</p>
       </header>
 
       <section className={styles.content}>
         <div className={styles.sectionCard}>
-          <h2>1. Responsable et Finalités</h2>
-          <p>
-            Les données sont collectées par <strong>Growzapp</strong> pour
-            la gestion des investissements et le monitoring des projets.
-          </p>
+          <h2>{t("legal_pages.rgpd.sec1_title", "1. Responsable et Finalités")}</h2>
+          <p>{t("legal_pages.rgpd.sec1_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>2. Données de Supervision</h2>
-          <p>
-            Dans le cadre du monitoring, Growzapp collecte des données
-            opérationnelles sur les projets. Certaines données de performance
-            peuvent être partagées avec les investisseurs concernés à des fins
-            de transparence contractuelle.
-          </p>
+          <h2>{t("legal_pages.rgpd.sec2_title", "2. Données de Supervision")}</h2>
+          <p>{t("legal_pages.rgpd.sec2_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>3. Souveraineté et Transfert</h2>
-          <p>
-            Le traitement est effectué au siège social en Afrique. Les
-            investisseurs hors zone Afrique consentent au transfert de leurs
-            données nécessaires à l'exécution de la garantie assurantielle et du
-            suivi de leur investissement.
-          </p>
+          <h2>{t("legal_pages.rgpd.sec3_title", "3. Souveraineté et Transfert")}</h2>
+          <p>{t("legal_pages.rgpd.sec3_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>4. Droits des utilisateurs</h2>
-          <p>
-            Accès, rectification et suppression via{" "}
-            <strong>rgpd@my-growzapp.com</strong>.
-          </p>
+          <h2>{t("legal_pages.rgpd.sec4_title", "4. Droits des utilisateurs")}</h2>
+          <p>{t("legal_pages.rgpd.sec4_body")}</p>
         </div>
       </section>
 
       <footer className={styles.footer}>
-        <FiShield /> Données chiffrées AES-256 - Hébergement certifié
+        <FiShield /> {t("legal_pages.rgpd.footer", "Données chiffrées AES-256 - Hébergement certifié")}
       </footer>
     </div>
   );

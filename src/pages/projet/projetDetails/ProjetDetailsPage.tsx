@@ -123,10 +123,10 @@ export default function ProjetDetailsPage() {
       return;
     }
     api
-      .get<ApiResponse<any>>(`api/porteur/fiche/${projet.porteurId}/publique`)
+      .get<ApiResponse<any>>(`api/porteur/fiche/${projet.porteurId}/publique?langue=${i18n.language}`)
       .then((res) => setFichePorteur(res.data))
       .catch(() => setFichePorteur(null));
-  }, [user, projet?.porteurId]);
+  }, [user, projet?.porteurId, i18n.language]);
 
   // Ouvrir modal si ?action=invest
   useEffect(() => {
@@ -350,10 +350,26 @@ export default function ProjetDetailsPage() {
                       ` · ${fichePorteur.anneesExperience} an(s) d'expérience`}
                   </p>
                   <p style={{ fontSize: "0.9rem", lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{fichePorteur.bio}</p>
-                  {fichePorteur.projetsPrecedents && (
-                    <p style={{ fontSize: "0.85rem", color: "#555", marginTop: 8, whiteSpace: "pre-wrap" }}>
-                      <strong>Projets précédents :</strong> {fichePorteur.projetsPrecedents}
-                    </p>
+                  {fichePorteur.projetsPrecedentsListe?.length > 0 ? (
+                    <div style={{ fontSize: "0.85rem", color: "#555", marginTop: 8 }}>
+                      <strong>{t("project_details.porteur_projets_precedents", "Projets précédents")}</strong>
+                      <ul style={{ margin: "4px 0 0", paddingLeft: 18 }}>
+                        {fichePorteur.projetsPrecedentsListe.map((p: any) => (
+                          <li key={p.id}>
+                            {p.libelle} —{" "}
+                            {t(`admin.projects_list.status.${p.statutProjet}`, { defaultValue: p.statutProjet })}{" "}
+                            ({p.pourcentageFinance}% {t("project_details.financed_suffix", "financé")})
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    fichePorteur.projetsPrecedents && (
+                      <p style={{ fontSize: "0.85rem", color: "#555", marginTop: 8, whiteSpace: "pre-wrap" }}>
+                        <strong>{t("project_details.porteur_projets_precedents", "Projets précédents")} :</strong>{" "}
+                        {fichePorteur.projetsPrecedents}
+                      </p>
+                    )
                   )}
                 </div>
               </div>

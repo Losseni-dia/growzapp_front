@@ -1,7 +1,9 @@
 import styles from "./LegalPage.module.css";
 import { FiAlertTriangle, FiShield } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 export default function CGV() {
+  const { t } = useTranslation();
   return (
     <div className={styles.legalContainer}>
       <header
@@ -13,59 +15,36 @@ export default function CGV() {
         <div className={styles.iconBox}>
           <FiAlertTriangle />
         </div>
-        <h1>Avertissement sur les Risques & CGV</h1>
-        <p>Cadre contractuel de l'investissement</p>
+        <h1>{t("legal_pages.cgv.title", "Avertissement sur les Risques & CGV")}</h1>
+        <p>{t("legal_pages.cgv.subtitle", "Cadre contractuel de l'investissement")}</p>
       </header>
 
       <section className={styles.content}>
-        <div className={styles.riskBox}>
-          <strong>SÉCURITÉ DU CAPITAL :</strong> Contrairement au crowdfunding
-          classique, les projets Growzapp font l'objet d'un monitoring rigoureux
-          et d'une couverture assurantielle partielle du capital investi.
+        <div className={styles.riskBox}>{t("legal_pages.cgv.risk_box")}</div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.cgv.art1_title", "Article 1 : Modalités d'Investissement")}</h2>
+          <p>{t("legal_pages.cgv.art1_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>Article 1 : Modalités d'Investissement</h2>
-          <p>
-            L'investissement est validé après réception des fonds et validation
-            du KYC. Un contrat électronique certifié est alors généré.
-          </p>
+          <h2>{t("legal_pages.cgv.art2_title", "Article 2 : Monitoring et Suivi des Projets")}</h2>
+          <p>{t("legal_pages.cgv.art2_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>Article 2 : Monitoring et Suivi des Projets</h2>
-          <p>
-            Chaque projet financé est soumis au protocole de{" "}
-            <strong>Monitoring Growzapp</strong> : visites de terrain
-            mensuelles, contrôle des flux financiers et rapports de gestion
-            trimestriels accessibles aux investisseurs.
-          </p>
+          <h2>{t("legal_pages.cgv.art3_title", "Article 3 : Garantie de Capital (Assurance)")}</h2>
+          <p>{t("legal_pages.cgv.art3_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>Article 3 : Garantie de Capital (Assurance)</h2>
-          <p>
-            Les projets sont couverts par une{" "}
-            <strong>assurance dommage/crédit</strong> souscrite auprès de nos
-            partenaires. En cas de défaut total du projet, cette police permet
-            un remboursement partiel du capital initial (selon les conditions
-            spécifiques de chaque projet détaillées dans la fiche
-            d'investissement).
-          </p>
-        </div>
-
-        <div className={styles.sectionCard}>
-          <h2>Article 4 : Rétractation et Juridiction</h2>
-          <p>
-            Délai de rétractation : 4 jours calendaires. Loi applicable : Droit
-            de <strong>Côte d'Ivoire</strong>. Tribunal compétent :{" "}
-            <strong>Yamoussoukro</strong>.
-          </p>
+          <h2>{t("legal_pages.cgv.art4_title", "Article 4 : Rétractation et Juridiction")}</h2>
+          <p>{t("legal_pages.cgv.art4_body")}</p>
         </div>
       </section>
 
       <footer className={styles.footer}>
-        <FiShield /> Investissement sous haute surveillance
+        <FiShield /> {t("legal_pages.cgv.footer", "Investissement sous haute surveillance")}
       </footer>
     </div>
   );

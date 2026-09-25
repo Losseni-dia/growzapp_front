@@ -68,7 +68,7 @@ interface CommandeDTO {
   factureUrl: string | null;
 }
 
-const STATUT_LABELS: Record<string, string> = {
+const STATUT_KEYS: Record<string, string> = {
   EN_ATTENTE_VALIDATION: "En attente de validation admin",
   REJETEE: "Rejetée",
   EN_ATTENTE_ACCEPTATION: "À accepter",
@@ -80,6 +80,10 @@ const STATUT_LABELS: Record<string, string> = {
   LIVREE: "Livrée — en attente de paiement",
   PAYEE: "Payée",
 };
+
+function statutLabel(t: any, statut: string): string {
+  return t(`fournisseur.espace.statut.${statut}`, STATUT_KEYS[statut] || statut);
+}
 
 export default function FournisseurEspacePage() {
   const { t } = useTranslation();
@@ -650,9 +654,9 @@ export default function FournisseurEspacePage() {
           </div>
           <select value={commandeStatutFilter} onChange={(e) => setCommandeStatutFilter(e.target.value)}>
             <option value="ALL">{t("fournisseur.espace.filter_all", "Tous")}</option>
-            {Object.entries(STATUT_LABELS).map(([key, label]) => (
+            {Object.keys(STATUT_KEYS).map((key) => (
               <option key={key} value={key}>
-                {label}
+                {statutLabel(t, key)}
               </option>
             ))}
           </select>
@@ -682,7 +686,7 @@ export default function FournisseurEspacePage() {
                 <span className={styles.articlePrix}>{format(Number(c.montantTotal), "XOF")}</span>
               </div>
               <span className={`${styles.badge} ${styles.commandeStatutBadge}`}>
-                {STATUT_LABELS[c.statut] || c.statut}
+                {statutLabel(t, c.statut)}
               </span>
 
               <CommandeTimeline commande={c} />

@@ -1,62 +1,54 @@
 import styles from "./LegalPage.module.css"; // Crée ce fichier CSS pour le style
 import { FiShield, FiInfo } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 export default function MentionsLegales() {
+  const { t } = useTranslation();
   return (
     <div className={styles.legalContainer}>
       <header className={styles.header}>
         <div className={styles.iconBox}>
           <FiInfo />
         </div>
-        <h1>Mentions Légales</h1>
-        <p>Dernière mise à jour : 03 Janvier 2026</p>
+        <h1>{t("legal_pages.mentions_legales.title", "Mentions Légales")}</h1>
+        <p>{t("legal_pages.mentions_legales.updated_at", "Dernière mise à jour : 03 Janvier 2026")}</p>
       </header>
 
       <section className={styles.content}>
         <div className={styles.sectionCard}>
-          <h2>1. Éditeur du site</h2>
-          <p>
-            Le site <strong>Growzapp</strong> est édité par la société{" "}
-            <strong>Afrikinity</strong>, société de droit ivoirien au capital
-            de <strong>10.000.000</strong> FCFA, immatriculée au Registre du
-            Commerce (RCCM) de [VILLE] sous le numéro{" "}
-            <strong>[NUMERO_RCCM]</strong>.
-          </p>
-          <p>Identifiant Fiscal (NIF/IFU) : [VOTRE_NUMERO]</p>
+          <h2>{t("legal_pages.mentions_legales.sec1_title", "1. Éditeur du site")}</h2>
+          <p>{t("legal_pages.mentions_legales.sec1_body")}</p>
+          <p>{t("legal_pages.mentions_legales.sec1_nif", "Identifiant Fiscal (NIF/IFU) : [VOTRE_NUMERO]")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>2. Directeur de la publication</h2>
-          <p>
-            Le directeur de la publication est{" "}
-            <strong>DIAKITE Losseni</strong>, en sa qualité de PDG.
-          </p>
+          <h2>{t("legal_pages.mentions_legales.sec2_title", "2. Directeur de la publication")}</h2>
+          <p>{t("legal_pages.mentions_legales.sec2_body")}</p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>3. Hébergement</h2>
+          <h2>{t("legal_pages.mentions_legales.sec3_title", "3. Hébergement")}</h2>
           <p>
-            Le site est hébergé par <strong>[NOM_HEBERGEUR]</strong>.<br />
-            Adresse : [ADRESSE_HEBERGEUR]
+            {t("legal_pages.mentions_legales.sec3_host", "Le site est hébergé par [NOM_HEBERGEUR].")}
             <br />
-            Contact : [TELEPHONE_HEBERGEUR]
+            {t("legal_pages.mentions_legales.sec3_address", "Adresse : [ADRESSE_HEBERGEUR]")}
+            <br />
+            {t("legal_pages.mentions_legales.sec3_contact", "Contact : [TELEPHONE_HEBERGEUR]")}
           </p>
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>4. Contact</h2>
-          <p>Pour toute question, vous pouvez nous contacter :</p>
+          <h2>{t("legal_pages.mentions_legales.sec4_title", "4. Contact")}</h2>
+          <p>{t("legal_pages.mentions_legales.sec4_intro", "Pour toute question, vous pouvez nous contacter :")}</p>
           <ul>
-            <li>
-              Email : <strong>support@my-growzapp.com</strong>
-            </li>
-            <li>Téléphone : [NUMERO_TELEPHONE]</li>
+            <li>{t("legal_pages.mentions_legales.sec4_email", "Email : support@my-growzapp.com")}</li>
+            <li>{t("legal_pages.mentions_legales.sec4_phone", "Téléphone : [NUMERO_TELEPHONE]")}</li>
           </ul>
         </div>
       </section>
 
       <footer className={styles.footer}>
-        <FiShield /> Growzapp - Plateforme de financement sécurisée
+        <FiShield /> {t("legal_pages.mentions_legales.footer", "Growzapp - Plateforme de financement sécurisée")}
       </footer>
     </div>
   );

@@ -37,7 +37,7 @@ interface CommandeDTO {
   lignes: CommandeLigneDTO[];
 }
 
-const STATUT_LABELS: Record<string, string> = {
+const STATUT_KEYS: Record<string, string> = {
   EN_ATTENTE_VALIDATION: "En attente de validation admin",
   REJETEE: "Rejetée",
   EN_ATTENTE_ACCEPTATION: "En attente d'acceptation fournisseur",
@@ -49,6 +49,10 @@ const STATUT_LABELS: Record<string, string> = {
   LIVREE: "Livrée — paiement en attente",
   PAYEE: "Payée",
 };
+
+function statutLabel(t: any, statut: string): string {
+  return t(`mes_commandes.statut.${statut}`, STATUT_KEYS[statut] || statut);
+}
 
 export default function MesCommandesPage() {
   const { t } = useTranslation();
@@ -132,7 +136,7 @@ export default function MesCommandesPage() {
                   <span className={styles.fournisseur}> — {c.fournisseurNom}</span>
                 </div>
                 <span className={`${styles.badge} ${styles["statut_" + c.statut]}`}>
-                  {STATUT_LABELS[c.statut] || c.statut}
+                  {statutLabel(t, c.statut)}
                 </span>
               </div>
 

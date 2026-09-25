@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import styles from "./Footer.module.css";
 import { FiShield, FiLinkedin, FiFacebook, FiInstagram } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
@@ -15,6 +16,7 @@ interface PartenaireDTO {
 }
 
 export default function Footer() {
+  const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
   const [partenaires, setPartenaires] = useState<PartenaireDTO[]>([]);
 
@@ -45,7 +47,7 @@ export default function Footer() {
         <div className={styles.topSection}>
           <div className={styles.brand}>
             <span className={styles.logoText}>GrowzApp</span>
-            <p>Financez l'avenir, un projet à la fois.</p>
+            <p>{t("site_footer.tagline", "Financez l'avenir, un projet à la fois.")}</p>
 
             <div className={styles.socials}>
               <a
@@ -85,38 +87,38 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.rssLink}
-                title="Abonnez-vous au flux RSS"
+                title={t("site_footer.rss_title", "Abonnez-vous au flux RSS") as string}
               >
                 <Rss size={20} />
-                <span className={styles.tooltip}>Abonnez-vous</span>
+                <span className={styles.tooltip}>{t("site_footer.rss_tooltip", "Abonnez-vous")}</span>
               </a>
             </div>
           </div>
 
           <nav className={styles.nav}>
             <div className={styles.navColumn}>
-              <h4>Légal</h4>
+              <h4>{t("site_footer.col_legal", "Légal")}</h4>
               <Link to="/mentions-legales" className={styles.link}>
-                Mentions Légales
+                {t("site_footer.link_mentions_legales", "Mentions Légales")}
               </Link>
               <Link to="/cgu" className={styles.link}>
-                CGU
+                {t("site_footer.link_cgu", "CGU")}
               </Link>
               <Link to="/rgpd" className={styles.link}>
-                RGPD
+                {t("site_footer.link_rgpd", "RGPD")}
               </Link>
             </div>
             <div className={styles.navColumn}>
-              <h4>Investissement</h4>
+              <h4>{t("site_footer.col_investissement", "Investissement")}</h4>
               <Link to="/cgv" className={styles.link}>
-                Risques & CGV
+                {t("site_footer.link_cgv", "Risques & CGV")}
               </Link>
               {/* On remplace le Link par un bouton stylisé ou une balise 'a' avec onClick */}
               <a href="#faq" onClick={openCrispFAQ} className={styles.link}>
-                Aide & FAQ
+                {t("site_footer.link_faq", "Aide & FAQ")}
               </a>
               <Link to="/mon-espace/contact" className={styles.link}>
-                Contactez-nous
+                {t("site_footer.link_contact", "Contactez-nous")}
               </Link>
             </div>
           </nav>
@@ -124,7 +126,7 @@ export default function Footer() {
 
         {partenaires.length > 0 && (
           <div className={styles.partenaires}>
-            <h4>Nos partenaires</h4>
+            <h4>{t("site_footer.partners_title", "Nos partenaires")}</h4>
             <div className={styles.partenairesList}>
               {partenaires.map((p) => (
                 <img
@@ -140,9 +142,9 @@ export default function Footer() {
         )}
 
         <div className={styles.bottomSection}>
-          <p>© {currentYear} GrowzApp – Tous droits réservés </p>
+          <p>{t("site_footer.copyright", "© {{year}} GrowzApp – Tous droits réservés", { year: currentYear })}</p>
           <div className={styles.secure}>
-            <FiShield /> Transactions Sécurisées
+            <FiShield /> {t("site_footer.secure_transactions", "Transactions Sécurisées")}
           </div>
         </div>
       </div>

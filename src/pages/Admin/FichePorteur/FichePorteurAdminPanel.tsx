@@ -157,40 +157,11 @@ export default function FichePorteurAdminPanel() {
     }
   };
 
-  const formatProjetLigne = (p: PorteurProjet) => {
-    const pct =
-      p.objectifFinancement > 0
-        ? Math.round((p.montantCollecte / p.objectifFinancement) * 100)
-        : 0;
-    return `• ${p.libelle} — ${p.statutProjet} (${pct}% financé)`;
-  };
-
   const toggleProjet = (p: PorteurProjet) => {
-    const ligne = formatProjetLigne(p);
-    const estCoche = selectedProjetIds.has(p.id);
-
     const next = new Set(selectedProjetIds);
-    if (estCoche) next.delete(p.id);
+    if (next.has(p.id)) next.delete(p.id);
     else next.add(p.id);
     setSelectedProjetIds(next);
-
-    // Appelé séparément (pas imbriqué dans le setSelectedProjetIds
-    // ci-dessus) : en StrictMode, React invoque deux fois la fonction de
-    // mise à jour d'un setState — un setForm imbriqué dans cet appel se
-    // déclenchait donc deux fois, dupliquant la ligne ajoutée. La
-    // vérification anti-doublon ci-dessous rend en plus l'ajout idempotent
-    // par sécurité, même hors de ce cas précis.
-    setForm((f) => {
-      const lignes = f.projetsPrecedents.split("\n").map((l) => l.trim());
-      if (estCoche) {
-        return { ...f, projetsPrecedents: lignes.filter((l) => l !== ligne).join("\n").trim() };
-      }
-      if (lignes.includes(ligne)) return f;
-      return {
-        ...f,
-        projetsPrecedents: [f.projetsPrecedents.trim(), ligne].filter(Boolean).join("\n"),
-      };
-    });
   };
 
   const openEdit = async (fiche: FicheAdmin) => {
@@ -204,6 +175,7 @@ export default function FichePorteurAdminPanel() {
     try {
       const res = await api.get<{ data: any }>(`/api/porteur/fiche/admin/${fiche.userId}`);
       const f = res.data;
+      setSelectedProjetIds(new Set(f.projetsMisEnAvantIds || []));
       setForm({
         bio: f.bio || "",
         statutJuridique: f.statutJuridique || StatutJuridiquePorteur.INDIVIDUEL,
@@ -268,6 +240,7 @@ export default function FichePorteurAdminPanel() {
         raisonSociale: form.statutJuridique === StatutJuridiquePorteur.SOCIETE ? form.raisonSociale.trim() : null,
         anneesExperience: form.anneesExperience === "" ? null : parseInt(form.anneesExperience, 10),
         projetsPrecedents: form.projetsPrecedents.trim() || null,
+        projetsMisEnAvantIds: Array.from(selectedProjetIds),
         contactTelephone: form.contactTelephone.trim(),
         contactEmail: form.contactEmail.trim(),
         siteWeb: form.siteWeb.trim() || null,
@@ -530,7 +503,7 @@ export default function FichePorteurAdminPanel() {
                 {porteurProjets.length > 0 && (
                   <div style={{ marginTop: "0.2rem" }}>
                     <label style={{ fontSize: "0.82rem", fontWeight: 700, display: "block", marginBottom: 4 }}>
-                      Mettre en avant l'un de ses projets existants (coche pour l'ajouter au texte ci-dessous)
+                      Projets à mettre en avant (libellé et statut affichés automatiquement, déjà traduits dans la langue de l'investisseur)
                     </label>
                     <div
                       style={{
@@ -567,7 +540,7 @@ export default function FichePorteurAdminPanel() {
                 )}
                 <textarea
                   className={styles.modalTextarea}
-                  placeholder="Projets précédents (facultatif)"
+                  placeholder="Note libre complémentaire (facultatif) — pour des projets hors GrowzApp, non traduite automatiquement"
                   value={form.projetsPrecedents}
                   onChange={(e) => setForm({ ...form, projetsPrecedents: e.target.value })}
                 />

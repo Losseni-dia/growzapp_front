@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 import { FiBriefcase, FiCheckCircle, FiClock, FiUser, FiXCircle } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { api } from "../../service/Api";
 import { StatutFichePorteur, StatutJuridiquePorteur } from "../../types/enum";
 import styles from "./FichePorteurForm.module.css";
+
+interface ProjetPrecedent {
+  id: number;
+  libelle: string;
+  statutProjet: string;
+  pourcentageFinance: number;
+}
 
 interface MaFicheResponse {
   bio?: string;
@@ -10,6 +18,7 @@ interface MaFicheResponse {
   raisonSociale?: string;
   anneesExperience?: number;
   projetsPrecedents?: string;
+  projetsPrecedentsListe?: ProjetPrecedent[];
   ficheStatut?: StatutFichePorteur;
   commentaireRejet?: string;
 }
@@ -20,16 +29,17 @@ interface MaFicheResponse {
  * ne peut que consulter le résultat ici, jamais la créer ou la modifier.
  */
 export default function FichePorteurForm() {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [fiche, setFiche] = useState<MaFicheResponse | null>(null);
 
   useEffect(() => {
     api
-      .get<{ data: MaFicheResponse }>("/api/porteur/fiche")
+      .get<{ data: MaFicheResponse }>(`/api/porteur/fiche?langue=${i18n.language}`)
       .then((res) => setFiche(res.data))
       .catch(() => setFiche(null))
       .finally(() => setLoading(false));
-  }, []);
+  }, [i18n.language]);
 
   if (loading) return <div className={styles.wrapper}>Chargement…</div>;
 
@@ -89,11 +99,26 @@ export default function FichePorteurForm() {
             <label>Années d'expérience</label>
             <p className={styles.readonlyText}>{fiche.anneesExperience ?? "—"}</p>
           </div>
-          {fiche.projetsPrecedents && (
+          {fiche.projetsPrecedentsListe && fiche.projetsPrecedentsListe.length > 0 ? (
             <div className={styles.field}>
-              <label>Projets précédents</label>
-              <p className={styles.readonlyText}>{fiche.projetsPrecedents}</p>
+              <label>{t("fiche_porteur.projets_precedents", "Projets précédents")}</label>
+              <ul className={styles.readonlyText}>
+                {fiche.projetsPrecedentsListe.map((p) => (
+                  <li key={p.id}>
+                    {p.libelle} —{" "}
+                    {t(`admin.projects_list.status.${p.statutProjet}`, { defaultValue: p.statutProjet })} (
+                    {p.pourcentageFinance}% {t("fiche_porteur.financed_suffix", "financé")})
+                  </li>
+                ))}
+              </ul>
             </div>
+          ) : (
+            fiche.projetsPrecedents && (
+              <div className={styles.field}>
+                <label>{t("fiche_porteur.projets_precedents", "Projets précédents")}</label>
+                <p className={styles.readonlyText}>{fiche.projetsPrecedents}</p>
+              </div>
+            )
           )}
         </div>
       )}
