@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { FiSearch, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api, buildFileUrl } from "../../service/Api";
+import { api, buildFileUrl, buildProjetUrl } from "../../service/Api";
 import styles from "./GrowzMarketPage.module.css";
 
 interface ArticleMarketDTO {
@@ -28,7 +28,7 @@ interface ArticleMarketDTO {
 const CATEGORIES = ["ALIMENTATION", "ARTISANAT", "TEXTILE", "COSMETIQUE", "AGRICULTURE", "SERVICE", "AUTRE"];
 
 export default function GrowzMarketPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { format } = useCurrency();
 
   const [articles, setArticles] = useState<ArticleMarketDTO[]>([]);
@@ -38,11 +38,11 @@ export default function GrowzMarketPage() {
 
   useEffect(() => {
     api
-      .get<{ data: ArticleMarketDTO[] }>("/api/market/articles")
+      .get<{ data: ArticleMarketDTO[] }>(buildProjetUrl("/api/market/articles"))
       .then((res) => setArticles(res.data || []))
       .catch(() => toast.error(t("growzmarket.catalogue.toast_error", "Erreur lors du chargement du catalogue")))
       .finally(() => setLoading(false));
-  }, [t]);
+  }, [t, i18n.language]);
 
   const filteredArticles = useMemo(() => {
     const q = search.trim().toLowerCase();

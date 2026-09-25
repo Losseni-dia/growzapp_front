@@ -14,7 +14,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
 import { useGrowzMarketCart } from "../../components/Context/GrowzMarketCartContext";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api, buildFileUrl } from "../../service/Api";
+import { api, buildFileUrl, buildProjetUrl } from "../../service/Api";
 import styles from "./GrowzMarketDetailPage.module.css";
 
 interface ArticleMarketDTO {
@@ -37,7 +37,7 @@ interface ArticleMarketDTO {
 
 export default function GrowzMarketDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { format } = useCurrency();
   const { user } = useAuth();
   const { addItem } = useGrowzMarketCart();
@@ -53,11 +53,11 @@ export default function GrowzMarketDetailPage() {
   useEffect(() => {
     if (!id) return;
     api
-      .get<{ data: ArticleMarketDTO }>(`/api/market/articles/${id}`)
+      .get<{ data: ArticleMarketDTO }>(buildProjetUrl(`/api/market/articles/${id}`))
       .then((res) => setArticle({ ...res.data, photos: res.data.photos || [] }))
       .catch(() => toast.error(t("growzmarket.detail.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
-  }, [id, t]);
+  }, [id, t, i18n.language]);
 
   const handleAjouterAuPanier = () => {
     if (!user) {
