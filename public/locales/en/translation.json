@@ -583,6 +583,8 @@
     "read_more": "Read more",
     "edit": "Edit",
     "delete": "Delete",
+    "article_not_found": "Article not found",
+    "back_to_news": "Back to news",
     "date_now": "Just now",
     "date_minutes_ago": "{{count}} min ago",
     "date_hours_ago": "{{count}}h ago",

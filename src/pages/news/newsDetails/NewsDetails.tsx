@@ -1,7 +1,9 @@
 import { ArrowLeft, Calendar, Loader2, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { News, newsService } from "../../../service/newsService";
+import { getCategoryMeta } from "../newsPage/NewsPage";
 import styles from "./NewsDetail.module.css";
 import { buildFileUrl } from "../../../service/Api";
 
@@ -13,32 +15,35 @@ const readingTime = (html: string): number => {
   return Math.max(1, Math.ceil(words / 200));
 };
 
-// Date formatée relative
-const formatDate = (dateStr: string): string => {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diff < 60) return "À l'instant";
-  if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
-  if (diff < 604800) return `Il y a ${Math.floor(diff / 86400)} jours`;
-  return date.toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
-
-const getCategoryLabel = (cat: string) => cat.replace(/_/g, " ");
-
 const NewsDetail = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [article, setArticle] = useState<News | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Date formatée relative
+  const formatDate = (dateStr: string): string => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diff < 60) return t("news_page.date_now", { defaultValue: "À l'instant" });
+    if (diff < 3600)
+      return t("news_page.date_minutes_ago", { defaultValue: "Il y a {{count}} min", count: Math.floor(diff / 60) });
+    if (diff < 86400)
+      return t("news_page.date_hours_ago", { defaultValue: "Il y a {{count}}h", count: Math.floor(diff / 3600) });
+    if (diff < 604800)
+      return t("news_page.date_days_ago", { defaultValue: "Il y a {{count}} j", count: Math.floor(diff / 86400) });
+    return date.toLocaleDateString(i18n.language, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   useEffect(() => {
     if (!id) return;
+    setLoading(true);
     newsService
       .getById(id)
       .then((res: any) => {
@@ -48,7 +53,7 @@ const NewsDetail = () => {
       })
       .catch((err) => console.error("Erreur chargement article:", err))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, i18n.language]);
 
   if (loading)
     return (
@@ -61,21 +66,22 @@ const NewsDetail = () => {
     return (
       <div className={styles.errorContainer}>
         <span style={{ fontSize: "3rem" }}>📭</span>
-        <h2>Article introuvable</h2>
+        <h2>{t("news_page.article_not_found", "Article introuvable")}</h2>
         <button className={styles.backBtn} onClick={() => navigate("/news")}>
-          <ArrowLeft size={18} /> Retour aux actualités
+          <ArrowLeft size={18} /> {t("news_page.back_to_news", "Retour aux actualités")}
         </button>
       </div>
     );
 
   const minutes = readingTime(article.content);
+  const meta = getCategoryMeta(article.category);
 
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
         {/* Bouton retour */}
         <button className={styles.backBtn} onClick={() => navigate("/news")}>
-          <ArrowLeft size={18} /> Retour aux actualités
+          <ArrowLeft size={18} /> {t("news_page.back_to_news", "Retour aux actualités")}
         </button>
 
         <article className={styles.articleCard}>
@@ -94,7 +100,7 @@ const NewsDetail = () => {
           {/* ── HEADER ──────────────────────────────────────────── */}
           <header className={styles.header}>
             <span className={styles.categoryBadge}>
-              {getCategoryLabel(article.category)}
+              {meta.icon} {t(`news_page.category.${article.category}`, meta.label)}
             </span>
 
             <h1 className={styles.mainTitle}>{article.title}</h1>
@@ -107,7 +113,7 @@ const NewsDetail = () => {
               <span className={styles.metaDot}>·</span>
               <span className={styles.metaItem}>
                 <Clock size={15} />
-                {minutes} min de lecture
+                {t("news_page.reading_time", { defaultValue: "{{count}} min", count: minutes })}
               </span>
             </div>
           </header>
@@ -127,10 +133,10 @@ const NewsDetail = () => {
               className={styles.backBtnFooter}
               onClick={() => navigate("/news")}
             >
-              <ArrowLeft size={16} /> Retour aux actualités
+              <ArrowLeft size={16} /> {t("news_page.back_to_news", "Retour aux actualités")}
             </button>
             <span className={styles.footerCategory}>
-              {getCategoryLabel(article.category)}
+              {meta.icon} {t(`news_page.category.${article.category}`, meta.label)}
             </span>
           </footer>
         </article>

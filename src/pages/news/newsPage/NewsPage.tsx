@@ -24,7 +24,7 @@ const getImageUrl = (url: string): string => {
 };
 
 // ─── Catégories ───────────────────────────────────────────────────────────────
-const CATEGORIES = [
+export const CATEGORIES = [
   { key: "", label: "Tout", icon: "🌍", color: "#1A6B3C", bg: "#E8F5EE" },
   {
     key: "PLATFORM_UPDATE",
@@ -97,7 +97,7 @@ const formatDate = (
   });
 };
 
-const getCategoryMeta = (key: string) =>
+export const getCategoryMeta = (key: string) =>
   CATEGORIES.find((c) => c.key === key) || CATEGORIES[0];
 
 const SkeletonCard = () => (

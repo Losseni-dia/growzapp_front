@@ -581,6 +581,8 @@
     "read_more": "Lire la suite",
     "edit": "Modifier",
     "delete": "Supprimer",
+    "article_not_found": "Article introuvable",
+    "back_to_news": "Retour aux actualités",
     "date_now": "À l'instant",
     "date_minutes_ago": "Il y a {{count}} min",
     "date_hours_ago": "Il y a {{count}}h",
