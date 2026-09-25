@@ -84,7 +84,14 @@
     },
     "buttons": {
       "submit_loading": "Création...",
-      "submit": "S'inscrire"
+      "submit": "S'inscrire",
+      "next": "Continuer",
+      "back": "Retour"
+    },
+    "steps": {
+      "account": "Compte",
+      "contact": "Contact",
+      "preferences": "Préférences"
     },
     "footer": {
       "already_account": "Déjà un compte ?",
@@ -104,7 +111,6 @@
       "phone_required": "Le numéro de téléphone est obligatoire",
       "phone_invalid": "Numéro invalide (ex: +22670123456)",
       "region_required": "Veuillez choisir une région",
-      "language_required": "Veuillez sélectionner au moins une langue",
       "generic": "Erreur lors de l'inscription"
     },
     "hints": {

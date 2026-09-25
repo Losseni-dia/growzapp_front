@@ -84,7 +84,14 @@
     },
     "buttons": {
       "submit_loading": "Creando...",
-      "submit": "Registrarse"
+      "submit": "Registrarse",
+      "next": "Continuar",
+      "back": "Volver"
+    },
+    "steps": {
+      "account": "Cuenta",
+      "contact": "Contacto",
+      "preferences": "Preferencias"
     },
     "footer": {
       "already_account": "¿Ya tienes cuenta?",

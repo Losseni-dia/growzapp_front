@@ -39,6 +39,105 @@
   margin: 0;
 }
 
+/* ── STEPPER ─────────────────────────────────────────────────── */
+.stepper {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 1.2rem 2.8rem 0.4rem;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #999;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.stepDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepActive {
+  color: #1B5E20;
+}
+
+.stepActive .stepDot {
+  background: #1B5E20;
+}
+
+.stepDone .stepDot {
+  background: #2E7D32;
+}
+
+.stepDone {
+  color: #2E7D32;
+}
+
+/* ── ACTIONS D'ÉTAPE (Retour / Continuer) ───────────────────── */
+.stepActions {
+  display: flex;
+  gap: 0.8rem;
+  padding: 1.2rem 2.8rem 0;
+}
+
+.stepActions .submitBtn,
+.nextBtn {
+  flex: 1;
+  margin: 0;
+}
+
+.nextBtn {
+  padding: 1rem;
+  background: #F5C400;
+  color: #1B5E20;
+  font-weight: 800;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.3px;
+}
+
+.nextBtn:hover {
+  background: #e6b800;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 196, 0, 0.4);
+}
+
+.backBtn {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: #666;
+  border: 2px solid #e0e0e0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.backBtn:hover {
+  border-color: #1B5E20;
+  color: #1B5E20;
+}
+
 /* ── CORPS DU FORMULAIRE ─────────────────────────────────────── */
 .form > *:not(.formHeader):not(.photoSection) {
   padding-left: 2.8rem;

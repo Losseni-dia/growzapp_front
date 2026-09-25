@@ -84,7 +84,14 @@
     },
     "buttons": {
       "submit_loading": "Creating...",
-      "submit": "Sign up "
+      "submit": "Sign up ",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "steps": {
+      "account": "Account",
+      "contact": "Contact",
+      "preferences": "Preferences"
     },
     "footer": {
       "already_account": "Already have an account?",
