@@ -240,10 +240,10 @@ export default function Header() {
                       {isAdmin && (
                         <Link
                           to="/admin"
-                          className={styles.profileMenuLabel}
+                          className={styles.profileMenuItem}
                           onClick={() => setShowProfileMenu(false)}
                         >
-                          <FiShield size={13} /> {t("admin_space")}
+                          <FiShield size={14} /> {t("admin_space")}
                         </Link>
                       )}
 

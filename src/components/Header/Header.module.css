@@ -406,19 +406,17 @@
 .profileMenuLabel {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 10px 4px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  gap: 8px;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: var(--growz-slate-700);
-  opacity: 0.6;
   width: 100%;
   background: none;
   border: none;
   cursor: pointer;
   border-radius: 8px;
+  text-decoration: none;
 }
 
 .profileMenuLabel:hover {
