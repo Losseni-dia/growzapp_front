@@ -593,6 +593,24 @@
     "toast_deleted": "Mensaje eliminado de tu lado",
     "toast_delete_error": "Error al eliminar"
   },
+  "notifications": {
+    "title": "Notificaciones",
+    "unread_count": "{{count}} nuevas",
+    "empty": "Ninguna notificación por el momento",
+    "mark_all_read": "Marcar todo como leído",
+    "close": "Cerrar",
+    "motif_label_refus": "Motivo del rechazo",
+    "motif_label_versement": "Motivo del pago",
+    "motif_label_default": "Motivo",
+    "hint_facture": "Abrir la factura →",
+    "hint_motif": "Ver el motivo →",
+    "hint_news": "Leer el artículo →",
+    "hint_view": "Ver →",
+    "hint_projet": "Ver el proyecto →",
+    "btn_read_article": "Leer el artículo",
+    "btn_view": "Ver",
+    "btn_view_projet": "Ver el proyecto"
+  },
   "admin": {
     "sidebar": {
       "brand": "GrowzApp Admin",

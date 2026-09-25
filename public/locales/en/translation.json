@@ -593,6 +593,24 @@
     "toast_deleted": "Message deleted on your side",
     "toast_delete_error": "Error while deleting"
   },
+  "notifications": {
+    "title": "Notifications",
+    "unread_count": "{{count}} new",
+    "empty": "No notification yet",
+    "mark_all_read": "Mark all as read",
+    "close": "Close",
+    "motif_label_refus": "Rejection reason",
+    "motif_label_versement": "Payment reason",
+    "motif_label_default": "Reason",
+    "hint_facture": "Open the invoice →",
+    "hint_motif": "View the reason →",
+    "hint_news": "Read the article →",
+    "hint_view": "View →",
+    "hint_projet": "View the project →",
+    "btn_read_article": "Read the article",
+    "btn_view": "View",
+    "btn_view_projet": "View the project"
+  },
   "admin": {
     "sidebar": {
       "brand": "GrowzApp Admin",
