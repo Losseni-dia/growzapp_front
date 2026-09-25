@@ -306,7 +306,15 @@
     },
     "buttons": {
       "submit": "Submit project",
-      "processing": "Processing..."
+      "processing": "Processing...",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "steps": {
+      "photos": "Photos",
+      "presentation": "Presentation",
+      "finances": "Finances",
+      "location": "Location"
     },
     "success": "Project submitted successfully!",
     "errors": {

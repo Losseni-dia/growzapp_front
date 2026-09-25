@@ -293,7 +293,15 @@
     },
     "buttons": {
       "submit": "Soumettre le projet",
-      "processing": "Traitement..."
+      "processing": "Traitement...",
+      "next": "Continuer",
+      "back": "Retour"
+    },
+    "steps": {
+      "photos": "Photos",
+      "presentation": "Présentation",
+      "finances": "Finances",
+      "location": "Localisation"
     },
     "success": "Projet soumis avec succès !",
     "errors": {

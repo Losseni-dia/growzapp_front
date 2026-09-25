@@ -3,7 +3,7 @@ import Cropper from "react-easy-crop";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
-  FiCamera, FiDollarSign, FiPieChart, FiSend,
+  FiArrowLeft, FiCamera, FiDollarSign, FiPieChart, FiSend,
   FiShield, FiAlertTriangle, FiCheck, FiMapPin, FiTag, FiClock,
 } from "react-icons/fi";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
@@ -19,12 +19,21 @@ import styles from "./ProjetForm.module.css";
 
 interface ApiWrapper<T> { success: boolean; message: string; data: T; }
 
-type FormErrors = Partial<Record<
+type FieldKey =
   | "libelle" | "description" | "secteurNom" | "localiteNom" | "paysNom"
   | "objectif" | "prixPart" | "valuation" | "roi" | "dureeMois"
-  | "dateDebut" | "dateFin" | "coherence" | "global",
-  string
->>;
+  | "dateDebut" | "dateFin" | "coherence" | "global";
+
+type FormErrors = Partial<Record<FieldKey, string>>;
+
+type Step = "photos" | "presentation" | "finances" | "location";
+const STEP_ORDER: Step[] = ["photos", "presentation", "finances", "location"];
+const STEP_FIELDS: Record<Step, FieldKey[]> = {
+  photos: [],
+  presentation: ["libelle", "description"],
+  finances: ["objectif", "prixPart", "valuation", "roi", "dateDebut", "dateFin", "coherence"],
+  location: ["secteurNom", "localiteNom"],
+};
 
 export default function ProjectForm() {
   const navigate = useNavigate();
@@ -34,6 +43,7 @@ export default function ProjectForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cropContainerRef = useRef<HTMLDivElement>(null);
 
+  const [step, setStep] = useState<Step>("photos");
   const [draftId, setDraftId] = useState<number | null>(null);
   const [savingDraft, setSavingDraft] = useState(false);
   const [loadingDraft, setLoadingDraft] = useState(false);
@@ -200,6 +210,36 @@ export default function ProjectForm() {
     return errs;
   };
 
+  const firstStepWithError = (errs: FormErrors): Step | null =>
+    STEP_ORDER.find((s) => STEP_FIELDS[s].some((k) => errs[k])) ?? null;
+
+  const handleNext = () => {
+    const allErrs = validate();
+    const keys = STEP_FIELDS[step];
+    const stepErrs: FormErrors = {};
+    keys.forEach((k) => {
+      if (allErrs[k]) stepErrs[k] = allErrs[k];
+    });
+    if (Object.keys(stepErrs).length > 0) {
+      setErrors((prev) => ({ ...prev, ...stepErrs }));
+      return;
+    }
+    setErrors((prev) => {
+      const next = { ...prev };
+      keys.forEach((k) => delete next[k]);
+      return next;
+    });
+    const idx = STEP_ORDER.indexOf(step);
+    setStep(STEP_ORDER[idx + 1]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBack = () => {
+    const idx = STEP_ORDER.indexOf(step);
+    setStep(STEP_ORDER[idx - 1]);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const onCropComplete = useCallback((_: any, p: any) => setCroppedAreaPixels(p), []);
 
   const createCroppedImage = async () => {
@@ -252,6 +292,8 @@ export default function ProjectForm() {
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      const badStep = firstStepWithError(errs);
+      if (badStep) setStep(badStep);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -439,7 +481,32 @@ export default function ProjectForm() {
 
         <form onSubmit={handleFormSubmit} className={styles.form} noValidate>
 
-          {/* ── PHOTO ── */}
+          {/* ── STEPPER ── */}
+          <div className={styles.stepper}>
+            {STEP_ORDER.map((s, i) => (
+              <div
+                key={s}
+                className={`${styles.stepItem} ${step === s ? styles.stepActive : ""} ${
+                  STEP_ORDER.indexOf(step) > i ? styles.stepDone : ""
+                }`}
+              >
+                <div className={styles.stepDot}>{i + 1}</div>
+                <span>
+                  {s === "photos"
+                    ? t("project_form.steps.photos", "Photos")
+                    : s === "presentation"
+                      ? t("project_form.steps.presentation", "Présentation")
+                      : s === "finances"
+                        ? t("project_form.steps.finances", "Finances")
+                        : t("project_form.steps.location", "Localisation")}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* ══════════ ÉTAPE 1 — PHOTOS ══════════ */}
+          {step === "photos" && (
+          <>
           <div className={styles.sectionLabel}>📸 {t("project_form.sections.photo")}</div>
           <div className={styles.photoSection}>
             {!showCropper ? (
@@ -548,7 +615,27 @@ export default function ProjectForm() {
             </div>
           </div>
 
-          {/* ── PRÉSENTATION ── */}
+          <div className={styles.stepActions}>
+            <button
+              type="button"
+              className={styles.draftInline}
+              disabled={savingDraft || loading}
+              onClick={handleSaveDraft}
+            >
+              {savingDraft
+                ? t("project_form.draft.saving", "Enregistrement…")
+                : t("project_form.draft.save", "Enregistrer comme brouillon")}
+            </button>
+            <button type="button" className={styles.nextBtn} onClick={handleNext}>
+              {t("project_form.buttons.next", "Continuer")}
+            </button>
+          </div>
+          </>
+          )}
+
+          {/* ══════════ ÉTAPE 2 — PRÉSENTATION ══════════ */}
+          {step === "presentation" && (
+          <>
           <div className={styles.sectionLabel}>📋 {t("project_form.sections.presentation")}</div>
 
           <div className={styles.fieldGroup}>
@@ -579,7 +666,35 @@ export default function ProjectForm() {
                 </span>}
           </div>
 
-          {/* ── FINANCES ── */}
+          <div className={styles.stepActions}>
+            <button
+              type="button"
+              className={styles.stepBackBtn}
+              onClick={handleBack}
+              aria-label={t("project_form.buttons.back", "Retour")}
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <button
+              type="button"
+              className={styles.draftInline}
+              disabled={savingDraft || loading}
+              onClick={handleSaveDraft}
+            >
+              {savingDraft
+                ? t("project_form.draft.saving", "Enregistrement…")
+                : t("project_form.draft.save", "Enregistrer comme brouillon")}
+            </button>
+            <button type="button" className={styles.nextBtn} onClick={handleNext}>
+              {t("project_form.buttons.next", "Continuer")}
+            </button>
+          </div>
+          </>
+          )}
+
+          {/* ══════════ ÉTAPE 3 — FINANCES ══════════ */}
+          {step === "finances" && (
+          <>
           <div className={styles.sectionLabel}>💰 {t("project_form.sections.finances")}</div>
 
           <div className={styles.financeGrid}>
@@ -710,7 +825,35 @@ export default function ProjectForm() {
             </div>
           </div>
 
-          {/* ── LOCALISATION ── */}
+          <div className={styles.stepActions}>
+            <button
+              type="button"
+              className={styles.stepBackBtn}
+              onClick={handleBack}
+              aria-label={t("project_form.buttons.back", "Retour")}
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <button
+              type="button"
+              className={styles.draftInline}
+              disabled={savingDraft || loading}
+              onClick={handleSaveDraft}
+            >
+              {savingDraft
+                ? t("project_form.draft.saving", "Enregistrement…")
+                : t("project_form.draft.save", "Enregistrer comme brouillon")}
+            </button>
+            <button type="button" className={styles.nextBtn} onClick={handleNext}>
+              {t("project_form.buttons.next", "Continuer")}
+            </button>
+          </div>
+          </>
+          )}
+
+          {/* ══════════ ÉTAPE 4 — LOCALISATION ══════════ */}
+          {step === "location" && (
+          <>
           <div className={styles.sectionLabel}>📍 {t("project_form.sections.location")}</div>
 
           <div className={styles.locationGrid}>
@@ -757,6 +900,14 @@ export default function ProjectForm() {
           <div className={styles.formActions}>
             <button
               type="button"
+              className={styles.stepBackBtn}
+              onClick={handleBack}
+              aria-label={t("project_form.buttons.back", "Retour")}
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <button
+              type="button"
               className={styles.draftBtn}
               disabled={savingDraft || loading}
               onClick={handleSaveDraft}
@@ -771,6 +922,8 @@ export default function ProjectForm() {
               {loading ? t("project_form.buttons.processing") : t("project_form.buttons.submit")}
             </button>
           </div>
+          </>
+          )}
 
         </form>
       </div>
