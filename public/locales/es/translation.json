@@ -567,6 +567,36 @@
     "individuel": "Empresario individual",
     "annees_experience": "Años de experiencia"
   },
+  "news_page": {
+    "title": "Noticias y Oportunidades",
+    "search_placeholder": "Buscar un artículo...",
+    "write_article": "Escribir un artículo",
+    "retraduire_tout": "Retraducir los artículos (DeepL)",
+    "retraduire_loading": "Retraduciendo…",
+    "toast_retraduit": "Artículos retraducidos",
+    "toast_retraduit_error": "Error al retraducir",
+    "confirm_delete": "¿Eliminar este artículo?",
+    "toast_delete_error": "Error al eliminar.",
+    "empty_title": "Ningún artículo encontrado",
+    "empty_text": "Pruebe otra categoría o modifique su búsqueda.",
+    "read_article": "Leer el artículo →",
+    "read_more": "Leer más",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "date_now": "Ahora mismo",
+    "date_minutes_ago": "Hace {{count}} min",
+    "date_hours_ago": "Hace {{count}}h",
+    "date_days_ago": "Hace {{count}} d",
+    "reading_time": "{{count}} min",
+    "category": {
+      "ALL": "Todo",
+      "PLATFORM_UPDATE": "Plataforma",
+      "INVESTMENT_OPPORTUNITY": "Oportunidades",
+      "PERFORMANCE_REPORT": "Rendimiento",
+      "EDUCATION": "Educación",
+      "SECURITY": "Seguridad"
+    }
+  },
   "contact_page": {
     "title": "Contacto / Soporte",
     "subtitle": "¿Una pregunta, un problema? Escríbenos, nuestro equipo te responderá por correo.",
@@ -659,7 +689,11 @@
       "confirm_delete": "¿Eliminar el artículo \"{{title}}\"? Esta acción es irreversible.",
       "delete_success": "Artículo eliminado",
       "delete_error": "Error al eliminar",
-      "search_placeholder": "Buscar por título..."
+      "search_placeholder": "Buscar por título...",
+      "retraduire_tout": "Retraducir los artículos (DeepL)",
+      "retraduire_loading": "Retraduciendo…",
+      "retraduire_error": "Error al retraducir",
+      "retraduire_hint": "Retraduce vía DeepL el título y el contenido de todos los artículos ya publicados (usar una vez tras el despliegue)"
     },
     "comments": {
       "title": "Comentarios",

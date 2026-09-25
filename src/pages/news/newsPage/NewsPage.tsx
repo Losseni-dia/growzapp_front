@@ -6,8 +6,11 @@ import {
   Trash2,
   Clock,
   X,
+  Languages,
 } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 import { News, newsService } from "../../../service/newsService";
 import { useAuth } from "../../../components/Context/AuthContext";
 import styles from "./NewsPage.module.css";
@@ -60,6 +63,9 @@ const CATEGORIES = [
   },
 ];
 
+const truncateAtWord = (text: string, maxLen: number): string =>
+  text.length <= maxLen ? text : text.slice(0, maxLen).replace(/\s+\S*$/, "");
+
 const getPlainText = (html: string): string => {
   const tmp = document.createElement("DIV");
   tmp.innerHTML = html;
@@ -69,15 +75,22 @@ const getPlainText = (html: string): string => {
 const readingTime = (html: string): number =>
   Math.max(1, Math.ceil(getPlainText(html).split(/\s+/).length / 200));
 
-const formatDate = (dateStr: string): string => {
+const formatDate = (
+  dateStr: string,
+  t: (key: string, options?: Record<string, unknown>) => string,
+  lang: string,
+): string => {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   const diff = Math.floor((Date.now() - date.getTime()) / 1000);
-  if (diff < 60) return "À l'instant";
-  if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
-  if (diff < 604800) return `Il y a ${Math.floor(diff / 86400)} j`;
-  return date.toLocaleDateString("fr-FR", {
+  if (diff < 60) return t("news_page.date_now", { defaultValue: "À l'instant" });
+  if (diff < 3600)
+    return t("news_page.date_minutes_ago", { defaultValue: "Il y a {{count}} min", count: Math.floor(diff / 60) });
+  if (diff < 86400)
+    return t("news_page.date_hours_ago", { defaultValue: "Il y a {{count}}h", count: Math.floor(diff / 3600) });
+  if (diff < 604800)
+    return t("news_page.date_days_ago", { defaultValue: "Il y a {{count}} j", count: Math.floor(diff / 86400) });
+  return date.toLocaleDateString(lang, {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -101,10 +114,12 @@ const SkeletonCard = () => (
 );
 
 const NewsPage = () => {
+  const { t, i18n } = useTranslation();
   const [articles, setArticles] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("");
   const [search, setSearch] = useState("");
+  const [retraducing, setRetraducing] = useState(false);
   const { user } = useAuth();
 
   const canPublish = user?.roles?.some((r: string) =>
@@ -119,26 +134,31 @@ const NewsPage = () => {
     newsService
       .getAll()
       .then((res: any) => {
-        console.log("NEWS RAW:", JSON.stringify(res)?.substring(0, 300));
         const data = Array.isArray(res) ? res : (res?.data ?? []);
-        console.log(
-          "NEWS articles:",
-          data.length,
-          "| hero imageUrl:",
-          data[0]?.imageUrl,
-        );
         setArticles(data);
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [i18n.language]);
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Supprimer cet article ?")) return;
+    if (!window.confirm(t("news_page.confirm_delete", "Supprimer cet article ?") as string)) return;
     try {
       await newsService.delete(id);
       setArticles((prev) => prev.filter((a) => a.id !== id));
     } catch {
-      alert("Erreur lors de la suppression.");
+      alert(t("news_page.toast_delete_error", "Erreur lors de la suppression."));
+    }
+  };
+
+  const handleRetraduireTout = async () => {
+    setRetraducing(true);
+    try {
+      const res = await newsService.retraduireTout();
+      toast.success(res.message || t("news_page.toast_retraduit", "Articles retraduits"));
+    } catch (err: any) {
+      toast.error(err.message || t("news_page.toast_retraduit_error", "Erreur lors de la retraduction"));
+    } finally {
+      setRetraducing(false);
     }
   };
 
@@ -173,13 +193,13 @@ const NewsPage = () => {
       <header className={styles.header}>
         <div className={styles.titleArea}>
           <Newspaper size={32} className={styles.icon} />
-          <h1>Actualités & Opportunités</h1>
+          <h1>{t("news_page.title", "Actualités & Opportunités")}</h1>
         </div>
         <div className={styles.headerRight}>
           <div className={styles.searchBox}>
             <input
               type="text"
-              placeholder="Rechercher un article..."
+              placeholder={t("news_page.search_placeholder", "Rechercher un article...") as string}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className={styles.searchInput}
@@ -194,8 +214,16 @@ const NewsPage = () => {
             )}
           </div>
           {canPublish && (
+            <button onClick={handleRetraduireTout} className={styles.adminBtn} disabled={retraducing}>
+              <Languages size={18} />{" "}
+              {retraducing
+                ? t("news_page.retraduire_loading", "Retraduction…")
+                : t("news_page.retraduire_tout", "Retraduire les articles (DeepL)")}
+            </button>
+          )}
+          {canPublish && (
             <Link to="/admin/news/new" className={styles.adminBtn}>
-              <PenLine size={18} /> Écrire un article
+              <PenLine size={18} /> {t("news_page.write_article", "Écrire un article")}
             </Link>
           )}
         </div>
@@ -219,7 +247,9 @@ const NewsPage = () => {
               }
             >
               <span className={styles.catIcon}>{cat.icon}</span>
-              <span className={styles.catLabel}>{cat.label}</span>
+              <span className={styles.catLabel}>
+                {t(`news_page.category.${cat.key || "ALL"}`, cat.label)}
+              </span>
               <span className={styles.catCount}>{count}</span>
             </button>
           );
@@ -236,8 +266,8 @@ const NewsPage = () => {
       ) : filtered.length === 0 ? (
         <div className={styles.empty}>
           <span style={{ fontSize: "3rem" }}>📭</span>
-          <h3>Aucun article trouvé</h3>
-          <p>Essayez une autre catégorie ou modifiez votre recherche.</p>
+          <h3>{t("news_page.empty_title", "Aucun article trouvé")}</h3>
+          <p>{t("news_page.empty_text", "Essayez une autre catégorie ou modifiez votre recherche.")}</p>
         </div>
       ) : (
         <>
@@ -278,7 +308,7 @@ const NewsPage = () => {
                       className={styles.heroBadge}
                       style={{ background: meta.color }}
                     >
-                      {meta.icon} {meta.label}
+                      {meta.icon} {t(`news_page.category.${hero.category}`, meta.label)}
                     </span>
                   );
                 })()}
@@ -286,20 +316,21 @@ const NewsPage = () => {
               <div className={styles.heroContent}>
                 <div className={styles.heroMeta}>
                   <span className={styles.metaDate}>
-                    {formatDate((hero as any).createdAt || "")}
+                    {formatDate((hero as any).createdAt || "", t, i18n.language)}
                   </span>
                   <span className={styles.metaDot}>·</span>
                   <span className={styles.metaRead}>
-                    <Clock size={13} /> {readingTime(hero.content)} min
+                    <Clock size={13} />{" "}
+                    {t("news_page.reading_time", "{{count}} min", { count: readingTime(hero.content) })}
                   </span>
                 </div>
                 <h2 className={styles.heroTitle}>{hero.title}</h2>
                 <p className={styles.heroExcerpt}>
-                  {getPlainText(hero.content).substring(0, 200)}...
+                  {truncateAtWord(getPlainText(hero.content), 200)}...
                 </p>
                 <div className={styles.heroActions}>
                   <Link to={`/news/${hero.id}`} className={styles.heroCta}>
-                    Lire l'article →
+                    {t("news_page.read_article", "Lire l'article →")}
                   </Link>
                   {(canEdit || canDelete) && (
                     <div className={styles.heroAdmin}>
@@ -308,7 +339,7 @@ const NewsPage = () => {
                           to={`/admin/news/edit/${hero.id}`}
                           className={styles.editBtn}
                         >
-                          <Edit size={14} /> Modifier
+                          <Edit size={14} /> {t("news_page.edit", "Modifier")}
                         </Link>
                       )}
                       {canDelete && (
@@ -316,7 +347,7 @@ const NewsPage = () => {
                           onClick={() => handleDelete(hero.id)}
                           className={styles.deleteBtn}
                         >
-                          <Trash2 size={14} /> Supprimer
+                          <Trash2 size={14} /> {t("news_page.delete", "Supprimer")}
                         </button>
                       )}
                     </div>
@@ -345,26 +376,27 @@ const NewsPage = () => {
                       className={styles.cardBadge}
                       style={{ background: meta.color }}
                     >
-                      {meta.icon} {meta.label}
+                      {meta.icon} {t(`news_page.category.${article.category}`, meta.label)}
                     </span>
                   </div>
                   <div className={styles.content}>
                     <div className={styles.cardMeta}>
                       <span>
-                        {formatDate((article as any).createdAt || "")}
+                        {formatDate((article as any).createdAt || "", t, i18n.language)}
                       </span>
                       <span className={styles.metaDot}>·</span>
                       <span>
-                        <Clock size={11} /> {readingTime(article.content)} min
+                        <Clock size={11} />{" "}
+                        {t("news_page.reading_time", "{{count}} min", { count: readingTime(article.content) })}
                       </span>
                     </div>
                     <h2>{article.title}</h2>
-                    <p>{getPlainText(article.content).substring(0, 130)}...</p>
+                    <p>{truncateAtWord(getPlainText(article.content), 130)}...</p>
                     <Link
                       to={`/news/${article.id}`}
                       className={styles.readMore}
                     >
-                      Lire la suite
+                      {t("news_page.read_more", "Lire la suite")}
                     </Link>
                     {(canEdit || canDelete) && (
                       <div className={styles.adminActions}>
@@ -373,7 +405,7 @@ const NewsPage = () => {
                             to={`/admin/news/edit/${article.id}`}
                             className={styles.editBtnSm}
                           >
-                            <Edit size={14} /> Modifier
+                            <Edit size={14} /> {t("news_page.edit", "Modifier")}
                           </Link>
                         )}
                         {canDelete && (
@@ -381,7 +413,7 @@ const NewsPage = () => {
                             onClick={() => handleDelete(article.id)}
                             className={styles.deleteBtnSm}
                           >
-                            <Trash2 size={14} /> Supprimer
+                            <Trash2 size={14} /> {t("news_page.delete", "Supprimer")}
                           </button>
                         )}
                       </div>

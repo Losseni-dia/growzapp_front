@@ -1,5 +1,5 @@
 // src/service/newsService.ts
-import { api } from "./Api";
+import { api, buildProjetUrl } from "./Api";
 
 export interface News {
   id: number;
@@ -31,13 +31,17 @@ interface ApiWrapped<T> {
 export const newsService = {
   getAll: async (category?: string) => {
     const res = await api.get<ApiWrapped<News[]>>(
-      category ? `/api/news?category=${category}` : "/api/news",
+      buildProjetUrl(category ? `/api/news?category=${category}` : "/api/news"),
     );
     return res.data;
   },
   getById: async (id: string | number) => {
-    const res = await api.get<ApiWrapped<News>>(`/api/news/${id}`);
+    const res = await api.get<ApiWrapped<News>>(buildProjetUrl(`/api/news/${id}`));
     return res.data;
+  },
+  retraduireTout: async () => {
+    const res = await api.post<{ message?: string }>("/api/news/admin/retraduire-tout", {});
+    return res;
   },
   create: async (data: any) => {
     const res = await api.post<ApiWrapped<News>>("/api/news", data);

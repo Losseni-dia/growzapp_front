@@ -567,6 +567,36 @@
     "individuel": "Sole proprietor",
     "annees_experience": "Years of experience"
   },
+  "news_page": {
+    "title": "News & Opportunities",
+    "search_placeholder": "Search for an article...",
+    "write_article": "Write an article",
+    "retraduire_tout": "Re-translate articles (DeepL)",
+    "retraduire_loading": "Re-translating…",
+    "toast_retraduit": "Articles re-translated",
+    "toast_retraduit_error": "Error while re-translating",
+    "confirm_delete": "Delete this article?",
+    "toast_delete_error": "Error while deleting.",
+    "empty_title": "No article found",
+    "empty_text": "Try another category or adjust your search.",
+    "read_article": "Read the article →",
+    "read_more": "Read more",
+    "edit": "Edit",
+    "delete": "Delete",
+    "date_now": "Just now",
+    "date_minutes_ago": "{{count}} min ago",
+    "date_hours_ago": "{{count}}h ago",
+    "date_days_ago": "{{count}}d ago",
+    "reading_time": "{{count}} min",
+    "category": {
+      "ALL": "All",
+      "PLATFORM_UPDATE": "Platform",
+      "INVESTMENT_OPPORTUNITY": "Opportunities",
+      "PERFORMANCE_REPORT": "Performance",
+      "EDUCATION": "Education",
+      "SECURITY": "Security"
+    }
+  },
   "contact_page": {
     "title": "Contact / Support",
     "subtitle": "A question, an issue? Write to us, our team will reply by email.",
@@ -659,7 +689,11 @@
       "confirm_delete": "Delete article \"{{title}}\"? This action is irreversible.",
       "delete_success": "Article deleted",
       "delete_error": "Error deleting article",
-      "search_placeholder": "Search by title..."
+      "search_placeholder": "Search by title...",
+      "retraduire_tout": "Re-translate articles (DeepL)",
+      "retraduire_loading": "Re-translating…",
+      "retraduire_error": "Error while re-translating",
+      "retraduire_hint": "Re-translates via DeepL the title and content of all already-published articles (use once after deployment)"
     },
     "comments": {
       "title": "Comments",

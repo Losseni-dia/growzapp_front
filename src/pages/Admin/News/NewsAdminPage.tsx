@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FiPlus, FiEdit2, FiTrash2, FiRss, FiSearch } from "react-icons/fi";
+import { FiPlus, FiEdit2, FiTrash2, FiRss, FiSearch, FiGlobe } from "react-icons/fi";
 import { format } from "date-fns";
 import { enUS, es, fr } from "date-fns/locale";
 import { News, newsService, NEWS_CATEGORIES } from "../../../service/newsService";
@@ -29,6 +29,7 @@ export default function NewsAdminPage() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [retraducing, setRetraducing] = useState(false);
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
@@ -42,17 +43,31 @@ export default function NewsAdminPage() {
   }, [search]);
 
   const { data, isLoading } = useQuery<NewsPage>({
-    queryKey: ["admin-news", page, debouncedSearch],
+    queryKey: ["admin-news", page, debouncedSearch, i18n.language],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         size: "12",
+        langue: i18n.language,
         ...(debouncedSearch && { search: debouncedSearch }),
       });
       const res = await api.get<{ data: NewsPage }>(`/api/news/admin?${params}`);
       return res.data;
     },
   });
+
+  const handleRetraduireTout = async () => {
+    setRetraducing(true);
+    try {
+      const res = await newsService.retraduireTout();
+      toast.success(res.message || t("admin.news.retraduire_tout"));
+      queryClient.invalidateQueries({ queryKey: ["admin-news"] });
+    } catch (err: any) {
+      toast.error(err.message || t("admin.news.retraduire_error"));
+    } finally {
+      setRetraducing(false);
+    }
+  };
 
   const articles = data?.content ?? [];
   const totalPages = data?.totalPages ?? 1;
@@ -86,6 +101,14 @@ export default function NewsAdminPage() {
           </h1>
           <p>{t("admin.news.subtitle", { count: totalElements })}</p>
         </div>
+        <button
+          onClick={handleRetraduireTout}
+          className={styles.createBtn}
+          disabled={retraducing}
+          title={t("admin.news.retraduire_hint") as string}
+        >
+          <FiGlobe /> {retraducing ? t("admin.news.retraduire_loading") : t("admin.news.retraduire_tout")}
+        </button>
         <Link to="/admin/news/new" className={styles.createBtn}>
           <FiPlus /> {t("admin.news.create")}
         </Link>

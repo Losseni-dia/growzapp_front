@@ -565,6 +565,36 @@
     "individuel": "Entrepreneur individuel",
     "annees_experience": "Années d'expérience"
   },
+  "news_page": {
+    "title": "Actualités & Opportunités",
+    "search_placeholder": "Rechercher un article...",
+    "write_article": "Écrire un article",
+    "retraduire_tout": "Retraduire les articles (DeepL)",
+    "retraduire_loading": "Retraduction…",
+    "toast_retraduit": "Articles retraduits",
+    "toast_retraduit_error": "Erreur lors de la retraduction",
+    "confirm_delete": "Supprimer cet article ?",
+    "toast_delete_error": "Erreur lors de la suppression.",
+    "empty_title": "Aucun article trouvé",
+    "empty_text": "Essayez une autre catégorie ou modifiez votre recherche.",
+    "read_article": "Lire l'article →",
+    "read_more": "Lire la suite",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "date_now": "À l'instant",
+    "date_minutes_ago": "Il y a {{count}} min",
+    "date_hours_ago": "Il y a {{count}}h",
+    "date_days_ago": "Il y a {{count}} j",
+    "reading_time": "{{count}} min",
+    "category": {
+      "ALL": "Tout",
+      "PLATFORM_UPDATE": "Plateforme",
+      "INVESTMENT_OPPORTUNITY": "Opportunités",
+      "PERFORMANCE_REPORT": "Performance",
+      "EDUCATION": "Éducation",
+      "SECURITY": "Sécurité"
+    }
+  },
   "contact_page": {
     "title": "Contact / Support",
     "subtitle": "Une question, un problème ? Écrivez-nous, notre équipe vous répond par email.",
@@ -657,7 +687,11 @@
       "confirm_delete": "Supprimer l'article \"{{title}}\" ? Cette action est irréversible.",
       "delete_success": "Article supprimé",
       "delete_error": "Erreur lors de la suppression",
-      "search_placeholder": "Rechercher par titre..."
+      "search_placeholder": "Rechercher par titre...",
+     "retraduire_tout": "Retraduire les articles (DeepL)",
+     "retraduire_loading": "Retraduction…",
+     "retraduire_error": "Erreur lors de la retraduction",
+     "retraduire_hint": "Retraduit via DeepL le titre et le contenu de tous les articles déjà publiés (à utiliser une fois après le déploiement)"
     },
     "comments": {
       "title": "Commentaires",
