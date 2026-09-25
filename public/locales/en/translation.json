@@ -36,6 +36,7 @@
     "settings": "Language and currency",
     "currency": "Currency",
     "language": "Language",
+    "login": "Sign in",
     "register": "Sign up"
   },
   "financed_projects_page": {

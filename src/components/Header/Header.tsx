@@ -256,7 +256,7 @@ export default function Header() {
                           size={13}
                           className={`${styles.sectionChevron} ${openSection === "devise" ? styles.sectionChevronOpen : ""}`}
                         />
-                        <FiDollarSign size={13} /> Devise ({currency})
+                        <FiDollarSign size={13} /> {t("header.currency", "Devise")} ({currency})
                       </button>
                       {openSection === "devise" && (
                         <div className={styles.profileMenuOptions}>
@@ -286,7 +286,7 @@ export default function Header() {
                           size={13}
                           className={`${styles.sectionChevron} ${openSection === "langue" ? styles.sectionChevronOpen : ""}`}
                         />
-                        <FiGlobe size={13} /> Langue
+                        <FiGlobe size={13} /> {t("header.language", "Langue")}
                       </button>
                       {openSection === "langue" && (
                         <div className={styles.profileMenuOptions}>
@@ -403,7 +403,7 @@ export default function Header() {
                 </div>
 
                 <Link to="/login" className={styles.loginBtn}>
-                  <span>{t("login")}</span>
+                  <span>{t("header.login", "Se connecter")}</span>
                 </Link>
                 <Link to="/register" className={styles.registerBtn}>
                   <span>{t("header.register", "S'inscrire")}</span>

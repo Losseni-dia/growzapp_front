@@ -36,6 +36,7 @@
     "settings": "Idioma y moneda",
     "currency": "Moneda",
     "language": "Idioma",
+    "login": "Iniciar sesión",
     "register": "Registrarse"
   },
   "financed_projects_page": {

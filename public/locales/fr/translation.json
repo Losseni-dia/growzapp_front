@@ -36,6 +36,7 @@
     "settings": "Langue et devise",
     "currency": "Devise",
     "language": "Langue",
+    "login": "Se connecter",
     "register": "S'inscrire"
   },
   "financed_projects_page": {
