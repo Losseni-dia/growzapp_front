@@ -4,7 +4,6 @@ import {
   FiChevronDown,
   FiDollarSign,
   FiGlobe,
-  FiLogIn,
   FiLogOut,
   FiMapPin,
   FiPlusCircle,
@@ -21,6 +20,7 @@ import {
   FiMail,
 } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import FlagIcon from "./FlagIcon";
 import { getAvatarUrl } from "../../types/utils/UserUtils";
 import { useAuth } from "../Context/AuthContext";
 import { useGrowzMarketCart } from "../Context/GrowzMarketCartContext";
@@ -61,9 +61,9 @@ export default function Header() {
   );
   const availableCurrencies = useMemo(() => Object.keys(rates), [rates]);
   const languages = [
-    { code: "fr", label: "Français", flag: "🇫🇷" },
-    { code: "en", label: "English", flag: "🇬🇧" },
-    { code: "es", label: "Español", flag: "🇪🇸" },
+    { code: "fr", label: "Français", flagCode: "fr" },
+    { code: "en", label: "English", flagCode: "gb" },
+    { code: "es", label: "Español", flagCode: "es" },
   ];
   const currentLanguage = languages.find((l) => l.code === i18n.language) ?? languages[0];
 
@@ -264,7 +264,10 @@ export default function Header() {
                             <button
                               key={c}
                               className={`${styles.profileMenuOption} ${currency === c ? styles.optionActive : ""}`}
-                              onClick={() => setCurrency(c)}
+                              onClick={() => {
+                                setCurrency(c);
+                                setShowProfileMenu(false);
+                              }}
                             >
                               {c}
                               {currency === c && <FiCheck size={13} />}
@@ -294,9 +297,10 @@ export default function Header() {
                               onClick={() => {
                                 i18n.changeLanguage(lang.code);
                                 localStorage.setItem("i18nextLng", lang.code);
+                                setShowProfileMenu(false);
                               }}
                             >
-                              <span aria-hidden="true">{lang.flag}</span> {lang.label}
+                              <FlagIcon code={lang.flagCode} /> {lang.label}
                               {i18n.language === lang.code && (
                                 <FiCheck size={13} />
                               )}
@@ -325,7 +329,7 @@ export default function Header() {
                     className={`${styles.profileTrigger} ${showGuestMenu ? styles.active : ""}`}
                     aria-label={t("header.settings", "Langue et devise")}
                   >
-                    <span aria-hidden="true">{currentLanguage.flag}</span>
+                    <FlagIcon code={currentLanguage.flagCode} />
                     <span className={styles.userName}>{currency}</span>
                     <FiChevronDown className={styles.chevron} />
                   </button>
@@ -350,7 +354,10 @@ export default function Header() {
                             <button
                               key={c}
                               className={`${styles.profileMenuOption} ${currency === c ? styles.optionActive : ""}`}
-                              onClick={() => setCurrency(c)}
+                              onClick={() => {
+                                setCurrency(c);
+                                setShowGuestMenu(false);
+                              }}
                             >
                               {c}
                               {currency === c && <FiCheck size={13} />}
@@ -380,9 +387,10 @@ export default function Header() {
                               onClick={() => {
                                 i18n.changeLanguage(lang.code);
                                 localStorage.setItem("i18nextLng", lang.code);
+                                setShowGuestMenu(false);
                               }}
                             >
-                              <span aria-hidden="true">{lang.flag}</span> {lang.label}
+                              <FlagIcon code={lang.flagCode} /> {lang.label}
                               {i18n.language === lang.code && (
                                 <FiCheck size={13} />
                               )}
@@ -395,7 +403,10 @@ export default function Header() {
                 </div>
 
                 <Link to="/login" className={styles.loginBtn}>
-                  <FiLogIn /> <span>{t("login")}</span>
+                  <span>{t("login")}</span>
+                </Link>
+                <Link to="/register" className={styles.registerBtn}>
+                  <span>{t("header.register", "S'inscrire")}</span>
                 </Link>
               </>
             )}

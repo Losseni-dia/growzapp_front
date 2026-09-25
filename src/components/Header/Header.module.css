@@ -189,6 +189,23 @@
   color: white;
 }
 
+.registerBtn {
+  background: var(--growz-primary);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+}
+
+.registerBtn:hover {
+  background: var(--growz-primary-pressed, var(--growz-primary));
+}
+
 /* Admin Dropdown Styles */
 .adminWrapper {
   position: relative;

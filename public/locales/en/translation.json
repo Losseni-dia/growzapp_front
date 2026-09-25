@@ -35,7 +35,8 @@
     "growzmarket": "GrowzMarket",
     "settings": "Language and currency",
     "currency": "Currency",
-    "language": "Language"
+    "language": "Language",
+    "register": "Sign up"
   },
   "financed_projects_page": {
     "title": "Financed Projects",
