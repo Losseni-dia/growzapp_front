@@ -37,7 +37,9 @@
     "currency": "Moneda",
     "language": "Idioma",
     "login": "Iniciar sesión",
-    "register": "Registrarse"
+    "register": "Registrarse",
+    "my_space": "Mi espacio",
+    "go_to_my_space": "Ir a mi espacio"
   },
   "financed_projects_page": {
     "title": "Proyectos financiados",

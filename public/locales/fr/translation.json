@@ -37,7 +37,9 @@
     "currency": "Devise",
     "language": "Langue",
     "login": "Se connecter",
-    "register": "S'inscrire"
+    "register": "S'inscrire",
+    "my_space": "Mon espace",
+    "go_to_my_space": "Accéder à mon espace"
   },
   "financed_projects_page": {
     "title": "Projets financés",

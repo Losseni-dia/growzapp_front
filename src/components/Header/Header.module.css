@@ -496,7 +496,7 @@
 }
 
 /* ── Responsive mobile ─────────────────────────────────────────────── */
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   .hamburgerBtn {
     display: flex;
     align-items: center;
@@ -551,7 +551,8 @@
 
   .navLink,
   .adminBtn,
-  .loginBtn {
+  .loginBtn,
+  .registerBtn {
     width: 100%;
     box-sizing: border-box;
     padding: 0.85rem 0.75rem;

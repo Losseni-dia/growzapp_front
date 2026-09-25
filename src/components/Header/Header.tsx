@@ -214,8 +214,6 @@ export default function Header() {
                         e.currentTarget.src = "/default-avatar.svg";
                       }}
                     />
-                    <span className={styles.userName}>{user.prenom}</span>
-                    <FiChevronDown className={styles.chevron} />
                   </button>
 
                   {showProfileMenu && (
@@ -230,7 +228,7 @@ export default function Header() {
                           size={13}
                           className={`${styles.sectionChevron} ${openSection === "espace" ? styles.sectionChevronOpen : ""}`}
                         />
-                        <FiUser size={13} /> Mon espace
+                        <FiUser size={13} /> {t("header.my_space", "Mon espace")}
                       </button>
                       {openSection === "espace" && (
                         <div className={styles.profileMenuOptions}>
@@ -239,7 +237,7 @@ export default function Header() {
                             className={styles.profileMenuItem}
                             onClick={() => setShowProfileMenu(false)}
                           >
-                            Accéder à mon espace
+                            {t("header.go_to_my_space", "Accéder à mon espace")}
                           </Link>
                         </div>
                       )}

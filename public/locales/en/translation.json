@@ -37,7 +37,9 @@
     "currency": "Currency",
     "language": "Language",
     "login": "Sign in",
-    "register": "Sign up"
+    "register": "Sign up",
+    "my_space": "My space",
+    "go_to_my_space": "Go to my space"
   },
   "financed_projects_page": {
     "title": "Financed Projects",
