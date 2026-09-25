@@ -185,11 +185,6 @@ export default function Header() {
                 </span>
                 <span>{t("growzmarket.cart.nav_label", "Panier")}</span>
               </Link>
-              {isAdmin && (
-                <Link to="/admin" className={styles.adminBtn}>
-                  <FiShield /> <span>{t("admin_space")}</span>
-                </Link>
-              )}
             </>
           )}
         </div>
@@ -239,6 +234,15 @@ export default function Header() {
                           >
                             {t("header.go_to_my_space", "Accéder à mon espace")}
                           </Link>
+                          {isAdmin && (
+                            <Link
+                              to="/admin"
+                              className={styles.profileMenuItem}
+                              onClick={() => setShowProfileMenu(false)}
+                            >
+                              <FiShield size={14} /> {t("admin_space")}
+                            </Link>
+                          )}
                         </div>
                       )}
 
