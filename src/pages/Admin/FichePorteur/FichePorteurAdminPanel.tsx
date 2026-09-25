@@ -62,7 +62,7 @@ const emptyForm = {
 };
 
 export default function FichePorteurAdminPanel() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [items, setItems] = useState<FicheAdmin[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
@@ -99,6 +99,7 @@ export default function FichePorteurAdminPanel() {
       const params = new URLSearchParams({
         page: page.toString(),
         size: "20",
+        langue: i18n.language,
         ...(debouncedSearch && { search: debouncedSearch }),
       });
       const res = await api.get<{ data: ListPage }>(`/api/porteur/fiche/admin/liste?${params}`);
@@ -115,7 +116,7 @@ export default function FichePorteurAdminPanel() {
   useEffect(() => {
     fetchListe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, i18n.language]);
 
   // ── Recherche d'utilisateur pour créer une nouvelle fiche ───────────────
   useEffect(() => {
