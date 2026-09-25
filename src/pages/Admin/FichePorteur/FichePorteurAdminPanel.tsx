@@ -1,6 +1,7 @@
-import { Check, Edit2, Plus, Search, ShieldCheck, X } from "lucide-react";
+import { Check, Edit2, Languages, Plus, Search, ShieldCheck, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import { api, buildFileUrl } from "../../../service/Api";
 import { StatutJuridiquePorteur } from "../../../types/enum";
 import styles from "../Kyc/KycAdminPanel.module.css";
@@ -61,6 +62,7 @@ const emptyForm = {
 };
 
 export default function FichePorteurAdminPanel() {
+  const { t } = useTranslation();
   const [items, setItems] = useState<FicheAdmin[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
@@ -68,6 +70,7 @@ export default function FichePorteurAdminPanel() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [retraducing, setRetraducing] = useState(false);
 
   // ── Modal création/édition ──────────────────────────────────────────────
   const [showModal, setShowModal] = useState(false);
@@ -103,7 +106,7 @@ export default function FichePorteurAdminPanel() {
       setTotalPages(res.data.totalPages ?? 1);
       setTotalElements(res.data.totalElements ?? 0);
     } catch {
-      toast.error("Erreur de chargement des fiches");
+      toast.error(t("admin.fiche_porteur.toast_load_error", "Erreur de chargement des fiches"));
     } finally {
       setLoading(false);
     }
@@ -190,7 +193,7 @@ export default function FichePorteurAdminPanel() {
       });
       setPhotoPreview(f.photoUrl ? buildFileUrl(f.photoUrl) : null);
     } catch {
-      toast.error("Impossible de charger la fiche existante");
+      toast.error(t("admin.fiche_porteur.toast_load_one_error", "Impossible de charger la fiche existante"));
     }
     setShowModal(true);
   };
@@ -228,7 +231,7 @@ export default function FichePorteurAdminPanel() {
 
   const handleSave = async (statut: "EN_ATTENTE" | "VALIDEE" | "REJETEE") => {
     if (!targetUserId) {
-      toast.error("Sélectionnez d'abord un porteur");
+      toast.error(t("admin.fiche_porteur.toast_select_porteur", "Sélectionnez d'abord un porteur"));
       return;
     }
     setSaving(true);
@@ -253,25 +256,50 @@ export default function FichePorteurAdminPanel() {
 
       await api.post(`/api/porteur/fiche/admin/${targetUserId}?${params}`, formData, true);
       toast.success(
-        statut === "VALIDEE" ? "Fiche publiée" : statut === "REJETEE" ? "Fiche marquée non conforme" : "Brouillon enregistré"
+        statut === "VALIDEE"
+          ? t("admin.fiche_porteur.toast_published", "Fiche publiée")
+          : statut === "REJETEE"
+          ? t("admin.fiche_porteur.toast_rejected", "Fiche marquée non conforme")
+          : t("admin.fiche_porteur.toast_draft_saved", "Brouillon enregistré")
       );
       setShowModal(false);
       fetchListe();
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors de l'enregistrement");
+      toast.error(err.message || t("admin.fiche_porteur.toast_save_error", "Erreur lors de l'enregistrement"));
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (userId: number, nom: string) => {
-    if (!window.confirm(`Supprimer définitivement la fiche de ${nom} ? Le porteur ne pourra plus soumettre de projet tant qu'une nouvelle fiche n'est pas créée.`)) return;
+    if (
+      !window.confirm(
+        t(
+          "admin.fiche_porteur.confirm_delete",
+          "Supprimer définitivement la fiche de {{nom}} ? Le porteur ne pourra plus soumettre de projet tant qu'une nouvelle fiche n'est pas créée.",
+          { nom }
+        )
+      )
+    )
+      return;
     try {
       await api.delete(`/api/porteur/fiche/admin/${userId}`);
-      toast.success("Fiche supprimée");
+      toast.success(t("admin.fiche_porteur.toast_deleted", "Fiche supprimée"));
       fetchListe();
     } catch (err: any) {
-      toast.error(err.message || "Erreur lors de la suppression");
+      toast.error(err.message || t("admin.fiche_porteur.toast_delete_error", "Erreur lors de la suppression"));
+    }
+  };
+
+  const handleRetraduireBios = async () => {
+    setRetraducing(true);
+    try {
+      const res = await api.post<{ message?: string }>("/api/porteur/fiche/admin/retraduire-bios", {});
+      toast.success(res.message || t("admin.fiche_porteur.toast_retraduit", "Bios retraduites"));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.fiche_porteur.toast_retraduit_error", "Erreur lors de la retraduction"));
+    } finally {
+      setRetraducing(false);
     }
   };
 
@@ -279,7 +307,7 @@ export default function FichePorteurAdminPanel() {
     return (
       <div className={styles.loadingScreen}>
         <div className={styles.spinner} />
-        <p>Chargement…</p>
+        <p>{t("dashboard.loading", "Chargement…")}</p>
       </div>
     );
   }
@@ -291,14 +319,30 @@ export default function FichePorteurAdminPanel() {
           <ShieldCheck size={20} />
         </div>
         <div style={{ flex: 1 }}>
-          <h1 className={styles.title}>Fiches de présentation porteur</h1>
+          <h1 className={styles.title}>{t("admin.fiche_porteur.title", "Fiches de présentation porteur")}</h1>
           <p className={styles.subtitle}>
-            {totalElements} fiche{totalElements > 1 ? "s" : ""} créée{totalElements > 1 ? "s" : ""} — rédigées et
-            validées exclusivement par l'admin
+            {t("admin.fiche_porteur.subtitle", "{{count}} fiche(s) créée(s) — rédigées et validées exclusivement par l'admin", {
+              count: totalElements,
+            })}
           </p>
         </div>
+        <button
+          onClick={handleRetraduireBios}
+          className={styles.btnCancel}
+          disabled={retraducing}
+          style={{ whiteSpace: "nowrap" }}
+          title={t(
+            "admin.fiche_porteur.retraduire_hint",
+            "Retraduit via DeepL la bio de toutes les fiches déjà soumises (à utiliser une fois après le déploiement)"
+          ) as string}
+        >
+          <Languages size={16} />{" "}
+          {retraducing
+            ? t("admin.fiche_porteur.retraduire_loading", "Retraduction…")
+            : t("admin.fiche_porteur.retraduire_bios", "Retraduire les bios (DeepL)")}
+        </button>
         <button onClick={openCreate} className={styles.btnApprove} style={{ whiteSpace: "nowrap" }}>
-          <Plus size={16} /> Nouvelle fiche
+          <Plus size={16} /> {t("admin.fiche_porteur.new_fiche", "Nouvelle fiche")}
         </button>
       </header>
 
@@ -306,7 +350,7 @@ export default function FichePorteurAdminPanel() {
         <Search size={15} />
         <input
           type="text"
-          placeholder="Rechercher par nom, prénom ou email…"
+          placeholder={t("admin.fiche_porteur.search_placeholder", "Rechercher par nom, prénom ou email…") as string}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -315,7 +359,12 @@ export default function FichePorteurAdminPanel() {
       {items.length === 0 ? (
         <div className={styles.emptyState}>
           <ShieldCheck size={32} />
-          <p>Aucune fiche créée pour l'instant — cliquez sur "Nouvelle fiche" pour en créer une.</p>
+          <p>
+            {t(
+              "admin.fiche_porteur.empty",
+              'Aucune fiche créée pour l\'instant — cliquez sur "Nouvelle fiche" pour en créer une.'
+            )}
+          </p>
         </div>
       ) : (
         <div className={styles.grid}>
@@ -352,7 +401,7 @@ export default function FichePorteurAdminPanel() {
                           : styles.badgeRed
                       }`}
                     >
-                      {f.ficheStatut}
+                      {t(`admin.fiche_porteur.statut.${f.ficheStatut}`, { defaultValue: f.ficheStatut })}
                     </span>
                   </div>
                 </div>
@@ -360,14 +409,18 @@ export default function FichePorteurAdminPanel() {
 
               <div className={styles.details}>
                 <div className={styles.detailItem}>
-                  <strong>Statut</strong>
+                  <strong>{t("admin.fiche_porteur.statut_label", "Statut")}</strong>
                   <span>
-                    {f.statutJuridique === "SOCIETE" ? `Société — ${f.raisonSociale || "?"}` : "Entrepreneur individuel"}
+                    {f.statutJuridique === "SOCIETE"
+                      ? `${t("admin.fiche_porteur.societe", "Société")} — ${f.raisonSociale || "?"}`
+                      : t("admin.fiche_porteur.individuel", "Entrepreneur individuel")}
                   </span>
                 </div>
                 <div className={styles.detailItem}>
-                  <strong>Expérience</strong>
-                  <span>{f.anneesExperience ?? "?"} an(s)</span>
+                  <strong>{t("admin.fiche_porteur.experience", "Expérience")}</strong>
+                  <span>
+                    {f.anneesExperience ?? "?"} {t("admin.fiche_porteur.annees_suffix", "an(s)")}
+                  </span>
                 </div>
                 <div className={styles.detailItem}>
                   <span style={{ whiteSpace: "pre-wrap" }}>{f.bio}</span>
@@ -376,10 +429,10 @@ export default function FichePorteurAdminPanel() {
 
               <div className={styles.cardActions}>
                 <button onClick={() => openEdit(f)} className={styles.btnApprove}>
-                  <Edit2 size={16} /> Modifier
+                  <Edit2 size={16} /> {t("admin.fiche_porteur.btn_edit", "Modifier")}
                 </button>
                 <button onClick={() => handleDelete(f.userId, `${f.prenom} ${f.nom}`)} className={styles.btnReject}>
-                  <X size={16} /> Supprimer
+                  <X size={16} /> {t("admin.fiche_porteur.btn_delete", "Supprimer")}
                 </button>
               </div>
             </div>
@@ -405,7 +458,9 @@ export default function FichePorteurAdminPanel() {
         <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
             <h3 className={styles.modalTitle}>
-              {targetUserId ? "Modifier la fiche" : "Créer une fiche de présentation"}
+              {targetUserId
+                ? t("admin.fiche_porteur.modal_title_edit", "Modifier la fiche")
+                : t("admin.fiche_porteur.modal_title_create", "Créer une fiche de présentation")}
             </h3>
 
             {!targetUserId ? (
@@ -413,7 +468,7 @@ export default function FichePorteurAdminPanel() {
                 <input
                   className={styles.modalTextarea}
                   style={{ minHeight: "auto" }}
-                  placeholder="Rechercher un porteur par nom, prénom ou login…"
+                  placeholder={t("admin.fiche_porteur.search_user_placeholder", "Rechercher un porteur par nom, prénom ou login…") as string}
                   value={userSearchTerm}
                   onChange={(e) => setUserSearchTerm(e.target.value)}
                 />
@@ -432,7 +487,9 @@ export default function FichePorteurAdminPanel() {
                 )}
               </div>
             ) : (
-              <p className={styles.modalUser}>Porteur : {targetUserLabel}</p>
+              <p className={styles.modalUser}>
+                {t("admin.fiche_porteur.porteur_label", "Porteur")} : {targetUserLabel}
+              </p>
             )}
 
             {targetUserId && (
@@ -441,7 +498,7 @@ export default function FichePorteurAdminPanel() {
                   {photoPreview ? (
                     <img
                       src={photoPreview}
-                      alt="Aperçu"
+                      alt={t("admin.fiche_porteur.photo_preview_alt", "Aperçu") as string}
                       style={{ width: 64, height: 64, borderRadius: "50%", objectFit: "cover" }}
                     />
                   ) : (
@@ -458,19 +515,19 @@ export default function FichePorteurAdminPanel() {
                         color: "#999",
                       }}
                     >
-                      Aucune photo
+                      {t("admin.fiche_porteur.no_photo", "Aucune photo")}
                     </div>
                   )}
                   <div>
                     <label style={{ fontSize: "0.82rem", fontWeight: 700, display: "block", marginBottom: 4 }}>
-                      Photo de la fiche (distincte de l'avatar de compte)
+                      {t("admin.fiche_porteur.photo_label", "Photo de la fiche (distincte de l'avatar de compte)")}
                     </label>
                     <input type="file" accept="image/*" onChange={handlePhotoChange} />
                   </div>
                 </div>
                 <textarea
                   className={styles.modalTextarea}
-                  placeholder="Bio — qui est ce porteur, son parcours…"
+                  placeholder={t("admin.fiche_porteur.bio_placeholder", "Bio — qui est ce porteur, son parcours…") as string}
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 />
@@ -480,14 +537,16 @@ export default function FichePorteurAdminPanel() {
                   className={styles.modalTextarea}
                   style={{ minHeight: "auto" }}
                 >
-                  <option value={StatutJuridiquePorteur.INDIVIDUEL}>Entrepreneur individuel</option>
-                  <option value={StatutJuridiquePorteur.SOCIETE}>Société</option>
+                  <option value={StatutJuridiquePorteur.INDIVIDUEL}>
+                    {t("admin.fiche_porteur.individuel", "Entrepreneur individuel")}
+                  </option>
+                  <option value={StatutJuridiquePorteur.SOCIETE}>{t("admin.fiche_porteur.societe", "Société")}</option>
                 </select>
                 {form.statutJuridique === StatutJuridiquePorteur.SOCIETE && (
                   <input
                     className={styles.modalTextarea}
                     style={{ minHeight: "auto" }}
-                    placeholder="Raison sociale"
+                    placeholder={t("admin.fiche_porteur.raison_sociale_placeholder", "Raison sociale") as string}
                     value={form.raisonSociale}
                     onChange={(e) => setForm({ ...form, raisonSociale: e.target.value })}
                   />
@@ -496,14 +555,17 @@ export default function FichePorteurAdminPanel() {
                   type="number"
                   className={styles.modalTextarea}
                   style={{ minHeight: "auto" }}
-                  placeholder="Années d'expérience"
+                  placeholder={t("admin.fiche_porteur.annees_experience_placeholder", "Années d'expérience") as string}
                   value={form.anneesExperience}
                   onChange={(e) => setForm({ ...form, anneesExperience: e.target.value })}
                 />
                 {porteurProjets.length > 0 && (
                   <div style={{ marginTop: "0.2rem" }}>
                     <label style={{ fontSize: "0.82rem", fontWeight: 700, display: "block", marginBottom: 4 }}>
-                      Projets à mettre en avant (libellé et statut affichés automatiquement, déjà traduits dans la langue de l'investisseur)
+                      {t(
+                        "admin.fiche_porteur.projets_label",
+                        "Projets à mettre en avant (libellé et statut affichés automatiquement, déjà traduits dans la langue de l'investisseur)"
+                      )}
                     </label>
                     <div
                       style={{
@@ -532,7 +594,9 @@ export default function FichePorteurAdminPanel() {
                             onChange={() => toggleProjet(p)}
                           />
                           {p.libelle}{" "}
-                          <span style={{ color: "#888" }}>({p.statutProjet})</span>
+                          <span style={{ color: "#888" }}>
+                            ({t(`admin.projects_list.status.${p.statutProjet}`, { defaultValue: p.statutProjet })})
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -540,21 +604,26 @@ export default function FichePorteurAdminPanel() {
                 )}
                 <textarea
                   className={styles.modalTextarea}
-                  placeholder="Note libre complémentaire (facultatif) — pour des projets hors GrowzApp, non traduite automatiquement"
+                  placeholder={
+                    t(
+                      "admin.fiche_porteur.note_libre_placeholder",
+                      "Note libre complémentaire (facultatif) — pour des projets hors GrowzApp, non traduite automatiquement"
+                    ) as string
+                  }
                   value={form.projetsPrecedents}
                   onChange={(e) => setForm({ ...form, projetsPrecedents: e.target.value })}
                 />
                 <input
                   className={styles.modalTextarea}
                   style={{ minHeight: "auto" }}
-                  placeholder="Téléphone (interne, jamais affiché)"
+                  placeholder={t("admin.fiche_porteur.telephone_placeholder", "Téléphone (interne, jamais affiché)") as string}
                   value={form.contactTelephone}
                   onChange={(e) => setForm({ ...form, contactTelephone: e.target.value })}
                 />
                 <input
                   className={styles.modalTextarea}
                   style={{ minHeight: "auto" }}
-                  placeholder="Email (interne, jamais affiché)"
+                  placeholder={t("admin.fiche_porteur.email_placeholder", "Email (interne, jamais affiché)") as string}
                   value={form.contactEmail}
                   onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
                 />
@@ -563,22 +632,25 @@ export default function FichePorteurAdminPanel() {
 
             <div className={styles.modalFooter} style={{ flexWrap: "wrap" }}>
               <button onClick={() => setShowModal(false)} className={styles.btnCancel}>
-                Annuler
+                {t("admin.fiche_porteur.btn_cancel", "Annuler")}
               </button>
               {targetUserId && (
                 <>
                   <button onClick={() => handleSave("EN_ATTENTE")} className={styles.btnCancel} disabled={saving}>
-                    Enregistrer (brouillon)
+                    {t("admin.fiche_porteur.btn_save_draft", "Enregistrer (brouillon)")}
                   </button>
                   <button
                     onClick={() => handleSave("REJETEE")}
                     className={styles.btnReject}
                     disabled={saving}
                   >
-                    <X size={16} /> Marquer non conforme
+                    <X size={16} /> {t("admin.fiche_porteur.btn_mark_rejected", "Marquer non conforme")}
                   </button>
                   <button onClick={() => handleSave("VALIDEE")} className={styles.btnApprove} disabled={saving}>
-                    <Check size={16} /> {saving ? "Publication…" : "Publier"}
+                    <Check size={16} />{" "}
+                    {saving
+                      ? t("admin.fiche_porteur.btn_publishing", "Publication…")
+                      : t("admin.fiche_porteur.btn_publish", "Publier")}
                   </button>
                 </>
               )}
