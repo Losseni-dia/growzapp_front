@@ -183,7 +183,8 @@
   },
   "common": {
     "anonymous": "Inconnu",
-    "not_provided": "Non renseigné"
+    "not_provided": "Non renseigné",
+    "loading": "Chargement..."
   },
   "project_details": {
     "owner": "Porteur du projet",
@@ -804,6 +805,8 @@
       "projects_pending": "Projets soumis",
       "validate_projects": "Valider les projets soumis",
       "messages_pending": "Messages en attente",
+      "fournisseurs_pending": "Fournisseurs en attente",
+      "commandes_pending": "Commandes en attente",
       "answer_messages": "Répondre aux messages de contact"
     },
     "wallets": {
@@ -1239,6 +1242,22 @@
       "btn_favor_porteur": "En faveur du porteur (annulée)",
       "btn_favor_fournisseur": "En faveur du fournisseur"
     },
+    "fournisseurs": {
+      "toast_load_error": "Erreur lors du chargement",
+      "toast_validated": "Fournisseur validé",
+      "toast_error": "Erreur",
+      "toast_motif_required": "Le motif est obligatoire (3 caractères min.)",
+      "toast_rejected": "Fournisseur rejeté",
+      "title": "Fournisseurs en attente de validation",
+      "subtitle": "{{count}} inscription(s) en attente",
+      "empty": "Aucune inscription en attente.",
+      "btn_validate": "Valider",
+      "btn_reject": "Rejeter",
+      "reject_title": "Motif du rejet",
+      "reject_placeholder": "Expliquez pourquoi cette inscription est rejetée...",
+      "btn_cancel": "Annuler",
+      "btn_confirm_reject": "Rejeter"
+    },
     "growzmarket": {
       "toast_load_error": "Erreur lors du chargement",
       "toast_motif_required": "Le motif est obligatoire",
@@ -1257,7 +1276,15 @@
       "arbitrate_placeholder": "Motif de la décision...",
       "btn_cancel": "Annuler",
       "btn_favor_acheteur": "En faveur de l'acheteur (remboursé)",
-      "btn_favor_vendeur": "En faveur du vendeur"
+      "btn_favor_vendeur": "En faveur du vendeur",
+      "statut": {
+        "PAYEE": "Payée — à préparer",
+        "PRETE_AU_RETRAIT": "Prête au retrait",
+        "RETIREE": "Retirée",
+        "NON_RETIREE": "Non retirée",
+        "LITIGE": "En litige",
+        "ANNULEE": "Annulée — remboursée"
+      }
     }
   },
   "contract_view": {
@@ -1866,7 +1893,19 @@
       "btn_confirm_refus": "Refuser la commande",
       "facture_title": "Confirmer l'expédition",
       "facture_notice": "La facture sera générée automatiquement et transmise au porteur et aux investisseurs du projet une fois le paiement exécuté.",
-      "btn_confirm_expedition": "Confirmer l'expédition"
+      "btn_confirm_expedition": "Confirmer l'expédition",
+      "statut": {
+        "EN_ATTENTE_VALIDATION": "En attente de validation admin",
+        "REJETEE": "Rejetée",
+        "EN_ATTENTE_ACCEPTATION": "À accepter",
+        "REFUSEE": "Refusée",
+        "ACCEPTEE": "Acceptée — à expédier",
+        "EXPEDIEE": "Expédiée",
+        "LITIGE": "En litige",
+        "ANNULEE": "Annulée",
+        "LIVREE": "Livrée — en attente de paiement",
+        "PAYEE": "Payée"
+      }
     },
     "inscription": {
       "toast_draft_saved": "Brouillon enregistré — vous pourrez continuer plus tard",
@@ -1952,7 +1991,19 @@
     "litige_title": "Signaler un problème",
     "litige_placeholder": "Décrivez le problème rencontré...",
     "btn_cancel": "Annuler",
-    "btn_send_litige": "Envoyer"
+    "btn_send_litige": "Envoyer",
+    "statut": {
+      "EN_ATTENTE_VALIDATION": "En attente de validation admin",
+      "REJETEE": "Rejetée",
+      "EN_ATTENTE_ACCEPTATION": "En attente d'acceptation fournisseur",
+      "REFUSEE": "Refusée par le fournisseur",
+      "ACCEPTEE": "Acceptée — en préparation",
+      "EXPEDIEE": "Expédiée — à confirmer",
+      "LITIGE": "En litige",
+      "ANNULEE": "Annulée",
+      "LIVREE": "Livrée — paiement en attente",
+      "PAYEE": "Payée"
+    }
   },
   "growzmarket": {
     "categorie": {
@@ -2051,7 +2102,15 @@
       "btn_valider_retrait": "Valider le retrait",
       "confirm_valider_retrait": "Confirmer que l'acheteur a bien récupéré cette commande ?",
       "toast_valider_retrait": "Retrait validé",
-      "search_placeholder": "Rechercher par numéro de commande, acheteur, projet..."
+      "search_placeholder": "Rechercher par numéro de commande, acheteur, projet...",
+      "statut": {
+        "PAYEE": "Payée — à préparer",
+        "PRETE_AU_RETRAIT": "Prête au retrait",
+        "RETIREE": "Retirée",
+        "NON_RETIREE": "Non retirée",
+        "LITIGE": "En litige",
+        "ANNULEE": "Annulée"
+      }
     },
     "achats": {
       "toast_load_error": "Erreur lors du chargement",
@@ -2071,7 +2130,15 @@
       "litige_title": "Signaler un problème",
       "litige_placeholder": "Décrivez le problème rencontré...",
       "btn_cancel": "Annuler",
-      "btn_send_litige": "Envoyer"
+      "btn_send_litige": "Envoyer",
+      "statut": {
+        "PAYEE": "Payée — en préparation",
+        "PRETE_AU_RETRAIT": "Prête au retrait",
+        "RETIREE": "Retirée",
+        "NON_RETIREE": "Non retirée",
+        "LITIGE": "En litige",
+        "ANNULEE": "Annulée — remboursée"
+      }
     },
     "facture": {
       "title": "Facture GrowzMarket — Commande #{{id}}",
@@ -2097,6 +2164,82 @@
       "toast_success": "Achat effectué avec succès",
       "toast_vendor_success": "{{vendeur}} : achat effectué",
       "toast_vendor_error": "{{vendeur}} : {{error}}"
+    }
+  },
+  "site_footer": {
+    "tagline": "Financez l'avenir, un projet à la fois.",
+    "rss_tooltip": "Abonnez-vous au flux RSS",
+    "rss_title": "Abonnez-vous au flux RSS",
+    "col_legal": "Légal",
+    "link_mentions_legales": "Mentions Légales",
+    "link_cgu": "CGU",
+    "link_rgpd": "RGPD",
+    "col_investissement": "Investissement",
+    "link_cgv": "Risques & CGV",
+    "link_faq": "Aide & FAQ",
+    "link_contact": "Contactez-nous",
+    "partners_title": "Nos partenaires",
+    "copyright": "© {{year}} GrowzApp – Tous droits réservés",
+    "secure_transactions": "Transactions Sécurisées"
+  },
+  "legal_pages": {
+    "cgu": {
+      "title": "Conditions Générales d'Utilisation",
+      "updated_at": "En vigueur au 03 Janvier 2026",
+      "art1_title": "Article 1 : Objet",
+      "art1_body": "Les présentes CGU définissent les modalités d'accès à la plateforme Growzapp. L'utilisation du site implique l'acceptation sans réserve des présentes conditions.",
+      "art2_title": "Article 2 : Accès et Sécurité",
+      "art2_body": "L'accès est réservé aux personnes majeures et capables. L'utilisateur est seul responsable de la sécurité de ses identifiants. Growzapp utilise des protocoles de sécurité avancés, mais l'utilisateur doit veiller à la sécurité de son propre équipement.",
+      "art3_title": "Article 3 : Statut d'Hébergeur et de Superviseur",
+      "art3_body": "Growzapp agit en tant qu'hébergeur pour les contenus fournis par les porteurs de projets. Parallèlement, la plateforme assure une mission de monitoring actif. Cette mission constitue une obligation de moyens : Growzapp déploie ses meilleurs efforts pour surveiller l'exécution des projets, sans toutefois se substituer à la gestion opérationnelle du porteur de projet.",
+      "art4_title": "Article 4 : Responsabilité",
+      "art4_body": "La responsabilité de Growzapp est limitée à sa mission de mise en relation et de supervision. Elle ne saurait être engagée en cas de force majeure, de fausse déclaration d'un tiers non détectable par un audit standard, ou d'aléas climatiques impactant les projets agricoles.",
+      "footer": "Growzapp - Supervision active et sécurisée"
+    },
+    "cgv": {
+      "title": "Avertissement sur les Risques & CGV",
+      "subtitle": "Cadre contractuel de l'investissement",
+      "risk_box": "SÉCURITÉ DU CAPITAL : Contrairement au crowdfunding classique, les projets Growzapp font l'objet d'un monitoring rigoureux et d'une couverture assurantielle partielle du capital investi.",
+      "art1_title": "Article 1 : Modalités d'Investissement",
+      "art1_body": "L'investissement est validé après réception des fonds et validation du KYC. Un contrat électronique certifié est alors généré.",
+      "art2_title": "Article 2 : Monitoring et Suivi des Projets",
+      "art2_body": "Chaque projet financé est soumis au protocole de Monitoring Growzapp : visites de terrain mensuelles, contrôle des flux financiers et rapports de gestion trimestriels accessibles aux investisseurs.",
+      "art3_title": "Article 3 : Garantie de Capital (Assurance)",
+      "art3_body": "Les projets sont couverts par une assurance dommage/crédit souscrite auprès de nos partenaires. En cas de défaut total du projet, cette police permet un remboursement partiel du capital initial (selon les conditions spécifiques de chaque projet détaillées dans la fiche d'investissement).",
+      "art4_title": "Article 4 : Rétractation et Juridiction",
+      "art4_body": "Délai de rétractation : 4 jours calendaires. Loi applicable : Droit de Côte d'Ivoire. Tribunal compétent : Yamoussoukro.",
+      "footer": "Investissement sous haute surveillance"
+    },
+    "mentions_legales": {
+      "title": "Mentions Légales",
+      "updated_at": "Dernière mise à jour : 03 Janvier 2026",
+      "sec1_title": "1. Éditeur du site",
+      "sec1_body": "Le site Growzapp est édité par la société Afrikinity, société de droit ivoirien au capital de 10.000.000 FCFA, immatriculée au Registre du Commerce (RCCM) de [VILLE] sous le numéro [NUMERO_RCCM].",
+      "sec1_nif": "Identifiant Fiscal (NIF/IFU) : [VOTRE_NUMERO]",
+      "sec2_title": "2. Directeur de la publication",
+      "sec2_body": "Le directeur de la publication est DIAKITE Losseni, en sa qualité de PDG.",
+      "sec3_title": "3. Hébergement",
+      "sec3_host": "Le site est hébergé par [NOM_HEBERGEUR].",
+      "sec3_address": "Adresse : [ADRESSE_HEBERGEUR]",
+      "sec3_contact": "Contact : [TELEPHONE_HEBERGEUR]",
+      "sec4_title": "4. Contact",
+      "sec4_intro": "Pour toute question, vous pouvez nous contacter :",
+      "sec4_email": "Email : support@my-growzapp.com",
+      "sec4_phone": "Téléphone : [NUMERO_TELEPHONE]",
+      "footer": "Growzapp - Plateforme de financement sécurisée"
+    },
+    "rgpd": {
+      "title": "Protection des Données (RGPD)",
+      "subtitle": "Souveraineté et sécurité des informations",
+      "sec1_title": "1. Responsable et Finalités",
+      "sec1_body": "Les données sont collectées par Growzapp pour la gestion des investissements et le monitoring des projets.",
+      "sec2_title": "2. Données de Supervision",
+      "sec2_body": "Dans le cadre du monitoring, Growzapp collecte des données opérationnelles sur les projets. Certaines données de performance peuvent être partagées avec les investisseurs concernés à des fins de transparence contractuelle.",
+      "sec3_title": "3. Souveraineté et Transfert",
+      "sec3_body": "Le traitement est effectué au siège social en Afrique. Les investisseurs hors zone Afrique consentent au transfert de leurs données nécessaires à l'exécution de la garantie assurantielle et du suivi de leur investissement.",
+      "sec4_title": "4. Droits des utilisateurs",
+      "sec4_body": "Accès, rectification et suppression via rgpd@my-growzapp.com.",
+      "footer": "Données chiffrées AES-256 - Hébergement certifié"
     }
   }
 }

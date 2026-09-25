@@ -34,7 +34,7 @@ interface CommandeMarketDTO {
   lignes: CommandeMarketLigneDTO[];
 }
 
-const STATUT_LABELS: Record<string, string> = {
+const STATUT_KEYS: Record<string, string> = {
   PAYEE: "Payée — à préparer",
   PRETE_AU_RETRAIT: "Prête au retrait",
   RETIREE: "Retirée",
@@ -42,6 +42,10 @@ const STATUT_LABELS: Record<string, string> = {
   LITIGE: "En litige",
   ANNULEE: "Annulée",
 };
+
+function statutLabel(t: (key: string, options?: { defaultValue: string }) => string, statut: string): string {
+  return t(`growzmarket.ventes.statut.${statut}`, { defaultValue: STATUT_KEYS[statut] || statut });
+}
 
 export default function MesVentesMarketPage() {
   const { t } = useTranslation();
@@ -169,7 +173,7 @@ export default function MesVentesMarketPage() {
                   <strong> {c.projetLibelle}</strong>
                   <span className={styles.acheteur}> — {c.acheteurNom}</span>
                 </div>
-                <span className={styles.badge}>{STATUT_LABELS[c.statut] || c.statut}</span>
+                <span className={styles.badge}>{statutLabel(t, c.statut)}</span>
               </div>
 
               <ul className={styles.lignes}>

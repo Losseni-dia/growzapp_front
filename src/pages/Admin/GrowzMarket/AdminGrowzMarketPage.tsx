@@ -43,7 +43,7 @@ const ENDPOINTS: Record<Onglet, string> = {
   TOUTES: "/api/admin/market/commandes/toutes",
 };
 
-const STATUT_LABELS: Record<string, string> = {
+const STATUT_KEYS: Record<string, string> = {
   PAYEE: "Payée — à préparer",
   PRETE_AU_RETRAIT: "Prête au retrait",
   RETIREE: "Retirée",
@@ -51,6 +51,10 @@ const STATUT_LABELS: Record<string, string> = {
   LITIGE: "En litige",
   ANNULEE: "Annulée — remboursée",
 };
+
+function statutLabel(t: (key: string, options?: { defaultValue: string }) => string, statut: string): string {
+  return t(`admin.growzmarket.statut.${statut}`, { defaultValue: STATUT_KEYS[statut] || statut });
+}
 
 export default function AdminGrowzMarketPage() {
   const { t } = useTranslation();
@@ -149,9 +153,9 @@ export default function AdminGrowzMarketPage() {
         {onglet === "TOUTES" && (
           <select value={statutFilter} onChange={(e) => setStatutFilter(e.target.value)}>
             <option value="ALL">{t("admin.growzmarket.filter_all", "Tous les statuts")}</option>
-            {Object.entries(STATUT_LABELS).map(([key, label]) => (
+            {Object.keys(STATUT_KEYS).map((key) => (
               <option key={key} value={key}>
-                {label}
+                {statutLabel(t, key)}
               </option>
             ))}
           </select>
@@ -181,7 +185,7 @@ export default function AdminGrowzMarketPage() {
                 <span className={styles.total}>{format(Number(c.montantTotal), "XOF")}</span>
               </div>
               {onglet === "TOUTES" && (
-                <span className={styles.badgeStatut}>{STATUT_LABELS[c.statut] || c.statut}</span>
+                <span className={styles.badgeStatut}>{statutLabel(t, c.statut)}</span>
               )}
               <p className={styles.date}>{formatDate(new Date(c.dateCommande), "dd MMM yyyy", { locale: fr })}</p>
               <ul className={styles.lignes}>

@@ -184,7 +184,8 @@
   },
   "common": {
     "anonymous": "Anonymous",
-    "not_provided": "Not provided"
+    "not_provided": "Not provided",
+    "loading": "Loading..."
   },
   "project_details": {
     "owner": "Project Owner",
@@ -806,6 +807,8 @@
       "projects_pending": "Submitted projects",
       "validate_projects": "Validate submitted projects",
       "messages_pending": "Pending messages",
+      "fournisseurs_pending": "Suppliers pending",
+      "commandes_pending": "Orders pending",
       "answer_messages": "Answer contact messages"
     },
     "kyc": {
@@ -1236,6 +1239,22 @@
       "btn_favor_porteur": "In favor of the project owner (cancelled)",
       "btn_favor_fournisseur": "In favor of the supplier"
     },
+    "fournisseurs": {
+      "toast_load_error": "Error loading data",
+      "toast_validated": "Supplier validated",
+      "toast_error": "Error",
+      "toast_motif_required": "A reason is required (3 characters min.)",
+      "toast_rejected": "Supplier rejected",
+      "title": "Suppliers pending validation",
+      "subtitle": "{{count}} pending registration(s)",
+      "empty": "No pending registration.",
+      "btn_validate": "Validate",
+      "btn_reject": "Reject",
+      "reject_title": "Reason for rejection",
+      "reject_placeholder": "Explain why this registration is rejected...",
+      "btn_cancel": "Cancel",
+      "btn_confirm_reject": "Reject"
+    },
     "growzmarket": {
       "toast_load_error": "Error loading data",
       "toast_motif_required": "A reason is required",
@@ -1254,7 +1273,15 @@
       "arbitrate_placeholder": "Reason for the decision...",
       "btn_cancel": "Cancel",
       "btn_favor_acheteur": "In favor of the buyer (refunded)",
-      "btn_favor_vendeur": "In favor of the seller"
+      "btn_favor_vendeur": "In favor of the seller",
+      "statut": {
+        "PAYEE": "Paid — to prepare",
+        "PRETE_AU_RETRAIT": "Ready for pickup",
+        "RETIREE": "Picked up",
+        "NON_RETIREE": "Not picked up",
+        "LITIGE": "In dispute",
+        "ANNULEE": "Cancelled — refunded"
+      }
     }
   },
   "contract_view": {
@@ -1862,7 +1889,19 @@
       "btn_confirm_refus": "Refuse the order",
       "facture_title": "Confirm shipment",
       "facture_notice": "The invoice will be generated automatically and sent to the project owner and investors once the payment is executed.",
-      "btn_confirm_expedition": "Confirm shipment"
+      "btn_confirm_expedition": "Confirm shipment",
+      "statut": {
+        "EN_ATTENTE_VALIDATION": "Pending admin validation",
+        "REJETEE": "Rejected",
+        "EN_ATTENTE_ACCEPTATION": "To accept",
+        "REFUSEE": "Refused",
+        "ACCEPTEE": "Accepted — to ship",
+        "EXPEDIEE": "Shipped",
+        "LITIGE": "In dispute",
+        "ANNULEE": "Cancelled",
+        "LIVREE": "Delivered — payment pending",
+        "PAYEE": "Paid"
+      }
     },
     "inscription": {
       "toast_draft_saved": "Draft saved — you can continue later",
@@ -1948,7 +1987,19 @@
     "litige_title": "Report an issue",
     "litige_placeholder": "Describe the issue encountered...",
     "btn_cancel": "Cancel",
-    "btn_send_litige": "Send"
+    "btn_send_litige": "Send",
+    "statut": {
+      "EN_ATTENTE_VALIDATION": "Pending admin validation",
+      "REJETEE": "Rejected",
+      "EN_ATTENTE_ACCEPTATION": "Pending supplier acceptance",
+      "REFUSEE": "Refused by the supplier",
+      "ACCEPTEE": "Accepted — in preparation",
+      "EXPEDIEE": "Shipped — to confirm",
+      "LITIGE": "In dispute",
+      "ANNULEE": "Cancelled",
+      "LIVREE": "Delivered — payment pending",
+      "PAYEE": "Paid"
+    }
   },
   "growzmarket": {
     "categorie": {
@@ -2047,7 +2098,15 @@
       "btn_valider_retrait": "Confirm pickup",
       "confirm_valider_retrait": "Confirm that the buyer has picked up this order?",
       "toast_valider_retrait": "Pickup confirmed",
-      "search_placeholder": "Search by order number, buyer, project..."
+      "search_placeholder": "Search by order number, buyer, project...",
+      "statut": {
+        "PAYEE": "Paid — to prepare",
+        "PRETE_AU_RETRAIT": "Ready for pickup",
+        "RETIREE": "Picked up",
+        "NON_RETIREE": "Not picked up",
+        "LITIGE": "In dispute",
+        "ANNULEE": "Cancelled"
+      }
     },
     "achats": {
       "toast_load_error": "Error while loading",
@@ -2067,7 +2126,15 @@
       "litige_title": "Report an issue",
       "litige_placeholder": "Describe the issue encountered...",
       "btn_cancel": "Cancel",
-      "btn_send_litige": "Send"
+      "btn_send_litige": "Send",
+      "statut": {
+        "PAYEE": "Paid — being prepared",
+        "PRETE_AU_RETRAIT": "Ready for pickup",
+        "RETIREE": "Picked up",
+        "NON_RETIREE": "Not picked up",
+        "LITIGE": "In dispute",
+        "ANNULEE": "Cancelled — refunded"
+      }
     },
     "facture": {
       "title": "GrowzMarket Invoice — Order #{{id}}",
@@ -2093,6 +2160,82 @@
       "toast_success": "Purchase successful",
       "toast_vendor_success": "{{vendeur}}: purchase successful",
       "toast_vendor_error": "{{vendeur}}: {{error}}"
+    }
+  },
+  "site_footer": {
+    "tagline": "Fund the future, one project at a time.",
+    "rss_tooltip": "Subscribe to the RSS feed",
+    "rss_title": "Subscribe to the RSS feed",
+    "col_legal": "Legal",
+    "link_mentions_legales": "Legal Notice",
+    "link_cgu": "Terms of Use",
+    "link_rgpd": "Data Protection",
+    "col_investissement": "Investment",
+    "link_cgv": "Risks & Terms of Sale",
+    "link_faq": "Help & FAQ",
+    "link_contact": "Contact us",
+    "partners_title": "Our partners",
+    "copyright": "© {{year}} GrowzApp – All rights reserved",
+    "secure_transactions": "Secure Transactions"
+  },
+  "legal_pages": {
+    "cgu": {
+      "title": "Terms of Use",
+      "updated_at": "In effect as of January 3, 2026",
+      "art1_title": "Article 1: Purpose",
+      "art1_body": "These Terms of Use define the conditions of access to the Growzapp platform. Using the site implies unreserved acceptance of these terms.",
+      "art2_title": "Article 2: Access and Security",
+      "art2_body": "Access is reserved for adults with full legal capacity. The user is solely responsible for the security of their credentials. Growzapp uses advanced security protocols, but the user must ensure the security of their own equipment.",
+      "art3_title": "Article 3: Host and Supervisor Status",
+      "art3_body": "Growzapp acts as a host for content provided by project owners. At the same time, the platform carries out an active monitoring mission. This mission is a best-efforts obligation: Growzapp deploys its best efforts to monitor project execution, without substituting itself for the project owner's operational management.",
+      "art4_title": "Article 4: Liability",
+      "art4_body": "Growzapp's liability is limited to its role of connecting and supervising. It cannot be held liable in cases of force majeure, false statements by a third party that could not be detected by a standard audit, or climatic hazards affecting agricultural projects.",
+      "footer": "Growzapp - Active and secure supervision"
+    },
+    "cgv": {
+      "title": "Risk Warning & Terms of Sale",
+      "subtitle": "Contractual framework for investment",
+      "risk_box": "CAPITAL SECURITY: Unlike traditional crowdfunding, Growzapp projects are subject to rigorous monitoring and partial insurance coverage of the invested capital.",
+      "art1_title": "Article 1: Investment Terms",
+      "art1_body": "The investment is validated after receipt of funds and KYC validation. A certified electronic contract is then generated.",
+      "art2_title": "Article 2: Project Monitoring and Follow-up",
+      "art2_body": "Each funded project is subject to the Growzapp Monitoring protocol: monthly field visits, financial flow controls, and quarterly management reports accessible to investors.",
+      "art3_title": "Article 3: Capital Guarantee (Insurance)",
+      "art3_body": "Projects are covered by damage/credit insurance taken out with our partners. In the event of total project default, this policy allows for partial reimbursement of the initial capital (subject to the specific conditions of each project detailed in the investment sheet).",
+      "art4_title": "Article 4: Withdrawal and Jurisdiction",
+      "art4_body": "Withdrawal period: 4 calendar days. Applicable law: Law of Côte d'Ivoire. Competent court: Yamoussoukro.",
+      "footer": "Investment under close supervision"
+    },
+    "mentions_legales": {
+      "title": "Legal Notice",
+      "updated_at": "Last updated: January 3, 2026",
+      "sec1_title": "1. Site Publisher",
+      "sec1_body": "The Growzapp site is published by Afrikinity, a company under Ivorian law with a capital of 10,000,000 FCFA, registered with the Trade Register (RCCM) of [CITY] under number [RCCM_NUMBER].",
+      "sec1_nif": "Tax ID (NIF/IFU): [YOUR_NUMBER]",
+      "sec2_title": "2. Publication Director",
+      "sec2_body": "The publication director is DIAKITE Losseni, as CEO.",
+      "sec3_title": "3. Hosting",
+      "sec3_host": "The site is hosted by [HOST_NAME].",
+      "sec3_address": "Address: [HOST_ADDRESS]",
+      "sec3_contact": "Contact: [HOST_PHONE]",
+      "sec4_title": "4. Contact",
+      "sec4_intro": "For any question, you can contact us:",
+      "sec4_email": "Email: support@my-growzapp.com",
+      "sec4_phone": "Phone: [PHONE_NUMBER]",
+      "footer": "Growzapp - Secure funding platform"
+    },
+    "rgpd": {
+      "title": "Data Protection (GDPR)",
+      "subtitle": "Sovereignty and security of information",
+      "sec1_title": "1. Controller and Purposes",
+      "sec1_body": "Data is collected by Growzapp for investment management and project monitoring.",
+      "sec2_title": "2. Monitoring Data",
+      "sec2_body": "As part of monitoring, Growzapp collects operational data on projects. Some performance data may be shared with concerned investors for contractual transparency purposes.",
+      "sec3_title": "3. Sovereignty and Transfer",
+      "sec3_body": "Processing is carried out at the head office in Africa. Investors outside the African zone consent to the transfer of their data necessary for the execution of the insurance guarantee and the monitoring of their investment.",
+      "sec4_title": "4. User Rights",
+      "sec4_body": "Access, rectification and deletion via rgpd@my-growzapp.com.",
+      "footer": "AES-256 encrypted data - Certified hosting"
     }
   }
 }
