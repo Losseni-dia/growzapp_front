@@ -213,6 +213,9 @@
     "financing": "Financement",
     "porteur_card_title": "À propos du porteur",
     "porteur_projets_precedents": "Projets précédents",
+    "porteur_societe": "Société",
+    "porteur_individuel": "Entrepreneur individuel",
+    "porteur_annees_experience": "an(s) d'expérience",
     "financed_suffix": "financé",
     "collected_amount": "Collectés",
     "parts_prises": "parts prises",
@@ -548,7 +551,19 @@
   },
   "fiche_porteur": {
     "projets_precedents": "Projets précédents",
-    "financed_suffix": "financé"
+    "financed_suffix": "financé",
+    "loading": "Chargement…",
+    "title": "Ma fiche de présentation",
+    "intro": "Cette fiche est rédigée par l'équipe GrowzApp après vérification de votre profil professionnel. Vous ne pouvez pas la modifier vous-même — contactez notre équipe si une information doit être corrigée.",
+    "badge_non_soumise": "Aucune fiche n'a encore été créée pour vous. Contactez l'équipe GrowzApp pour engager la vérification de votre profil — c'est une étape nécessaire avant de pouvoir soumettre un projet.",
+    "badge_validee": "Votre fiche est validée. Vous pouvez soumettre vos projets.",
+    "badge_rejetee": "Votre fiche a été marquée non conforme",
+    "badge_rejetee_contact": "Contactez l'équipe GrowzApp pour la faire corriger.",
+    "bio": "Bio",
+    "statut": "Statut",
+    "societe": "Société",
+    "individuel": "Entrepreneur individuel",
+    "annees_experience": "Années d'expérience"
   },
   "contact_page": {
     "title": "Contact / Support",

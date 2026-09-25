@@ -214,6 +214,9 @@
     "financing": "Financing",
     "porteur_card_title": "About the project owner",
     "porteur_projets_precedents": "Previous projects",
+    "porteur_societe": "Company",
+    "porteur_individuel": "Sole proprietor",
+    "porteur_annees_experience": "year(s) of experience",
     "financed_suffix": "funded",
     "collected_amount": "Raised",
     "parts_prises": "shares taken",
@@ -550,7 +553,19 @@
   },
   "fiche_porteur": {
     "projets_precedents": "Previous projects",
-    "financed_suffix": "funded"
+    "financed_suffix": "funded",
+    "loading": "Loading…",
+    "title": "My profile sheet",
+    "intro": "This sheet is written by the GrowzApp team after verifying your professional profile. You cannot edit it yourself — contact our team if any information needs to be corrected.",
+    "badge_non_soumise": "No profile sheet has been created for you yet. Contact the GrowzApp team to start verifying your profile — this is a required step before you can submit a project.",
+    "badge_validee": "Your profile sheet is validated. You can submit your projects.",
+    "badge_rejetee": "Your profile sheet was marked as non-compliant",
+    "badge_rejetee_contact": "Contact the GrowzApp team to have it corrected.",
+    "bio": "Bio",
+    "statut": "Status",
+    "societe": "Company",
+    "individuel": "Sole proprietor",
+    "annees_experience": "Years of experience"
   },
   "contact_page": {
     "title": "Contact / Support",

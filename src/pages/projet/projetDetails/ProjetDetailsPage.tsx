@@ -344,10 +344,10 @@ export default function ProjetDetailsPage() {
                   </p>
                   <p style={{ fontSize: "0.85rem", color: "#666", margin: "0 0 8px" }}>
                     {fichePorteur.statutJuridique === "SOCIETE"
-                      ? fichePorteur.raisonSociale || "Société"
-                      : "Entrepreneur individuel"}
+                      ? fichePorteur.raisonSociale || t("project_details.porteur_societe", "Société")
+                      : t("project_details.porteur_individuel", "Entrepreneur individuel")}
                     {fichePorteur.anneesExperience != null &&
-                      ` · ${fichePorteur.anneesExperience} an(s) d'expérience`}
+                      ` · ${fichePorteur.anneesExperience} ${t("project_details.porteur_annees_experience", "an(s) d'expérience")}`}
                   </p>
                   <p style={{ fontSize: "0.9rem", lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{fichePorteur.bio}</p>
                   {fichePorteur.projetsPrecedentsListe?.length > 0 ? (
