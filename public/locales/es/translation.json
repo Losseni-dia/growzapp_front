@@ -894,6 +894,10 @@
       "messages_pending": "Mensajes pendientes",
       "fournisseurs_pending": "Proveedores pendientes",
       "commandes_pending": "Pedidos pendientes",
+      "articles_pending": "Productos pendientes",
+      "section_overview": "Resumen",
+      "section_projets": "Proyectos e inversiones",
+      "section_market": "GrowzMarket",
       "answer_messages": "Responder mensajes de contacto"
     },
     "edit_projet": {
@@ -1491,6 +1495,10 @@
       "toast_article_deleted": "Artículo eliminado",
       "toast_article_valide": "Artículo aprobado",
       "toast_article_rejete": "Artículo rechazado",
+      "retraduire_articles": "Retraducir los productos (DeepL)",
+      "retraduire_loading": "Retraduciendo…",
+      "retraduire_hint": "Retraduce vía DeepL el nombre y la descripción de todos los artículos ya publicados (usar una vez tras el despliegue)",
+      "toast_retraduit": "Artículos retraducidos",
       "btn_facture": "Ver la factura",
       "btn_arbitrate": "Arbitrar",
       "arbitrate_title": "Arbitrar la disputa",

@@ -893,6 +893,10 @@
       "messages_pending": "Messages en attente",
       "fournisseurs_pending": "Fournisseurs en attente",
       "commandes_pending": "Commandes en attente",
+      "articles_pending": "Produits en attente",
+      "section_overview": "Vue d'ensemble",
+      "section_projets": "Projets & investissements",
+      "section_market": "GrowzMarket",
       "answer_messages": "Répondre aux messages de contact"
     },
     "wallets": {
@@ -1496,6 +1500,10 @@
       "toast_article_deleted": "Article supprimé",
       "toast_article_valide": "Article validé",
       "toast_article_rejete": "Article rejeté",
+      "retraduire_articles": "Retraduire les produits (DeepL)",
+      "retraduire_loading": "Retraduction…",
+      "retraduire_hint": "Retraduit via DeepL le nom et la description de tous les articles déjà publiés (à utiliser une fois après le déploiement)",
+      "toast_retraduit": "Articles retraduits",
       "btn_facture": "Voir la facture",
       "btn_arbitrate": "Arbitrer",
       "arbitrate_title": "Arbitrer le litige",

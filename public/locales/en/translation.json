@@ -895,6 +895,10 @@
       "messages_pending": "Pending messages",
       "fournisseurs_pending": "Suppliers pending",
       "commandes_pending": "Orders pending",
+      "articles_pending": "Products pending",
+      "section_overview": "Overview",
+      "section_projets": "Projects & investments",
+      "section_market": "GrowzMarket",
       "answer_messages": "Answer contact messages"
     },
     "kyc": {
@@ -1493,6 +1497,10 @@
       "toast_article_deleted": "Item deleted",
       "toast_article_valide": "Item approved",
       "toast_article_rejete": "Item rejected",
+      "retraduire_articles": "Re-translate items (DeepL)",
+      "retraduire_loading": "Re-translating…",
+      "retraduire_hint": "Re-translates via DeepL the name and description of all already-published items (use once after deployment)",
+      "toast_retraduit": "Items re-translated",
       "btn_facture": "View invoice",
       "btn_arbitrate": "Settle",
       "arbitrate_title": "Settle the dispute",

@@ -12,6 +12,7 @@ import {
   FiMail,
   FiTruck,
   FiShoppingBag,
+  FiPackage,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
@@ -34,6 +35,7 @@ export default function DashboardAdmin() {
     messagesEnAttente: 0,
     fournisseursEnAttente: 0,
     commandesEnAttente: 0,
+    articlesEnAttente: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +52,7 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, invCounts, s, a, k, p, c, fo, cmd] = await Promise.all([
+      const [u, invCounts, s, a, k, p, c, fo, cmd, art] = await Promise.all([
         api
           .get<any>("/api/admin/users?page=0&size=1")
           .catch(() => ({ data: { totalElements: 0 } })),
@@ -72,12 +74,16 @@ export default function DashboardAdmin() {
         api
           .get<any>("/api/admin/commandes/en-attente")
           .catch(() => ({ data: [] })),
+        api
+          .get<any>("/api/admin/market/articles/en-attente")
+          .catch(() => ({ data: [] })),
       ]);
 
       const projets = Array.isArray(p.data) ? p.data : [];
       const messages = Array.isArray(c.data) ? c.data : [];
       const fournisseurs = Array.isArray(fo.data) ? fo.data : [];
       const commandesEnAttente = Array.isArray(cmd.data) ? cmd.data : [];
+      const articlesEnAttente = Array.isArray(art.data) ? art.data : [];
 
       setStats({
         totalUsers: u.data?.totalElements || 0,
@@ -95,6 +101,7 @@ export default function DashboardAdmin() {
         messagesEnAttente: messages.length,
         fournisseursEnAttente: fournisseurs.length,
         commandesEnAttente: commandesEnAttente.length,
+        articlesEnAttente: articlesEnAttente.length,
       });
     } finally {
       setLoading(false);
@@ -116,7 +123,8 @@ export default function DashboardAdmin() {
     stats.projetsSoumis +
     stats.messagesEnAttente +
     stats.fournisseursEnAttente +
-    stats.commandesEnAttente;
+    stats.commandesEnAttente +
+    stats.articlesEnAttente;
 
   return (
     <div className={styles.page}>
@@ -164,7 +172,8 @@ export default function DashboardAdmin() {
         </section>
       )}
 
-      {/* ═══════════ STATS GRID ═══════════ */}
+      {/* ═══════════ VUE D'ENSEMBLE ═══════════ */}
+      <h2 className={styles.sectionTitle}>{t("admin.dashboard.section_overview", "Vue d'ensemble")}</h2>
       <section className={styles.statsGrid}>
         <Link to="/admin/users" className={styles.statCard}>
           <div className={styles.statIconWrap}>
@@ -174,23 +183,6 @@ export default function DashboardAdmin() {
             <span className={styles.statNumber}>{stats.totalUsers}</span>
             <span className={styles.statLabel}>
               {t("admin.dashboard.users")}
-            </span>
-          </div>
-        </Link>
-
-        <Link
-          to="/admin/investissements"
-          className={`${styles.statCard} ${stats.investissementsEnAttente > 0 ? styles.statCardAlert : ""}`}
-        >
-          <div className={styles.statIconWrap}>
-            <FiDollarSign size={18} />
-          </div>
-          <div className={styles.statContent}>
-            <span className={styles.statNumber}>
-              {stats.investissementsEnAttente}
-            </span>
-            <span className={styles.statLabel}>
-              {t("admin.dashboard.investments_pending")}
             </span>
           </div>
         </Link>
@@ -211,6 +203,25 @@ export default function DashboardAdmin() {
         </Link>
 
         <Link
+          to="/admin/contact"
+          className={`${styles.statCard} ${stats.messagesEnAttente > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiMail size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.messagesEnAttente}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.messages_pending")}
+            </span>
+          </div>
+        </Link>
+      </section>
+
+      {/* ═══════════ PROJETS & INVESTISSEMENTS ═══════════ */}
+      <h2 className={styles.sectionTitle}>{t("admin.dashboard.section_projets", "Projets & investissements")}</h2>
+      <section className={styles.statsGrid}>
+        <Link
           to="/admin/projets?tab=SOUMIS"
           className={`${styles.statCard} ${stats.projetsSoumis > 0 ? styles.statCardAlert : ""}`}
         >
@@ -226,20 +237,26 @@ export default function DashboardAdmin() {
         </Link>
 
         <Link
-          to="/admin/contact"
-          className={`${styles.statCard} ${stats.messagesEnAttente > 0 ? styles.statCardAlert : ""}`}
+          to="/admin/investissements"
+          className={`${styles.statCard} ${stats.investissementsEnAttente > 0 ? styles.statCardAlert : ""}`}
         >
           <div className={styles.statIconWrap}>
-            <FiMail size={18} />
+            <FiDollarSign size={18} />
           </div>
           <div className={styles.statContent}>
-            <span className={styles.statNumber}>{stats.messagesEnAttente}</span>
+            <span className={styles.statNumber}>
+              {stats.investissementsEnAttente}
+            </span>
             <span className={styles.statLabel}>
-              {t("admin.dashboard.messages_pending")}
+              {t("admin.dashboard.investments_pending")}
             </span>
           </div>
         </Link>
+      </section>
 
+      {/* ═══════════ GROWZMARKET ═══════════ */}
+      <h2 className={styles.sectionTitle}>{t("admin.dashboard.section_market", "GrowzMarket")}</h2>
+      <section className={styles.statsGrid}>
         <Link
           to="/admin/fournisseurs"
           className={`${styles.statCard} ${stats.fournisseursEnAttente > 0 ? styles.statCardAlert : ""}`}
@@ -266,6 +283,21 @@ export default function DashboardAdmin() {
             <span className={styles.statNumber}>{stats.commandesEnAttente}</span>
             <span className={styles.statLabel}>
               {t("admin.dashboard.commandes_pending", "Commandes en attente")}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          to="/admin/growzmarket"
+          className={`${styles.statCard} ${stats.articlesEnAttente > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiPackage size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.articlesEnAttente}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.articles_pending", "Produits en attente")}
             </span>
           </div>
         </Link>

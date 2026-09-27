@@ -3,7 +3,7 @@ import { fr } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiCheck, FiEye, FiEyeOff, FiFileText, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2, FiX } from "react-icons/fi";
+import { FiCheck, FiEye, FiEyeOff, FiFileText, FiGlobe, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../../components/Commande/CommandeMarketTimeline";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
@@ -91,6 +91,7 @@ export default function AdminGrowzMarketPage() {
   const [statutArticleFilter, setStatutArticleFilter] = useState<"ALL" | "EN_ATTENTE" | "VALIDE" | "REJETE">("ALL");
   const [rejectArticleId, setRejectArticleId] = useState<number | null>(null);
   const [motifRejetArticle, setMotifRejetArticle] = useState("");
+  const [retraducing, setRetraducing] = useState(false);
 
   const filteredCommandes = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -220,6 +221,18 @@ export default function AdminGrowzMarketPage() {
     }
   };
 
+  const handleRetraduireArticles = async () => {
+    setRetraducing(true);
+    try {
+      const res = await api.post<{ message?: string }>("/api/admin/market/articles/retraduire-tout", {});
+      toast.success(res.message || t("admin.growzmarket.toast_retraduit", "Articles retraduits"));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.growzmarket.toast_error", "Erreur"));
+    } finally {
+      setRetraducing(false);
+    }
+  };
+
   const handleArbitrer = async (enFaveurDuVendeur: boolean) => {
     if (!arbitrageId || motifArbitrage.trim().length < 3) {
       toast.error(t("admin.growzmarket.toast_motif_required", "Le motif est obligatoire"));
@@ -299,6 +312,22 @@ export default function AdminGrowzMarketPage() {
             <option value="VALIDE">{t("admin.growzmarket.article_valide", "Validé")}</option>
             <option value="REJETE">{t("admin.growzmarket.article_rejete", "Rejeté")}</option>
           </select>
+        )}
+        {onglet === "ARTICLES" && (
+          <button
+            className={styles.btnCancel}
+            disabled={retraducing}
+            onClick={handleRetraduireArticles}
+            title={t(
+              "admin.growzmarket.retraduire_hint",
+              "Retraduit via DeepL le nom et la description de tous les articles déjà publiés (à utiliser une fois après le déploiement)",
+            ) as string}
+          >
+            <FiGlobe size={14} />{" "}
+            {retraducing
+              ? t("admin.growzmarket.retraduire_loading", "Retraduction…")
+              : t("admin.growzmarket.retraduire_articles", "Retraduire les produits (DeepL)")}
+          </button>
         )}
       </div>
 
