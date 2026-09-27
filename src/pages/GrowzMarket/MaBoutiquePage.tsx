@@ -27,6 +27,8 @@ interface ArticleMarketDTO {
   photos: string[];
   pointRetrait: string;
   telephoneContact: string | null;
+  statutValidation: string;
+  motifRejet: string | null;
 }
 
 const CATEGORIES = ["ALIMENTATION", "ARTISANAT", "TEXTILE", "COSMETIQUE", "AGRICULTURE", "SERVICE", "AUTRE"];
@@ -365,6 +367,20 @@ export default function MaBoutiquePage() {
                         : t("growzmarket.boutique.badge_unavailable", "Indisponible")}
                     </span>
                   </div>
+                  {a.statutValidation === "EN_ATTENTE" && (
+                    <p className={styles.hint}>
+                      {t(
+                        "growzmarket.boutique.badge_pending",
+                        "En attente de validation par l'équipe GrowzApp — pas encore visible des acheteurs.",
+                      )}
+                    </p>
+                  )}
+                  {a.statutValidation === "REJETE" && (
+                    <p className={styles.hint} style={{ color: "#a12727" }}>
+                      {t("growzmarket.boutique.badge_rejected", "Rejeté")}
+                      {a.motifRejet ? ` : ${a.motifRejet}` : ""}
+                    </p>
+                  )}
                   <p className={styles.articleProjet}>{a.projetLibelle}</p>
                   <p className={styles.articlePrix}>
                     {format(Number(a.prix), "XOF")} / {a.unite}

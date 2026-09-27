@@ -3,7 +3,7 @@ import { fr } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiEye, FiEyeOff, FiFileText, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2 } from "react-icons/fi";
+import { FiCheck, FiEye, FiEyeOff, FiFileText, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../../components/Commande/CommandeMarketTimeline";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
@@ -24,6 +24,8 @@ interface ArticleMarketDTO {
   categorie: string;
   photos: string[];
   pointRetrait: string;
+  statutValidation: string;
+  motifRejet: string | null;
 }
 
 interface CommandeMarketLigneDTO {
@@ -86,7 +88,9 @@ export default function AdminGrowzMarketPage() {
   const [statutFilter, setStatutFilter] = useState<string>("ALL");
 
   const [articles, setArticles] = useState<ArticleMarketDTO[]>([]);
-  const [dispoFilter, setDispoFilter] = useState<"ALL" | "DISPONIBLE" | "MASQUE">("ALL");
+  const [statutArticleFilter, setStatutArticleFilter] = useState<"ALL" | "EN_ATTENTE" | "VALIDE" | "REJETE">("ALL");
+  const [rejectArticleId, setRejectArticleId] = useState<number | null>(null);
+  const [motifRejetArticle, setMotifRejetArticle] = useState("");
 
   const filteredCommandes = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -106,8 +110,7 @@ export default function AdminGrowzMarketPage() {
   const filteredArticles = useMemo(() => {
     const q = search.trim().toLowerCase();
     return articles.filter((a) => {
-      if (dispoFilter === "DISPONIBLE" && !a.disponible) return false;
-      if (dispoFilter === "MASQUE" && a.disponible) return false;
+      if (statutArticleFilter !== "ALL" && a.statutValidation !== statutArticleFilter) return false;
       if (
         q &&
         !a.nom.toLowerCase().includes(q) &&
@@ -117,7 +120,7 @@ export default function AdminGrowzMarketPage() {
         return false;
       return true;
     });
-  }, [articles, search, dispoFilter]);
+  }, [articles, search, statutArticleFilter]);
 
   const loadArticles = () => {
     setLoading(true);
@@ -160,6 +163,38 @@ export default function AdminGrowzMarketPage() {
       setArticles((prev) =>
         prev.map((a) => (a.id === article.id ? { ...a, disponible: !a.disponible } : a)),
       );
+    } catch (err: any) {
+      toast.error(err.message || t("admin.growzmarket.toast_error", "Erreur"));
+    }
+  };
+
+  const handleValiderArticle = async (article: ArticleMarketDTO) => {
+    try {
+      await api.post(`/api/admin/market/articles/${article.id}/valider`, {});
+      toast.success(t("admin.growzmarket.toast_article_valide", "Article validé"));
+      setArticles((prev) =>
+        prev.map((a) => (a.id === article.id ? { ...a, statutValidation: "VALIDE", motifRejet: null } : a)),
+      );
+    } catch (err: any) {
+      toast.error(err.message || t("admin.growzmarket.toast_error", "Erreur"));
+    }
+  };
+
+  const handleRejeterArticle = async () => {
+    if (!rejectArticleId || motifRejetArticle.trim().length < 3) {
+      toast.error(t("admin.growzmarket.toast_motif_required", "Le motif est obligatoire"));
+      return;
+    }
+    try {
+      await api.post(`/api/admin/market/articles/${rejectArticleId}/rejeter`, { motif: motifRejetArticle });
+      toast.success(t("admin.growzmarket.toast_article_rejete", "Article rejeté"));
+      setArticles((prev) =>
+        prev.map((a) =>
+          a.id === rejectArticleId ? { ...a, statutValidation: "REJETE", motifRejet: motifRejetArticle } : a,
+        ),
+      );
+      setRejectArticleId(null);
+      setMotifRejetArticle("");
     } catch (err: any) {
       toast.error(err.message || t("admin.growzmarket.toast_error", "Erreur"));
     }
@@ -258,10 +293,11 @@ export default function AdminGrowzMarketPage() {
           </select>
         )}
         {onglet === "ARTICLES" && (
-          <select value={dispoFilter} onChange={(e) => setDispoFilter(e.target.value as any)}>
+          <select value={statutArticleFilter} onChange={(e) => setStatutArticleFilter(e.target.value as any)}>
             <option value="ALL">{t("admin.growzmarket.filter_all", "Tous les statuts")}</option>
-            <option value="DISPONIBLE">{t("admin.growzmarket.filter_disponible", "Disponibles")}</option>
-            <option value="MASQUE">{t("admin.growzmarket.filter_masque", "Masqués")}</option>
+            <option value="EN_ATTENTE">{t("admin.growzmarket.article_en_attente", "En attente")}</option>
+            <option value="VALIDE">{t("admin.growzmarket.article_valide", "Validé")}</option>
+            <option value="REJETE">{t("admin.growzmarket.article_rejete", "Rejeté")}</option>
           </select>
         )}
       </div>
@@ -302,20 +338,50 @@ export default function AdminGrowzMarketPage() {
                 </div>
                 <span
                   className={styles.badgeStatut}
-                  style={!a.disponible ? { background: "#eee", color: "#666" } : undefined}
+                  style={
+                    a.statutValidation === "EN_ATTENTE"
+                      ? { background: "#fff3cd", color: "#8a6d00" }
+                      : a.statutValidation === "REJETE"
+                      ? { background: "#fde3e3", color: "#a12727" }
+                      : !a.disponible
+                      ? { background: "#eee", color: "#666" }
+                      : undefined
+                  }
                 >
-                  {a.disponible
+                  {a.statutValidation === "EN_ATTENTE"
+                    ? t("admin.growzmarket.article_en_attente", "En attente")
+                    : a.statutValidation === "REJETE"
+                    ? t("admin.growzmarket.article_rejete", "Rejeté")
+                    : a.disponible
                     ? t("admin.growzmarket.article_disponible", "Disponible")
                     : t("admin.growzmarket.article_masque", "Masqué")}
                 </span>
                 {a.description && <p className={styles.date}>{a.description}</p>}
+                {a.statutValidation === "REJETE" && a.motifRejet && (
+                  <p className={styles.motifLitige}>{a.motifRejet}</p>
+                )}
                 <div className={styles.actions}>
-                  <button className={styles.btnValider} onClick={() => handleToggleDisponibilite(a)}>
-                    {a.disponible ? <FiEyeOff size={14} /> : <FiEye size={14} />}{" "}
-                    {a.disponible
-                      ? t("admin.growzmarket.btn_masquer", "Masquer")
-                      : t("admin.growzmarket.btn_afficher", "Afficher")}
-                  </button>
+                  {a.statutValidation === "EN_ATTENTE" ? (
+                    <>
+                      <button className={styles.btnValider} onClick={() => handleValiderArticle(a)}>
+                        <FiCheck size={14} /> {t("admin.growzmarket.btn_valider", "Valider")}
+                      </button>
+                      <button className={styles.btnRejeter} onClick={() => setRejectArticleId(a.id)}>
+                        <FiX size={14} /> {t("admin.growzmarket.btn_rejeter", "Rejeter")}
+                      </button>
+                    </>
+                  ) : a.statutValidation === "REJETE" ? (
+                    <button className={styles.btnValider} onClick={() => handleValiderArticle(a)}>
+                      <FiCheck size={14} /> {t("admin.growzmarket.btn_valider", "Valider")}
+                    </button>
+                  ) : (
+                    <button className={styles.btnValider} onClick={() => handleToggleDisponibilite(a)}>
+                      {a.disponible ? <FiEyeOff size={14} /> : <FiEye size={14} />}{" "}
+                      {a.disponible
+                        ? t("admin.growzmarket.btn_masquer", "Masquer")
+                        : t("admin.growzmarket.btn_afficher", "Afficher")}
+                    </button>
+                  )}
                   <button className={styles.btnRejeter} onClick={() => handleDeleteArticle(a)}>
                     <FiTrash2 size={14} /> {t("admin.growzmarket.btn_supprimer", "Supprimer")}
                   </button>
@@ -377,6 +443,29 @@ export default function AdminGrowzMarketPage() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {rejectArticleId !== null && (
+        <div className={styles.modalOverlay} onClick={() => setRejectArticleId(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("admin.growzmarket.reject_article_title", "Rejeter l'article")}</h2>
+            <textarea
+              value={motifRejetArticle}
+              onChange={(e) => setMotifRejetArticle(e.target.value)}
+              placeholder={t("admin.growzmarket.reject_article_placeholder", "Motif du rejet...") as string}
+              rows={4}
+              maxLength={500}
+            />
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setRejectArticleId(null)}>
+                {t("admin.growzmarket.btn_cancel", "Annuler")}
+              </button>
+              <button className={styles.btnRejeter} onClick={handleRejeterArticle}>
+                {t("admin.growzmarket.btn_rejeter", "Rejeter")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
