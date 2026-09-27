@@ -1,0 +1,102 @@
+.thread {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #555;
+  margin: 0 0 0.5rem;
+}
+
+.empty {
+  font-size: 0.82rem;
+  color: #888;
+  margin: 0 0 0.5rem;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.message {
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border-left: 3px solid #ccc;
+  background: white;
+}
+
+.role_acheteur {
+  border-left-color: #1565c0;
+}
+
+.role_vendeur {
+  border-left-color: #2e7d32;
+}
+
+.role_admin {
+  border-left-color: #f57c00;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: #777;
+  margin-bottom: 2px;
+}
+
+.author {
+  font-weight: 700;
+}
+
+.date {
+  white-space: nowrap;
+}
+
+.content {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #222;
+  white-space: pre-wrap;
+}
+
+.replyBox {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.replyBox textarea {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  resize: none;
+}
+
+.sendBtn {
+  background: var(--growz-primary, #1b5e20);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sendBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}

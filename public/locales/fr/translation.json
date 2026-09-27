@@ -2334,6 +2334,16 @@
       "stock_restant": "{{count}} en stock",
       "btn_edit": "Modifier"
     },
+    "litige_thread": {
+      "title": "Échanges sur le litige",
+      "empty": "Aucun message pour le moment.",
+      "placeholder": "Votre message...",
+      "role_acheteur": "Acheteur",
+      "role_vendeur": "Vendeur",
+      "role_admin": "GrowzApp",
+      "toast_validation": "Le message doit contenir au moins 3 caractères",
+      "toast_error": "Erreur lors de l'envoi"
+    },
     "ventes": {
       "toast_load_error": "Erreur lors du chargement",
       "toast_prepared": "Commande marquée comme prête au retrait",

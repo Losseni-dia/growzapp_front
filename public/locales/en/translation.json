@@ -2330,6 +2330,16 @@
       "stock_restant": "{{count}} in stock",
       "btn_edit": "Edit"
     },
+    "litige_thread": {
+      "title": "Dispute exchange",
+      "empty": "No message yet.",
+      "placeholder": "Your message...",
+      "role_acheteur": "Buyer",
+      "role_vendeur": "Seller",
+      "role_admin": "GrowzApp",
+      "toast_validation": "The message must contain at least 3 characters",
+      "toast_error": "Error while sending"
+    },
     "ventes": {
       "toast_load_error": "Error while loading",
       "toast_prepared": "Order marked as ready for pickup",

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { FiAlertTriangle, FiArrowLeft, FiFileText, FiHash, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../components/Commande/CommandeMarketTimeline";
+import LitigeThread, { LitigeMessageDTO } from "../../components/Commande/LitigeThread";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api } from "../../service/Api";
 import styles from "./MesVentesMarketPage.module.css";
@@ -32,6 +33,7 @@ interface CommandeMarketDTO {
   motifLitige: string | null;
   factureUrl: string | null;
   lignes: CommandeMarketLigneDTO[];
+  litigeMessages: LitigeMessageDTO[];
 }
 
 const STATUT_KEYS: Record<string, string> = {
@@ -138,6 +140,14 @@ export default function MesAchatsMarketPage() {
               <CommandeMarketTimeline commande={c} />
 
               {c.motifLitige && <p className={styles.motif}>{c.motifLitige}</p>}
+
+              <LitigeThread
+                commandeId={c.id}
+                statut={c.statut}
+                messages={c.litigeMessages || []}
+                apiBase="/api/market/commandes"
+                onSent={load}
+              />
 
               {c.factureUrl && (
                 <Link to={`/growzmarket/commandes/${c.id}/facture`} className={styles.btnFacture}>

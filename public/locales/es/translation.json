@@ -2328,6 +2328,16 @@
       "stock_restant": "{{count}} en stock",
       "btn_edit": "Modificar"
     },
+    "litige_thread": {
+      "title": "Intercambio sobre la disputa",
+      "empty": "Ningún mensaje por el momento.",
+      "placeholder": "Su mensaje...",
+      "role_acheteur": "Comprador",
+      "role_vendeur": "Vendedor",
+      "role_admin": "GrowzApp",
+      "toast_validation": "El mensaje debe contener al menos 3 caracteres",
+      "toast_error": "Error al enviar"
+    },
     "ventes": {
       "toast_load_error": "Error al cargar",
       "toast_prepared": "Pedido marcado como listo para retirar",

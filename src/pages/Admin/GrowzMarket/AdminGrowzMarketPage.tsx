@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { FiCheck, FiEye, FiEyeOff, FiFileText, FiGlobe, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../../components/Commande/CommandeMarketTimeline";
+import LitigeThread, { LitigeMessageDTO } from "../../../components/Commande/LitigeThread";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api, buildFileUrl } from "../../../service/Api";
 import styles from "./AdminGrowzMarketPage.module.css";
@@ -52,6 +53,7 @@ interface CommandeMarketDTO {
   motifLitige: string | null;
   factureUrl: string | null;
   lignes: CommandeMarketLigneDTO[];
+  litigeMessages: LitigeMessageDTO[];
 }
 
 type Onglet = "LITIGES" | "TOUTES" | "ARTICLES";
@@ -456,6 +458,16 @@ export default function AdminGrowzMarketPage() {
               <CommandeMarketTimeline commande={c} />
 
               {onglet === "LITIGES" && c.motifLitige && <p className={styles.motifLitige}>{c.motifLitige}</p>}
+
+              {onglet === "LITIGES" && (
+                <LitigeThread
+                  commandeId={c.id}
+                  statut={c.statut}
+                  messages={c.litigeMessages || []}
+                  apiBase="/api/admin/market/commandes"
+                  onSent={load}
+                />
+              )}
 
               {c.factureUrl && (
                 <Link to={`/growzmarket/commandes/${c.id}/facture`} className={styles.btnFacture}>
