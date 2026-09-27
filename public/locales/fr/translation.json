@@ -2341,6 +2341,8 @@
       "role_acheteur": "Acheteur",
       "role_vendeur": "Vendeur",
       "role_admin": "GrowzApp",
+      "destinataire_label": "Envoyer à :",
+      "toast_destinataire_required": "Choisissez un destinataire (acheteur ou vendeur)",
       "toast_validation": "Le message doit contenir au moins 3 caractères",
       "toast_error": "Erreur lors de l'envoi"
     },

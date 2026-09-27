@@ -466,6 +466,7 @@ export default function AdminGrowzMarketPage() {
                   messages={c.litigeMessages || []}
                   apiBase="/api/admin/market/commandes"
                   onSent={load}
+                  isAdmin
                 />
               )}
 

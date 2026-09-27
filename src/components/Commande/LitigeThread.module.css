@@ -71,6 +71,32 @@
   white-space: pre-wrap;
 }
 
+.destinataireTag {
+  font-weight: 700;
+  color: var(--growz-primary, #1b5e20);
+}
+
+.replyForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.destinataireChoice {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.destinataireChoice label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
 .replyBox {
   display: flex;
   gap: 0.5rem;
