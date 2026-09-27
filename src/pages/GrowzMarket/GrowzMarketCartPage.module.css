@@ -277,28 +277,6 @@
   flex-shrink: 0;
 }
 
-.btnPayGroup {
-  width: 100%;
-  margin-top: 1rem;
-  background: var(--growz-primary);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 0.75rem;
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-}
-
-.btnPayGroup:hover:not(:disabled) {
-  background: var(--growz-primary-pressed);
-}
-
-.btnPayGroup:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .footer {
   margin-top: 1.5rem;
   background: white;
@@ -306,6 +284,10 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   border: 1px solid #f0f0f0;
   padding: 1.2rem 1.4rem;
+}
+
+.footerBottom {
+  margin-top: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

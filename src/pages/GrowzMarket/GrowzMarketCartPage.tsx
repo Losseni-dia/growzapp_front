@@ -43,11 +43,11 @@ export default function GrowzMarketCartPage() {
   const { format } = useCurrency();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { items, removeItem, updateQuantite, clearVendorItems } = useGrowzMarketCart();
+  const { items, removeItem, updateQuantite, clearCart } = useGrowzMarketCart();
 
   const [confirmations, setConfirmations] = useState<Record<number, boolean>>({});
-  const [payingVendors, setPayingVendors] = useState<Record<number, boolean>>({});
-  const [methods, setMethods] = useState<Record<number, PaymentMethod>>({});
+  const [method, setMethod] = useState<PaymentMethod>("wallet");
+  const [paying, setPaying] = useState(false);
   const [soldeDisponible, setSoldeDisponible] = useState(0);
   const [loadingSolde, setLoadingSolde] = useState(true);
 
@@ -89,42 +89,37 @@ export default function GrowzMarketCartPage() {
   }, [items]);
 
   const totalGeneral = groups.reduce((sum, g) => sum + g.sousTotal, 0);
+  const toutConfirme = groups.length > 0 && groups.every((g) => confirmations[g.projetId]);
 
-  const handlePayerGroupe = async (group: VendorGroup) => {
-    if (!confirmations[group.projetId]) {
+  const handlePayerTout = async () => {
+    if (!toutConfirme) {
       toast.error(
         t(
-          "growzmarket.cart.confirmation_required_toast",
-          "Confirmez le point de retrait pour {{vendeur}} avant de payer",
-          { vendeur: group.projetLibelle },
+          "growzmarket.cart.confirmation_required_all_toast",
+          "Confirmez le point de retrait de chaque vendeur avant de payer",
         ),
       );
       return;
     }
-    const method = methods[group.projetId] || "wallet";
-    if (method === "wallet" && group.sousTotal > soldeDisponible) {
+    if (method === "wallet" && totalGeneral > soldeDisponible) {
       toast.error(t("growzmarket.cart.toast_insufficient_balance", "Solde insuffisant dans votre portefeuille"));
       return;
     }
 
-    setPayingVendors((prev) => ({ ...prev, [group.projetId]: true }));
+    setPaying(true);
     const body = {
-      lignes: group.items.map((i) => ({ articleId: i.articleId, quantite: i.quantite })),
+      lignes: groups.flatMap((g) => g.items.map((i) => ({ articleId: i.articleId, quantite: i.quantite }))),
       confirmationLieuRetrait: true,
     };
     try {
       if (method === "wallet") {
         await api.post("/api/market/commandes", body);
-        toast.success(
-          t("growzmarket.cart.toast_vendor_success", "{{vendeur}} : achat effectué", {
-            vendeur: group.projetLibelle,
-          }),
-        );
-        clearVendorItems(group.projetId);
+        toast.success(t("growzmarket.cart.toast_success", "Achat effectué avec succès"));
+        clearCart();
       } else if (method === "mobile") {
         const response = await api.post<{ redirectUrl: string }>("/api/market/commandes/mobile", body);
         if (response.redirectUrl) {
-          clearVendorItems(group.projetId);
+          clearCart();
           window.location.href = response.redirectUrl;
         } else {
           toast.error(t("growzmarket.cart.toast_redirect_error", "Erreur de redirection Mobile Money"));
@@ -132,21 +127,16 @@ export default function GrowzMarketCartPage() {
       } else {
         const response = await api.post<{ redirectUrl: string }>("/api/market/commandes/carte", body);
         if (response.redirectUrl) {
-          clearVendorItems(group.projetId);
+          clearCart();
           window.location.href = response.redirectUrl;
         } else {
           toast.error(t("growzmarket.cart.toast_redirect_error_card", "Erreur de redirection Stripe"));
         }
       }
     } catch (err: any) {
-      toast.error(
-        t("growzmarket.cart.toast_vendor_error", "{{vendeur}} : {{error}}", {
-          vendeur: group.projetLibelle,
-          error: err.message || "Erreur",
-        }),
-      );
+      toast.error(err.message || t("growzmarket.cart.toast_error", "Erreur lors du paiement"));
     } finally {
-      setPayingVendors((prev) => ({ ...prev, [group.projetId]: false }));
+      setPaying(false);
     }
   };
 
@@ -252,88 +242,83 @@ export default function GrowzMarketCartPage() {
                   {t("growzmarket.cart.vendor_subtotal", "Sous-total")} :{" "}
                   {format(Number(group.sousTotal), "XOF")}
                 </p>
-
-                <p className={styles.methodsLabel}>
-                  {t("growzmarket.cart.choose_payment_method", "Moyen de paiement")}
-                </p>
-                <div className={styles.methods}>
-                  <button
-                    type="button"
-                    onClick={() => setMethods((prev) => ({ ...prev, [group.projetId]: "wallet" }))}
-                    className={`${styles.method} ${(methods[group.projetId] || "wallet") === "wallet" ? styles.methodActive : ""}`}
-                  >
-                    <div className={styles.methodIcon} style={{ background: "#e8f5e9" }}>
-                      <FiDollarSign color="#1B5E20" size={18} />
-                    </div>
-                    <div className={styles.methodInfo}>
-                      <strong>{t("growzmarket.cart.method_wallet", "Portefeuille GrowzApp")}</strong>
-                      <span>
-                        {loadingSolde
-                          ? t("dashboard.loading")
-                          : `${format(soldeDisponible, "XOF")} ${t("growzmarket.cart.available", "disponible")}`}
-                        {!loadingSolde && group.sousTotal > soldeDisponible && (
-                          <em className={styles.insufficient}>
-                            {" "}
-                            — {t("growzmarket.cart.insufficient", "Solde insuffisant")}
-                          </em>
-                        )}
-                      </span>
-                    </div>
-                    {(methods[group.projetId] || "wallet") === "wallet" && (
-                      <FiCheckCircle className={styles.methodCheck} />
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setMethods((prev) => ({ ...prev, [group.projetId]: "mobile" }))}
-                    className={`${styles.method} ${methods[group.projetId] === "mobile" ? styles.methodActive : ""}`}
-                  >
-                    <div className={styles.methodIcon} style={{ background: "#fff3e0" }}>
-                      <FiSmartphone color="#e65100" size={18} />
-                    </div>
-                    <div className={styles.methodInfo}>
-                      <strong>{t("growzmarket.cart.method_mobile", "Mobile Money")}</strong>
-                      <span>Orange Money · MTN MoMo · Wave</span>
-                    </div>
-                    {methods[group.projetId] === "mobile" && <FiCheckCircle className={styles.methodCheck} />}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setMethods((prev) => ({ ...prev, [group.projetId]: "card" }))}
-                    className={`${styles.method} ${methods[group.projetId] === "card" ? styles.methodActive : ""}`}
-                  >
-                    <div className={styles.methodIcon} style={{ background: "#e3f2fd" }}>
-                      <FiCreditCard color="#1565c0" size={18} />
-                    </div>
-                    <div className={styles.methodInfo}>
-                      <strong>{t("growzmarket.cart.method_card", "Carte bancaire")}</strong>
-                      <span>Visa · Mastercard — Stripe</span>
-                    </div>
-                    {methods[group.projetId] === "card" && <FiCheckCircle className={styles.methodCheck} />}
-                  </button>
-                </div>
-
-                <button
-                  className={styles.btnPayGroup}
-                  onClick={() => handlePayerGroupe(group)}
-                  disabled={!!payingVendors[group.projetId]}
-                >
-                  {payingVendors[group.projetId]
-                    ? t("growzmarket.cart.btn_paying", "Paiement en cours...")
-                    : t("growzmarket.cart.btn_pay_vendor", "Payer {{montant}}", {
-                        montant: format(Number(group.sousTotal), "XOF"),
-                      })}
-                </button>
               </div>
             ))}
           </div>
 
           <div className={styles.footer}>
-            <p className={styles.totalGeneral}>
-              {t("growzmarket.cart.total_general", "Total général")} : {format(Number(totalGeneral), "XOF")}
+            <p className={styles.methodsLabel}>
+              {t("growzmarket.cart.choose_payment_method", "Moyen de paiement")}
             </p>
+            <div className={styles.methods}>
+              <button
+                type="button"
+                onClick={() => setMethod("wallet")}
+                className={`${styles.method} ${method === "wallet" ? styles.methodActive : ""}`}
+              >
+                <div className={styles.methodIcon} style={{ background: "#e8f5e9" }}>
+                  <FiDollarSign color="#1B5E20" size={18} />
+                </div>
+                <div className={styles.methodInfo}>
+                  <strong>{t("growzmarket.cart.method_wallet", "Portefeuille GrowzApp")}</strong>
+                  <span>
+                    {loadingSolde
+                      ? t("dashboard.loading")
+                      : `${format(soldeDisponible, "XOF")} ${t("growzmarket.cart.available", "disponible")}`}
+                    {!loadingSolde && totalGeneral > soldeDisponible && (
+                      <em className={styles.insufficient}>
+                        {" "}
+                        — {t("growzmarket.cart.insufficient", "Solde insuffisant")}
+                      </em>
+                    )}
+                  </span>
+                </div>
+                {method === "wallet" && <FiCheckCircle className={styles.methodCheck} />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMethod("mobile")}
+                className={`${styles.method} ${method === "mobile" ? styles.methodActive : ""}`}
+              >
+                <div className={styles.methodIcon} style={{ background: "#fff3e0" }}>
+                  <FiSmartphone color="#e65100" size={18} />
+                </div>
+                <div className={styles.methodInfo}>
+                  <strong>{t("growzmarket.cart.method_mobile", "Mobile Money")}</strong>
+                  <span>Orange Money · MTN MoMo · Wave</span>
+                </div>
+                {method === "mobile" && <FiCheckCircle className={styles.methodCheck} />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMethod("card")}
+                className={`${styles.method} ${method === "card" ? styles.methodActive : ""}`}
+              >
+                <div className={styles.methodIcon} style={{ background: "#e3f2fd" }}>
+                  <FiCreditCard color="#1565c0" size={18} />
+                </div>
+                <div className={styles.methodInfo}>
+                  <strong>{t("growzmarket.cart.method_card", "Carte bancaire")}</strong>
+                  <span>Visa · Mastercard — Stripe</span>
+                </div>
+                {method === "card" && <FiCheckCircle className={styles.methodCheck} />}
+              </button>
+            </div>
+
+            <div className={styles.footerBottom}>
+              <p className={styles.totalGeneral}>
+                {t("growzmarket.cart.total_general", "Total général")} : {format(Number(totalGeneral), "XOF")}
+              </p>
+              <button className={styles.btnPay} onClick={handlePayerTout} disabled={paying}>
+                {paying
+                  ? t("growzmarket.cart.btn_paying", "Paiement en cours...")
+                  : t("growzmarket.cart.btn_pay_all", "Payer tout — {{montant}}", {
+                      montant: format(Number(totalGeneral), "XOF"),
+                    })}
+              </button>
+            </div>
           </div>
         </>
       )}
