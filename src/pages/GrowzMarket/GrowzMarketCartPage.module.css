@@ -207,6 +207,98 @@
   margin: 0.8rem 0 0;
 }
 
+.methodsLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+  margin: 1rem 0 0.5rem;
+}
+
+.methods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.method {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.methodActive {
+  border-color: var(--growz-primary);
+  background: var(--growz-mint-50, #f0f9f2);
+}
+
+.methodIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.methodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.methodInfo strong {
+  font-size: 0.88rem;
+}
+
+.methodInfo span {
+  font-size: 0.76rem;
+  color: #777;
+}
+
+.insufficient {
+  color: #c62828;
+  font-style: normal;
+}
+
+.methodCheck {
+  color: var(--growz-primary);
+  flex-shrink: 0;
+}
+
+.btnPayGroup {
+  width: 100%;
+  margin-top: 1rem;
+  background: var(--growz-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btnPayGroup:hover:not(:disabled) {
+  background: var(--growz-primary-pressed);
+}
+
+.btnPayGroup:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .footer {
   margin-top: 1.5rem;
   background: white;
