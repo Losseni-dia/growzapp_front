@@ -16,7 +16,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [lockMessage, setLockMessage] = useState<string | null>(null);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginError, setLoginError] = useState<React.ReactNode>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const { login: authLogin } = useAuth();
@@ -73,7 +73,16 @@ export default function LoginForm() {
         );
       } else if (err.status === 401) {
         const field = err.data?.field;
-        if (field === "login") {
+        if (field === "login" && err.data?.deleted) {
+          const supportEmail = err.data?.supportEmail || "losdiakite@gmail.com";
+          setLoginError(
+            <>
+              {t("login_page.error_account_deleted", "Ce compte a été supprimé.")}{" "}
+              {t("login_page.error_account_deleted_contact", "Pour en savoir plus, contactez le support :")}{" "}
+              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+            </>,
+          );
+        } else if (field === "login") {
           setLoginError(err.message || t("login_page.error_login_invalid"));
         } else if (field === "password") {
           setPasswordError(

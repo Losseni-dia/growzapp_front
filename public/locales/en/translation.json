@@ -20,6 +20,8 @@
     "toast_error_server": "Invalid server response",
     "toast_error_credentials": "Invalid credentials",
     "error_login_invalid": "Login not found",
+    "error_account_deleted": "This account has been deleted.",
+    "error_account_deleted_contact": "For more information, contact support:",
     "error_password_invalid": "Incorrect password",
     "error_account_locked": "Account temporarily locked after several failed login attempts. Try again in 15 minutes, or contact support if you believe this is an error: {{email}}",
     "forgot_password": "Forgot password?",

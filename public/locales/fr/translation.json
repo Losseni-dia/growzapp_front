@@ -20,6 +20,8 @@
     "toast_error_server": "Réponse invalide du serveur",
     "toast_error_credentials": "Identifiants incorrects",
     "error_login_invalid": "Identifiant introuvable",
+    "error_account_deleted": "Ce compte a été supprimé.",
+    "error_account_deleted_contact": "Pour en savoir plus, contactez le support :",
     "error_password_invalid": "Mot de passe incorrect",
     "error_account_locked": "Compte temporairement verrouillé suite à plusieurs échecs de connexion. Réessayez dans 15 minutes, ou contactez le support si vous pensez qu'il s'agit d'une erreur : {{email}}",
     "forgot_password": "Mot de passe oublié ?",

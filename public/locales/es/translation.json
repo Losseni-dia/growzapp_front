@@ -20,6 +20,8 @@
     "toast_error_server": "Respuesta del servidor no válida",
     "toast_error_credentials": "Credenciales incorrectas",
     "error_login_invalid": "Usuario no encontrado",
+    "error_account_deleted": "Esta cuenta ha sido eliminada.",
+    "error_account_deleted_contact": "Para más información, contacte al soporte:",
     "error_password_invalid": "Contraseña incorrecta",
     "error_account_locked": "Cuenta temporalmente bloqueada tras varios intentos fallidos de inicio de sesión. Vuelva a intentarlo en 15 minutos, o contacte con soporte si cree que se trata de un error: {{email}}",
     "forgot_password": "¿Has olvidado tu contraseña?",
