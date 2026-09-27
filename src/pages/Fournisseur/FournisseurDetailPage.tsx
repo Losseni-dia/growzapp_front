@@ -35,6 +35,11 @@ interface PorteurProjetLigneDTO {
   soldeDisponibleWallet: number;
 }
 
+// Miroir de StatutProjet.estPublie() côté backend — seul un projet
+// réellement validé (financement en cours ou déjà financé) peut
+// commander chez un fournisseur, jamais un brouillon/soumis/rejeté.
+const STATUTS_PUBLIES = ["VALIDE", "EN_COURS", "TERMINE", "FINANCE"];
+
 export default function FournisseurDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
@@ -61,7 +66,7 @@ export default function FournisseurDetailPage() {
       .then(([fRes, artRes, dashRes]) => {
         setFournisseur(fRes.data);
         setArticles(artRes.data || []);
-        setProjets(dashRes.data?.projets || []);
+        setProjets((dashRes.data?.projets || []).filter((p) => STATUTS_PUBLIES.includes(p.statutProjet)));
       })
       .catch(() => toast.error(t("fournisseur.detail.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));

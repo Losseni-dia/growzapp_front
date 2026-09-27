@@ -10,7 +10,13 @@ import styles from "./MaBoutiquePage.module.css";
 interface ProjetLigne {
   id: number;
   libelle: string;
+  statutProjet: string;
 }
+
+// Miroir de StatutProjet.estPublie() côté backend — seul un projet
+// réellement validé (financement en cours ou déjà financé) peut vendre
+// sur GrowzMarket, jamais un brouillon/soumis/rejeté.
+const STATUTS_PUBLIES = ["VALIDE", "EN_COURS", "TERMINE", "FINANCE"];
 
 interface ArticleMarketDTO {
   id: number;
@@ -63,7 +69,7 @@ export default function MaBoutiquePage() {
         api.get<{ data: ProjetLigne[] }>(buildProjetUrl("/api/projets/mes-projets")),
         api.get<{ data: ArticleMarketDTO[] }>("/api/market/mes-articles"),
       ]);
-      setProjets(projRes.data || []);
+      setProjets((projRes.data || []).filter((p) => STATUTS_PUBLIES.includes(p.statutProjet)));
       setArticles(artRes.data || []);
     } catch {
       // Rien — état vide géré ci-dessous
