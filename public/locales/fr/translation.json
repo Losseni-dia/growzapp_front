@@ -2278,7 +2278,12 @@
       "search_placeholder": "Rechercher un produit ou service...",
       "filter_all": "Toutes les catégories",
       "empty": "Aucun produit disponible pour le moment.",
-      "no_results": "Aucun résultat pour cette recherche/filtre."
+      "no_results": "Aucun résultat pour cette recherche/filtre.",
+      "btn_buy": "Acheter",
+      "quantite": "Quantité",
+      "stock_disponible": "{{stock}} en stock",
+      "total": "Total",
+      "btn_add_cart": "Ajouter au panier"
     },
     "detail": {
       "toast_load_error": "Erreur lors du chargement",
@@ -2427,7 +2432,17 @@
       "toast_stock_max": "Quantité limitée au stock disponible ({{count}})",
       "toast_success": "Achat effectué avec succès",
       "toast_vendor_success": "{{vendeur}} : achat effectué",
-      "toast_vendor_error": "{{vendeur}} : {{error}}"
+      "toast_vendor_error": "{{vendeur}} : {{error}}",
+      "choose_payment_method": "Moyen de paiement",
+      "method_wallet": "Portefeuille GrowzApp",
+      "method_mobile": "Mobile Money",
+      "method_card": "Carte bancaire",
+      "available": "disponible",
+      "insufficient": "Solde insuffisant",
+      "btn_pay_vendor": "Payer {{montant}}",
+      "toast_insufficient_balance": "Solde insuffisant dans votre portefeuille",
+      "toast_redirect_error": "Erreur de redirection Mobile Money",
+      "toast_redirect_error_card": "Erreur de redirection Stripe"
     }
   },
   "site_footer": {

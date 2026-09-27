@@ -2272,7 +2272,12 @@
       "search_placeholder": "Buscar un producto o servicio...",
       "filter_all": "Todas las categorías",
       "empty": "Ningún producto disponible por el momento.",
-      "no_results": "Ningún resultado para esta búsqueda/filtro."
+      "no_results": "Ningún resultado para esta búsqueda/filtro.",
+      "btn_buy": "Comprar",
+      "quantite": "Cantidad",
+      "stock_disponible": "{{stock}} en stock",
+      "total": "Total",
+      "btn_add_cart": "Añadir al carrito"
     },
     "detail": {
       "toast_load_error": "Error al cargar",
@@ -2421,7 +2426,17 @@
       "toast_stock_max": "Cantidad limitada al stock disponible ({{count}})",
       "toast_success": "Compra realizada con éxito",
       "toast_vendor_success": "{{vendeur}}: compra realizada",
-      "toast_vendor_error": "{{vendeur}}: {{error}}"
+      "toast_vendor_error": "{{vendeur}}: {{error}}",
+      "choose_payment_method": "Método de pago",
+      "method_wallet": "Cartera GrowzApp",
+      "method_mobile": "Mobile Money",
+      "method_card": "Tarjeta bancaria",
+      "available": "disponible",
+      "insufficient": "Saldo insuficiente",
+      "btn_pay_vendor": "Pagar {{montant}}",
+      "toast_insufficient_balance": "Saldo insuficiente en tu cartera",
+      "toast_redirect_error": "Error de redirección Mobile Money",
+      "toast_redirect_error_card": "Error de redirección Stripe"
     }
   },
   "site_footer": {

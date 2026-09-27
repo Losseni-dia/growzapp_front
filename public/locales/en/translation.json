@@ -2274,7 +2274,12 @@
       "search_placeholder": "Search for a product or service...",
       "filter_all": "All categories",
       "empty": "No product available at the moment.",
-      "no_results": "No results for this search/filter."
+      "no_results": "No results for this search/filter.",
+      "btn_buy": "Buy",
+      "quantite": "Quantity",
+      "stock_disponible": "{{stock}} in stock",
+      "total": "Total",
+      "btn_add_cart": "Add to cart"
     },
     "detail": {
       "toast_load_error": "Error while loading",
@@ -2423,7 +2428,17 @@
       "toast_stock_max": "Quantity limited to available stock ({{count}})",
       "toast_success": "Purchase successful",
       "toast_vendor_success": "{{vendeur}}: purchase successful",
-      "toast_vendor_error": "{{vendeur}}: {{error}}"
+      "toast_vendor_error": "{{vendeur}}: {{error}}",
+      "choose_payment_method": "Payment method",
+      "method_wallet": "GrowzApp wallet",
+      "method_mobile": "Mobile Money",
+      "method_card": "Card",
+      "available": "available",
+      "insufficient": "Insufficient balance",
+      "btn_pay_vendor": "Pay {{montant}}",
+      "toast_insufficient_balance": "Insufficient balance in your wallet",
+      "toast_redirect_error": "Mobile Money redirect error",
+      "toast_redirect_error_card": "Stripe redirect error"
     }
   },
   "site_footer": {
