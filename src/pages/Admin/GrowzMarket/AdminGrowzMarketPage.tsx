@@ -3,12 +3,28 @@ import { fr } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiFileText, FiList, FiSearch, FiShoppingBag } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiFileText, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../../components/Commande/CommandeMarketTimeline";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { api } from "../../../service/Api";
+import { api, buildFileUrl } from "../../../service/Api";
 import styles from "./AdminGrowzMarketPage.module.css";
+
+interface ArticleMarketDTO {
+  id: number;
+  projetId: number;
+  projetLibelle: string;
+  porteurNom: string | null;
+  nom: string;
+  description: string;
+  prix: number;
+  unite: string;
+  disponible: boolean;
+  stock: number | null;
+  categorie: string;
+  photos: string[];
+  pointRetrait: string;
+}
 
 interface CommandeMarketLigneDTO {
   id: number;
@@ -36,9 +52,9 @@ interface CommandeMarketDTO {
   lignes: CommandeMarketLigneDTO[];
 }
 
-type Onglet = "LITIGES" | "TOUTES";
+type Onglet = "LITIGES" | "TOUTES" | "ARTICLES";
 
-const ENDPOINTS: Record<Onglet, string> = {
+const ENDPOINTS: Record<"LITIGES" | "TOUTES", string> = {
   LITIGES: "/api/admin/market/commandes/litiges",
   TOUTES: "/api/admin/market/commandes/toutes",
 };
@@ -69,6 +85,9 @@ export default function AdminGrowzMarketPage() {
   const [search, setSearch] = useState("");
   const [statutFilter, setStatutFilter] = useState<string>("ALL");
 
+  const [articles, setArticles] = useState<ArticleMarketDTO[]>([]);
+  const [dispoFilter, setDispoFilter] = useState<"ALL" | "DISPONIBLE" | "MASQUE">("ALL");
+
   const filteredCommandes = useMemo(() => {
     const q = search.trim().toLowerCase();
     return commandes.filter((c) => {
@@ -84,7 +103,36 @@ export default function AdminGrowzMarketPage() {
     });
   }, [commandes, search, statutFilter, onglet]);
 
+  const filteredArticles = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return articles.filter((a) => {
+      if (dispoFilter === "DISPONIBLE" && !a.disponible) return false;
+      if (dispoFilter === "MASQUE" && a.disponible) return false;
+      if (
+        q &&
+        !a.nom.toLowerCase().includes(q) &&
+        !(a.porteurNom || "").toLowerCase().includes(q) &&
+        !a.projetLibelle.toLowerCase().includes(q)
+      )
+        return false;
+      return true;
+    });
+  }, [articles, search, dispoFilter]);
+
+  const loadArticles = () => {
+    setLoading(true);
+    api
+      .get<{ data: ArticleMarketDTO[] }>("/api/admin/market/articles")
+      .then((res) => setArticles(res.data || []))
+      .catch(() => toast.error(t("admin.growzmarket.toast_load_error", "Erreur lors du chargement")))
+      .finally(() => setLoading(false));
+  };
+
   const load = () => {
+    if (onglet === "ARTICLES") {
+      loadArticles();
+      return;
+    }
     setLoading(true);
     api
       .get<{ data: CommandeMarketDTO[] }>(ENDPOINTS[onglet])
@@ -97,6 +145,45 @@ export default function AdminGrowzMarketPage() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onglet]);
+
+  const handleToggleDisponibilite = async (article: ArticleMarketDTO) => {
+    try {
+      await api.post(
+        `/api/admin/market/articles/${article.id}/disponibilite?disponible=${!article.disponible}`,
+        {},
+      );
+      toast.success(
+        article.disponible
+          ? t("admin.growzmarket.toast_article_hidden", "Article masqué du catalogue")
+          : t("admin.growzmarket.toast_article_shown", "Article réaffiché dans le catalogue"),
+      );
+      setArticles((prev) =>
+        prev.map((a) => (a.id === article.id ? { ...a, disponible: !a.disponible } : a)),
+      );
+    } catch (err: any) {
+      toast.error(err.message || t("admin.growzmarket.toast_error", "Erreur"));
+    }
+  };
+
+  const handleDeleteArticle = async (article: ArticleMarketDTO) => {
+    if (
+      !window.confirm(
+        t(
+          "admin.growzmarket.confirm_delete_article",
+          "Supprimer définitivement l'article \"{{nom}}\" ? Cette action est irréversible.",
+          { nom: article.nom },
+        ) as string,
+      )
+    )
+      return;
+    try {
+      await api.delete(`/api/admin/market/articles/${article.id}`);
+      toast.success(t("admin.growzmarket.toast_article_deleted", "Article supprimé"));
+      setArticles((prev) => prev.filter((a) => a.id !== article.id));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.growzmarket.toast_error", "Erreur"));
+    }
+  };
 
   const handleArbitrer = async (enFaveurDuVendeur: boolean) => {
     if (!arbitrageId || motifArbitrage.trim().length < 3) {
@@ -138,6 +225,12 @@ export default function AdminGrowzMarketPage() {
         >
           <FiList size={13} /> {t("admin.growzmarket.tab_toutes", "Toutes / historique")}
         </button>
+        <button
+          className={`${styles.tabBtn} ${onglet === "ARTICLES" ? styles.tabBtnActive : ""}`}
+          onClick={() => setOnglet("ARTICLES")}
+        >
+          <FiPackage size={13} /> {t("admin.growzmarket.tab_articles", "Catalogue")}
+        </button>
       </div>
 
       <div className={styles.filterBar}>
@@ -147,7 +240,11 @@ export default function AdminGrowzMarketPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("admin.growzmarket.search_placeholder", "Rechercher par projet, porteur, acheteur...") as string}
+            placeholder={
+              onglet === "ARTICLES"
+                ? (t("admin.growzmarket.search_placeholder_articles", "Rechercher par article, porteur, projet...") as string)
+                : (t("admin.growzmarket.search_placeholder", "Rechercher par projet, porteur, acheteur...") as string)
+            }
           />
         </div>
         {onglet === "TOUTES" && (
@@ -160,9 +257,74 @@ export default function AdminGrowzMarketPage() {
             ))}
           </select>
         )}
+        {onglet === "ARTICLES" && (
+          <select value={dispoFilter} onChange={(e) => setDispoFilter(e.target.value as any)}>
+            <option value="ALL">{t("admin.growzmarket.filter_all", "Tous les statuts")}</option>
+            <option value="DISPONIBLE">{t("admin.growzmarket.filter_disponible", "Disponibles")}</option>
+            <option value="MASQUE">{t("admin.growzmarket.filter_masque", "Masqués")}</option>
+          </select>
+        )}
       </div>
 
-      {loading ? (
+      {onglet === "ARTICLES" ? (
+        loading ? (
+          <div className={styles.loading}>{t("dashboard.loading")}</div>
+        ) : articles.length === 0 ? (
+          <div className={styles.emptyState}>
+            <FiPackage size={48} />
+            <p>{t("admin.growzmarket.empty_articles", "Aucun article publié pour le moment.")}</p>
+          </div>
+        ) : filteredArticles.length === 0 ? (
+          <div className={styles.emptyState}>
+            <p>{t("admin.growzmarket.no_results", "Aucun résultat pour cette recherche/filtre.")}</p>
+          </div>
+        ) : (
+          <div className={styles.list}>
+            {filteredArticles.map((a) => (
+              <div key={a.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                    {a.photos?.[0] && (
+                      <img
+                        src={buildFileUrl(a.photos[0])}
+                        alt={a.nom}
+                        style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
+                      />
+                    )}
+                    <div>
+                      <strong>{a.nom}</strong>
+                      <div className={styles.acheteur}>
+                        {a.projetLibelle} — {a.porteurNom}
+                      </div>
+                    </div>
+                  </div>
+                  <span className={styles.total}>{format(Number(a.prix), "XOF")}</span>
+                </div>
+                <span
+                  className={styles.badgeStatut}
+                  style={!a.disponible ? { background: "#eee", color: "#666" } : undefined}
+                >
+                  {a.disponible
+                    ? t("admin.growzmarket.article_disponible", "Disponible")
+                    : t("admin.growzmarket.article_masque", "Masqué")}
+                </span>
+                {a.description && <p className={styles.date}>{a.description}</p>}
+                <div className={styles.actions}>
+                  <button className={styles.btnValider} onClick={() => handleToggleDisponibilite(a)}>
+                    {a.disponible ? <FiEyeOff size={14} /> : <FiEye size={14} />}{" "}
+                    {a.disponible
+                      ? t("admin.growzmarket.btn_masquer", "Masquer")
+                      : t("admin.growzmarket.btn_afficher", "Afficher")}
+                  </button>
+                  <button className={styles.btnRejeter} onClick={() => handleDeleteArticle(a)}>
+                    <FiTrash2 size={14} /> {t("admin.growzmarket.btn_supprimer", "Supprimer")}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      ) : loading ? (
         <div className={styles.loading}>{t("dashboard.loading")}</div>
       ) : commandes.length === 0 ? (
         <div className={styles.emptyState}>
