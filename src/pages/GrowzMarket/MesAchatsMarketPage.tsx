@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../components/Commande/CommandeMarketTimeline";
 import LitigeThread, { LitigeMessageDTO } from "../../components/Commande/LitigeThread";
 import { useCurrency } from "../../components/Context/CurrencyContext";
-import { api } from "../../service/Api";
+import { api, buildProjetUrl } from "../../service/Api";
 import styles from "./MesVentesMarketPage.module.css";
 
 interface CommandeMarketLigneDTO {
@@ -50,7 +50,7 @@ function statutLabel(t: (key: string, options?: { defaultValue: string }) => str
 }
 
 export default function MesAchatsMarketPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { format } = useCurrency();
 
   const [commandes, setCommandes] = useState<CommandeMarketDTO[]>([]);
@@ -60,7 +60,7 @@ export default function MesAchatsMarketPage() {
 
   const load = () => {
     api
-      .get<{ data: CommandeMarketDTO[] }>("/api/market/commandes/mes-achats")
+      .get<{ data: CommandeMarketDTO[] }>(buildProjetUrl("/api/market/commandes/mes-achats"))
       .then((res) => setCommandes(res.data || []))
       .catch(() => toast.error(t("growzmarket.achats.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
@@ -69,7 +69,7 @@ export default function MesAchatsMarketPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [i18n.language]);
 
   const handleLitige = async () => {
     if (!litigeId || motifLitige.trim().length < 5) {

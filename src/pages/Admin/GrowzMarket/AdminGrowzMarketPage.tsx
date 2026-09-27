@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../../components/Commande/CommandeMarketTimeline";
 import LitigeThread, { LitigeMessageDTO } from "../../../components/Commande/LitigeThread";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
-import { api, buildFileUrl } from "../../../service/Api";
+import { api, buildFileUrl, buildProjetUrl } from "../../../service/Api";
 import styles from "./AdminGrowzMarketPage.module.css";
 
 interface ArticleMarketDTO {
@@ -77,7 +77,7 @@ function statutLabel(t: (key: string, options?: { defaultValue: string }) => str
 }
 
 export default function AdminGrowzMarketPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { format } = useCurrency();
 
   const [onglet, setOnglet] = useState<Onglet>("TOUTES");
@@ -128,7 +128,7 @@ export default function AdminGrowzMarketPage() {
   const loadArticles = () => {
     setLoading(true);
     api
-      .get<{ data: ArticleMarketDTO[] }>("/api/admin/market/articles")
+      .get<{ data: ArticleMarketDTO[] }>(buildProjetUrl("/api/admin/market/articles"))
       .then((res) => setArticles(res.data || []))
       .catch(() => toast.error(t("admin.growzmarket.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
@@ -141,7 +141,7 @@ export default function AdminGrowzMarketPage() {
     }
     setLoading(true);
     api
-      .get<{ data: CommandeMarketDTO[] }>(ENDPOINTS[onglet])
+      .get<{ data: CommandeMarketDTO[] }>(buildProjetUrl(ENDPOINTS[onglet]))
       .then((res) => setCommandes(res.data || []))
       .catch(() => toast.error(t("admin.growzmarket.toast_load_error", "Erreur lors du chargement")))
       .finally(() => setLoading(false));
@@ -150,7 +150,7 @@ export default function AdminGrowzMarketPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onglet]);
+  }, [onglet, i18n.language]);
 
   const handleToggleDisponibilite = async (article: ArticleMarketDTO) => {
     try {
