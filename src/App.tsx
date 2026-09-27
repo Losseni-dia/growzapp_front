@@ -229,6 +229,9 @@ function App() {
               <Route path="/kyc/success" element={<KycSuccess />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/news/:id" element={<NewsDetail />} />
+              {/* Accessible sans connexion — un compte supprime ne peut
+                  plus se connecter et doit pouvoir contacter le support. */}
+              <Route path="/mon-espace/contact" element={<ContactPage />} />
               <Route
                 path="/oauth2/redirect"
                 element={<OAuth2RedirectHandler />}
@@ -290,7 +293,6 @@ function App() {
                     path="/mon-portefeuille"
                     element={<MonPortefeuillePage />}
                   />
-                  <Route path="/mon-espace/contact" element={<ContactPage />} />
                   <Route path="/devenir-fournisseur" element={<FournisseurInscriptionPage />} />
                   <Route path="/mon-espace/fournisseur" element={<FournisseurEspacePage />} />
                   <Route path="/fournisseurs" element={<FournisseurRecherchePage />} />

@@ -74,12 +74,14 @@ export default function LoginForm() {
       } else if (err.status === 401) {
         const field = err.data?.field;
         if (field === "login" && err.data?.deleted) {
-          const supportEmail = err.data?.supportEmail || "losdiakite@gmail.com";
           setLoginError(
             <>
               {t("login_page.error_account_deleted", "Ce compte a été supprimé.")}{" "}
-              {t("login_page.error_account_deleted_contact", "Pour en savoir plus, contactez le support :")}{" "}
-              <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
+              {t("login_page.error_account_deleted_contact", "Pour en savoir plus,")}{" "}
+              <Link to="/mon-espace/contact">
+                {t("login_page.error_account_deleted_link", "contactez le support")}
+              </Link>
+              .
             </>,
           );
         } else if (field === "login") {

@@ -13,6 +13,7 @@ import {
   FiTrash2,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../components/Context/AuthContext";
 import { api } from "../../../service/Api";
 import { ApiResponse } from "../../../types/common";
 import styles from "./ContactPage.module.css";
@@ -40,12 +41,15 @@ interface ContactMessageDTO {
 
 export default function ContactPage() {
   const { t, i18n } = useTranslation();
+  const { user, loading: authLoading } = useAuth();
 
   const [threads, setThreads] = useState<ContactMessageDTO[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!user);
   const [sujet, setSujet] = useState("");
   const [message, setMessage] = useState("");
+  const [visitorEmail, setVisitorEmail] = useState("");
   const [sending, setSending] = useState(false);
+  const [sentAsVisitor, setSentAsVisitor] = useState(false);
   const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
   const [replyingId, setReplyingId] = useState<number | null>(null);
 
@@ -61,9 +65,9 @@ export default function ContactPage() {
   };
 
   useEffect(() => {
-    loadThreads();
+    if (user) loadThreads();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,13 +75,22 @@ export default function ContactPage() {
       toast.error(t("contact_page.toast_validation_error"));
       return;
     }
+    if (!user && !/^\S+@\S+\.\S+$/.test(visitorEmail.trim())) {
+      toast.error(t("contact_page.toast_email_invalid", "Adresse email invalide"));
+      return;
+    }
     setSending(true);
     try {
-      await api.post("/api/contact", { sujet, message });
+      if (user) {
+        await api.post("/api/contact", { sujet, message });
+        loadThreads();
+      } else {
+        await api.post("/api/contact/public", { email: visitorEmail.trim(), sujet, message });
+        setSentAsVisitor(true);
+      }
       toast.success(t("contact_page.toast_sent"));
       setSujet("");
       setMessage("");
-      loadThreads();
     } catch (err: any) {
       toast.error(err.message || t("contact_page.toast_send_error"));
     } finally {
@@ -114,10 +127,12 @@ export default function ContactPage() {
     }
   };
 
+  if (authLoading) return <div className={styles.loading}>{t("dashboard.loading")}</div>;
+
   return (
     <div className={styles.container}>
-      <Link to="/mon-espace" className={styles.backLink}>
-        <FiArrowLeft /> {t("my_profile")}
+      <Link to={user ? "/mon-espace" : "/"} className={styles.backLink}>
+        <FiArrowLeft /> {user ? t("my_profile") : t("contact_page.back_home", "Retour à l'accueil")}
       </Link>
 
       <div className={styles.header}>
@@ -135,39 +150,60 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.field}>
-          <label htmlFor="sujet">{t("contact_page.field_subject")}</label>
-          <input
-            id="sujet"
-            type="text"
-            value={sujet}
-            onChange={(e) => setSujet(e.target.value)}
-            placeholder={t("contact_page.field_subject_placeholder") as string}
-            maxLength={150}
-            required
-          />
+      {!user && sentAsVisitor ? (
+        <div className={styles.emptyState}>
+          <FiCheckCircle size={48} />
+          <p>{t("contact_page.toast_sent")}</p>
         </div>
-        <div className={styles.field}>
-          <label htmlFor="message">{t("contact_page.field_message")}</label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder={t("contact_page.field_message_placeholder") as string}
-            maxLength={3000}
-            rows={5}
-            required
-          />
-        </div>
-        <button type="submit" className={styles.btnSubmit} disabled={sending}>
-          <FiSend /> {sending ? t("contact_page.btn_sending") : t("contact_page.btn_send")}
-        </button>
-      </form>
+      ) : (
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {!user && (
+            <div className={styles.field}>
+              <label htmlFor="visitorEmail">{t("contact_page.field_email", "Votre email")}</label>
+              <input
+                id="visitorEmail"
+                type="email"
+                value={visitorEmail}
+                onChange={(e) => setVisitorEmail(e.target.value)}
+                placeholder={t("contact_page.field_email_placeholder", "vous@exemple.com") as string}
+                maxLength={191}
+                required
+              />
+            </div>
+          )}
+          <div className={styles.field}>
+            <label htmlFor="sujet">{t("contact_page.field_subject")}</label>
+            <input
+              id="sujet"
+              type="text"
+              value={sujet}
+              onChange={(e) => setSujet(e.target.value)}
+              placeholder={t("contact_page.field_subject_placeholder") as string}
+              maxLength={150}
+              required
+            />
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="message">{t("contact_page.field_message")}</label>
+            <textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder={t("contact_page.field_message_placeholder") as string}
+              maxLength={3000}
+              rows={5}
+              required
+            />
+          </div>
+          <button type="submit" className={styles.btnSubmit} disabled={sending}>
+            <FiSend /> {sending ? t("contact_page.btn_sending") : t("contact_page.btn_send")}
+          </button>
+        </form>
+      )}
 
-      <h2 className={styles.historyTitle}>{t("contact_page.history_title")}</h2>
+      {user && <h2 className={styles.historyTitle}>{t("contact_page.history_title")}</h2>}
 
-      {loading ? (
+      {!user ? null : loading ? (
         <div className={styles.loading}>{t("dashboard.loading")}</div>
       ) : threads.length === 0 ? (
         <div className={styles.emptyState}>
