@@ -398,6 +398,23 @@
   margin-bottom: 1rem;
 }
 
+.quickLinksGroup {
+  margin-bottom: 1.5rem;
+}
+
+.quickLinksGroup:last-child {
+  margin-bottom: 0;
+}
+
+.quickLinksGroupTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--growz-slate-500, #64748b);
+  margin: 0 0 0.6rem;
+}
+
 .quickLinksGrid {
   display: flex;
   flex-wrap: wrap;

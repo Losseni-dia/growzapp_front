@@ -402,6 +402,15 @@
     "error_not_identified": "Utilisateur non identifié. Veuillez vous reconnecter.",
     "back_to_login": "Retour à la connexion",
     "quick_links": "Accès rapide",
+    "quick_links_group": {
+      "compte": "Compte",
+      "porteur": "Porteur de projet",
+      "investisseur": "Investisseur",
+      "finance": "Finance",
+      "growzmarket": "GrowzMarket",
+      "fournisseur": "Fournisseur",
+      "documents": "Documents"
+    },
     "wallet": {
       "title": "Portefeuille",
       "available": "disponible",

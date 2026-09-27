@@ -402,7 +402,16 @@
     "edit_profile": "Editar mi perfil",
     "error_not_identified": "User not identified. Please log in again.",
     "back_to_login": "Back to login",
-    "quick_links": "Quick access",
+    "quick_links": "Acceso rápido",
+    "quick_links_group": {
+      "compte": "Cuenta",
+      "porteur": "Promotor de proyecto",
+      "investisseur": "Inversor",
+      "finance": "Finanzas",
+      "growzmarket": "GrowzMarket",
+      "fournisseur": "Proveedor",
+      "documents": "Documentos"
+    },
     "wallet": {
       "title": "Billetera",
       "available": "disponible",

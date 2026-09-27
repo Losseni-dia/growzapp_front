@@ -23,6 +23,13 @@ import {
   FiFile,
   FiBarChart2,
   FiBriefcase,
+  FiUser,
+  FiCheckCircle,
+  FiDownload,
+  FiArrowUpCircle,
+  FiRepeat,
+  FiShoppingBag,
+  FiTruck,
 } from "react-icons/fi";
 import type { WalletDTO } from "../../types/wallet";
 import { ApiResponse } from "../../types/common";
@@ -36,6 +43,7 @@ export default function Dashboard() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useTranslation();
   const { format } = useCurrency();
+  const isInvestisseur = user?.roles?.includes("INVESTISSEUR") ?? false;
 
   const [wallet, setWallet] = useState<WalletDTO | null>(null);
   const [walletLoading, setWalletLoading] = useState(true);
@@ -309,31 +317,117 @@ export default function Dashboard() {
       {/* ── ACCÈS RAPIDE ── */}
       <section className={styles.quickLinksSection}>
         <h2 className={styles.quickLinksTitle}>{t("dashboard.quick_links")}</h2>
-        <div className={styles.quickLinksGrid}>
-        <Link to="/mon-portefeuille" className={styles.quickLink}>
-            <FiBarChart2 size={18} />
-            <span>{t("portfolio.title")}</span>
-          </Link>
-          <Link to="/mon-dashboard-porteur" className={styles.quickLink}>
-            <FiBriefcase size={18} />
-            <span>{t("porteur.title")}</span>
-          </Link>
-          <Link to="/projets/proximite" className={styles.quickLink}>
-            <FiCompass size={18} />
-            <span>{t("projets_proches.title")}</span>
-          </Link>
-          <Link to="/projet/creer" className={styles.quickLink}>
-            <FiPackage size={18} />
-            <span>{t("create_project")}</span>
-          </Link>
-          <Link to="/mes-contrats" className={styles.quickLink}>
-            <FiFileText size={18} />
-            <span>{t("my_contracts.title")}</span>
-          </Link>
-          <Link to="/mes-factures" className={styles.quickLink}>
-            <FiFile size={18} />
-            <span>{t("my_invoices.title")}</span>
-          </Link>
+
+        <div className={styles.quickLinksGroup}>
+          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.compte", "Compte")}</p>
+          <div className={styles.quickLinksGrid}>
+            <Link to="/profile/edit" className={styles.quickLink}>
+              <FiUser size={18} />
+              <span>{t("user_sidebar.profile", "Mon profil")}</span>
+            </Link>
+            <Link to="/profile/kyc" className={styles.quickLink}>
+              <FiCheckCircle size={18} />
+              <span>{t("user_sidebar.kyc", "Vérification d'identité (KYC)")}</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className={styles.quickLinksGroup}>
+          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.porteur", "Porteur de projet")}</p>
+          <div className={styles.quickLinksGrid}>
+            <Link to="/mon-dashboard-porteur" className={styles.quickLink}>
+              <FiBriefcase size={18} />
+              <span>{t("porteur.title")}</span>
+            </Link>
+            <Link to="/projet/creer" className={styles.quickLink}>
+              <FiPackage size={18} />
+              <span>{t("create_project")}</span>
+            </Link>
+            <Link to="/projets/proximite" className={styles.quickLink}>
+              <FiCompass size={18} />
+              <span>{t("projets_proches.title")}</span>
+            </Link>
+          </div>
+        </div>
+
+        {isInvestisseur && (
+          <div className={styles.quickLinksGroup}>
+            <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.investisseur", "Investisseur")}</p>
+            <div className={styles.quickLinksGrid}>
+              <Link to="/mon-portefeuille" className={styles.quickLink}>
+                <FiBarChart2 size={18} />
+                <span>{t("portfolio.title")}</span>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <div className={styles.quickLinksGroup}>
+          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.finance", "Finance")}</p>
+          <div className={styles.quickLinksGrid}>
+            <Link to="/depot" className={styles.quickLink}>
+              <FiDownload size={18} />
+              <span>{t("user_sidebar.deposit", "Déposer des fonds")}</span>
+            </Link>
+            <Link to="/wallet?tab=withdraw" className={styles.quickLink}>
+              <FiArrowUpCircle size={18} />
+              <span>{t("user_sidebar.withdraw", "Retirer des fonds")}</span>
+            </Link>
+            <Link to="/wallet?tab=transfer" className={styles.quickLink}>
+              <FiRepeat size={18} />
+              <span>{t("user_sidebar.transfer", "Transférer des fonds")}</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className={styles.quickLinksGroup}>
+          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.growzmarket", "GrowzMarket")}</p>
+          <div className={styles.quickLinksGrid}>
+            <Link to="/mon-espace/ma-boutique" className={styles.quickLink}>
+              <FiShoppingBag size={18} />
+              <span>{t("user_sidebar.ma_boutique", "Ma Boutique")}</span>
+            </Link>
+            <Link to="/mon-espace/mes-ventes-market" className={styles.quickLink}>
+              <FiShoppingBag size={18} />
+              <span>{t("user_sidebar.mes_ventes_market", "Mes ventes")}</span>
+            </Link>
+            <Link to="/mon-espace/mes-achats-market" className={styles.quickLink}>
+              <FiShoppingBag size={18} />
+              <span>{t("user_sidebar.mes_achats_market", "Mes achats")}</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className={styles.quickLinksGroup}>
+          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.fournisseur", "Fournisseur")}</p>
+          <div className={styles.quickLinksGrid}>
+            <Link to="/fournisseurs" className={styles.quickLink}>
+              <FiTruck size={18} />
+              <span>{t("user_sidebar.fournisseurs", "Trouver un fournisseur")}</span>
+            </Link>
+            <Link to="/mes-commandes" className={styles.quickLink}>
+              <FiShoppingBag size={18} />
+              <span>{t("user_sidebar.mes_commandes", "Mes commandes fournisseur")}</span>
+            </Link>
+            <Link to="/mon-espace/fournisseur" className={styles.quickLink}>
+              <FiTruck size={18} />
+              <span>{t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur")}</span>
+            </Link>
+          </div>
+        </div>
+
+        <div className={styles.quickLinksGroup}>
+          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.documents", "Documents")}</p>
+          <div className={styles.quickLinksGrid}>
+            <Link to="/mes-contrats" className={styles.quickLink}>
+              <FiFileText size={18} />
+              <span>{t("my_contracts.title")}</span>
+            </Link>
+            <Link to="/mes-factures" className={styles.quickLink}>
+              <FiFile size={18} />
+              <span>{t("my_invoices.title")}</span>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

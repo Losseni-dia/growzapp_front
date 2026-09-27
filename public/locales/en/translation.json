@@ -403,6 +403,15 @@
     "error_not_identified": "User not identified. Please log in again.",
     "back_to_login": "Back to login",
     "quick_links": "Quick access",
+    "quick_links_group": {
+      "compte": "Account",
+      "porteur": "Project owner",
+      "investisseur": "Investor",
+      "finance": "Finance",
+      "growzmarket": "GrowzMarket",
+      "fournisseur": "Supplier",
+      "documents": "Documents"
+    },
     "wallet": {
       "title": "Wallet",
       "available": "available",
