@@ -153,6 +153,13 @@ export default function GrowzMarketPage() {
                 <p className={styles.prix}>
                   {format(Number(a.prix), "XOF")} / {a.unite}
                 </p>
+                {a.stock !== null && (
+                  <p className={`${styles.stockInfo} ${a.stock <= 5 ? styles.stockLow : ""}`}>
+                    {a.stock === 0
+                      ? t("growzmarket.catalogue.rupture_stock", "Rupture de stock")
+                      : t("growzmarket.catalogue.stock_disponible", "{{stock}} en stock", { stock: a.stock })}
+                  </p>
+                )}
               </Link>
               <button
                 type="button"

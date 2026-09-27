@@ -300,3 +300,14 @@
   color: var(--growz-primary);
   margin: 0;
 }
+
+.stockInfo {
+  font-size: 0.76rem;
+  color: #999;
+  margin: 0.3rem 0 0;
+}
+
+.stockLow {
+  color: #c62828;
+  font-weight: 700;
+}

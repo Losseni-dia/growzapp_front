@@ -59,6 +59,8 @@ export function GrowzMarketCartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addItem: GrowzMarketCartContextType["addItem"] = (article, quantite) => {
+    let cappedAt: number | null = null;
+
     setItems((prev) => {
       const existing = prev.find((i) => i.articleId === article.articleId);
       const maxStock = article.stock;
@@ -67,11 +69,7 @@ export function GrowzMarketCartProvider({ children }: { children: ReactNode }) {
         let newQte = existing.quantite + quantite;
         if (maxStock !== null && newQte > maxStock) {
           newQte = maxStock;
-          toast.error(
-            t("growzmarket.cart.toast_stock_max", "Quantité limitée au stock disponible ({{count}})", {
-              count: maxStock,
-            }),
-          );
+          cappedAt = maxStock;
         }
         return prev.map((i) =>
           i.articleId === article.articleId ? { ...i, quantite: newQte } : i,
@@ -81,15 +79,20 @@ export function GrowzMarketCartProvider({ children }: { children: ReactNode }) {
       let qte = quantite;
       if (maxStock !== null && qte > maxStock) {
         qte = maxStock;
-        toast.error(
-          t("growzmarket.cart.toast_stock_max", "Quantité limitée au stock disponible ({{count}})", {
-            count: maxStock,
-          }),
-        );
+        cappedAt = maxStock;
       }
-      toast.success(t("growzmarket.cart.toast_added", "Ajouté au panier"));
       return [...prev, { ...article, quantite: qte }];
     });
+
+    if (cappedAt !== null) {
+      toast.error(
+        t("growzmarket.cart.toast_stock_max", "Quantité limitée au stock disponible ({{count}})", {
+          count: cappedAt,
+        }),
+      );
+    } else {
+      toast.success(t("growzmarket.cart.toast_added", "Ajouté au panier"));
+    }
   };
 
   const removeItem = (articleId: number) => {

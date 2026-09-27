@@ -2282,6 +2282,7 @@
       "btn_buy": "Acheter",
       "quantite": "Quantité",
       "stock_disponible": "{{stock}} en stock",
+      "rupture_stock": "Rupture de stock",
       "total": "Total",
       "btn_add_cart": "Ajouter au panier"
     },

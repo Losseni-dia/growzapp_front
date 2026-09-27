@@ -2278,6 +2278,7 @@
       "btn_buy": "Buy",
       "quantite": "Quantity",
       "stock_disponible": "{{stock}} in stock",
+      "rupture_stock": "Out of stock",
       "total": "Total",
       "btn_add_cart": "Add to cart"
     },
