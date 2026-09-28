@@ -45,6 +45,21 @@ export default function MentionsLegales() {
             <li>{t("legal_pages.mentions_legales.sec4_phone", "Téléphone : [NUMERO_TELEPHONE]")}</li>
           </ul>
         </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.mentions_legales.sec5_title", "5. Nature de l'activité")}</h2>
+          <p>{t("legal_pages.mentions_legales.sec5_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.mentions_legales.sec6_title", "6. Propriété intellectuelle")}</h2>
+          <p>{t("legal_pages.mentions_legales.sec6_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.mentions_legales.sec7_title", "7. Médiation et réclamations")}</h2>
+          <p>{t("legal_pages.mentions_legales.sec7_body")}</p>
+        </div>
       </section>
 
       <footer className={styles.footer}>

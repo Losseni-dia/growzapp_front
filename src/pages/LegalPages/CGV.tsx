@@ -38,8 +38,33 @@ export default function CGV() {
         </div>
 
         <div className={styles.sectionCard}>
-          <h2>{t("legal_pages.cgv.art4_title", "Article 4 : Rétractation et Juridiction")}</h2>
+          <h2>{t("legal_pages.cgv.art4_title", "Article 4 : Limites de la garantie d'assurance")}</h2>
           <p>{t("legal_pages.cgv.art4_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.cgv.art5_title", "Article 5 : Frais applicables")}</h2>
+          <p>{t("legal_pages.cgv.art5_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.cgv.art6_title", "Article 6 : Fiscalité")}</h2>
+          <p>{t("legal_pages.cgv.art6_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.cgv.art7_title", "Article 7 : GrowzMarket et Fournisseur")}</h2>
+          <p>{t("legal_pages.cgv.art7_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.cgv.art8_title", "Article 8 : Rétractation et Juridiction")}</h2>
+          <p>{t("legal_pages.cgv.art8_body")}</p>
+        </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.cgv.art9_title", "Article 9 : Réclamations")}</h2>
+          <p>{t("legal_pages.cgv.art9_body")}</p>
         </div>
       </section>
 
