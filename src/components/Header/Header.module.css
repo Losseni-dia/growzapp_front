@@ -80,6 +80,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
   transition: 0.2s;
 }
 
@@ -163,6 +164,7 @@
   color: var(--growz-slate-700);
   font-weight: 700;
   padding-right: 10px;
+  white-space: nowrap;
 }
 
 .userAvatar {
@@ -182,6 +184,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -200,6 +203,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -225,6 +229,7 @@
   gap: 8px;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .adminMenu {
