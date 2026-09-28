@@ -182,15 +182,17 @@ export default function Header() {
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className={`${styles.profileTrigger} ${showProfileMenu ? styles.active : ""}`}
                   >
-                    <img
-                      src={getAvatarUrl(user.image)}
-                      alt={user.prenom}
-                      className={styles.userAvatar}
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = "/default-avatar.svg";
-                      }}
-                    />
+                    <span className={styles.avatarFrame}>
+                      <img
+                        src={getAvatarUrl(user.image)}
+                        alt={user.prenom}
+                        className={styles.userAvatar}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "/default-avatar.svg";
+                        }}
+                      />
+                    </span>
                   </button>
 
                   {showProfileMenu && (

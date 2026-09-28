@@ -167,13 +167,26 @@
   white-space: nowrap;
 }
 
-.userAvatar {
+/* Cadre non-remplacé autour de l'avatar : Firefox peut ignorer width/height
+   explicites d'un <img> pour calculer son flex-basis dans un conteneur
+   flex (contrairement à Chrome), l'écrasant en une fine bande verticale.
+   En isolant la taille fixe + flex-shrink sur ce span, l'image elle-même
+   n'a plus qu'à remplir le cadre à 100%, ce qui est fiable partout. */
+.avatarFrame {
+  display: block;
   width: 34px;
   height: 34px;
   flex-shrink: 0;
-  object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--growz-green-500);
+  overflow: hidden;
+}
+
+.userAvatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .loginBtn {
