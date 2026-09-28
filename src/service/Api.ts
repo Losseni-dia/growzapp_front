@@ -104,16 +104,29 @@ if (response.status === 401) {
   // formulaire.
   const isLoginRoute = url.includes("/api/auth/login");
 
-  if (!isVerifyRoute && !isProjectDocumentsRoute && !isLoginRoute) {
+  // Une page publique (accueil, catalogue, détail projet...) peut déclencher
+  // des appels API en arrière-plan (wallet, notifications) avec un cookie de
+  // session expiré/invalide — un 401 y signifie juste "visiteur anonyme",
+  // pas "session coupée en pleine navigation privée". Forcer un hard-redirect
+  // vers /login depuis "/" cassait l'accès au site pour tout visiteur dont le
+  // cookie avait expiré. On ne force la redirection que depuis l'espace
+  // membre/admin, là où une session morte doit vraiment renvoyer au login ;
+  // ProtectedRoute prend de toute façon le relais si l'utilisateur y navigue
+  // ensuite sans session valide.
+  const estEspacePrive =
+    window.location.pathname.startsWith("/mon-espace") ||
+    window.location.pathname.startsWith("/admin");
+
+  if (!isVerifyRoute && !isProjectDocumentsRoute && !isLoginRoute && estEspacePrive) {
     console.error("401 Unauthorized – Session expirée sur :", url);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     window.location.href = "/login";
     throw new Error("Session expirée");
   }
-  // Route exclue : on ne fait rien ici, on laisse la logique d'erreur
-  // standard ci-dessous prendre le relais (le composant appelant gère
-  // lui-même le 401/403 localement).
+  // Route exclue, ou 401 survenu sur une page publique : on ne fait rien
+  // ici, on laisse la logique d'erreur standard ci-dessous prendre le
+  // relais (le composant appelant gère lui-même le 401/403 localement).
 }
     // ========================================================================
 if (!response.ok) {
