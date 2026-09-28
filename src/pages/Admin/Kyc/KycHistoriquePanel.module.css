@@ -160,3 +160,181 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btnViewDocs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--growz-radius-sm);
+  border: 1px solid var(--growz-border);
+  background: var(--growz-elevated);
+  color: var(--growz-slate-700);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btnViewDocs:hover {
+  border-color: var(--growz-primary);
+  color: var(--growz-primary);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 12, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.docsModal {
+  position: relative;
+  background: var(--growz-elevated);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 560px;
+  width: 100%;
+}
+
+.docsModal h3 {
+  margin: 0 0 16px;
+  padding-right: 32px;
+  color: var(--growz-slate-800);
+}
+
+.modalClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--growz-surface);
+  color: var(--growz-slate-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.docsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.docCell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.docLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--growz-slate-500);
+}
+
+.docThumbBtn {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--growz-border);
+  padding: 0;
+  cursor: pointer;
+  background: var(--growz-surface);
+}
+
+.docThumbBtn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.docThumbOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.docThumbBtn:hover .docThumbOverlay {
+  opacity: 1;
+}
+
+.docMissing,
+.docLoadingCell {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1px dashed var(--growz-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: var(--growz-slate-500);
+  text-align: center;
+  padding: 6px;
+}
+
+.docSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--growz-border);
+  border-top-color: var(--growz-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.zoomOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 12, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 32px;
+}
+
+.zoomImage {
+  max-width: min(90vw, 720px);
+  max-height: 85vh;
+  border-radius: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  object-fit: contain;
+}
+
+.zoomClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

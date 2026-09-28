@@ -573,6 +573,7 @@
     "badge_validee": "Su ficha está validada. Puede enviar sus proyectos.",
     "badge_rejetee": "Su ficha fue marcada como no conforme",
     "badge_rejetee_contact": "Contacte al equipo de GrowzApp para corregirla.",
+    "contact_link": "Contactar al equipo",
     "bio": "Bio",
     "statut": "Estado",
     "societe": "Sociedad",
@@ -1066,7 +1067,10 @@
       "cancel": "Cancelar",
       "confirm_reject": "Confirmar rechazo",
       "tab_pending": "Pendientes ({{count}})",
+      "tab_non_soumis": "Sin enviar ({{count}})",
       "tab_historique": "Historial",
+      "empty_non_soumis": "Todos los usuarios han enviado su verificación de identidad.",
+      "badge_non_soumis": "Sin enviar",
       "historique": {
         "filter_tous": "Todos",
         "filter_valide": "Validados",
@@ -1082,8 +1086,10 @@
           "piece_no": "N° Documento",
           "expiration": "Expiración",
           "decision_date": "Fecha de decisión",
-          "motif": "Motivo"
-        }
+          "motif": "Motivo",
+          "documents": "Documentos"
+        },
+        "btn_view_docs": "Ver documentos"
       }
     },
     "wallets": {
@@ -2516,6 +2522,8 @@
       "sec3_body": "El tratamiento se realiza en la sede social en África. Los inversores fuera de la zona africana consienten la transferencia de sus datos necesarios para la ejecución de la garantía de seguro y el seguimiento de su inversión.",
       "sec4_title": "4. Derechos de los usuarios",
       "sec4_body": "Acceso, rectificación y supresión a través de rgpd@my-growzapp.com.",
+      "sec5_title": "5. Verificación de identidad (KYC)",
+      "sec5_body": "En el marco de nuestras obligaciones regulatorias (BCEAO/UEMOA) de lucha contra el blanqueo de capitales y la financiación del terrorismo, Growzapp debe verificar la identidad de los usuarios antes de cualquier inversión o retiro. Esta verificación puede realizarse de dos formas: automáticamente a través de nuestro proveedor certificado VOVE ID (escaneo del documento de identidad y una selfie, tratados por VOVE ID conforme a su propia política de privacidad), o manualmente por nuestro equipo (envío directo de los documentos anverso/reverso y una selfie). En ambos casos, se conserva una copia cifrada de los documentos (incluidos los enviados vía VOVE ID) en nuestro sistema, accesible únicamente para nuestro equipo de cumplimiento, durante el plazo legal de conservación exigido por la normativa aplicable, y luego se elimina. Estos datos nunca se utilizan para fines distintos a la verificación de identidad y el cumplimiento normativo. El envío de una verificación de identidad requiere su consentimiento explícito, otorgado en el momento del envío.",
       "footer": "Datos cifrados AES-256 - Alojamiento certificado"
     }
   }

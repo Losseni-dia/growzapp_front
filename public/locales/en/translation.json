@@ -573,6 +573,7 @@
     "badge_validee": "Your profile sheet is validated. You can submit your projects.",
     "badge_rejetee": "Your profile sheet was marked as non-compliant",
     "badge_rejetee_contact": "Contact the GrowzApp team to have it corrected.",
+    "contact_link": "Contact the team",
     "bio": "Bio",
     "statut": "Status",
     "societe": "Company",
@@ -970,7 +971,10 @@
       "cancel": "Cancel",
       "confirm_reject": "Confirm rejection",
       "tab_pending": "Pending ({{count}})",
+      "tab_non_soumis": "Not submitted ({{count}})",
       "tab_historique": "History",
+      "empty_non_soumis": "All users have submitted their identity verification.",
+      "badge_non_soumis": "Not submitted",
       "historique": {
         "filter_tous": "All",
         "filter_valide": "Approved",
@@ -986,8 +990,10 @@
           "piece_no": "ID No.",
           "expiration": "Expiration",
           "decision_date": "Decision date",
-          "motif": "Reason"
-        }
+          "motif": "Reason",
+          "documents": "Documents"
+        },
+        "btn_view_docs": "View documents"
       }
     },
     "edit_projet": {
@@ -2518,6 +2524,8 @@
       "sec3_body": "Processing is carried out at the head office in Africa. Investors outside the African zone consent to the transfer of their data necessary for the execution of the insurance guarantee and the monitoring of their investment.",
       "sec4_title": "4. User Rights",
       "sec4_body": "Access, rectification and deletion via rgpd@my-growzapp.com.",
+      "sec5_title": "5. Identity Verification (KYC)",
+      "sec5_body": "As part of our regulatory obligations (BCEAO/UEMOA) to combat money laundering and terrorist financing, Growzapp must verify users' identity before any investment or withdrawal. This verification can be done in two ways: automatically via our certified provider VOVE ID (scan of your ID document and a selfie, processed by VOVE ID under its own privacy policy), or manually by our team (direct submission of front/back documents and a selfie). In both cases, a copy of the documents (including those submitted via VOVE ID) is kept encrypted in our system, accessible only to our compliance team, for the legal retention period required by applicable regulation, then deleted. This data is never used for any purpose other than identity verification and regulatory compliance. Submitting an identity verification requires your explicit consent, given at the time of submission.",
       "footer": "AES-256 encrypted data - Certified hosting"
     }
   }

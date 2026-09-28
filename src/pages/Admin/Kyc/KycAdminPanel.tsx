@@ -19,7 +19,7 @@ import styles from "./KycAdminPanel.module.css";
 
 type DocType = "recto" | "verso" | "selfie";
 type DocState = "loading" | "ready" | "missing";
-type MainTab = "en_attente" | "historique";
+type MainTab = "en_attente" | "non_soumis" | "historique";
 
 interface ZoomedDoc {
   url: string;
@@ -42,6 +42,14 @@ export const KycAdminPanel = () => {
   const [pendingSearch, setPendingSearch] = useState("");
   const [debouncedPendingSearch, setDebouncedPendingSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const [nonSoumisUsers, setNonSoumisUsers] = useState<UserDTO[]>([]);
+  const [totalNonSoumisPages, setTotalNonSoumisPages] = useState(1);
+  const [totalNonSoumisElements, setTotalNonSoumisElements] = useState(0);
+  const [nonSoumisPage, setNonSoumisPage] = useState(0);
+  const [nonSoumisSearch, setNonSoumisSearch] = useState("");
+  const [debouncedNonSoumisSearch, setDebouncedNonSoumisSearch] = useState("");
+  const [nonSoumisLoading, setNonSoumisLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [docUrls, setDocUrls] = useState<Record<string, string>>({});
@@ -84,6 +92,42 @@ export const KycAdminPanel = () => {
     fetchPending();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingPage, debouncedPendingSearch]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setNonSoumisPage(0);
+      setDebouncedNonSoumisSearch(nonSoumisSearch);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [nonSoumisSearch]);
+
+  const fetchNonSoumis = async () => {
+    try {
+      setNonSoumisLoading(true);
+      const params = new URLSearchParams({
+        page: nonSoumisPage.toString(),
+        size: "20",
+        ...(debouncedNonSoumisSearch && { search: debouncedNonSoumisSearch }),
+      });
+      const res = await api.get<{ data: PendingPage }>(
+        `/api/kyc/admin/non-soumis?${params}`,
+      );
+      setNonSoumisUsers(res.data.content || []);
+      setTotalNonSoumisPages(res.data.totalPages ?? 1);
+      setTotalNonSoumisElements(res.data.totalElements ?? 0);
+    } catch (error: any) {
+      toast.error(t("admin.kyc.load_error"));
+    } finally {
+      setNonSoumisLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "non_soumis") {
+      fetchNonSoumis();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, nonSoumisPage, debouncedNonSoumisSearch]);
 
   // Charge les miniatures recto/verso/selfie de tous les dossiers en attente
   // dès que la liste est chargée, pour un aperçu immédiat (au lieu d'un
@@ -215,6 +259,12 @@ export const KycAdminPanel = () => {
           {t("admin.kyc.tab_pending", { count: totalPendingElements })}
         </button>
         <button
+          className={`${styles.mainTabBtn} ${activeTab === "non_soumis" ? styles.mainTabBtnActive : ""}`}
+          onClick={() => setActiveTab("non_soumis")}
+        >
+          {t("admin.kyc.tab_non_soumis", { count: totalNonSoumisElements })}
+        </button>
+        <button
           className={`${styles.mainTabBtn} ${activeTab === "historique" ? styles.mainTabBtnActive : ""}`}
           onClick={() => setActiveTab("historique")}
         >
@@ -224,6 +274,80 @@ export const KycAdminPanel = () => {
 
       {activeTab === "historique" ? (
         <KycHistoriquePanel />
+      ) : activeTab === "non_soumis" ? (
+        <>
+          <div className={styles.pendingSearchWrapper}>
+            <Search size={15} />
+            <input
+              type="text"
+              placeholder={t("admin.kyc.search_placeholder")}
+              value={nonSoumisSearch}
+              onChange={(e) => setNonSoumisSearch(e.target.value)}
+            />
+          </div>
+          {nonSoumisLoading ? (
+            <div className={styles.loadingScreen}>
+              <div className={styles.spinner} />
+              <p>{t("admin.kyc.loading")}</p>
+            </div>
+          ) : nonSoumisUsers.length === 0 ? (
+            <div className={styles.emptyState}>
+              <ShieldCheck size={32} />
+              <p>{t("admin.kyc.empty_non_soumis")}</p>
+            </div>
+          ) : (
+            <div className={styles.grid}>
+              {nonSoumisUsers.map((u) => (
+                <div key={u.id} className={styles.card}>
+                  <div className={styles.cardAccent} />
+                  <div className={styles.cardHeader}>
+                    <div className={styles.avatar}>
+                      {u.prenom[0]}
+                      {u.nom[0]}
+                    </div>
+                    <div className={styles.userInfo}>
+                      <p className={styles.userName}>
+                        {u.prenom} {u.nom}
+                      </p>
+                      <div className={styles.statusRow}>
+                        <span className={styles.userLogin}>@{u.login}</span>
+                        <span className={`${styles.badge} ${styles.badgeGray}`}>
+                          {t("admin.kyc.badge_non_soumis")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.details}>
+                    <div className={styles.detailItem}>
+                      <span>{u.email}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {totalNonSoumisPages > 1 && (
+            <div className={styles.pendingPagination}>
+              <button
+                onClick={() => setNonSoumisPage((p) => Math.max(0, p - 1))}
+                disabled={nonSoumisPage === 0}
+              >
+                ‹
+              </button>
+              <span>
+                {nonSoumisPage + 1} / {totalNonSoumisPages}
+              </span>
+              <button
+                onClick={() =>
+                  setNonSoumisPage((p) => Math.min(totalNonSoumisPages - 1, p + 1))
+                }
+                disabled={nonSoumisPage >= totalNonSoumisPages - 1}
+              >
+                ›
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <>
         <div className={styles.pendingSearchWrapper}>
