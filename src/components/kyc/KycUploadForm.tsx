@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import { api } from "../../service/Api";
 import { toast } from "react-hot-toast";
@@ -21,6 +21,7 @@ export default function KYCUploadForm() {
   const [loading, setLoading] = useState(false);
   const [voveLoading, setVoveLoading] = useState(false);
   const [voveStarted, setVoveStarted] = useState(false);
+  const [consentRgpd, setConsentRgpd] = useState(false);
 
   const [files, setFiles] = useState<{ [key: string]: File | null }>({
     recto: null,
@@ -42,6 +43,10 @@ export default function KYCUploadForm() {
 
   // ── VOVE ID ───────────────────────────────────────────────────────────────
   const startVoveId = async () => {
+    if (!consentRgpd) {
+      toast.error("Veuillez accepter le traitement de vos données d'identité avant de continuer.");
+      return;
+    }
     setVoveLoading(true);
     try {
       const response = await api.post<{
@@ -87,6 +92,10 @@ export default function KYCUploadForm() {
     e.preventDefault();
     if (!files.recto || !files.selfie || !user) {
       toast.error("Veuillez fournir au moins le recto et le selfie.");
+      return;
+    }
+    if (!consentRgpd) {
+      toast.error("Veuillez accepter le traitement de vos données d'identité avant de continuer.");
       return;
     }
 
@@ -136,6 +145,27 @@ export default function KYCUploadForm() {
       <div className={styles.formKyc}>
         <h1 className={styles.title}>{t("kyc.title")}</h1>
 
+        {/* ══ CONSENTEMENT RGPD (commun aux deux méthodes ci-dessous) ══ */}
+        <label style={{ display: "flex", alignItems: "flex-start", gap: 8, margin: "0 0 16px" }}>
+          <input
+            type="checkbox"
+            checked={consentRgpd}
+            onChange={(e) => setConsentRgpd(e.target.checked)}
+            style={{ marginTop: 3 }}
+          />
+          <span>
+            J'accepte que mes documents d'identité et selfie soient traités
+            (via VOVE ID pour la vérification automatique, ou directement par
+            notre équipe pour l'envoi manuel) et conservés par GrowzApp à des
+            fins de vérification d'identité et de conformité réglementaire,
+            conformément à la{" "}
+            <Link to="/rgpd" target="_blank" rel="noopener noreferrer">
+              politique RGPD
+            </Link>
+            .
+          </span>
+        </label>
+
         {/* ══ BANNIÈRE VOVE ID ══ */}
         <div className={styles.voveIdBanner}>
           <div className={styles.voveIdInfo}>
@@ -151,7 +181,7 @@ export default function KYCUploadForm() {
           <button
             type="button"
             onClick={startVoveId}
-            disabled={voveLoading}
+            disabled={voveLoading || !consentRgpd}
             className={styles.btnVoveId}
           >
             <Zap size={16} />
@@ -341,7 +371,7 @@ export default function KYCUploadForm() {
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className={styles.submitBtn}>
+          <button type="submit" disabled={loading || !consentRgpd} className={styles.submitBtn}>
             {loading ? "Envoi en cours..." : "Soumettre mon dossier"}
           </button>
         </form>

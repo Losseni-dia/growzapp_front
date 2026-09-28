@@ -39,6 +39,11 @@ export default function RGPD() {
           <h2>{t("legal_pages.rgpd.sec4_title", "4. Droits des utilisateurs")}</h2>
           <p>{t("legal_pages.rgpd.sec4_body")}</p>
         </div>
+
+        <div className={styles.sectionCard}>
+          <h2>{t("legal_pages.rgpd.sec5_title", "5. Vérification d'identité (KYC)")}</h2>
+          <p>{t("legal_pages.rgpd.sec5_body")}</p>
+        </div>
       </section>
 
       <footer className={styles.footer}>

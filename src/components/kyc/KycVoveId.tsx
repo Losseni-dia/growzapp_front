@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 interface VoveIdSession {
@@ -12,8 +13,13 @@ const KycVoveId = () => {
   const [session, setSession] = useState<VoveIdSession | null>(null);
   const [mode, setMode] = useState<"choix" | "auto" | "manuel">("choix");
   const [error, setError] = useState<string | null>(null);
+  const [consentRgpd, setConsentRgpd] = useState(false);
 
   const startVoveId = async () => {
+    if (!consentRgpd) {
+      setError("Veuillez accepter le traitement de vos données d'identité avant de continuer.");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -86,13 +92,33 @@ const KycVoveId = () => {
           {error && <p className="error-message">{error}</p>}
 
           {!session && (
-            <button
-              onClick={startVoveId}
-              disabled={loading}
-              className="btn-voveid"
-            >
-              {loading ? "Chargement..." : "Démarrer la vérification"}
-            </button>
+            <>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, margin: "12px 0" }}>
+                <input
+                  type="checkbox"
+                  checked={consentRgpd}
+                  onChange={(e) => setConsentRgpd(e.target.checked)}
+                  style={{ marginTop: 3 }}
+                />
+                <span>
+                  J'accepte que mes documents d'identité et selfie soient
+                  transmis à notre prestataire VOVE ID et conservés par
+                  GrowzApp à des fins de vérification d'identité et de
+                  conformité réglementaire, conformément à la{" "}
+                  <Link to="/rgpd" target="_blank" rel="noopener noreferrer">
+                    politique RGPD
+                  </Link>
+                  .
+                </span>
+              </label>
+              <button
+                onClick={startVoveId}
+                disabled={loading || !consentRgpd}
+                className="btn-voveid"
+              >
+                {loading ? "Chargement..." : "Démarrer la vérification"}
+              </button>
+            </>
           )}
 
           {session && (
