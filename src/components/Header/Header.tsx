@@ -161,17 +161,21 @@ export default function Header() {
           <div className={styles.userSection}>
             {user ? (
               <>
-                <Link
-                  to="/growzmarket/panier"
-                  className={styles.cartIconBtn}
-                  aria-label={t("growzmarket.cart.nav_label", "Panier")}
-                >
-                  <FiShoppingCart size={22} />
-                  {totalItems > 0 && (
-                    <span className={styles.cartBadge}>{totalItems}</span>
-                  )}
-                </Link>
-                <NotificationBell />
+                <div className={styles.iconsGroup}>
+                  <Link
+                    to="/growzmarket/panier"
+                    className={styles.cartIconBtn}
+                    aria-label={t("growzmarket.cart.nav_label", "Panier")}
+                  >
+                    <FiShoppingCart size={22} />
+                    {totalItems > 0 && (
+                      <span className={styles.cartBadge}>{totalItems}</span>
+                    )}
+                  </Link>
+                  <NotificationBell />
+                </div>
+
+                <span className={styles.avatarDivider} aria-hidden="true" />
 
                 <div className={styles.profileWrapper} ref={profileRef}>
                   <button

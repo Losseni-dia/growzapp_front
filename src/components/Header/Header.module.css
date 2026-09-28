@@ -97,7 +97,7 @@
 .userSection {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .directActionBtn {
@@ -170,6 +170,8 @@
 .userAvatar {
   width: 34px;
   height: 34px;
+  flex-shrink: 0;
+  object-fit: cover;
   border-radius: 50%;
   border: 2px solid var(--growz-green-500);
 }
@@ -322,14 +324,6 @@
   animation: pulseGps 2s infinite;
 }
 
-/* Dans ton Header.module.css */
-
-.userSection {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Augmenté légèrement pour laisser respirer la cloche */
-}
-
 /* On s'assure que les icônes de la cloche ont le même style que tes autres icônes */
 .userSection :global(.lucide-bell) {
   color: var(--growz-slate-500);
@@ -340,16 +334,36 @@
   color: var(--growz-primary); /* Vert au survol */
 }
 
+/* Icônes (panier, notifications) regroupées et serrées, comme dans un
+   header Google — chacune dans un rond au survol pour une cible tactile
+   cohérente, puis l'avatar séparé plus loin par avatarDivider. */
+.iconsGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.avatarDivider {
+  width: 1px;
+  height: 24px;
+  background: var(--growz-border-subtle);
+  margin: 0 12px;
+}
+
 .cartIconBtn {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   color: var(--growz-slate-500);
-  transition: color 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .cartIconBtn:hover {
+  background: var(--growz-veil-10);
   color: var(--growz-primary);
 }
 
@@ -581,6 +595,12 @@
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+  }
+
+  /* Le tiroir mobile empile déjà les groupes sur des lignes séparées —
+     le séparateur vertical n'a plus de sens dans cette disposition. */
+  .avatarDivider {
+    display: none;
   }
 
   .navLink,
