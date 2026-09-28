@@ -115,3 +115,12 @@
   white-space: pre-wrap;
   color: #333;
 }
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
