@@ -1,18 +1,46 @@
 // KycSuccess.tsx
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
+import { api } from "../../service/Api";
 
 const KycSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { reloadUser } = useAuth();
   const status = searchParams.get("status");
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    // Rediriger vers le profil après 3 secondes
+    // Le webhook VOVE ID ne peut pas atteindre un backend en local
+    // (localhost) et peut manquer même en production — on interroge donc
+    // directement VOVE ID ici pour confirmer le vrai statut en base, avant
+    // de recharger l'utilisateur en session (sinon le tableau de bord
+    // continue d'afficher l'ancien statut malgré une vérification réussie).
+    let cancelled = false;
+
+    const refresh = async () => {
+      try {
+        await api.post("/api/kyc/refresh-status", {});
+        await reloadUser();
+      } catch (err) {
+        console.error("Erreur lors du rafraîchissement du statut KYC", err);
+      } finally {
+        if (!cancelled) setChecking(false);
+      }
+    };
+
+    refresh();
+
     const timer = setTimeout(() => {
-      navigate("/profil");
+      navigate("/mon-espace");
     }, 3000);
-    return () => clearTimeout(timer);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   return (
@@ -22,7 +50,7 @@ const KycSuccess = () => {
           <h2>✅ Vérification réussie !</h2>
           <p>
             Votre identité a été vérifiée avec succès. Vous allez être redirigé
-            vers votre profil.
+            vers votre espace.
           </p>
         </div>
       )}
@@ -42,7 +70,7 @@ const KycSuccess = () => {
           <h2>❌ Vérification annulée</h2>
           <p>
             Vous avez annulé la vérification. Vous pouvez recommencer à tout
-            moment depuis votre profil.
+            moment depuis votre espace.
           </p>
         </div>
       )}
@@ -56,6 +84,8 @@ const KycSuccess = () => {
           </p>
         </div>
       )}
+
+      {checking && <p>Confirmation du statut en cours...</p>}
     </div>
   );
 };

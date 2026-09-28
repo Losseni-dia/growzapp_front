@@ -40,7 +40,7 @@ interface DividendeSummary {
 }
 
 export default function Dashboard() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, reloadUser } = useAuth();
   const { t } = useTranslation();
   const { format } = useCurrency();
   const isInvestisseur = user?.roles?.includes("INVESTISSEUR") ?? false;
@@ -70,6 +70,21 @@ export default function Dashboard() {
     }, 1500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Le webhook VOVE ID ne peut pas atteindre un backend en local, et peut
+  // manquer même en production — si le dashboard affiche un KYC toujours
+  // "non soumis"/"en attente", on vérifie une fois directement auprès de
+  // VOVE ID au chargement plutôt que de rester bloqué sur un statut périmé
+  // jusqu'à ce que l'utilisateur relance tout le parcours de vérification.
+  useEffect(() => {
+    if (user && (user.kycStatus === "NON_SOUMIS" || user.kycStatus === "EN_ATTENTE")) {
+      api
+        .post("/api/kyc/refresh-status", {})
+        .then(() => reloadUser())
+        .catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const loadWallet = useCallback(async () => {
     try {
