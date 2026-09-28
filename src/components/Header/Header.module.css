@@ -62,6 +62,11 @@
   display: flex;
   align-items: center;
   flex: 1;
+  /* Garantit un minimum d'air entre les liens et le bloc panier/notif/avatar
+     — sans ça, l'espace dépend juste de ce qu'il reste après le texte des
+     liens, qui se rend un peu plus large sur Firefox (métriques de police
+     différentes) et grignotait quasiment tout l'espace avant les icônes. */
+  gap: 24px;
 }
 
 .navLeft {
