@@ -1,7 +1,8 @@
 .header {
   position: fixed;
   top: 0;
-  width: 100%;
+  left: 0;
+  right: 0;
   /* Fallback + verre mat moderne */
   background: rgba(255, 255, 255, 0.94);
   background: color-mix(in srgb, var(--growz-elevated) 92%, transparent);
