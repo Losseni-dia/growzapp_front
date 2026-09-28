@@ -245,11 +245,13 @@ export default function Dashboard() {
             </div>
 
             <div className={styles.roles}>
-              {user.roles?.map((role) => (
-                <span key={role} className={styles.roleBadge}>
-                  {role}
-                </span>
-              ))}
+              {user.roles
+                ?.filter((role) => role !== "USER")
+                .map((role) => (
+                  <span key={role} className={styles.roleBadge}>
+                    {role}
+                  </span>
+                ))}
             </div>
           </div>
 
