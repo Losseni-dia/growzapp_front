@@ -8,18 +8,17 @@ html,
   width: 100%;
 }
 
-@media (min-width: 769px) {
-  html {
-    /* Réserve toujours l'espace de la scrollbar, même sans contenu
-       scrollable — évite un décalage de layout entre les pages courtes
-       et longues, et entre navigateurs qui gèrent la gouttière différemment
-       (Firefox réserve systématiquement cet espace, contrairement à Chrome
-       sur certaines configs). Limité au desktop : sur petit écran, ça
-       grignotait la largeur déjà réduite et écrasait le header (avatar,
-       marges) sur Firefox mobile — pas de scrollbar classique à compenser
-       là de toute façon. */
-    scrollbar-gutter: stable;
-  }
+html {
+  /* Masque la scrollbar sur tous les navigateurs tout en gardant le
+     scroll fonctionnel (molette, clavier, swipe) — plus de scrollbar à
+     compenser, donc plus besoin de scrollbar-gutter ni de son décalage
+     entre Chrome et Firefox. */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge/IE legacy */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge Chromium */
 }
 
 body {
