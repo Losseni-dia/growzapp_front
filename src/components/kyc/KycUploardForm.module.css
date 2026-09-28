@@ -130,6 +130,12 @@
     box-shadow: 0 12px 25px rgba(241, 196, 15, 0.4);
 }
 
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .statusBox,
 .statusBoxSuccess {
     background: white;
@@ -276,4 +282,15 @@
     .formKyc {
         padding: 1.5rem;
     }
+}
+.fieldError {
+  display: block;
+  color: #c0392b;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.inputError {
+  border-color: #c0392b !important;
 }
