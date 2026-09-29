@@ -1957,6 +1957,11 @@
       "blocked": "Blocked treasury",
       "blocked_hint": "Pending admin unlock",
       "distribute_btn": "Distribute dividends",
+      "transfer_btn": "Transfer to owner",
+      "transfer_hint": "Transfers the available real treasury to the project owner's personal wallet, so they can withdraw it.",
+      "transfer_modal_hint": "This amount will be deducted from the available real treasury ({{amount}}) and credited to the owner's personal wallet — they can then withdraw it to Mobile Money or their bank.",
+      "transfer_toast_success": "Transfer to the owner's wallet completed",
+      "toast_invalid_amount": "Invalid amount",
       "recalc_btn": "Recalculate collection",
       "recalc_hint": "Recomputes the collected amount and shares taken from the actually validated investments — never touches the wallet.",
       "recalc_toast_fixed": "Discrepancy fixed: {{before}} → {{after}}",
@@ -1986,7 +1991,8 @@
         "DEPOT": "Deposit",
         "INVESTISSEMENT": "Investment",
         "PAIEMENT_FOURNISSEUR": "Supplier payment",
-        "VENTE_MARKET": "GrowzMarket sale"
+        "VENTE_MARKET": "GrowzMarket sale",
+        "TRANSFER_PROJET_VERS_PERSONNEL": "Transfer to owner"
       }
     }
   },

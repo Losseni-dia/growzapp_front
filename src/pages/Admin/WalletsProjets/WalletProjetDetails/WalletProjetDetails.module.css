@@ -154,8 +154,14 @@
   transition: 0.15s;
 }
 
-.distribTrigger:hover {
+.distribTrigger:hover:not(:disabled) {
   background: var(--growz-green-50, #eafaf0);
+}
+
+.distribTrigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-style: solid;
 }
 
 .recalcTrigger {

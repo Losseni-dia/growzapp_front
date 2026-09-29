@@ -1955,6 +1955,11 @@
       "blocked": "Tesorería bloqueada",
       "blocked_hint": "Pendiente de desbloqueo por el admin",
       "distribute_btn": "Distribuir dividendos",
+      "transfer_btn": "Transferir al promotor",
+      "transfer_hint": "Transfiere la tesorería real disponible a la cartera personal del promotor, para que pueda retirarla.",
+      "transfer_modal_hint": "Este monto se deducirá de la tesorería real disponible ({{amount}}) y se acreditará en la cartera personal del promotor — luego podrá retirarlo a Mobile Money o a su banco.",
+      "transfer_toast_success": "Transferencia realizada a la cartera del promotor",
+      "toast_invalid_amount": "Monto inválido",
       "recalc_btn": "Recalcular la recaudación",
       "recalc_hint": "Recalcula el monto recaudado y las partes tomadas a partir de las inversiones realmente validadas — no toca el wallet.",
       "recalc_toast_fixed": "Discrepancia corregida: {{before}} → {{after}}",
@@ -1984,7 +1989,8 @@
         "DEPOT": "Depósito",
         "INVESTISSEMENT": "Inversión",
         "PAIEMENT_FOURNISSEUR": "Pago a proveedor",
-        "VENTE_MARKET": "Venta GrowzMarket"
+        "VENTE_MARKET": "Venta GrowzMarket",
+        "TRANSFER_PROJET_VERS_PERSONNEL": "Transferencia al promotor"
       }
     }
   },

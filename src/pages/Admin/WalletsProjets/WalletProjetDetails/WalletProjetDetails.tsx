@@ -24,6 +24,7 @@ const OUTBOUND_TYPES = [
   "FRAIS_PLATEFORME",
   "RETRAIT",
   "PAIEMENT_FOURNISSEUR",
+  "TRANSFER_PROJET_VERS_PERSONNEL",
 ];
 
 export default function ProjectWalletDetails() {
@@ -41,6 +42,10 @@ export default function ProjectWalletDetails() {
   const [isDistributing, setIsDistributing] = useState(false);
   const [showDistribModal, setShowDistribModal] = useState(false);
   const [isRecalculating, setIsRecalculating] = useState(false);
+
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [transferMontant, setTransferMontant] = useState("");
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -90,6 +95,31 @@ export default function ProjectWalletDetails() {
       toast.error(err.message || t("admin_wallet.detail.toast_error"));
     } finally {
       setIsDistributing(false);
+    }
+  };
+
+  const handleTransfer = async () => {
+    if (!transferMontant || parseFloat(transferMontant) <= 0) {
+      toast.error(t("admin_wallet.detail.toast_invalid_amount"));
+      return;
+    }
+    try {
+      setIsTransferring(true);
+      await api.post(`/api/projets/${projetId}/wallet/transferer`, {
+        montant: parseFloat(transferMontant),
+        idempotencyKey:
+          typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : `${projetId}-${Date.now()}`,
+      });
+      toast.success(t("admin_wallet.detail.transfer_toast_success"));
+      setTransferMontant("");
+      setShowTransferModal(false);
+      loadData();
+    } catch (err: any) {
+      toast.error(err.message || t("admin_wallet.detail.toast_error"));
+    } finally {
+      setIsTransferring(false);
     }
   };
 
@@ -182,6 +212,14 @@ export default function ProjectWalletDetails() {
       <div className={styles.actionsRow}>
         <button
           className={styles.distribTrigger}
+          onClick={() => setShowTransferModal(true)}
+          disabled={!report?.tresorerieReelle || report.tresorerieReelle <= 0}
+          title={t("admin_wallet.detail.transfer_hint") as string}
+        >
+          <FiDollarSign size={16} /> {t("admin_wallet.detail.transfer_btn")}
+        </button>
+        <button
+          className={styles.distribTrigger}
           onClick={() => setShowDistribModal(true)}
         >
           <FiTrendingUp size={16} /> {t("admin_wallet.detail.distribute_btn")}
@@ -259,6 +297,60 @@ export default function ProjectWalletDetails() {
           </div>
         )}
       </section>
+
+      {/* ═══════════ MODAL TRANSFERT VERS LE PORTEUR ═══════════ */}
+      {showTransferModal && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setShowTransferModal(false)}
+        >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>{t("admin_wallet.detail.transfer_btn")}</h2>
+              <button
+                className={styles.modalClose}
+                onClick={() => setShowTransferModal(false)}
+              >
+                <FiX size={18} />
+              </button>
+            </div>
+
+            <p className={styles.modalHint}>
+              {t("admin_wallet.detail.transfer_modal_hint", {
+                amount: format(report?.tresorerieReelle || 0, "XOF"),
+              })}
+            </p>
+
+            <label className={styles.modalLabel}>
+              {t("admin_wallet.detail.amount_label")}
+            </label>
+            <input
+              type="number"
+              className={styles.modalInput}
+              value={transferMontant}
+              onChange={(e) => setTransferMontant(e.target.value)}
+            />
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.btnCancel}
+                onClick={() => setShowTransferModal(false)}
+              >
+                {t("admin_wallet.detail.cancel")}
+              </button>
+              <button
+                className={styles.btnConfirm}
+                onClick={handleTransfer}
+                disabled={isTransferring || !transferMontant}
+              >
+                {isTransferring
+                  ? t("admin_wallet.detail.confirm_processing")
+                  : t("admin_wallet.detail.confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ═══════════ MODAL DISTRIBUTION ═══════════ */}
       {showDistribModal && (
