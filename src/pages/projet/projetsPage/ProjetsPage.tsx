@@ -48,11 +48,13 @@ export default function ProjetsPage() {
   const [viewMode, setViewMode] = useState<"grille" | "carte">("grille");
   const [prixMin, setPrixMin] = useState("");
   const [prixMax, setPrixMax] = useState("");
-  // Par défaut : financement décroissant, avec les plus récents en
-  // départage — conforme à la règle catalogue Premium > financement > récent.
+  // Par défaut : les plus récents d'abord — conforme à la règle catalogue
+  // Premium > nouveau > ... (l'utilisateur peut toujours choisir un autre
+  // tri via le sélecteur, la règle Premium en tête reste appliquée dans
+  // tous les cas, voir plus bas).
   const [sortBy, setSortBy] = useState<
     "recent" | "financement" | "prixAsc" | "prixDesc"
-  >("financement");
+  >("recent");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -144,8 +146,9 @@ export default function ProjetsPage() {
       }
     };
 
-    // Règle métier : les projets Premium sont toujours groupés en tête du
-    // catalogue, quel que soit le tri choisi par l'utilisateur — celui-ci ne
+    // Règle métier catalogue : Premium en tête, puis les plus récents (ou
+    // le tri choisi par l'utilisateur) — les projets Premium sont toujours
+    // groupés en premier quel que soit le tri sélectionné, celui-ci ne
     // s'applique qu'à l'intérieur de chaque groupe (Premium / non-Premium).
     const premium = filtered.filter((p) => p.premiumActif);
     const autres = filtered.filter((p) => !p.premiumActif);
