@@ -1758,7 +1758,8 @@
       "dividend": "Dividend",
       "premium": "Premium purchase",
       "supplier_payment": "Supplier payment",
-      "market_purchase": "GrowzMarket purchase"
+      "market_purchase": "GrowzMarket purchase",
+      "transfer_from_projet": "Transfer from project wallet"
     },
     "toast": {
       "invalid_amount": "Invalid amount",

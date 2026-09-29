@@ -1761,7 +1761,8 @@
       "dividend": "Dividende",
       "premium": "Achat Premium",
       "supplier_payment": "Paiement fournisseur",
-      "market_purchase": "Achat GrowzMarket"
+      "market_purchase": "Achat GrowzMarket",
+      "transfer_from_projet": "Transfert depuis le wallet projet"
     },
     "toast": {
       "invalid_amount": "Montant invalide",

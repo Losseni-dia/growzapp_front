@@ -65,6 +65,9 @@ const TX_CONFIG: Record<string, { icon: any; key: string; outbound: boolean }> =
   // N'apparaît que côté acheteur sur le wallet personnel (le côté vendeur
   // crédite le wallet PROJET, pas un wallet USER — voir docs/GROWZMARKET_VISION.md).
   VENTE_MARKET: { icon: ShoppingBag, key: "market_purchase", outbound: true },
+  // Transfert admin/porteur du wallet projet vers le wallet personnel du
+  // porteur — toujours entrant côté wallet personnel.
+  TRANSFER_PROJET_VERS_PERSONNEL: { icon: ArrowDownToLine, key: "transfer_from_projet", outbound: false },
 };
 
 function getTxConfig(type: string) {

@@ -1756,7 +1756,8 @@
       "dividend": "Dividendo",
       "premium": "Compra Premium",
       "supplier_payment": "Pago a proveedor",
-      "market_purchase": "Compra GrowzMarket"
+      "market_purchase": "Compra GrowzMarket",
+      "transfer_from_projet": "Transferencia desde la cartera del proyecto"
     },
     "toast": {
       "invalid_amount": "Monto inválido",
