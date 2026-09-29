@@ -1620,20 +1620,25 @@
     "wallet": {
       "withdraw_btn": "Retirar",
       "transfer_btn": "Transferir a mi wallet",
+      "reapprovisionner_btn": "Financiar el proyecto",
       "withdraw_hint": "Retiro Mobile Money desde el saldo disponible de este proyecto.",
       "transfer_hint": "Transferencia instantánea a su wallet personal — retírelo luego desde Mi Portafolio.",
+      "reapprovisionner_hint": "Transferencia instantánea desde su wallet personal ({{amount}} disponible) hacia la tesorería de este proyecto.",
       "amount_label": "Monto (FCFA)",
       "phone_label": "Número Mobile Money",
       "cancel": "Cancelar",
       "processing": "Procesando...",
       "confirm_withdraw": "Confirmar retiro",
       "confirm_transfer": "Confirmar transferencia",
+      "confirm_reapprovisionner": "Confirmar financiación",
       "toast": {
         "invalid_amount": "Monto inválido",
         "insufficient_funds": "El monto excede el saldo disponible",
+        "insufficient_personal_funds": "El monto excede el saldo disponible de su wallet personal",
         "phone_required": "Número Mobile Money requerido",
         "withdraw_success": "Retiro iniciado con éxito",
         "transfer_success": "Transferencia realizada con éxito",
+        "reapprovisionner_success": "Financiación realizada con éxito",
         "error": "Error en la operación"
       }
     },
@@ -1757,7 +1762,8 @@
       "premium": "Compra Premium",
       "supplier_payment": "Pago a proveedor",
       "market_purchase": "Compra GrowzMarket",
-      "transfer_from_projet": "Transferencia desde la cartera del proyecto"
+      "transfer_from_projet": "Transferencia desde la cartera del proyecto",
+      "transfer_to_projet": "Transferencia hacia la cartera del proyecto"
     },
     "toast": {
       "invalid_amount": "Monto inválido",
@@ -1991,7 +1997,8 @@
         "INVESTISSEMENT": "Inversión",
         "PAIEMENT_FOURNISSEUR": "Pago a proveedor",
         "VENTE_MARKET": "Venta GrowzMarket",
-        "TRANSFER_PROJET_VERS_PERSONNEL": "Transferencia al promotor"
+        "TRANSFER_PROJET_VERS_PERSONNEL": "Transferencia al promotor",
+        "TRANSFER_PERSONNEL_VERS_PROJET": "Financiación del promotor"
       }
     }
   },

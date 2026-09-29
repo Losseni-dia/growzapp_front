@@ -68,6 +68,9 @@ const TX_CONFIG: Record<string, { icon: any; key: string; outbound: boolean }> =
   // Transfert admin/porteur du wallet projet vers le wallet personnel du
   // porteur — toujours entrant côté wallet personnel.
   TRANSFER_PROJET_VERS_PERSONNEL: { icon: ArrowDownToLine, key: "transfer_from_projet", outbound: false },
+  // Sens inverse : le porteur réinjecte des fonds personnels dans son
+  // projet — toujours sortant côté wallet personnel.
+  TRANSFER_PERSONNEL_VERS_PROJET: { icon: Send, key: "transfer_to_projet", outbound: true },
 };
 
 function getTxConfig(type: string) {

@@ -1661,20 +1661,25 @@
     "wallet": {
       "withdraw_btn": "Retirer",
       "transfer_btn": "Transférer vers mon wallet",
+      "reapprovisionner_btn": "Réapprovisionner le projet",
       "withdraw_hint": "Retrait Mobile Money depuis le solde disponible de ce projet.",
       "transfer_hint": "Virement instantané vers votre wallet personnel — à retirer ensuite depuis Mon Portefeuille.",
+      "reapprovisionner_hint": "Virement instantané depuis votre wallet personnel ({{amount}} disponible) vers la trésorerie de ce projet.",
       "amount_label": "Montant (FCFA)",
       "phone_label": "Numéro Mobile Money",
       "cancel": "Annuler",
       "processing": "Traitement...",
       "confirm_withdraw": "Confirmer le retrait",
       "confirm_transfer": "Confirmer le transfert",
+      "confirm_reapprovisionner": "Confirmer le réapprovisionnement",
       "toast": {
         "invalid_amount": "Montant invalide",
         "insufficient_funds": "Montant supérieur au solde disponible",
+        "insufficient_personal_funds": "Montant supérieur au solde disponible de votre wallet personnel",
         "phone_required": "Numéro Mobile Money requis",
         "withdraw_success": "Retrait initié avec succès",
         "transfer_success": "Transfert effectué avec succès",
+        "reapprovisionner_success": "Réapprovisionnement effectué avec succès",
         "error": "Échec de l'opération"
       }
     },
@@ -1762,7 +1767,8 @@
       "premium": "Achat Premium",
       "supplier_payment": "Paiement fournisseur",
       "market_purchase": "Achat GrowzMarket",
-      "transfer_from_projet": "Transfert depuis le wallet projet"
+      "transfer_from_projet": "Transfert depuis le wallet projet",
+      "transfer_to_projet": "Transfert vers le wallet projet"
     },
     "toast": {
       "invalid_amount": "Montant invalide",
@@ -1997,7 +2003,8 @@
         "INVESTISSEMENT": "Investissement",
         "PAIEMENT_FOURNISSEUR": "Paiement fournisseur",
         "VENTE_MARKET": "Vente GrowzMarket",
-        "TRANSFER_PROJET_VERS_PERSONNEL": "Transfert vers le porteur"
+        "TRANSFER_PROJET_VERS_PERSONNEL": "Transfert vers le porteur",
+        "TRANSFER_PERSONNEL_VERS_PROJET": "Réapprovisionnement du porteur"
       }
     }
   },

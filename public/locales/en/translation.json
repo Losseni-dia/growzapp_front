@@ -1636,20 +1636,25 @@
     "wallet": {
       "withdraw_btn": "Withdraw",
       "transfer_btn": "Transfer to my wallet",
+      "reapprovisionner_btn": "Fund the project",
       "withdraw_hint": "Mobile Money withdrawal from this project's available balance.",
       "transfer_hint": "Instant transfer to your personal wallet — withdraw it afterwards from My Wallet.",
+      "reapprovisionner_hint": "Instant transfer from your personal wallet ({{amount}} available) to this project's treasury.",
       "amount_label": "Amount (FCFA)",
       "phone_label": "Mobile Money number",
       "cancel": "Cancel",
       "processing": "Processing...",
       "confirm_withdraw": "Confirm withdrawal",
       "confirm_transfer": "Confirm transfer",
+      "confirm_reapprovisionner": "Confirm funding",
       "toast": {
         "invalid_amount": "Invalid amount",
         "insufficient_funds": "Amount exceeds available balance",
+        "insufficient_personal_funds": "Amount exceeds your personal wallet's available balance",
         "phone_required": "Mobile Money number required",
         "withdraw_success": "Withdrawal initiated successfully",
         "transfer_success": "Transfer completed successfully",
+        "reapprovisionner_success": "Funding completed successfully",
         "error": "Operation failed"
       }
     },
@@ -1759,7 +1764,8 @@
       "premium": "Premium purchase",
       "supplier_payment": "Supplier payment",
       "market_purchase": "GrowzMarket purchase",
-      "transfer_from_projet": "Transfer from project wallet"
+      "transfer_from_projet": "Transfer from project wallet",
+      "transfer_to_projet": "Transfer to project wallet"
     },
     "toast": {
       "invalid_amount": "Invalid amount",
@@ -1993,7 +1999,8 @@
         "INVESTISSEMENT": "Investment",
         "PAIEMENT_FOURNISSEUR": "Supplier payment",
         "VENTE_MARKET": "GrowzMarket sale",
-        "TRANSFER_PROJET_VERS_PERSONNEL": "Transfer to owner"
+        "TRANSFER_PROJET_VERS_PERSONNEL": "Transfer to owner",
+        "TRANSFER_PERSONNEL_VERS_PROJET": "Owner funding"
       }
     }
   },

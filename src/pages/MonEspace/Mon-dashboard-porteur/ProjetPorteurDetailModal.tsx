@@ -1,5 +1,5 @@
 // src/pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailModal.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import {
@@ -37,7 +37,7 @@ interface Props {
   onActionDone: () => void;
 }
 
-type PanelType = "retrait" | "transfert" | "document" | "premium" | null;
+type PanelType = "retrait" | "transfert" | "reapprovisionner" | "document" | "premium" | null;
 
 const PRIX_PREMIUM = 5000;
 
@@ -54,6 +54,17 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
   const [docNom, setDocNom] = useState("");
   const [docDescription, setDocDescription] = useState("");
   const [premiumLoading, setPremiumLoading] = useState<string | null>(null);
+  const [soldePersonnel, setSoldePersonnel] = useState(0);
+
+  useEffect(() => {
+    api
+      .get<any>("/api/wallets/solde")
+      .then((data) => {
+        const solde = typeof data === "object" ? (data?.data?.soldeDisponible ?? data?.soldeDisponible ?? 0) : (data ?? 0);
+        setSoldePersonnel(Number(solde));
+      })
+      .catch(() => setSoldePersonnel(0));
+  }, []);
 
   const resetPanel = () => {
     setPanel(null);
@@ -111,6 +122,34 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
         idempotencyKey,
       });
       toast.success(t("porteur.wallet.toast.transfer_success"));
+      resetPanel();
+      onActionDone();
+    } catch (err: any) {
+      toast.error(err.message || t("porteur.wallet.toast.error"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReapprovisionner = async () => {
+    const montantNum = parseFloat(montant);
+    if (!montantNum || montantNum <= 0) {
+      toast.error(t("porteur.wallet.toast.invalid_amount"));
+      return;
+    }
+    if (montantNum > soldePersonnel) {
+      toast.error(t("porteur.wallet.toast.insufficient_personal_funds"));
+      return;
+    }
+    try {
+      setSubmitting(true);
+      const idempotencyKey = crypto.randomUUID();
+      await api.post(`/api/projets/${ligne.projetId}/wallet/reapprovisionner`, {
+        montant: montantNum,
+        idempotencyKey,
+      });
+      toast.success(t("porteur.wallet.toast.reapprovisionner_success"));
+      setSoldePersonnel((prev) => prev - montantNum);
       resetPanel();
       onActionDone();
     } catch (err: any) {
@@ -318,6 +357,16 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
             </button>
             <button
               className={styles.walletActionBtn}
+              disabled={soldePersonnel <= 0}
+              onClick={() =>
+                setPanel(panel === "reapprovisionner" ? null : "reapprovisionner")
+              }
+            >
+              <FiArrowRightCircle size={14} style={{ transform: "rotate(180deg)" }} />{" "}
+              {t("porteur.wallet.reapprovisionner_btn")}
+            </button>
+            <button
+              className={styles.walletActionBtn}
               onClick={() => setPanel(panel === "document" ? null : "document")}
             >
               <FiUpload size={14} /> {t("porteur.documents.upload_btn")}
@@ -496,6 +545,40 @@ export default function ProjetPorteurDetailModal({ ligne, onClose, onActionDone 
                   {submitting
                     ? t("porteur.wallet.processing")
                     : t("porteur.wallet.confirm_transfer")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {panel === "reapprovisionner" && (
+            <div className={styles.walletPanel}>
+              <p className={styles.walletPanelHint}>
+                {t("porteur.wallet.reapprovisionner_hint", {
+                  amount: format(soldePersonnel, "XOF"),
+                })}
+              </p>
+              <label>{t("porteur.wallet.amount_label")}</label>
+              <input
+                type="number"
+                value={montant}
+                onChange={(e) => setMontant(e.target.value)}
+                max={soldePersonnel}
+              />
+              <div className={styles.walletPanelActions}>
+                <button
+                  onClick={resetPanel}
+                  className={styles.walletPanelCancel}
+                >
+                  {t("porteur.wallet.cancel")}
+                </button>
+                <button
+                  onClick={handleReapprovisionner}
+                  disabled={submitting}
+                  className={styles.walletPanelConfirm}
+                >
+                  {submitting
+                    ? t("porteur.wallet.processing")
+                    : t("porteur.wallet.confirm_reapprovisionner")}
                 </button>
               </div>
             </div>
