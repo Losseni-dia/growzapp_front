@@ -1631,7 +1631,8 @@
       "blocked": "Blocked",
       "collection_evolution": "Collection evolution",
       "velocity": "Fundraising velocity",
-      "no_data": "Not enough data yet"
+      "no_data": "Not enough data yet",
+      "details_cta": "View details and manage treasury →"
     },
     "wallet": {
       "withdraw_btn": "Withdraw",

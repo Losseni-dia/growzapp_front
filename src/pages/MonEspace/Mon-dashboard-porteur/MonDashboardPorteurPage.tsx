@@ -231,6 +231,10 @@ function ProjetPorteurCard({
           )}
         </div>
       </div>
+
+      <div className={styles.detailsCta}>
+        {t("porteur.card.details_cta", "Voir les détails et gérer la trésorerie →")}
+      </div>
         </>
       )}
     </div>
