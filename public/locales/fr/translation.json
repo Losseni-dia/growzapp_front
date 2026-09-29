@@ -659,6 +659,33 @@
     "btn_view_projet": "Voir le projet"
   },
   "admin": {
+    "dashboard_global": {
+      "kpi_total_collected": "Total collecté",
+      "kpi_global_goal": "Objectif global atteint",
+      "kpi_members": "Membres inscrits",
+      "kpi_active_projects": "Projets actifs",
+      "section_investments": "Investissements",
+      "stat_valid_investments": "Investissements validés",
+      "stat_unique_investors": "Investisseurs uniques",
+      "stat_avg_investment": "Investissement moyen",
+      "chart_investments_evolution": "Évolution mensuelle des investissements",
+      "no_data": "Pas encore assez de données",
+      "section_projects": "Projets",
+      "chart_status_distribution": "Répartition par statut",
+      "top_collection_title": "🏆 Top 5 — Meilleure collecte",
+      "top_progression_title": "🚀 Top 5 — Meilleure progression",
+      "section_dividends": "Dividendes",
+      "stat_total_paid": "Total versé",
+      "stat_payments_count": "Versements effectués",
+      "chart_dividends_evolution": "Évolution mensuelle des dividendes versés",
+      "status": {
+        "VALIDE": "Validés",
+        "SOUMIS": "Soumis",
+        "REJETE": "Rejetés",
+        "TERMINE": "Terminés",
+        "EN_ATTENTE": "En attente"
+      }
+    },
     "sidebar": {
       "brand": "GrowzApp Admin",
       "aria_label": "Navigation d'administration",
@@ -1323,33 +1350,6 @@
         "ancien": "⬆ Plus ancien",
         "collecte": "📈 % collecté",
         "objectif": "💰 Objectif"
-      },
-      "dashboard_global": {
-        "kpi_total_collected": "Total collecté",
-        "kpi_global_goal": "Objectif global atteint",
-        "kpi_members": "Membres inscrits",
-        "kpi_active_projects": "Projets actifs",
-        "section_investments": "Investissements",
-        "stat_valid_investments": "Investissements validés",
-        "stat_unique_investors": "Investisseurs uniques",
-        "stat_avg_investment": "Investissement moyen",
-        "chart_investments_evolution": "Évolution mensuelle des investissements",
-        "no_data": "Pas encore assez de données",
-        "section_projects": "Projets",
-        "chart_status_distribution": "Répartition par statut",
-        "top_collection_title": "🏆 Top 5 — Meilleure collecte",
-        "top_progression_title": "🚀 Top 5 — Meilleure progression",
-        "section_dividends": "Dividendes",
-        "stat_total_paid": "Total versé",
-        "stat_payments_count": "Versements effectués",
-        "chart_dividends_evolution": "Évolution mensuelle des dividendes versés",
-        "status": {
-          "VALIDE": "Validés",
-          "SOUMIS": "Soumis",
-          "REJETE": "Rejetés",
-          "TERMINE": "Terminés",
-          "EN_ATTENTE": "En attente"
-        }
       },
       "revalorisation": {
         "tooltip": "Revaloriser",
