@@ -149,8 +149,20 @@ const KycAdminPanel = lazy(() =>
 const FichePorteurAdminPanel = lazy(
   () => import("./pages/Admin/FichePorteur/FichePorteurAdminPanel"),
 );
-const ProjectSettingsPanel = lazy(
-  () => import("./pages/Admin/Projets/ProjectSettings/ProjectsSettingsPanel"),
+const AnalyticsPage = lazy(
+  () => import("./pages/Admin/Projets/ProjectSettings/AnalyticsPage"),
+);
+const SecteursPage = lazy(
+  () => import("./pages/Admin/Projets/ProjectSettings/SecteursPage"),
+);
+const LocalitesPage = lazy(
+  () => import("./pages/Admin/Projets/ProjectSettings/LocalitesPage"),
+);
+const LocalisationsPage = lazy(
+  () => import("./pages/Admin/Projets/ProjectSettings/LocalisationsPage"),
+);
+const DevisesPage = lazy(
+  () => import("./pages/Admin/Projets/ProjectSettings/DevisesPage"),
 );
 const ProjetsProches = lazy(
   () => import("./pages/projet/gps-projetProche/ProjetsProches"),
@@ -409,10 +421,31 @@ function App() {
                       element={<DocumentsAdminPage />}
                     />
                     
-                    {/* 7. RÉFÉRENTIELS & PARAMÈTRES */}
+                    {/* 7. RÉFÉRENTIELS & PARAMÈTRES — pages individuelles,
+                        plus de panneau à onglets unique */}
                     <Route
                       path="/admin/settings"
-                      element={<ProjectSettingsPanel />}
+                      element={<Navigate to="/admin/settings/analytics" replace />}
+                    />
+                    <Route
+                      path="/admin/settings/analytics"
+                      element={<AnalyticsPage />}
+                    />
+                    <Route
+                      path="/admin/settings/secteurs"
+                      element={<SecteursPage />}
+                    />
+                    <Route
+                      path="/admin/settings/localites"
+                      element={<LocalitesPage />}
+                    />
+                    <Route
+                      path="/admin/settings/localisations"
+                      element={<LocalisationsPage />}
+                    />
+                    <Route
+                      path="/admin/settings/devises"
+                      element={<DevisesPage />}
                     />
                     <Route
                       path="/admin/parametres"

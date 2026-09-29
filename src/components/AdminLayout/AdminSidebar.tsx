@@ -14,6 +14,8 @@ import {
   FiMessageSquare,
   FiMail,
   FiMap,
+  FiMapPin,
+  FiDollarSign,
   FiSettings,
   FiBell,
   FiActivity,
@@ -214,9 +216,29 @@ export default function AdminSidebar({
       title: t("admin.sidebar.section_referentiels"),
       links: [
         {
-          to: "/admin/settings",
-          label: t("admin.sidebar.referentiels"),
+          to: "/admin/settings/analytics",
+          label: t("admin.settings.analytics", "Analyses"),
+          icon: <FiTrendingUp size={16} />,
+        },
+        {
+          to: "/admin/settings/secteurs",
+          label: t("admin.settings.sectors", "Secteurs"),
+          icon: <FiGrid size={16} />,
+        },
+        {
+          to: "/admin/settings/localites",
+          label: t("admin.settings.localities", "Villes / Localités"),
           icon: <FiMap size={16} />,
+        },
+        {
+          to: "/admin/settings/localisations",
+          label: t("admin.settings.sites", "Sites Projets"),
+          icon: <FiMapPin size={16} />,
+        },
+        {
+          to: "/admin/settings/devises",
+          label: t("admin.settings.currencies", "Devises"),
+          icon: <FiDollarSign size={16} />,
         },
       ],
     });
