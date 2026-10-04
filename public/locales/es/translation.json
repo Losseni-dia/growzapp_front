@@ -2511,6 +2511,7 @@
     "link_mentions_legales": "Aviso Legal",
     "link_cgu": "Términos de Uso",
     "link_rgpd": "Protección de Datos",
+    "link_cookies": "Gestionar cookies",
     "col_investissement": "Inversión",
     "link_cgv": "Riesgos y Condiciones de Venta",
     "link_faq": "Ayuda y FAQ",
@@ -2632,5 +2633,18 @@
       "sec12_body": "Growzapp puede modificar la presente política de protección de datos en cualquier momento, en particular para adaptarse a la evolución de la normativa aplicable. La fecha de la última actualización figura en la parte superior de la página. En caso de modificación sustancial, se informará a los usuarios.",
       "footer": "Datos cifrados AES-256 - Alojamiento certificado"
     }
+  },
+  "cookies": {
+    "title": "Su privacidad, respetada",
+    "body": "Utilizamos cookies estrictamente necesarias para el funcionamiento del sitio (autenticación, preferencias de idioma y moneda). Con su consentimiento, también activamos nuestro chat de soporte (Crisp). Puede cambiar de opinión en cualquier momento desde el pie de página.",
+    "learn_more": "Saber más",
+    "essential_title": "Cookies esenciales",
+    "essential_desc": "Autenticación, seguridad, preferencias de idioma y moneda. Siempre activas.",
+    "chat_title": "Soporte y Chat (Crisp)",
+    "chat_desc": "Activa la burbuja de chat en directo con nuestro equipo de soporte.",
+    "btn_save": "Guardar mis opciones",
+    "btn_customize": "Personalizar",
+    "btn_reject": "Rechazar no esenciales",
+    "btn_accept_all": "Aceptar todo"
   }
 }

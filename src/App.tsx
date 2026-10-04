@@ -6,8 +6,10 @@ import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import GrowzToaster from "./components/ui/Toaster";
 import CrispUserHandler from "./components/Crips-ChatBox/CrispUserHandler";
+import CookieConsentBanner from "./components/CookieConsent/CookieConsentBanner";
 // === PROVIDERS ===
 import { CurrencyProvider } from "./components/Context/CurrencyContext";
+import { CookieConsentProvider, useCookieConsent } from "./components/Context/CookieConsentContext";
 import { HelmetProvider } from "react-helmet-async";
 // === GUARDS (légers, chargés immédiatement) ===
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoutes";
@@ -193,27 +195,34 @@ const ContactAdminPage = lazy(
   () => import("./pages/Admin/Contact/ContactAdminPage"),
 );
 
-function App() {
+function AppInner() {
   const location = useLocation();
+  const { consent } = useCookieConsent();
 
   useEffect(() => {
-    // 1. Initialisation simple (Le français sera automatique car c'est la seule langue restant)
+    // Le chat Crisp dépose ses propres cookies — ne le charger qu'avec le
+    // consentement explicite du visiteur (catégorie "Support & Chat").
+    if (!consent?.chat) {
+      return;
+    }
+
     Crisp.configure("5437aabc-9202-40af-9d91-9901c5bb0271");
 
-    // 2. Gestion de la visibilité sur les pages Admin
+    // Gestion de la visibilité sur les pages Admin
     if (location.pathname.startsWith("/admin")) {
       Crisp.chat.hide();
     } else {
       Crisp.chat.show();
     }
-  }, [location]);
+  }, [location, consent?.chat]);
 
   return (
     <HelmetProvider>
       <CurrencyProvider>
+        <CookieConsentBanner />
         <Header />
         {/* Gère l'identification du nom et de l'email de l'investisseur */}
-        <CrispUserHandler />
+        {consent?.chat && <CrispUserHandler />}
         <GrowzToaster />
 
         <main className="growzAppMain">
@@ -479,6 +488,14 @@ function App() {
         <Footer />
       </CurrencyProvider>
     </HelmetProvider>
+  );
+}
+
+function App() {
+  return (
+    <CookieConsentProvider>
+      <AppInner />
+    </CookieConsentProvider>
   );
 }
 

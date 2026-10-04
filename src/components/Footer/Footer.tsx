@@ -6,6 +6,7 @@ import { FiShield, FiLinkedin, FiFacebook, FiInstagram } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { Rss } from "lucide-react";
 import { api, buildFileUrl } from "../../service/Api";
+import { useCookieConsent } from "../Context/CookieConsentContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -17,6 +18,7 @@ interface PartenaireDTO {
 
 export default function Footer() {
   const { t } = useTranslation();
+  const { resetConsent } = useCookieConsent();
   const currentYear = new Date().getFullYear();
   const [partenaires, setPartenaires] = useState<PartenaireDTO[]>([]);
 
@@ -107,6 +109,14 @@ export default function Footer() {
               <Link to="/rgpd" className={styles.link}>
                 {t("site_footer.link_rgpd", "RGPD")}
               </Link>
+              <button
+                type="button"
+                onClick={resetConsent}
+                className={styles.link}
+                style={{ background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", font: "inherit" }}
+              >
+                {t("site_footer.link_cookies", "Gérer les cookies")}
+              </button>
             </div>
             <div className={styles.navColumn}>
               <h4>{t("site_footer.col_investissement", "Investissement")}</h4>
