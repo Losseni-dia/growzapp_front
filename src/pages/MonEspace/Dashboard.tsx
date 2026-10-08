@@ -44,6 +44,8 @@ export default function Dashboard() {
   const { t } = useTranslation();
   const { format } = useCurrency();
   const isInvestisseur = user?.roles?.includes("INVESTISSEUR") ?? false;
+  const isPorteur = user?.roles?.includes("PORTEUR") ?? false;
+  const isFournisseur = user?.roles?.includes("FOURNISSEUR") ?? false;
 
   const [wallet, setWallet] = useState<WalletDTO | null>(null);
   const [walletLoading, setWalletLoading] = useState(true);
@@ -281,53 +283,59 @@ export default function Dashboard() {
       {/* ── STATS ── */}
       <section className={styles.statsSection}>
         <div className={styles.statsGrid}>
-          <Link to="/mes-investissements" className={styles.statCard}>
-            <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
-              <FiTrendingUp size={22} />
-            </div>
-            <div className={styles.statContent}>
-              <h3>{t("dashboard.stats.my_investments")}</h3>
-              <div className={styles.statNumber}>{stats.invCount}</div>
-              <div className={styles.statDetail}>
-                {stats.totalInvesti > 0
-                  ? `${format(stats.totalInvesti, "XOF")} ${t("dashboard.stats.invested")}`
-                  : t("dashboard.stats.none_invested")}
+          {isInvestisseur && (
+            <Link to="/mes-investissements" className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
+                <FiTrendingUp size={22} />
               </div>
-            </div>
-            <FiArrowRight className={styles.statArrow} />
-          </Link>
+              <div className={styles.statContent}>
+                <h3>{t("dashboard.stats.my_investments")}</h3>
+                <div className={styles.statNumber}>{stats.invCount}</div>
+                <div className={styles.statDetail}>
+                  {stats.totalInvesti > 0
+                    ? `${format(stats.totalInvesti, "XOF")} ${t("dashboard.stats.invested")}`
+                    : t("dashboard.stats.none_invested")}
+                </div>
+              </div>
+              <FiArrowRight className={styles.statArrow} />
+            </Link>
+          )}
 
-          <Link to="/mon-dashboard-porteur" className={styles.statCard}>
-            <div className={`${styles.statIcon} ${styles.statIconGold}`}>
-              <FiPackage size={22} />
-            </div>
-            <div className={styles.statContent}>
-              <h3>{t("dashboard.stats.my_projects")}</h3>
-              <div className={styles.statNumber}>{stats.projCount}</div>
-              <div className={styles.statDetail}>
-                {stats.totalCollecte > 0
-                  ? `${format(stats.totalCollecte, "XOF")} ${t("dashboard.stats.collected")}`
-                  : t("dashboard.stats.none_projects")}
+          {isPorteur && (
+            <Link to="/mon-dashboard-porteur" className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.statIconGold}`}>
+                <FiPackage size={22} />
               </div>
-            </div>
-            <FiArrowRight className={styles.statArrow} />
-          </Link>
+              <div className={styles.statContent}>
+                <h3>{t("dashboard.stats.my_projects")}</h3>
+                <div className={styles.statNumber}>{stats.projCount}</div>
+                <div className={styles.statDetail}>
+                  {stats.totalCollecte > 0
+                    ? `${format(stats.totalCollecte, "XOF")} ${t("dashboard.stats.collected")}`
+                    : t("dashboard.stats.none_projects")}
+                </div>
+              </div>
+              <FiArrowRight className={styles.statArrow} />
+            </Link>
+          )}
 
-          <Link to="/mes-dividendes" className={styles.statCard}>
-            <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
-              <FiGift size={22} />
-            </div>
-            <div className={styles.statContent}>
-              <h3>{t("dashboard.stats.my_dividends")}</h3>
-              <div className={styles.statNumber}>{dividendesSummary.count}</div>
-              <div className={styles.statDetail}>
-                {dividendesSummary.totalPercu > 0
-                  ? `${format(dividendesSummary.totalPercu, "XOF")} ${t("dashboard.stats.received")}`
-                  : t("dashboard.stats.none_received")}
+          {isInvestisseur && (
+            <Link to="/mes-dividendes" className={styles.statCard}>
+              <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
+                <FiGift size={22} />
               </div>
-            </div>
-            <FiArrowRight className={styles.statArrow} />
-          </Link>
+              <div className={styles.statContent}>
+                <h3>{t("dashboard.stats.my_dividends")}</h3>
+                <div className={styles.statNumber}>{dividendesSummary.count}</div>
+                <div className={styles.statDetail}>
+                  {dividendesSummary.totalPercu > 0
+                    ? `${format(dividendesSummary.totalPercu, "XOF")} ${t("dashboard.stats.received")}`
+                    : t("dashboard.stats.none_received")}
+                </div>
+              </div>
+              <FiArrowRight className={styles.statArrow} />
+            </Link>
+          )}
         </div>
       </section>
 
@@ -349,23 +357,39 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={styles.quickLinksGroup}>
-          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.porteur", "Porteur de projet")}</p>
-          <div className={styles.quickLinksGrid}>
-            <Link to="/mon-dashboard-porteur" className={styles.quickLink}>
-              <FiBriefcase size={18} />
-              <span>{t("porteur.title")}</span>
-            </Link>
-            <Link to="/projet/creer" className={styles.quickLink}>
-              <FiPackage size={18} />
-              <span>{t("create_project")}</span>
-            </Link>
-            <Link to="/projets/proximite" className={styles.quickLink}>
-              <FiCompass size={18} />
-              <span>{t("projets_proches.title")}</span>
-            </Link>
+        {isFournisseur && (
+          <div className={styles.quickLinksGroup}>
+            <p className={styles.quickLinksGroupTitle}>
+              {t("dashboard.quick_links_group.mon_espace_fournisseur", "Mon espace fournisseur")}
+            </p>
+            <div className={styles.quickLinksGrid}>
+              <Link to="/mon-espace/fournisseur/dashboard" className={styles.quickLink}>
+                <FiTruck size={18} />
+                <span>{t("user_sidebar.fournisseur_dashboard", "Tableau de bord")}</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
+
+        {isPorteur && (
+          <div className={styles.quickLinksGroup}>
+            <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.porteur", "Porteur de projet")}</p>
+            <div className={styles.quickLinksGrid}>
+              <Link to="/mon-dashboard-porteur" className={styles.quickLink}>
+                <FiBriefcase size={18} />
+                <span>{t("porteur.title")}</span>
+              </Link>
+              <Link to="/projet/creer" className={styles.quickLink}>
+                <FiPackage size={18} />
+                <span>{t("create_project")}</span>
+              </Link>
+              <Link to="/projets/proximite" className={styles.quickLink}>
+                <FiCompass size={18} />
+                <span>{t("projets_proches.title")}</span>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {isInvestisseur && (
           <div className={styles.quickLinksGroup}>
@@ -415,37 +439,37 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className={styles.quickLinksGroup}>
-          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.fournisseur", "Fournisseur")}</p>
-          <div className={styles.quickLinksGrid}>
-            <Link to="/fournisseurs" className={styles.quickLink}>
-              <FiTruck size={18} />
-              <span>{t("user_sidebar.fournisseurs", "Trouver un fournisseur")}</span>
-            </Link>
-            <Link to="/mes-commandes" className={styles.quickLink}>
-              <FiShoppingBag size={18} />
-              <span>{t("user_sidebar.mes_commandes", "Mes commandes fournisseur")}</span>
-            </Link>
-            <Link to="/mon-espace/fournisseur" className={styles.quickLink}>
-              <FiTruck size={18} />
-              <span>{t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur")}</span>
-            </Link>
+        {isPorteur && (
+          <div className={styles.quickLinksGroup}>
+            <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.fournisseur", "Fournisseur")}</p>
+            <div className={styles.quickLinksGrid}>
+              <Link to="/fournisseurs" className={styles.quickLink}>
+                <FiTruck size={18} />
+                <span>{t("user_sidebar.fournisseurs", "Trouver un fournisseur")}</span>
+              </Link>
+              <Link to="/mes-commandes" className={styles.quickLink}>
+                <FiShoppingBag size={18} />
+                <span>{t("user_sidebar.mes_commandes", "Mes commandes fournisseur")}</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className={styles.quickLinksGroup}>
-          <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.documents", "Documents")}</p>
-          <div className={styles.quickLinksGrid}>
-            <Link to="/mes-contrats" className={styles.quickLink}>
-              <FiFileText size={18} />
-              <span>{t("my_contracts.title")}</span>
-            </Link>
-            <Link to="/mes-factures" className={styles.quickLink}>
-              <FiFile size={18} />
-              <span>{t("my_invoices.title")}</span>
-            </Link>
+        {(isPorteur || isInvestisseur) && (
+          <div className={styles.quickLinksGroup}>
+            <p className={styles.quickLinksGroupTitle}>{t("dashboard.quick_links_group.documents", "Documents")}</p>
+            <div className={styles.quickLinksGrid}>
+              <Link to="/mes-contrats" className={styles.quickLink}>
+                <FiFileText size={18} />
+                <span>{t("my_contracts.title")}</span>
+              </Link>
+              <Link to="/mes-factures" className={styles.quickLink}>
+                <FiFile size={18} />
+                <span>{t("my_invoices.title")}</span>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

@@ -25,4 +25,7 @@ export interface TransactionDTO {
   expediteurUserId?: number | null;
   expediteurNomComplet?: string | null;
   expediteurLogin?: string | null;
+
+  referenceType?: string | null;
+  referenceId?: number | null;
 }

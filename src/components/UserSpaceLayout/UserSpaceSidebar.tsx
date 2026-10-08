@@ -17,6 +17,9 @@ import {
   FiMail,
   FiTruck,
   FiShoppingBag,
+  FiBarChart2,
+  FiPackage,
+  FiClock,
 } from "react-icons/fi";
 import styles from "./UserSpaceLayout.module.css";
 
@@ -81,6 +84,49 @@ export default function UserSpaceSidebar({
       },
     ],
   });
+
+  // Fournisseur, côté fournisseur = la propre fiche/catalogue/commandes
+  // reçues du fournisseur lui-même. Réservé aux utilisateurs ayant le rôle
+  // FOURNISSEUR. Affiché juste après "Compte", avant les sections
+  // porteur/investisseur, car un fournisseur pur veut d'abord accéder à son
+  // tableau de bord.
+  if (isFournisseur) {
+    sections.push({
+      title: t("user_sidebar.section_mon_espace_fournisseur", "Mon espace fournisseur"),
+      links: [
+        {
+          to: "/mon-espace/fournisseur/dashboard",
+          label: t("user_sidebar.fournisseur_dashboard", "Tableau de bord"),
+          icon: <FiBarChart2 size={16} />,
+        },
+        {
+          to: "/mon-espace/fournisseur/fiche",
+          label: t("user_sidebar.fournisseur_fiche", "Ma fiche"),
+          icon: <FiTruck size={16} />,
+        },
+        {
+          to: "/mon-espace/fournisseur/catalogue",
+          label: t("user_sidebar.fournisseur_catalogue", "Mon catalogue"),
+          icon: <FiPackage size={16} />,
+        },
+        {
+          to: "/mon-espace/fournisseur/commandes",
+          label: t("user_sidebar.fournisseur_commandes", "Mes commandes"),
+          icon: <FiShoppingBag size={16} />,
+        },
+        {
+          to: "/mon-espace/fournisseur/historique",
+          label: t("user_sidebar.fournisseur_historique", "Historique"),
+          icon: <FiClock size={16} />,
+        },
+        {
+          to: "/mon-espace/fournisseur/transactions",
+          label: t("user_sidebar.fournisseur_transactions", "Transactions"),
+          icon: <FiCreditCard size={16} />,
+        },
+      ],
+    });
+  }
 
   // Section porteur — visible uniquement une fois le rôle PORTEUR acquis
   // (à la validation du premier projet). La soumission d'un premier projet,
@@ -204,37 +250,25 @@ export default function UserSpaceSidebar({
     });
   }
 
-  // Fournisseur, côté fournisseur = la propre fiche/catalogue/commandes
-  // reçues du fournisseur lui-même. Réservé aux utilisateurs ayant le rôle
-  // FOURNISSEUR, distinct du rôle PORTEUR ci-dessus.
-  if (isFournisseur) {
+  // Contrats/factures ne concernent que les acteurs d'un projet (porteur ou
+  // investisseur) — un fournisseur pur ou un membre sans rôle n'en a aucun.
+  if (isPorteur || isInvestisseur) {
     sections.push({
-      title: t("user_sidebar.section_mon_espace_fournisseur", "Mon espace fournisseur"),
+      title: t("user_sidebar.section_documents", "Documents"),
       links: [
         {
-          to: "/mon-espace/fournisseur",
-          label: t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur"),
-          icon: <FiTruck size={16} />,
+          to: "/mes-contrats",
+          label: t("user_sidebar.my_contracts", "Mes contrats"),
+          icon: <FiFileText size={16} />,
+        },
+        {
+          to: "/mes-factures",
+          label: t("user_sidebar.my_invoices", "Mes factures"),
+          icon: <FiClipboard size={16} />,
         },
       ],
     });
   }
-
-  sections.push({
-    title: t("user_sidebar.section_documents", "Documents"),
-    links: [
-      {
-        to: "/mes-contrats",
-        label: t("user_sidebar.my_contracts", "Mes contrats"),
-        icon: <FiFileText size={16} />,
-      },
-      {
-        to: "/mes-factures",
-        label: t("user_sidebar.my_invoices", "Mes factures"),
-        icon: <FiClipboard size={16} />,
-      },
-    ],
-  });
 
   return (
     <nav className={styles.sidebar} aria-label={t("user_sidebar.aria_label", "Menu de mon espace")}>

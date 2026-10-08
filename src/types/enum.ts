@@ -71,7 +71,35 @@ export type TypeTransaction =
   | "TRANSFER_IN"
   | "PAYOUT_STRIPE"
   | "DIVIDENDE"
-  | "RETRAIT_EXTERNE";
+  | "RETRAIT_EXTERNE"
+  // Reste de l'enum backend TypeTransaction.java — élargi au fil des
+  // modules (wallet projet, Premium, Fournisseur, GrowzMarket).
+  | "PAIEMENT_STRIPE"
+  | "PAIEMENT_OM"
+  | "PAIEMENT_MTN"
+  | "PAIEMENT_WAVE"
+  | "PAYOUT_OM"
+  | "PAYOUT_MTN"
+  | "PAYOUT_WAVE"
+  | "PAYOUT_OM_SN"
+  | "PAYOUT_WAVE_SN"
+  | "PAYOUT_MOOV"
+  | "PAYOUT_BANK"
+  | "CREDIT_PROJET"
+  | "VIREMENT_PORTEUR"
+  | "RETRAIT_MOBILE_MONEY"
+  | "VERSEMENT_PORTEUR"
+  | "VERSEMENT_DIVIDENDE"
+  | "DIVIDENDE_ENTRANT"
+  | "DIVIDENDE_SORTANT"
+  | "RETRAIT_ADMIN"
+  | "DEBLOCAGE_PROJET"
+  | "TRANSFER_PROJET_VERS_PERSONNEL"
+  | "TRANSFER_PERSONNEL_VERS_PROJET"
+  | "RETRAIT_PROJET"
+  | "PREMIUM_PROJET"
+  | "PAIEMENT_FOURNISSEUR"
+  | "VENTE_MARKET";
 
 /** Statut d'une transaction */
 export type StatutTransaction =
@@ -99,7 +127,33 @@ export const TypeTransactionLabel: Record<TypeTransaction, string> = {
   TRANSFER_IN: "Transfert reçu",
   RETRAIT_EXTERNE: "Retrait_externe",
   PAYOUT_STRIPE: "Stripe",
-  DIVIDENDE: "Dividende"
+  DIVIDENDE: "Dividende",
+  PAIEMENT_STRIPE: "Paiement carte",
+  PAIEMENT_OM: "Paiement Orange Money",
+  PAIEMENT_MTN: "Paiement MTN MoMo",
+  PAIEMENT_WAVE: "Paiement Wave",
+  PAYOUT_OM: "Retrait Orange Money",
+  PAYOUT_MTN: "Retrait MTN MoMo",
+  PAYOUT_WAVE: "Retrait Wave",
+  PAYOUT_OM_SN: "Retrait Orange Money",
+  PAYOUT_WAVE_SN: "Retrait Wave",
+  PAYOUT_MOOV: "Retrait Moov Money",
+  PAYOUT_BANK: "Retrait bancaire",
+  CREDIT_PROJET: "Crédit projet",
+  VIREMENT_PORTEUR: "Virement au porteur",
+  RETRAIT_MOBILE_MONEY: "Retrait Mobile Money",
+  VERSEMENT_PORTEUR: "Versement au porteur",
+  VERSEMENT_DIVIDENDE: "Versement de dividende",
+  DIVIDENDE_ENTRANT: "Dividende reçu",
+  DIVIDENDE_SORTANT: "Dividende distribué",
+  RETRAIT_ADMIN: "Retrait (admin)",
+  DEBLOCAGE_PROJET: "Déblocage de trésorerie",
+  TRANSFER_PROJET_VERS_PERSONNEL: "Transfert projet → personnel",
+  TRANSFER_PERSONNEL_VERS_PROJET: "Transfert personnel → projet",
+  RETRAIT_PROJET: "Retrait projet",
+  PREMIUM_PROJET: "Statut Premium",
+  PAIEMENT_FOURNISSEUR: "Paiement fournisseur",
+  VENTE_MARKET: "Vente GrowzMarket",
 };
 
 

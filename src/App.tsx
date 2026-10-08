@@ -92,7 +92,13 @@ const ProfileUpdateForm = lazy(
 const KYCUploadForm = lazy(() => import("./components/kyc/KycUploadForm"));
 const ContactPage = lazy(() => import("./pages/MonEspace/Contact/ContactPage"));
 const FournisseurInscriptionPage = lazy(() => import("./pages/Fournisseur/FournisseurInscriptionPage"));
-const FournisseurEspacePage = lazy(() => import("./pages/Fournisseur/FournisseurEspacePage"));
+const FournisseurEspaceLayout = lazy(() => import("./pages/Fournisseur/Espace/FournisseurEspaceLayout"));
+const FournisseurDashboardPage = lazy(() => import("./pages/Fournisseur/Espace/FournisseurDashboardPage"));
+const FournisseurFichePage = lazy(() => import("./pages/Fournisseur/Espace/FournisseurFichePage"));
+const FournisseurCataloguePage = lazy(() => import("./pages/Fournisseur/Espace/FournisseurCataloguePage"));
+const FournisseurCommandesPage = lazy(() => import("./pages/Fournisseur/Espace/FournisseurCommandesPage"));
+const FournisseurHistoriquePage = lazy(() => import("./pages/Fournisseur/Espace/FournisseurHistoriquePage"));
+const FournisseurTransactionsPage = lazy(() => import("./pages/Fournisseur/Espace/FournisseurTransactionsPage"));
 const FournisseurRecherchePage = lazy(() => import("./pages/Fournisseur/FournisseurRecherchePage"));
 const FournisseurDetailPage = lazy(() => import("./pages/Fournisseur/FournisseurDetailPage"));
 const MesCommandesPage = lazy(() => import("./pages/MonEspace/MesCommandes/MesCommandesPage"));
@@ -315,7 +321,15 @@ function AppInner() {
                     element={<MonPortefeuillePage />}
                   />
                   <Route path="/devenir-fournisseur" element={<FournisseurInscriptionPage />} />
-                  <Route path="/mon-espace/fournisseur" element={<FournisseurEspacePage />} />
+                  <Route path="/mon-espace/fournisseur" element={<FournisseurEspaceLayout />}>
+                    <Route index element={<Navigate to="/mon-espace/fournisseur/dashboard" replace />} />
+                    <Route path="dashboard" element={<FournisseurDashboardPage />} />
+                    <Route path="fiche" element={<FournisseurFichePage />} />
+                    <Route path="catalogue" element={<FournisseurCataloguePage />} />
+                    <Route path="commandes" element={<FournisseurCommandesPage />} />
+                    <Route path="historique" element={<FournisseurHistoriquePage />} />
+                    <Route path="transactions" element={<FournisseurTransactionsPage />} />
+                  </Route>
                   <Route path="/fournisseurs" element={<FournisseurRecherchePage />} />
                   <Route path="/fournisseurs/:id" element={<FournisseurDetailPage />} />
                   <Route path="/mes-commandes" element={<MesCommandesPage />} />

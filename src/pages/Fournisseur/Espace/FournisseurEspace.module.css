@@ -619,3 +619,34 @@
   gap: 0.7rem;
   margin-top: 1.2rem;
 }
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  padding: 1.2rem 1.4rem;
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #999;
+  margin-bottom: 0.4rem;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--growz-primary);
+}
