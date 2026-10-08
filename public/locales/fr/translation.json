@@ -1665,7 +1665,11 @@
       "collection_evolution": "Évolution de la collecte",
       "velocity": "Vitesse de levée",
       "no_data": "Pas encore assez de données",
-      "details_cta": "Voir les détails et gérer la trésorerie →"
+      "details_cta": "Voir les détails et gérer la trésorerie →",
+      "transactions_title": "Transactions",
+      "transactions_fournisseur": "Fournisseur",
+      "transactions_growzmarket": "GrowzMarket",
+      "transactions_empty": "Aucune transaction."
     },
     "wallet": {
       "withdraw_btn": "Retirer",
@@ -1987,6 +1991,9 @@
       "recalc_toast_fixed": "Écart corrigé : {{before}} → {{after}}",
       "recalc_toast_ok": "Aucun écart — les chiffres reflètent déjà les investissements validés",
       "history_title": "Historique des mouvements",
+      "history_filter_toutes": "Toutes",
+      "history_filter_fournisseur": "Fournisseur",
+      "history_filter_growzmarket": "GrowzMarket",
       "history_empty": "Aucune transaction pour ce projet",
       "amount_label": "Montant total à payer (FCFA)",
       "amount_placeholder": "Ex : 50000",

@@ -47,6 +47,13 @@ export default function ProjectWalletDetails() {
   const [transferMontant, setTransferMontant] = useState("");
   const [isTransferring, setIsTransferring] = useState(false);
 
+  const [historyFilter, setHistoryFilter] = useState<"TOUTES" | "FOURNISSEUR" | "GROWZMARKET">("TOUTES");
+  const filteredTransactions = transactions.filter((tx) => {
+    if (historyFilter === "FOURNISSEUR") return tx.type === "PAIEMENT_FOURNISSEUR";
+    if (historyFilter === "GROWZMARKET") return tx.type === "VENTE_MARKET";
+    return true;
+  });
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
@@ -241,14 +248,40 @@ export default function ProjectWalletDetails() {
           {t("admin_wallet.detail.history_title")}
         </h2>
 
-        {transactions.length === 0 ? (
+        {transactions.length > 0 && (
+          <div className={styles.historyTabBar}>
+            <button
+              type="button"
+              className={`${styles.historyTabBtn} ${historyFilter === "TOUTES" ? styles.historyTabBtnActive : ""}`}
+              onClick={() => setHistoryFilter("TOUTES")}
+            >
+              {t("admin_wallet.detail.history_filter_toutes", "Toutes")}
+            </button>
+            <button
+              type="button"
+              className={`${styles.historyTabBtn} ${historyFilter === "FOURNISSEUR" ? styles.historyTabBtnActive : ""}`}
+              onClick={() => setHistoryFilter("FOURNISSEUR")}
+            >
+              {t("admin_wallet.detail.history_filter_fournisseur", "Fournisseur")}
+            </button>
+            <button
+              type="button"
+              className={`${styles.historyTabBtn} ${historyFilter === "GROWZMARKET" ? styles.historyTabBtnActive : ""}`}
+              onClick={() => setHistoryFilter("GROWZMARKET")}
+            >
+              {t("admin_wallet.detail.history_filter_growzmarket", "GrowzMarket")}
+            </button>
+          </div>
+        )}
+
+        {filteredTransactions.length === 0 ? (
           <div className={styles.emptyState}>
             <FiClock size={28} />
             <p>{t("admin_wallet.detail.history_empty")}</p>
           </div>
         ) : (
           <div className={styles.txList}>
-            {transactions.map((tx) => {
+            {filteredTransactions.map((tx) => {
               const isOut = OUTBOUND_TYPES.includes(tx.type);
               const label = t(`admin_wallet.detail.tx_types.${tx.type}`, {
                 defaultValue: tx.type.replace(/_/g, " "),

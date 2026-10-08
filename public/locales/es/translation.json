@@ -1624,7 +1624,11 @@
       "collection_evolution": "Evolución de la recaudación",
       "velocity": "Velocidad de captación",
       "no_data": "Aún no hay suficientes datos",
-      "details_cta": "Ver detalles y gestionar la tesorería →"
+      "details_cta": "Ver detalles y gestionar la tesorería →",
+      "transactions_title": "Transacciones",
+      "transactions_fournisseur": "Proveedor",
+      "transactions_growzmarket": "GrowzMarket",
+      "transactions_empty": "Ninguna transacción."
     },
     "wallet": {
       "withdraw_btn": "Retirar",
@@ -1981,6 +1985,9 @@
       "recalc_toast_fixed": "Discrepancia corregida: {{before}} → {{after}}",
       "recalc_toast_ok": "Sin discrepancia — las cifras ya coinciden con las inversiones validadas",
       "history_title": "Historial de movimientos",
+      "history_filter_toutes": "Todas",
+      "history_filter_fournisseur": "Proveedor",
+      "history_filter_growzmarket": "GrowzMarket",
       "history_empty": "Ninguna transacción para este proyecto",
       "amount_label": "Monto total a pagar (FCFA)",
       "amount_placeholder": "Ej: 50000",

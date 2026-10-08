@@ -212,6 +212,36 @@
   color: var(--growz-slate-700);
 }
 
+.historyTabBar {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 2px solid var(--growz-border);
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.historyTabBtn {
+  border: none;
+  background: transparent;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--growz-slate-500, #888);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.historyTabBtn:hover {
+  color: var(--growz-primary);
+}
+
+.historyTabBtnActive {
+  color: var(--growz-primary);
+  border-bottom-color: var(--growz-primary);
+}
+
 .emptyState {
   display: flex;
   flex-direction: column;

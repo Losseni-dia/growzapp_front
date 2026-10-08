@@ -337,3 +337,78 @@
   padding: 2rem;
   margin: 0;
 }
+
+/* ── TRANSACTIONS (fournisseur / GrowzMarket) ── */
+.txTabBar {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 0.9rem;
+  overflow-x: auto;
+}
+
+.txTabBtn {
+  border: none;
+  background: transparent;
+  padding: 0.5rem 0.8rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #888;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.txTabBtn:hover {
+  color: #1b5e20;
+}
+
+.txTabBtnActive {
+  color: #1b5e20;
+  border-bottom-color: #1b5e20;
+}
+
+.txList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.txRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0.8rem;
+  background: #fafafa;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+}
+
+.txRowInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.txRowDesc {
+  font-size: 0.82rem;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.txRowDate {
+  font-size: 0.72rem;
+  color: #999;
+}
+
+.txRowAmount {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #1b5e20;
+  white-space: nowrap;
+}

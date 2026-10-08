@@ -1640,7 +1640,11 @@
       "collection_evolution": "Collection evolution",
       "velocity": "Fundraising velocity",
       "no_data": "Not enough data yet",
-      "details_cta": "View details and manage treasury →"
+      "details_cta": "View details and manage treasury →",
+      "transactions_title": "Transactions",
+      "transactions_fournisseur": "Supplier",
+      "transactions_growzmarket": "GrowzMarket",
+      "transactions_empty": "No transaction."
     },
     "wallet": {
       "withdraw_btn": "Withdraw",
@@ -1983,6 +1987,9 @@
       "recalc_toast_fixed": "Discrepancy fixed: {{before}} → {{after}}",
       "recalc_toast_ok": "No discrepancy — figures already match validated investments",
       "history_title": "Transaction history",
+      "history_filter_toutes": "All",
+      "history_filter_fournisseur": "Supplier",
+      "history_filter_growzmarket": "GrowzMarket",
       "history_empty": "No transactions for this project",
       "amount_label": "Total amount to pay (FCFA)",
       "amount_placeholder": "E.g.: 50000",
