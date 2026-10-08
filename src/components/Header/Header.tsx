@@ -38,8 +38,8 @@ export default function Header() {
   const { totalItems } = useGrowzMarketCart();
 
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [openSection, setOpenSection] = useState<"espace" | "devise" | "langue" | null>(null);
-  const toggleSection = (section: "espace" | "devise" | "langue") =>
+  const [openSection, setOpenSection] = useState<"devise" | "langue" | null>(null);
+  const toggleSection = (section: "devise" | "langue") =>
     setOpenSection((prev) => (prev === section ? null : section));
   const [scrolled, setScrolled] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -198,28 +198,13 @@ export default function Header() {
                   {showProfileMenu && (
                     <div className={styles.profileMenu}>
                       {/* ── MON ESPACE ── */}
-                      <button
-                        type="button"
-                        className={styles.profileMenuLabel}
-                        onClick={() => toggleSection("espace")}
+                      <Link
+                        to="/mon-espace"
+                        className={styles.profileMenuItem}
+                        onClick={() => setShowProfileMenu(false)}
                       >
-                        <FiChevronDown
-                          size={13}
-                          className={`${styles.sectionChevron} ${openSection === "espace" ? styles.sectionChevronOpen : ""}`}
-                        />
                         <FiUser size={13} /> {t("header.my_space", "Mon espace")}
-                      </button>
-                      {openSection === "espace" && (
-                        <div className={styles.profileMenuOptions}>
-                          <Link
-                            to="/mon-espace"
-                            className={styles.profileMenuItem}
-                            onClick={() => setShowProfileMenu(false)}
-                          >
-                            {t("header.go_to_my_space", "Accéder à mon espace")}
-                          </Link>
-                        </div>
-                      )}
+                      </Link>
 
                       {isAdmin && (
                         <Link
