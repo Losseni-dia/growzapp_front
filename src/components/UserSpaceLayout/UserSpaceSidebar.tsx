@@ -221,10 +221,29 @@ export default function UserSpaceSidebar({
         icon: <FiShoppingBag size={16} />,
       },
       {
+        to: "/mon-espace/historique-ventes-market",
+        label: t("user_sidebar.historique_ventes_market", "Historique des ventes"),
+        icon: <FiClock size={16} />,
+      },
+      {
         to: "/mon-espace/mes-achats-market",
         label: t("user_sidebar.mes_achats_market", "Mes achats"),
         icon: <FiShoppingBag size={16} />,
       },
+      {
+        to: "/mon-espace/historique-achats-market",
+        label: t("user_sidebar.historique_achats_market", "Historique des achats"),
+        icon: <FiClock size={16} />,
+      },
+      ...(isPorteur
+        ? [
+            {
+              to: "/mon-espace/mes-transactions-market",
+              label: t("user_sidebar.mes_transactions_market", "Transactions Boutique"),
+              icon: <FiCreditCard size={16} />,
+            },
+          ]
+        : []),
     ],
   });
 
@@ -245,6 +264,16 @@ export default function UserSpaceSidebar({
           to: "/mes-commandes",
           label: t("user_sidebar.mes_commandes", "Mes commandes fournisseur"),
           icon: <FiShoppingBag size={16} />,
+        },
+        {
+          to: "/mes-historique-commandes-fournisseur",
+          label: t("user_sidebar.historique_commandes_fournisseur", "Historique des commandes"),
+          icon: <FiClock size={16} />,
+        },
+        {
+          to: "/mes-transactions-fournisseur",
+          label: t("user_sidebar.mes_transactions_fournisseur", "Transactions Fournisseur"),
+          icon: <FiCreditCard size={16} />,
         },
       ],
     });

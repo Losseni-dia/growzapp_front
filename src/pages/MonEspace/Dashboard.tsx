@@ -30,6 +30,8 @@ import {
   FiRepeat,
   FiShoppingBag,
   FiTruck,
+  FiCreditCard,
+  FiClock,
 } from "react-icons/fi";
 import type { WalletDTO } from "../../types/wallet";
 import { ApiResponse } from "../../types/common";
@@ -432,10 +434,24 @@ export default function Dashboard() {
               <FiShoppingBag size={18} />
               <span>{t("user_sidebar.mes_ventes_market", "Mes ventes")}</span>
             </Link>
+            <Link to="/mon-espace/historique-ventes-market" className={styles.quickLink}>
+              <FiClock size={18} />
+              <span>{t("user_sidebar.historique_ventes_market", "Historique des ventes")}</span>
+            </Link>
             <Link to="/mon-espace/mes-achats-market" className={styles.quickLink}>
               <FiShoppingBag size={18} />
               <span>{t("user_sidebar.mes_achats_market", "Mes achats")}</span>
             </Link>
+            <Link to="/mon-espace/historique-achats-market" className={styles.quickLink}>
+              <FiClock size={18} />
+              <span>{t("user_sidebar.historique_achats_market", "Historique des achats")}</span>
+            </Link>
+            {isPorteur && (
+              <Link to="/mon-espace/mes-transactions-market" className={styles.quickLink}>
+                <FiCreditCard size={18} />
+                <span>{t("user_sidebar.mes_transactions_market", "Transactions Boutique")}</span>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -450,6 +466,14 @@ export default function Dashboard() {
               <Link to="/mes-commandes" className={styles.quickLink}>
                 <FiShoppingBag size={18} />
                 <span>{t("user_sidebar.mes_commandes", "Mes commandes fournisseur")}</span>
+              </Link>
+              <Link to="/mes-historique-commandes-fournisseur" className={styles.quickLink}>
+                <FiClock size={18} />
+                <span>{t("user_sidebar.historique_commandes_fournisseur", "Historique des commandes")}</span>
+              </Link>
+              <Link to="/mes-transactions-fournisseur" className={styles.quickLink}>
+                <FiCreditCard size={18} />
+                <span>{t("user_sidebar.mes_transactions_fournisseur", "Transactions Fournisseur")}</span>
               </Link>
             </div>
           </div>

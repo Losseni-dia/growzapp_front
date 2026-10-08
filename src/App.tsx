@@ -106,6 +106,9 @@ const FournisseurTransactionsPage = lazy(() => import("./pages/Fournisseur/Espac
 const FournisseurRecherchePage = lazy(() => import("./pages/Fournisseur/FournisseurRecherchePage"));
 const FournisseurDetailPage = lazy(() => import("./pages/Fournisseur/FournisseurDetailPage"));
 const MesCommandesPage = lazy(() => import("./pages/MonEspace/MesCommandes/MesCommandesPage"));
+const HistoriqueCommandesFournisseurPage = lazy(() => import("./pages/MonEspace/MesCommandes/HistoriqueCommandesFournisseurPage"));
+const TransactionsFournisseurPage = lazy(() => import("./pages/MonEspace/Transactions/TransactionsFournisseurPage"));
+const TransactionsGrowzmarketPage = lazy(() => import("./pages/MonEspace/Transactions/TransactionsGrowzmarketPage"));
 const AdminFournisseursPage = lazy(() => import("./pages/Admin/Fournisseurs/AdminFournisseursPage"));
 const AdminCommandesPage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesPage"));
 const CommandeFacturePage = lazy(() => import("./pages/Commandes/CommandeFacturePage"));
@@ -114,7 +117,9 @@ const GrowzMarketDetailPage = lazy(() => import("./pages/GrowzMarket/GrowzMarket
 const GrowzMarketCartPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketCartPage"));
 const MaBoutiquePage = lazy(() => import("./pages/GrowzMarket/MaBoutiquePage"));
 const MesVentesMarketPage = lazy(() => import("./pages/GrowzMarket/MesVentesMarketPage"));
+const HistoriqueVentesMarketPage = lazy(() => import("./pages/GrowzMarket/HistoriqueVentesMarketPage"));
 const MesAchatsMarketPage = lazy(() => import("./pages/GrowzMarket/MesAchatsMarketPage"));
+const HistoriqueAchatsMarketPage = lazy(() => import("./pages/GrowzMarket/HistoriqueAchatsMarketPage"));
 const MarketFacturePage = lazy(() => import("./pages/GrowzMarket/MarketFacturePage"));
 const AdminGrowzMarketPage = lazy(() => import("./pages/Admin/GrowzMarket/AdminGrowzMarketPage"));
 const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
@@ -341,10 +346,15 @@ function AppInner() {
                   <Route path="/fournisseurs" element={<FournisseurRecherchePage />} />
                   <Route path="/fournisseurs/:id" element={<FournisseurDetailPage />} />
                   <Route path="/mes-commandes" element={<MesCommandesPage />} />
+                  <Route path="/mes-historique-commandes-fournisseur" element={<HistoriqueCommandesFournisseurPage />} />
+                  <Route path="/mes-transactions-fournisseur" element={<TransactionsFournisseurPage />} />
                   <Route path="/commandes/:id/facture" element={<CommandeFacturePage />} />
                   <Route path="/mon-espace/ma-boutique" element={<MaBoutiquePage />} />
                   <Route path="/mon-espace/mes-ventes-market" element={<MesVentesMarketPage />} />
+                  <Route path="/mon-espace/historique-ventes-market" element={<HistoriqueVentesMarketPage />} />
                   <Route path="/mon-espace/mes-achats-market" element={<MesAchatsMarketPage />} />
+                  <Route path="/mon-espace/historique-achats-market" element={<HistoriqueAchatsMarketPage />} />
+                  <Route path="/mon-espace/mes-transactions-market" element={<TransactionsGrowzmarketPage />} />
                   <Route path="/growzmarket/panier" element={<GrowzMarketCartPage />} />
                   <Route path="/growzmarket/commandes/:id/facture" element={<MarketFacturePage />} />
                 </Route>

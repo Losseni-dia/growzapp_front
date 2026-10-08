@@ -1,6 +1,4 @@
 // src/pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailPage.tsx
-import { format as formatDate } from "date-fns";
-import { fr } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -83,21 +81,6 @@ export default function ProjetPorteurDetailPage() {
       })
       .catch(() => setSoldePersonnel(0));
   }, []);
-
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [txFilter, setTxFilter] = useState<"FOURNISSEUR" | "GROWZMARKET">("FOURNISSEUR");
-
-  useEffect(() => {
-    if (!projetId) return;
-    api
-      .get<any[]>(`/api/projets/${projetId}/wallet/transactions`)
-      .then((data) => setTransactions(data || []))
-      .catch(() => setTransactions([]));
-  }, [projetId]);
-
-  const txFournisseur = transactions.filter((tx) => tx.type === "PAIEMENT_FOURNISSEUR");
-  const txGrowzmarket = transactions.filter((tx) => tx.type === "VENTE_MARKET");
-  const txAffichees = txFilter === "FOURNISSEUR" ? txFournisseur : txGrowzmarket;
 
   const resetPanel = () => {
     setPanel(null);
@@ -578,44 +561,6 @@ export default function ProjetPorteurDetailPage() {
             </div>
           </div>
         )}
-
-        {/* ── TRANSACTIONS FOURNISSEUR / GROWZMARKET ── */}
-        <div className={styles.chartBlock}>
-          <h3>{t("porteur.card.transactions_title", "Transactions")}</h3>
-          <div className={styles.txTabBar}>
-            <button
-              type="button"
-              className={`${styles.txTabBtn} ${txFilter === "FOURNISSEUR" ? styles.txTabBtnActive : ""}`}
-              onClick={() => setTxFilter("FOURNISSEUR")}
-            >
-              {t("porteur.card.transactions_fournisseur", "Fournisseur")} ({txFournisseur.length})
-            </button>
-            <button
-              type="button"
-              className={`${styles.txTabBtn} ${txFilter === "GROWZMARKET" ? styles.txTabBtnActive : ""}`}
-              onClick={() => setTxFilter("GROWZMARKET")}
-            >
-              {t("porteur.card.transactions_growzmarket", "GrowzMarket")} ({txGrowzmarket.length})
-            </button>
-          </div>
-          {txAffichees.length === 0 ? (
-            <p className={styles.noData}>{t("porteur.card.transactions_empty", "Aucune transaction.")}</p>
-          ) : (
-            <div className={styles.txList}>
-              {txAffichees.map((tx) => (
-                <div key={tx.id} className={styles.txRow}>
-                  <div className={styles.txRowInfo}>
-                    <span className={styles.txRowDesc}>{tx.description || "—"}</span>
-                    <span className={styles.txRowDate}>
-                      {formatDate(new Date(tx.createdAt), "dd MMM yyyy 'à' HH:mm", { locale: fr })}
-                    </span>
-                  </div>
-                  <span className={styles.txRowAmount}>{format(Number(tx.montant), "XOF")}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
 
         {/* ── GRAPHIQUE COLLECTE AGRANDI ── */}
         <div className={styles.chartBlock}>
