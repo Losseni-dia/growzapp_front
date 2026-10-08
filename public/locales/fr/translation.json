@@ -1669,7 +1669,8 @@
       "transactions_title": "Transactions",
       "transactions_fournisseur": "Fournisseur",
       "transactions_growzmarket": "GrowzMarket",
-      "transactions_empty": "Aucune transaction."
+      "transactions_empty": "Aucune transaction.",
+      "not_found": "Projet introuvable."
     },
     "wallet": {
       "withdraw_btn": "Retirer",

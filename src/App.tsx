@@ -86,6 +86,10 @@ const MonDashboardPorteurPage = lazy(
   () =>
     import("./pages/MonEspace/Mon-dashboard-porteur/MonDashboardPorteurPage"),
 );
+const ProjetPorteurDetailPage = lazy(
+  () =>
+    import("./pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailPage"),
+);
 const ProfileUpdateForm = lazy(
   () => import("./pages/MonEspace/ProfileUpdateForm/ProfileUpdateForm"),
 );
@@ -314,6 +318,10 @@ function AppInner() {
                   <Route
                     path="/mon-dashboard-porteur"
                     element={<MonDashboardPorteurPage />}
+                  />
+                  <Route
+                    path="/mon-dashboard-porteur/:projetId"
+                    element={<ProjetPorteurDetailPage />}
                   />
                   <Route path="/mes-factures" element={<MesFacturesPage />} />
                   <Route

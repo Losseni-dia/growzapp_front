@@ -29,7 +29,6 @@ import type {
     PorteurProjetLigneDTO,
 } from "../../../types/porteurDashboard";
 import styles from "./MonDashboardPorteurPage.module.css";
-import ProjetPorteurDetailModal from "./ProjetPorteurDetailModal";
 
 // Normalisation : retire accents + met en minuscule, pour une recherche
 // insensible à la casse et aux accents (ex: "ferme" == "Ferme" == "FÉRME")
@@ -247,9 +246,6 @@ export default function MonDashboardPorteurPage() {
   const navigate = useNavigate();
   const [dashboard, setDashboard] = useState<PorteurDashboardDTO | null>(null);
   const [loading, setLoading] = useState(true);
-  const [projetSelectionneId, setProjetSelectionneId] = useState<number | null>(
-    null,
-  );
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("invested");
 
@@ -425,27 +421,13 @@ export default function MonDashboardPorteurPage() {
                 onClick={() =>
                   ligne.statutProjet === "BROUILLON"
                     ? navigate(`/projet/creer?brouillonId=${ligne.projetId}`)
-                    : setProjetSelectionneId(ligne.projetId)
+                    : navigate(`/mon-dashboard-porteur/${ligne.projetId}`)
                 }
               />
             ))}
           </div>
         )}
       </section>
-
-      {projetSelectionneId != null && (() => {
-        const ligne = dashboard.projets.find(
-          (p) => p.projetId === projetSelectionneId,
-        );
-        if (!ligne) return null;
-        return (
-          <ProjetPorteurDetailModal
-            ligne={ligne}
-            onClose={() => setProjetSelectionneId(null)}
-            onActionDone={fetchDashboard}
-          />
-        );
-      })()}
     </div>
   );
 }

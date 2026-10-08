@@ -1,37 +1,35 @@
-/* src/pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailModal.module.css */
+/* src/pages/MonEspace/Mon-dashboard-porteur/ProjetPorteurDetailPage.module.css */
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 19, 0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
 }
 
-.modal {
-  background: white;
-  border-radius: 22px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 88vh;
-  overflow-y: auto;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--growz-primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  color: #666;
 }
 
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 1.5rem 1.5rem 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid #f1f5f9;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 2;
 }
 
 .headerLeft {
@@ -48,9 +46,9 @@
   flex-shrink: 0;
 }
 
-.header h2 {
+.header h1 {
   margin: 0 0 6px;
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: #1e293b;
 }
@@ -65,28 +63,7 @@
   border-radius: 8px;
 }
 
-.closeBtn {
-  background: #f1f5f9;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  flex-shrink: 0;
-  transition: 0.2s;
-}
-
-.closeBtn:hover {
-  background: #e2e8f0;
-  color: #1e293b;
-}
-
 .body {
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
