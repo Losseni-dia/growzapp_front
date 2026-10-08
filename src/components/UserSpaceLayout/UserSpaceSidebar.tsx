@@ -22,6 +22,8 @@ import styles from "./UserSpaceLayout.module.css";
 
 interface UserSpaceSidebarProps {
   isInvestisseur: boolean;
+  isPorteur: boolean;
+  isFournisseur: boolean;
   onNavigate?: () => void;
 }
 
@@ -39,6 +41,8 @@ interface SidebarSection {
 
 export default function UserSpaceSidebar({
   isInvestisseur,
+  isPorteur,
+  isFournisseur,
   onNavigate,
 }: UserSpaceSidebarProps) {
   const { t } = useTranslation();
@@ -78,31 +82,32 @@ export default function UserSpaceSidebar({
     ],
   });
 
-  // Section porteur — toujours visible (permet de créer un premier projet
-  // même avant d'avoir le rôle PORTEUR, qui n'est attribué qu'à la
-  // validation du projet). Uniquement la gestion du projet lui-même — le
-  // Fournisseur (B2B) et GrowzMarket (B2C) ont chacun leur propre section
-  // ci-dessous pour ne pas mélanger les genres.
-  sections.push({
-    title: t("user_sidebar.section_porteur", "Porteur de projet"),
-    links: [
-      {
-        to: "/mon-dashboard-porteur",
-        label: t("user_sidebar.my_projects", "Mes projets"),
-        icon: <FiBriefcase size={16} />,
-      },
-      {
-        to: "/projet/creer",
-        label: t("user_sidebar.create_project", "Créer un projet"),
-        icon: <FiPlusCircle size={16} />,
-      },
-      {
-        to: "/profile/fiche-porteur",
-        label: t("user_sidebar.fiche_porteur", "Ma fiche porteur"),
-        icon: <FiCheckCircle size={16} />,
-      },
-    ],
-  });
+  // Section porteur — visible uniquement une fois le rôle PORTEUR acquis
+  // (à la validation du premier projet). La soumission d'un premier projet,
+  // elle, reste accessible à tout utilisateur connecté via le bouton
+  // "Créer un projet" du header, indépendamment de ce menu.
+  if (isPorteur) {
+    sections.push({
+      title: t("user_sidebar.section_porteur", "Porteur de projet"),
+      links: [
+        {
+          to: "/mon-dashboard-porteur",
+          label: t("user_sidebar.my_projects", "Mes projets"),
+          icon: <FiBriefcase size={16} />,
+        },
+        {
+          to: "/projet/creer",
+          label: t("user_sidebar.create_project", "Créer un projet"),
+          icon: <FiPlusCircle size={16} />,
+        },
+        {
+          to: "/profile/fiche-porteur",
+          label: t("user_sidebar.fiche_porteur", "Ma fiche porteur"),
+          icon: <FiCheckCircle size={16} />,
+        },
+      ],
+    });
+  }
 
   if (isInvestisseur) {
     sections.push({
@@ -177,28 +182,43 @@ export default function UserSpaceSidebar({
     ],
   });
 
-  // Fournisseur = module B2B (achats de matières/services pour un projet,
-  // validés par l'admin, payés sur la trésorerie bloquée du projet).
-  sections.push({
-    title: t("user_sidebar.section_fournisseur", "Fournisseur"),
-    links: [
-      {
-        to: "/fournisseurs",
-        label: t("user_sidebar.fournisseurs", "Trouver un fournisseur"),
-        icon: <FiTruck size={16} />,
-      },
-      {
-        to: "/mes-commandes",
-        label: t("user_sidebar.mes_commandes", "Mes commandes fournisseur"),
-        icon: <FiShoppingBag size={16} />,
-      },
-      {
-        to: "/mon-espace/fournisseur",
-        label: t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur"),
-        icon: <FiTruck size={16} />,
-      },
-    ],
-  });
+  // Fournisseur, côté porteur = module B2B (achats de matières/services pour
+  // un projet, validés par l'admin, payés sur la trésorerie bloquée du
+  // projet). Réservé aux porteurs : seul un porteur commande des fournitures
+  // pour son propre projet.
+  if (isPorteur) {
+    sections.push({
+      title: t("user_sidebar.section_fournisseur", "Fournisseur"),
+      links: [
+        {
+          to: "/fournisseurs",
+          label: t("user_sidebar.fournisseurs", "Trouver un fournisseur"),
+          icon: <FiTruck size={16} />,
+        },
+        {
+          to: "/mes-commandes",
+          label: t("user_sidebar.mes_commandes", "Mes commandes fournisseur"),
+          icon: <FiShoppingBag size={16} />,
+        },
+      ],
+    });
+  }
+
+  // Fournisseur, côté fournisseur = la propre fiche/catalogue/commandes
+  // reçues du fournisseur lui-même. Réservé aux utilisateurs ayant le rôle
+  // FOURNISSEUR, distinct du rôle PORTEUR ci-dessus.
+  if (isFournisseur) {
+    sections.push({
+      title: t("user_sidebar.section_mon_espace_fournisseur", "Mon espace fournisseur"),
+      links: [
+        {
+          to: "/mon-espace/fournisseur",
+          label: t("user_sidebar.mon_espace_fournisseur", "Mon espace fournisseur"),
+          icon: <FiTruck size={16} />,
+        },
+      ],
+    });
+  }
 
   sections.push({
     title: t("user_sidebar.section_documents", "Documents"),

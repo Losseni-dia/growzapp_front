@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
@@ -8,10 +8,21 @@ import styles from "./UserSpaceLayout.module.css";
 
 export default function UserSpaceLayout() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, reloadUser } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Rafraîchit les rôles à chaque entrée dans "Mon Espace" : PORTEUR,
+  // INVESTISSEUR et FOURNISSEUR sont attribués côté serveur après coup
+  // (validation de projet, premier investissement, fiche fournisseur) et ne
+  // sont donc pas forcément à jour dans la session déjà chargée.
+  useEffect(() => {
+    reloadUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const isInvestisseur = user?.roles?.includes("INVESTISSEUR") ?? false;
+  const isPorteur = user?.roles?.includes("PORTEUR") ?? false;
+  const isFournisseur = user?.roles?.includes("FOURNISSEUR") ?? false;
 
   return (
     <div className={styles.shell}>
@@ -29,6 +40,8 @@ export default function UserSpaceLayout() {
       >
         <UserSpaceSidebar
           isInvestisseur={isInvestisseur}
+          isPorteur={isPorteur}
+          isFournisseur={isFournisseur}
           onNavigate={() => setMobileOpen(false)}
         />
       </div>
