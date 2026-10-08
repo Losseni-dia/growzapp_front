@@ -108,8 +108,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // 5. AJOUT : Fonction Reload (Appel API pour synchroniser le statut KYC)
   const reloadUser = async () => {
     try {
-      // On récupère les données fraîches depuis le serveur
-      const freshUser = await api.get<UserDTO>("/api/auth/me");
+      // /api/auth/me renvoie un ApiResponseDTO { success, message, data },
+      // pas le UserDTO brut — sans ce déballage, user.roles (et tout le
+      // reste) devient undefined après chaque reload, faisant disparaître
+      // les sections de menu gatées par rôle.
+      const response = await api.get<{ data: UserDTO }>("/api/auth/me");
+      const freshUser = response?.data;
       if (freshUser) {
         updateUserInfo(freshUser);
         console.log("Données utilisateur rafraîchies :", freshUser.kycStatus);
