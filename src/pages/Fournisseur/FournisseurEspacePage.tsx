@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import CommandeTimeline from "../../components/Commande/CommandeTimeline";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api, buildFileUrl } from "../../service/Api";
+import { STATUTS_TERMINAUX_FOURNISSEUR } from "../../utils/commandeStatus";
 import styles from "./FournisseurEspacePage.module.css";
 
 interface FournisseurDTO {
@@ -247,15 +248,19 @@ export default function FournisseurEspacePage() {
 
   const [commandeSearch, setCommandeSearch] = useState("");
   const [commandeStatutFilter, setCommandeStatutFilter] = useState<string>("ALL");
+  const [commandeVue, setCommandeVue] = useState<"en_cours" | "historique">("en_cours");
 
   const filteredCommandes = useMemo(() => {
     const q = commandeSearch.trim().toLowerCase();
     return commandes.filter((c) => {
+      const terminal = STATUTS_TERMINAUX_FOURNISSEUR.includes(c.statut);
+      if (commandeVue === "historique" && !terminal) return false;
+      if (commandeVue === "en_cours" && terminal) return false;
       if (commandeStatutFilter !== "ALL" && c.statut !== commandeStatutFilter) return false;
       if (q && !c.projetLibelle.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [commandes, commandeSearch, commandeStatutFilter]);
+  }, [commandes, commandeSearch, commandeStatutFilter, commandeVue]);
 
   const [expeditionId, setExpeditionId] = useState<number | null>(null);
   const [expeditionSending, setExpeditionSending] = useState(false);
@@ -640,6 +645,25 @@ export default function FournisseurEspacePage() {
       <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>
         <FiTruck /> {t("fournisseur.espace.commandes_title", "Commandes reçues")}
       </h2>
+
+      {commandes.length > 0 && (
+        <div className={styles.tabBar}>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${commandeVue === "en_cours" ? styles.tabBtnActive : ""}`}
+            onClick={() => setCommandeVue("en_cours")}
+          >
+            {t("fournisseur.espace.tab_en_cours", "En cours")}
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${commandeVue === "historique" ? styles.tabBtnActive : ""}`}
+            onClick={() => setCommandeVue("historique")}
+          >
+            {t("fournisseur.espace.tab_historique", "Historique")}
+          </button>
+        </div>
+      )}
 
       {commandes.length > 0 && (
         <div className={styles.filterBar}>

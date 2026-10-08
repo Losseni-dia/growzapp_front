@@ -9,6 +9,7 @@ import CommandeMarketTimeline from "../../components/Commande/CommandeMarketTime
 import LitigeThread, { LitigeMessageDTO } from "../../components/Commande/LitigeThread";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api, buildProjetUrl } from "../../service/Api";
+import { STATUTS_TERMINAUX_MARKET } from "../../utils/commandeStatus";
 import styles from "./MesVentesMarketPage.module.css";
 
 interface CommandeMarketLigneDTO {
@@ -57,6 +58,13 @@ export default function MesAchatsMarketPage() {
   const [loading, setLoading] = useState(true);
   const [litigeId, setLitigeId] = useState<number | null>(null);
   const [motifLitige, setMotifLitige] = useState("");
+  const [vue, setVue] = useState<"en_cours" | "historique">("en_cours");
+
+  const commandesVue = commandes.filter((c) =>
+    vue === "historique"
+      ? STATUTS_TERMINAUX_MARKET.includes(c.statut)
+      : !STATUTS_TERMINAUX_MARKET.includes(c.statut)
+  );
 
   const load = () => {
     api
@@ -102,6 +110,25 @@ export default function MesAchatsMarketPage() {
         <p>{t("growzmarket.achats.subtitle", "Suivi de vos commandes passées sur GrowzMarket.")}</p>
       </div>
 
+      {commandes.length > 0 && (
+        <div className={styles.tabBar}>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${vue === "en_cours" ? styles.tabBtnActive : ""}`}
+            onClick={() => setVue("en_cours")}
+          >
+            {t("growzmarket.achats.tab_en_cours", "En cours")}
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${vue === "historique" ? styles.tabBtnActive : ""}`}
+            onClick={() => setVue("historique")}
+          >
+            {t("growzmarket.achats.tab_historique", "Historique")}
+          </button>
+        </div>
+      )}
+
       {commandes.length === 0 ? (
         <div className={styles.emptyState}>
           <FiShoppingBag size={48} />
@@ -110,9 +137,17 @@ export default function MesAchatsMarketPage() {
             {t("growzmarket.achats.btn_catalogue", "Découvrir GrowzMarket")}
           </Link>
         </div>
+      ) : commandesVue.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>
+            {vue === "historique"
+              ? t("growzmarket.achats.empty_historique", "Aucun achat livré pour le moment.")
+              : t("growzmarket.achats.empty_en_cours", "Aucun achat en cours.")}
+          </p>
+        </div>
       ) : (
         <div className={styles.list}>
-          {commandes.map((c) => (
+          {commandesVue.map((c) => (
             <div key={c.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>

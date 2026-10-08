@@ -9,6 +9,7 @@ import CommandeMarketTimeline from "../../components/Commande/CommandeMarketTime
 import LitigeThread, { LitigeMessageDTO } from "../../components/Commande/LitigeThread";
 import { useCurrency } from "../../components/Context/CurrencyContext";
 import { api, buildProjetUrl } from "../../service/Api";
+import { STATUTS_TERMINAUX_MARKET } from "../../utils/commandeStatus";
 import styles from "./MesVentesMarketPage.module.css";
 
 interface CommandeMarketLigneDTO {
@@ -58,6 +59,7 @@ export default function MesVentesMarketPage() {
   const [litigeId, setLitigeId] = useState<number | null>(null);
   const [motifLitige, setMotifLitige] = useState("");
   const [recherche, setRecherche] = useState("");
+  const [vue, setVue] = useState<"en_cours" | "historique">("en_cours");
 
   const load = () => {
     api
@@ -102,6 +104,9 @@ export default function MesVentesMarketPage() {
   };
 
   const commandesFiltrees = commandes.filter((c) => {
+    const terminal = STATUTS_TERMINAUX_MARKET.includes(c.statut);
+    if (vue === "historique" && !terminal) return false;
+    if (vue === "en_cours" && terminal) return false;
     const q = recherche.trim().toLowerCase();
     if (!q) return true;
     return (
@@ -142,6 +147,25 @@ export default function MesVentesMarketPage() {
         <p>{t("growzmarket.ventes.subtitle", "Commandes reçues sur vos articles GrowzMarket.")}</p>
       </div>
 
+      {commandes.length > 0 && (
+        <div className={styles.tabBar}>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${vue === "en_cours" ? styles.tabBtnActive : ""}`}
+            onClick={() => setVue("en_cours")}
+          >
+            {t("growzmarket.ventes.tab_en_cours", "En cours")}
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${vue === "historique" ? styles.tabBtnActive : ""}`}
+            onClick={() => setVue("historique")}
+          >
+            {t("growzmarket.ventes.tab_historique", "Historique")}
+          </button>
+        </div>
+      )}
+
       {commandes.length === 0 ? (
         <div className={styles.emptyState}>
           <FiShoppingBag size={48} />
@@ -166,6 +190,15 @@ export default function MesVentesMarketPage() {
               }
             />
           </div>
+          {commandesFiltrees.length === 0 ? (
+            <div className={styles.emptyState}>
+              <p>
+                {vue === "historique"
+                  ? t("growzmarket.ventes.empty_historique", "Aucune vente livrée pour le moment.")
+                  : t("growzmarket.ventes.empty_en_cours", "Aucune vente en cours.")}
+              </p>
+            </div>
+          ) : (
           <div className={styles.list}>
           {commandesFiltrees.map((c) => (
             <div key={c.id} className={styles.card}>
@@ -229,6 +262,7 @@ export default function MesVentesMarketPage() {
             </div>
           ))}
           </div>
+          )}
         </>
       )}
 

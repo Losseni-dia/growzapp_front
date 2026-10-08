@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import CommandeTimeline from "../../../components/Commande/CommandeTimeline";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
 import { api } from "../../../service/Api";
+import { STATUTS_TERMINAUX_FOURNISSEUR } from "../../../utils/commandeStatus";
 import styles from "./MesCommandesPage.module.css";
 
 interface CommandeLigneDTO {
@@ -62,6 +63,13 @@ export default function MesCommandesPage() {
   const [loading, setLoading] = useState(true);
   const [litigeId, setLitigeId] = useState<number | null>(null);
   const [motifLitige, setMotifLitige] = useState("");
+  const [vue, setVue] = useState<"en_cours" | "historique">("en_cours");
+
+  const commandesVue = commandes.filter((c) =>
+    vue === "historique"
+      ? STATUTS_TERMINAUX_FOURNISSEUR.includes(c.statut)
+      : !STATUTS_TERMINAUX_FOURNISSEUR.includes(c.statut)
+  );
 
   const load = () => {
     api
@@ -118,6 +126,25 @@ export default function MesCommandesPage() {
         <p>{t("mes_commandes.subtitle", "Suivi des commandes passées auprès des fournisseurs pour vos projets.")}</p>
       </div>
 
+      {commandes.length > 0 && (
+        <div className={styles.tabBar}>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${vue === "en_cours" ? styles.tabBtnActive : ""}`}
+            onClick={() => setVue("en_cours")}
+          >
+            {t("mes_commandes.tab_en_cours", "En cours")}
+          </button>
+          <button
+            type="button"
+            className={`${styles.tabBtn} ${vue === "historique" ? styles.tabBtnActive : ""}`}
+            onClick={() => setVue("historique")}
+          >
+            {t("mes_commandes.tab_historique", "Historique")}
+          </button>
+        </div>
+      )}
+
       {commandes.length === 0 ? (
         <div className={styles.emptyState}>
           <FiShoppingBag size={48} />
@@ -126,9 +153,17 @@ export default function MesCommandesPage() {
             {t("mes_commandes.btn_find_fournisseur", "Trouver un fournisseur")}
           </Link>
         </div>
+      ) : commandesVue.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>
+            {vue === "historique"
+              ? t("mes_commandes.empty_historique", "Aucune commande terminée pour le moment.")
+              : t("mes_commandes.empty_en_cours", "Aucune commande en cours.")}
+          </p>
+        </div>
       ) : (
         <div className={styles.list}>
-          {commandes.map((c) => (
+          {commandesVue.map((c) => (
             <div key={c.id} className={styles.card}>
               <div className={styles.cardHeader}>
                 <div>
