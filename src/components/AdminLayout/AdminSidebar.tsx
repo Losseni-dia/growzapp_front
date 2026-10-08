@@ -21,6 +21,9 @@ import {
   FiActivity,
   FiTruck,
   FiShoppingBag,
+  FiAlertTriangle,
+  FiClock,
+  FiPackage,
 } from "react-icons/fi";
 import { BsStarFill } from "react-icons/bs";
 import styles from "./AdminLayout.module.css";
@@ -134,6 +137,16 @@ export default function AdminSidebar({
           label: t("admin.sidebar.commandes", "Commandes fournisseur"),
           icon: <FiShoppingBag size={16} />,
         },
+        {
+          to: "/admin/commandes/litiges",
+          label: t("admin.sidebar.commandes_litiges", "Litiges fournisseur"),
+          icon: <FiAlertTriangle size={16} />,
+        },
+        {
+          to: "/admin/commandes/historique",
+          label: t("admin.sidebar.commandes_historique", "Historique"),
+          icon: <FiClock size={16} />,
+        },
       ],
     });
 
@@ -143,9 +156,19 @@ export default function AdminSidebar({
       title: t("admin.sidebar.section_growzmarket", "GrowzMarket"),
       links: [
         {
-          to: "/admin/growzmarket",
-          label: t("admin.sidebar.growzmarket", "Commandes GrowzMarket"),
-          icon: <FiShoppingBag size={16} />,
+          to: "/admin/growzmarket/litiges",
+          label: t("admin.sidebar.growzmarket_litiges", "Litiges"),
+          icon: <FiAlertTriangle size={16} />,
+        },
+        {
+          to: "/admin/growzmarket/historique",
+          label: t("admin.sidebar.growzmarket_historique", "Commandes / historique"),
+          icon: <FiClock size={16} />,
+        },
+        {
+          to: "/admin/growzmarket/catalogue",
+          label: t("admin.sidebar.growzmarket_catalogue", "Catalogue"),
+          icon: <FiPackage size={16} />,
         },
       ],
     });

@@ -111,6 +111,8 @@ const TransactionsFournisseurPage = lazy(() => import("./pages/MonEspace/Transac
 const TransactionsGrowzmarketPage = lazy(() => import("./pages/MonEspace/Transactions/TransactionsGrowzmarketPage"));
 const AdminFournisseursPage = lazy(() => import("./pages/Admin/Fournisseurs/AdminFournisseursPage"));
 const AdminCommandesPage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesPage"));
+const AdminCommandesLitigesPage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesLitigesPage"));
+const AdminCommandesHistoriquePage = lazy(() => import("./pages/Admin/Commandes/AdminCommandesHistoriquePage"));
 const CommandeFacturePage = lazy(() => import("./pages/Commandes/CommandeFacturePage"));
 const GrowzMarketPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketPage"));
 const GrowzMarketDetailPage = lazy(() => import("./pages/GrowzMarket/GrowzMarketDetailPage"));
@@ -121,7 +123,9 @@ const HistoriqueVentesMarketPage = lazy(() => import("./pages/GrowzMarket/Histor
 const MesAchatsMarketPage = lazy(() => import("./pages/GrowzMarket/MesAchatsMarketPage"));
 const HistoriqueAchatsMarketPage = lazy(() => import("./pages/GrowzMarket/HistoriqueAchatsMarketPage"));
 const MarketFacturePage = lazy(() => import("./pages/GrowzMarket/MarketFacturePage"));
-const AdminGrowzMarketPage = lazy(() => import("./pages/Admin/GrowzMarket/AdminGrowzMarketPage"));
+const AdminGrowzMarketLitigesPage = lazy(() => import("./pages/Admin/GrowzMarket/AdminGrowzMarketLitigesPage"));
+const AdminGrowzMarketHistoriquePage = lazy(() => import("./pages/Admin/GrowzMarket/AdminGrowzMarketHistoriquePage"));
+const AdminGrowzMarketCataloguePage = lazy(() => import("./pages/Admin/GrowzMarket/AdminGrowzMarketCataloguePage"));
 const FichePorteurForm = lazy(() => import("./components/FichePorteur/FichePorteurForm"));
 const ContratPage = lazy(
   () => import("./pages/Contrat/ContratsPage/ContratPage"),
@@ -450,8 +454,28 @@ function AppInner() {
                       element={<AdminCommandesPage />}
                     />
                     <Route
+                      path="/admin/commandes/litiges"
+                      element={<AdminCommandesLitigesPage />}
+                    />
+                    <Route
+                      path="/admin/commandes/historique"
+                      element={<AdminCommandesHistoriquePage />}
+                    />
+                    <Route
                       path="/admin/growzmarket"
-                      element={<AdminGrowzMarketPage />}
+                      element={<Navigate to="/admin/growzmarket/historique" replace />}
+                    />
+                    <Route
+                      path="/admin/growzmarket/litiges"
+                      element={<AdminGrowzMarketLitigesPage />}
+                    />
+                    <Route
+                      path="/admin/growzmarket/historique"
+                      element={<AdminGrowzMarketHistoriquePage />}
+                    />
+                    <Route
+                      path="/admin/growzmarket/catalogue"
+                      element={<AdminGrowzMarketCataloguePage />}
                     />
                     <Route
                       path="/admin/notifications"

@@ -707,6 +707,11 @@
       "parameters": "Settings",
       "growzmarket": "GrowzMarket",
       "commandes": "Supplier orders",
+      "commandes_litiges": "Supplier disputes",
+      "commandes_historique": "History",
+      "growzmarket_litiges": "Disputes",
+      "growzmarket_historique": "Orders / history",
+      "growzmarket_catalogue": "Catalogue",
       "fiches_porteur": "Project owner profiles",
       "fournisseurs": "Suppliers"
     },

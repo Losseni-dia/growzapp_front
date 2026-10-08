@@ -732,6 +732,11 @@
       "parameters": "Paramètres",
       "growzmarket": "GrowzMarket",
       "commandes": "Commandes fournisseur",
+      "commandes_litiges": "Litiges fournisseur",
+      "commandes_historique": "Historique",
+      "growzmarket_litiges": "Litiges",
+      "growzmarket_historique": "Commandes / historique",
+      "growzmarket_catalogue": "Catalogue",
       "fiches_porteur": "Fiches porteur",
       "fournisseurs": "Fournisseurs"
     },

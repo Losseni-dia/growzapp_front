@@ -1,0 +1,440 @@
+import { format as formatDate } from "date-fns";
+import { fr } from "date-fns/locale";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import {
+  FiCheckCircle,
+  FiCreditCard,
+  FiEye,
+  FiFileText,
+  FiList,
+  FiMail,
+  FiMapPin,
+  FiPhone,
+  FiSearch,
+  FiShoppingBag,
+  FiUser,
+  FiXCircle,
+} from "react-icons/fi";
+import { Link } from "react-router-dom";
+import CommandeTimeline from "../../../components/Commande/CommandeTimeline";
+import { useCurrency } from "../../../components/Context/CurrencyContext";
+import { api } from "../../../service/Api";
+import styles from "./AdminCommandesPage.module.css";
+
+interface CommandeLigneDTO {
+  id: number;
+  libelle: string;
+  quantite: number;
+  sousTotal: number;
+}
+
+interface CommandeDTO {
+  id: number;
+  projetLibelle: string;
+  porteurNom: string | null;
+  porteurEmail: string | null;
+  fournisseurNom: string;
+  fournisseurVille: string | null;
+  fournisseurPays: string | null;
+  fournisseurTelephone: string | null;
+  fournisseurEmail: string | null;
+  montantTotal: number;
+  statut: string;
+  dateCommande: string;
+  dateValidationAdmin: string | null;
+  dateAcceptation: string | null;
+  dateExpedition: string | null;
+  dateConfirmationReception: string | null;
+  datePaiement: string | null;
+  motifRejet: string | null;
+  motifRefus: string | null;
+  motifLitige: string | null;
+  factureUrl: string | null;
+  lignes: CommandeLigneDTO[];
+}
+
+export type Onglet = "EN_ATTENTE" | "A_PAYER" | "LITIGES" | "TOUTES";
+
+const ENDPOINTS: Record<Onglet, string> = {
+  EN_ATTENTE: "/api/admin/commandes/en-attente",
+  A_PAYER: "/api/admin/commandes/a-payer",
+  LITIGES: "/api/admin/commandes/litiges",
+  TOUTES: "/api/admin/commandes/toutes",
+};
+
+const STATUT_LABELS: Record<string, string> = {
+  EN_ATTENTE_VALIDATION: "En attente de validation admin",
+  REJETEE: "Rejetée",
+  EN_ATTENTE_ACCEPTATION: "En attente d'acceptation fournisseur",
+  REFUSEE: "Refusée par le fournisseur",
+  ACCEPTEE: "Acceptée — en préparation",
+  EXPEDIEE: "Expédiée — à confirmer",
+  LITIGE: "En litige",
+  ANNULEE: "Annulée",
+  LIVREE: "Livrée — paiement en attente",
+  PAYEE: "Payée",
+};
+
+const TAB_LABEL_KEYS: Record<Onglet, [string, string]> = {
+  EN_ATTENTE: ["admin.commandes.tab_pending", "En attente de validation"],
+  A_PAYER: ["admin.commandes.tab_to_pay", "À payer"],
+  LITIGES: ["admin.commandes.tab_litiges", "Litiges"],
+  TOUTES: ["admin.commandes.tab_toutes", "Toutes / historique"],
+};
+
+interface Props {
+  allowedOnglets: Onglet[];
+}
+
+export default function AdminCommandesList({ allowedOnglets }: Props) {
+  const { t } = useTranslation();
+  const { format } = useCurrency();
+
+  const [onglet, setOnglet] = useState<Onglet>(allowedOnglets[0]);
+  const [commandes, setCommandes] = useState<CommandeDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [rejetId, setRejetId] = useState<number | null>(null);
+  const [motif, setMotif] = useState("");
+  const [arbitrageId, setArbitrageId] = useState<number | null>(null);
+  const [motifArbitrage, setMotifArbitrage] = useState("");
+  const [detail, setDetail] = useState<CommandeDTO | null>(null);
+  const [payingId, setPayingId] = useState<number | null>(null);
+
+  const [search, setSearch] = useState("");
+  const [statutFilter, setStatutFilter] = useState<string>("ALL");
+
+  const filteredCommandes = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return commandes.filter((c) => {
+      if (onglet === "TOUTES" && statutFilter !== "ALL" && c.statut !== statutFilter) return false;
+      if (
+        q &&
+        !c.projetLibelle.toLowerCase().includes(q) &&
+        !c.fournisseurNom.toLowerCase().includes(q) &&
+        !(c.porteurNom || "").toLowerCase().includes(q)
+      )
+        return false;
+      return true;
+    });
+  }, [commandes, search, statutFilter, onglet]);
+
+  const load = () => {
+    setLoading(true);
+    api
+      .get<{ data: CommandeDTO[] }>(ENDPOINTS[onglet])
+      .then((res) => setCommandes(res.data || []))
+      .catch(() => toast.error(t("admin.commandes.toast_load_error", "Erreur lors du chargement")))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onglet]);
+
+  const handleValider = async (id: number) => {
+    try {
+      await api.post(`/api/admin/commandes/${id}/valider`);
+      toast.success(t("admin.commandes.toast_validated", "Commande validée, transmise au fournisseur"));
+      setCommandes((prev) => prev.filter((c) => c.id !== id));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.commandes.toast_error", "Erreur"));
+    }
+  };
+
+  const handleRejeter = async () => {
+    if (!rejetId || motif.trim().length < 3) {
+      toast.error(t("admin.commandes.toast_motif_required", "Le motif est obligatoire"));
+      return;
+    }
+    try {
+      await api.post(`/api/admin/commandes/${rejetId}/rejeter`, { motif });
+      toast.success(t("admin.commandes.toast_rejected", "Commande rejetée"));
+      setCommandes((prev) => prev.filter((c) => c.id !== rejetId));
+      setRejetId(null);
+      setMotif("");
+    } catch (err: any) {
+      toast.error(err.message || t("admin.commandes.toast_error", "Erreur"));
+    }
+  };
+
+  const handleArbitrer = async (enFaveurDuFournisseur: boolean) => {
+    if (!arbitrageId || motifArbitrage.trim().length < 3) {
+      toast.error(t("admin.commandes.toast_motif_required", "Le motif est obligatoire"));
+      return;
+    }
+    try {
+      await api.post(
+        `/api/admin/commandes/${arbitrageId}/arbitrer?enFaveurDuFournisseur=${enFaveurDuFournisseur}`,
+        { motif: motifArbitrage },
+      );
+      toast.success(t("admin.commandes.toast_arbitrated", "Litige arbitré"));
+      setCommandes((prev) => prev.filter((c) => c.id !== arbitrageId));
+      setArbitrageId(null);
+      setMotifArbitrage("");
+    } catch (err: any) {
+      toast.error(err.message || t("admin.commandes.toast_error", "Erreur"));
+    }
+  };
+
+  const handlePayer = async (id: number) => {
+    if (!window.confirm(t("admin.commandes.confirm_pay", "Exécuter le paiement ? Cette action débite le wallet du projet et crédite le wallet du fournisseur.") as string)) return;
+    setPayingId(id);
+    try {
+      await api.post(`/api/admin/commandes/${id}/payer`);
+      toast.success(t("admin.commandes.toast_paid", "Paiement exécuté"));
+      setCommandes((prev) => prev.filter((c) => c.id !== id));
+    } catch (err: any) {
+      toast.error(err.message || t("admin.commandes.toast_error", "Erreur"));
+    } finally {
+      setPayingId(null);
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1>
+          <FiShoppingBag /> {t("admin.commandes.title", "Commandes fournisseurs")}
+        </h1>
+      </div>
+
+      {allowedOnglets.length > 1 && (
+        <div className={styles.tabs}>
+          {allowedOnglets.map((o) => {
+            const [key, fallback] = TAB_LABEL_KEYS[o];
+            return (
+              <button
+                key={o}
+                className={`${styles.tabBtn} ${onglet === o ? styles.tabBtnActive : ""}`}
+                onClick={() => setOnglet(o)}
+              >
+                {o === "TOUTES" && <FiList size={13} />} {t(key, fallback)}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <div className={styles.filterBar}>
+        <div className={styles.searchInput}>
+          <FiSearch size={15} />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("admin.commandes.search_placeholder", "Rechercher par projet, fournisseur, porteur...") as string}
+          />
+        </div>
+        {onglet === "TOUTES" && (
+          <select value={statutFilter} onChange={(e) => setStatutFilter(e.target.value)}>
+            <option value="ALL">{t("admin.commandes.filter_all", "Tous les statuts")}</option>
+            {Object.entries(STATUT_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
+      {loading ? (
+        <div className={styles.loading}>{t("dashboard.loading")}</div>
+      ) : commandes.length === 0 ? (
+        <div className={styles.emptyState}>
+          <FiShoppingBag size={48} />
+          <p>{t("admin.commandes.empty", "Rien à traiter ici pour le moment.")}</p>
+        </div>
+      ) : filteredCommandes.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>{t("admin.commandes.no_results", "Aucun résultat pour cette recherche/filtre.")}</p>
+        </div>
+      ) : (
+        <div className={styles.list}>
+          {filteredCommandes.map((c) => (
+            <div key={c.id} className={styles.card}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <strong>{c.projetLibelle}</strong>
+                  <span className={styles.fournisseur}> → {c.fournisseurNom}</span>
+                </div>
+                <span className={styles.total}>{format(Number(c.montantTotal), "XOF")}</span>
+              </div>
+              {onglet === "TOUTES" && (
+                <span className={styles.badgeStatut}>{STATUT_LABELS[c.statut] || c.statut}</span>
+              )}
+              <p className={styles.date}>{formatDate(new Date(c.dateCommande), "dd MMM yyyy", { locale: fr })}</p>
+              <ul className={styles.lignes}>
+                {c.lignes.map((l) => (
+                  <li key={l.id}>
+                    {l.quantite} × {l.libelle} — {format(Number(l.sousTotal), "XOF")}
+                  </li>
+                ))}
+              </ul>
+
+              {onglet === "LITIGES" && c.motifLitige && <p className={styles.motifLitige}>{c.motifLitige}</p>}
+
+              {c.factureUrl && (
+                <Link to={`/commandes/${c.id}/facture`} className={styles.btnFacture}>
+                  <FiFileText size={14} /> {t("admin.commandes.btn_facture", "Voir la facture")}
+                </Link>
+              )}
+
+              <div className={styles.actions}>
+                <button className={styles.btnDetail} onClick={() => setDetail(c)}>
+                  <FiEye size={14} /> {t("admin.commandes.btn_details", "Détails")}
+                </button>
+                {onglet === "EN_ATTENTE" && (
+                  <>
+                    <button className={styles.btnValider} onClick={() => handleValider(c.id)}>
+                      <FiCheckCircle size={14} /> {t("admin.commandes.btn_validate", "Valider")}
+                    </button>
+                    <button className={styles.btnRejeter} onClick={() => setRejetId(c.id)}>
+                      <FiXCircle size={14} /> {t("admin.commandes.btn_reject", "Rejeter")}
+                    </button>
+                  </>
+                )}
+                {onglet === "A_PAYER" && (
+                  <button
+                    className={styles.btnValider}
+                    onClick={() => handlePayer(c.id)}
+                    disabled={payingId === c.id}
+                  >
+                    <FiCreditCard size={14} />{" "}
+                    {payingId === c.id
+                      ? t("admin.commandes.btn_paying", "Paiement...")
+                      : t("admin.commandes.btn_pay", "Exécuter le paiement")}
+                  </button>
+                )}
+                {onglet === "LITIGES" && (
+                  <button className={styles.btnValider} onClick={() => setArbitrageId(c.id)}>
+                    {t("admin.commandes.btn_arbitrate", "Arbitrer")}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {detail !== null && (
+        <div className={styles.modalOverlay} onClick={() => setDetail(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("admin.commandes.detail_title", "Commande #{{id}}", { id: detail.id })}</h2>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>
+                <FiUser size={13} /> {t("admin.commandes.detail_porteur", "Porteur")}
+              </p>
+              <p className={styles.detailValue}>{detail.porteurNom || "—"}</p>
+              {detail.porteurEmail && (
+                <p className={styles.detailSub}>
+                  <FiMail size={12} /> {detail.porteurEmail}
+                </p>
+              )}
+              <p className={styles.detailValue}>{detail.projetLibelle}</p>
+            </div>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>
+                <FiUser size={13} /> {t("admin.commandes.detail_fournisseur", "Fournisseur")}
+              </p>
+              <p className={styles.detailValue}>{detail.fournisseurNom}</p>
+              {(detail.fournisseurVille || detail.fournisseurPays) && (
+                <p className={styles.detailSub}>
+                  <FiMapPin size={12} /> {detail.fournisseurVille}, {detail.fournisseurPays}
+                </p>
+              )}
+              {detail.fournisseurTelephone && (
+                <p className={styles.detailSub}>
+                  <FiPhone size={12} /> {detail.fournisseurTelephone}
+                </p>
+              )}
+              {detail.fournisseurEmail && (
+                <p className={styles.detailSub}>
+                  <FiMail size={12} /> {detail.fournisseurEmail}
+                </p>
+              )}
+            </div>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>{t("admin.commandes.detail_lignes", "Articles commandés")}</p>
+              <ul className={styles.lignes}>
+                {detail.lignes.map((l) => (
+                  <li key={l.id}>
+                    {l.quantite} × {l.libelle} — {format(Number(l.sousTotal), "XOF")}
+                  </li>
+                ))}
+              </ul>
+              <p className={styles.detailTotal}>
+                {t("admin.commandes.detail_total", "Total")} : {format(Number(detail.montantTotal), "XOF")}
+              </p>
+            </div>
+
+            <div className={styles.detailSection}>
+              <p className={styles.detailLabel}>{t("admin.commandes.detail_chronologie", "Chronologie")}</p>
+              <CommandeTimeline commande={detail} />
+            </div>
+
+            {detail.factureUrl && (
+              <Link to={`/commandes/${detail.id}/facture`} className={styles.btnFacture}>
+                <FiFileText size={14} /> {t("admin.commandes.btn_facture", "Voir la facture")}
+              </Link>
+            )}
+
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setDetail(null)}>
+                {t("admin.commandes.btn_close", "Fermer")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {rejetId !== null && (
+        <div className={styles.modalOverlay} onClick={() => setRejetId(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("admin.commandes.reject_title", "Motif du rejet")}</h2>
+            <textarea value={motif} onChange={(e) => setMotif(e.target.value)} rows={4} maxLength={500} />
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setRejetId(null)}>
+                {t("admin.commandes.btn_cancel", "Annuler")}
+              </button>
+              <button className={styles.btnRejeter} onClick={handleRejeter}>
+                {t("admin.commandes.btn_confirm_reject", "Rejeter")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {arbitrageId !== null && (
+        <div className={styles.modalOverlay} onClick={() => setArbitrageId(null)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("admin.commandes.arbitrate_title", "Arbitrer le litige")}</h2>
+            <textarea
+              value={motifArbitrage}
+              onChange={(e) => setMotifArbitrage(e.target.value)}
+              placeholder={t("admin.commandes.arbitrate_placeholder", "Motif de la décision...") as string}
+              rows={4}
+              maxLength={1000}
+            />
+            <div className={styles.modalFooter}>
+              <button className={styles.btnCancel} onClick={() => setArbitrageId(null)}>
+                {t("admin.commandes.btn_cancel", "Annuler")}
+              </button>
+              <button className={styles.btnRejeter} onClick={() => handleArbitrer(false)}>
+                {t("admin.commandes.btn_favor_porteur", "En faveur du porteur (annulée)")}
+              </button>
+              <button className={styles.btnValider} onClick={() => handleArbitrer(true)}>
+                {t("admin.commandes.btn_favor_fournisseur", "En faveur du fournisseur")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

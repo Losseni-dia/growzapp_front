@@ -3,7 +3,7 @@ import { fr } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiCheck, FiEye, FiEyeOff, FiFileText, FiGlobe, FiList, FiPackage, FiSearch, FiShoppingBag, FiTrash2, FiX } from "react-icons/fi";
+import { FiCheck, FiEye, FiEyeOff, FiFileText, FiGlobe, FiPackage, FiSearch, FiShoppingBag, FiTrash2, FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import CommandeMarketTimeline from "../../../components/Commande/CommandeMarketTimeline";
 import LitigeThread, { LitigeMessageDTO } from "../../../components/Commande/LitigeThread";
@@ -56,7 +56,7 @@ interface CommandeMarketDTO {
   litigeMessages: LitigeMessageDTO[];
 }
 
-type Onglet = "LITIGES" | "TOUTES" | "ARTICLES";
+export type Onglet = "LITIGES" | "TOUTES" | "ARTICLES";
 
 const ENDPOINTS: Record<"LITIGES" | "TOUTES", string> = {
   LITIGES: "/api/admin/market/commandes/litiges",
@@ -76,11 +76,10 @@ function statutLabel(t: (key: string, options?: { defaultValue: string }) => str
   return t(`admin.growzmarket.statut.${statut}`, { defaultValue: STATUT_KEYS[statut] || statut });
 }
 
-export default function AdminGrowzMarketPage() {
+export default function AdminGrowzMarketList({ onglet }: { onglet: Onglet }) {
   const { t, i18n } = useTranslation();
   const { format } = useCurrency();
 
-  const [onglet, setOnglet] = useState<Onglet>("TOUTES");
   const [commandes, setCommandes] = useState<CommandeMarketDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [arbitrageId, setArbitrageId] = useState<number | null>(null);
@@ -254,33 +253,19 @@ export default function AdminGrowzMarketPage() {
     }
   };
 
+  const title =
+    onglet === "ARTICLES"
+      ? t("admin.growzmarket.tab_articles", "Catalogue")
+      : onglet === "LITIGES"
+        ? t("admin.growzmarket.tab_litiges", "Litiges")
+        : t("admin.growzmarket.tab_toutes", "Toutes / historique");
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>
-          <FiShoppingBag /> {t("admin.growzmarket.title", "GrowzMarket")}
+          <FiShoppingBag /> {t("admin.growzmarket.title", "GrowzMarket")} — {title}
         </h1>
-      </div>
-
-      <div className={styles.tabs}>
-        <button
-          className={`${styles.tabBtn} ${onglet === "LITIGES" ? styles.tabBtnActive : ""}`}
-          onClick={() => setOnglet("LITIGES")}
-        >
-          {t("admin.growzmarket.tab_litiges", "Litiges")}
-        </button>
-        <button
-          className={`${styles.tabBtn} ${onglet === "TOUTES" ? styles.tabBtnActive : ""}`}
-          onClick={() => setOnglet("TOUTES")}
-        >
-          <FiList size={13} /> {t("admin.growzmarket.tab_toutes", "Toutes / historique")}
-        </button>
-        <button
-          className={`${styles.tabBtn} ${onglet === "ARTICLES" ? styles.tabBtnActive : ""}`}
-          onClick={() => setOnglet("ARTICLES")}
-        >
-          <FiPackage size={13} /> {t("admin.growzmarket.tab_articles", "Catalogue")}
-        </button>
       </div>
 
       <div className={styles.filterBar}>

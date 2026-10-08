@@ -707,6 +707,11 @@
       "parameters": "Ajustes",
       "growzmarket": "GrowzMarket",
       "commandes": "Pedidos a proveedores",
+      "commandes_litiges": "Disputas de proveedores",
+      "commandes_historique": "Historial",
+      "growzmarket_litiges": "Disputas",
+      "growzmarket_historique": "Pedidos / historial",
+      "growzmarket_catalogue": "Catálogo",
       "fiches_porteur": "Fichas de promotor",
       "fournisseurs": "Proveedores"
     },
