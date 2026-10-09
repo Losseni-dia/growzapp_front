@@ -89,6 +89,62 @@
   background: #dc2626;
 }
 
+/* ── ALERTE ÉCHÉANCE DÉPASSÉE ────────────────────────────────────────── */
+.echeanceAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  background: #fff7ed;
+  border: 1.5px solid #f59e0b;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.echeanceAlert svg {
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.echeanceAlertText {
+  flex: 1;
+}
+.echeanceAlertText strong {
+  display: block;
+  color: #92400e;
+  margin-bottom: 0.3rem;
+}
+.echeanceAlertText p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #78350f;
+}
+.echeanceAlertActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+.btnProlonger,
+.btnCloturer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  white-space: nowrap;
+}
+.btnProlonger {
+  background: #1976d2;
+}
+.btnCloturer {
+  background: #dc2626;
+}
+
 /* ── MODALE RÉÉVALUATION ─────────────────────────────────────────────── */
 .modalOverlay {
   position: fixed;

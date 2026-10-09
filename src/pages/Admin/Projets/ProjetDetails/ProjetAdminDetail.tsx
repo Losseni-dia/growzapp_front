@@ -18,6 +18,8 @@ import {
   FiTrash2,
   FiCheck,
   FiX,
+  FiAlertTriangle,
+  FiCalendar,
 } from "react-icons/fi";
 import { ApiResponse } from "../../../../types/common";
 import { ProjetDTO } from "../../../../types/projet";
@@ -46,6 +48,12 @@ export default function ProjetAdminDetail() {
   const [nouvelleValorisation, setNouvelleValorisation] = useState("");
   const [motifRevalorisation, setMotifRevalorisation] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const [showProlonger, setShowProlonger] = useState(false);
+  const [nouvelleDateFin, setNouvelleDateFin] = useState("");
+  const [showCloturer, setShowCloturer] = useState(false);
+  const [motifCloture, setMotifCloture] = useState("");
+  const [submittingEcheance, setSubmittingEcheance] = useState(false);
 
   const loadProjetAndDocuments = async () => {
     if (!id) return;
@@ -170,6 +178,53 @@ export default function ProjetAdminDetail() {
     }
   };
 
+  const handleProlonger = async () => {
+    if (!nouvelleDateFin) {
+      toast.error(t("admin.projects.echeance.toast_date_required", "La nouvelle date est obligatoire") as string);
+      return;
+    }
+    try {
+      setSubmittingEcheance(true);
+      await api.patch(`api/admin/projets/${projet?.id}/prolonger-echeance`, {
+        nouvelleDateFin,
+      });
+      toast.success(t("admin.projects.echeance.toast_prolonge", "Date limite prolongée") as string);
+      setShowProlonger(false);
+      setNouvelleDateFin("");
+      loadProjetAndDocuments();
+    } catch (err: any) {
+      toast.error(err.message || (t("admin.projects.echeance.toast_error", "Erreur") as string));
+    } finally {
+      setSubmittingEcheance(false);
+    }
+  };
+
+  const handleCloturer = async () => {
+    if (
+      !window.confirm(
+        t(
+          "admin.projects.echeance.confirm_cloture",
+          "Clôturer ce projet et rembourser intégralement tous les investisseurs ? Cette action est irréversible.",
+        ) as string,
+      )
+    )
+      return;
+    try {
+      setSubmittingEcheance(true);
+      await api.post(`api/admin/projets/${projet?.id}/cloturer-echec`, {
+        motif: motifCloture || undefined,
+      });
+      toast.success(t("admin.projects.echeance.toast_cloture", "Projet clôturé, investisseurs remboursés") as string);
+      setShowCloturer(false);
+      setMotifCloture("");
+      loadProjetAndDocuments();
+    } catch (err: any) {
+      toast.error(err.message || (t("admin.projects.echeance.toast_error", "Erreur") as string));
+    } finally {
+      setSubmittingEcheance(false);
+    }
+  };
+
   const getIcon = (type: string) => {
     switch (type.toUpperCase()) {
       case "PDF":
@@ -198,6 +253,13 @@ export default function ProjetAdminDetail() {
     return <div className={styles.loading}>{t("admin.documents.loading")}</div>;
   if (!projet)
     return <div className={styles.error}>{t("admin.projects.btn_view")}</div>;
+
+  const echeanceDepassee =
+    !!projet.dateFin &&
+    new Date(projet.dateFin) < new Date() &&
+    projet.montantCollecte < projet.objectifFinancement &&
+    projet.statutProjet !== "ECHEC_FINANCEMENT" &&
+    projet.statutProjet !== "TERMINE";
 
   return (
     <div className={styles.container}>
@@ -235,6 +297,88 @@ export default function ProjetAdminDetail() {
           </button>
         </div>
       </div>
+
+      {echeanceDepassee && (
+        <div className={styles.echeanceAlert}>
+          <FiAlertTriangle size={22} />
+          <div className={styles.echeanceAlertText}>
+            <strong>
+              {t("admin.projects.echeance.title", "Date limite dépassée, objectif non atteint")}
+            </strong>
+            <p>
+              {t(
+                "admin.projects.echeance.message",
+                "Ce projet n'a pas atteint son objectif de financement avant sa date limite. Prolongez l'échéance si le projet mérite plus de temps, ou clôturez-le pour rembourser intégralement les investisseurs.",
+              )}
+            </p>
+            <div className={styles.echeanceAlertActions}>
+              <button
+                className={styles.btnProlonger}
+                onClick={() => setShowProlonger(true)}
+              >
+                <FiCalendar /> {t("admin.projects.echeance.btn_prolonger", "Prolonger la date limite")}
+              </button>
+              <button
+                className={styles.btnCloturer}
+                onClick={() => setShowCloturer(true)}
+              >
+                <FiTrash2 /> {t("admin.projects.echeance.btn_cloturer", "Clôturer et rembourser")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showProlonger && (
+        <div className={styles.modalOverlay} onClick={() => setShowProlonger(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("admin.projects.echeance.modal_prolonger_title", "Prolonger la date limite")}</h2>
+            <label>{t("admin.projects.echeance.new_date_label", "Nouvelle date limite")}</label>
+            <input
+              type="date"
+              value={nouvelleDateFin}
+              onChange={(e) => setNouvelleDateFin(e.target.value)}
+              min={projet.dateFin}
+              autoFocus
+            />
+            <div className={styles.modalActions}>
+              <button onClick={() => setShowProlonger(false)}>
+                {t("admin.projects_list.revalorisation.cancel")}
+              </button>
+              <button onClick={handleProlonger} disabled={submittingEcheance}>
+                {submittingEcheance
+                  ? t("admin.projects_list.revalorisation.confirm_processing")
+                  : t("admin.projects.echeance.confirm_prolonger", "Prolonger")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCloturer && (
+        <div className={styles.modalOverlay} onClick={() => setShowCloturer(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>{t("admin.projects.echeance.modal_cloturer_title", "Clôturer et rembourser")}</h2>
+            <label>{t("admin.projects.echeance.motif_label", "Motif (optionnel)")}</label>
+            <input
+              type="text"
+              value={motifCloture}
+              onChange={(e) => setMotifCloture(e.target.value)}
+              placeholder={t("admin.projects.echeance.motif_placeholder", "Objectif non atteint à la date limite") as string}
+            />
+            <div className={styles.modalActions}>
+              <button onClick={() => setShowCloturer(false)}>
+                {t("admin.projects_list.revalorisation.cancel")}
+              </button>
+              <button onClick={handleCloturer} disabled={submittingEcheance}>
+                {submittingEcheance
+                  ? t("admin.projects_list.revalorisation.confirm_processing")
+                  : t("admin.projects.echeance.confirm_cloturer", "Clôturer et rembourser")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showRevaloriser && (
         <div

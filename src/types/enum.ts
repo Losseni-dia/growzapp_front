@@ -15,7 +15,8 @@ export type StatutProjet =
   | "EN_COURS"
   | "TERMINE"
   | "EN_ATTENTE"
-  | "FINANCE";
+  | "FINANCE"
+  | "ECHEC_FINANCEMENT";
 
 export const StatutProjetLabel: Record<StatutProjet, string> = {
   BROUILLON: "Brouillon",
@@ -27,6 +28,7 @@ export const StatutProjetLabel: Record<StatutProjet, string> = {
   TERMINE: "Terminé",
   EN_ATTENTE: "En attente",
   FINANCE: "Financé",
+  ECHEC_FINANCEMENT: "Échec — objectif non atteint",
 };
 
 // === INVESTISSEMENT ===

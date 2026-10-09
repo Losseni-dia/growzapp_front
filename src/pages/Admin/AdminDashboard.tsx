@@ -13,6 +13,7 @@ import {
   FiTruck,
   FiShoppingBag,
   FiPackage,
+  FiAlertTriangle,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/Context/AuthContext";
@@ -36,6 +37,7 @@ export default function DashboardAdmin() {
     fournisseursEnAttente: 0,
     commandesEnAttente: 0,
     articlesEnAttente: 0,
+    projetsEcheanceDepassee: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -52,7 +54,7 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, invCounts, s, a, k, p, c, fo, cmd, art] = await Promise.all([
+      const [u, invCounts, s, a, k, p, c, fo, cmd, art, ech] = await Promise.all([
         api
           .get<any>("/api/admin/users?page=0&size=1")
           .catch(() => ({ data: { totalElements: 0 } })),
@@ -77,6 +79,9 @@ export default function DashboardAdmin() {
         api
           .get<any>("/api/admin/market/articles/en-attente")
           .catch(() => ({ data: [] })),
+        api
+          .get<any>("/api/admin/projets/echeance-depassee")
+          .catch(() => ({ data: [] })),
       ]);
 
       const projets = Array.isArray(p.data) ? p.data : [];
@@ -84,6 +89,7 @@ export default function DashboardAdmin() {
       const fournisseurs = Array.isArray(fo.data) ? fo.data : [];
       const commandesEnAttente = Array.isArray(cmd.data) ? cmd.data : [];
       const articlesEnAttente = Array.isArray(art.data) ? art.data : [];
+      const projetsEcheanceDepassee = Array.isArray(ech.data) ? ech.data : [];
 
       setStats({
         totalUsers: u.data?.totalElements || 0,
@@ -102,6 +108,7 @@ export default function DashboardAdmin() {
         fournisseursEnAttente: fournisseurs.length,
         commandesEnAttente: commandesEnAttente.length,
         articlesEnAttente: articlesEnAttente.length,
+        projetsEcheanceDepassee: projetsEcheanceDepassee.length,
       });
     } finally {
       setLoading(false);
@@ -232,6 +239,21 @@ export default function DashboardAdmin() {
             <span className={styles.statNumber}>{stats.projetsSoumis}</span>
             <span className={styles.statLabel}>
               {t("admin.dashboard.projects_pending")}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          to="/admin/projets"
+          className={`${styles.statCard} ${stats.projetsEcheanceDepassee > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiAlertTriangle size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.projetsEcheanceDepassee}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.projects_echeance_depassee", "Échéance dépassée, objectif non atteint")}
             </span>
           </div>
         </Link>
