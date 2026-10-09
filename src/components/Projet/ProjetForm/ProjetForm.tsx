@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { dataURLtoFile, getCroppedImg } from "../../../types/utils/CropImage";
 import { api } from "../../../service/Api";
 import { useAuth } from "../../Context/AuthContext";
-import { KycStatus, StatutFichePorteur } from "../../../types/enum";
+import { KycStatus } from "../../../types/enum";
 import type { SecteurDTO } from "../../../types/secteur";
 import type { PaysDTO } from "../../../types/pays";
 import type { LocaliteDTO } from "../../../types/localite";
@@ -440,35 +440,12 @@ export default function ProjectForm() {
     );
   }
 
-  // Deuxième garde-fou : la fiche de présentation professionnelle du
-  // porteur doit elle aussi être validée par un admin (distincte du KYC,
-  // qui ne couvre que l'identité civile) — même règle appliquée strictement
-  // côté backend (ProjetService.requireFichePorteurValidee).
-  if (user && user.ficheStatut !== StatutFichePorteur.VALIDEE) {
-    const isRejetee = user.ficheStatut === StatutFichePorteur.REJETEE;
-
-    return (
-      <div className={styles.pageWrapper}>
-        <div className={styles.kycGate}>
-          <h2>📋 {t("project_form.fiche_gate.title", "Fiche de présentation requise")}</h2>
-          <p>
-            {isRejetee
-              ? t(
-                  "project_form.fiche_gate.message_rejected",
-                  "Votre fiche de présentation a été marquée non conforme par notre équipe. Contactez GrowzApp pour la faire corriger avant de pouvoir soumettre un projet."
-                )
-              : t(
-                  "project_form.fiche_gate.message",
-                  "Avant de pouvoir soumettre un projet, votre profil doit être vérifié par notre équipe (fiche de présentation professionnelle). Contactez GrowzApp pour engager cette vérification — elle rassure les investisseurs sur le sérieux des porteurs de projet."
-                )}
-          </p>
-          <Link to="/profile/fiche-porteur" className={styles.kycGateBtn}>
-            {t("project_form.fiche_gate.cta", "Voir l'état de ma fiche")}
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // La fiche de présentation professionnelle du porteur (due diligence
+  // interne, rédigée par l'équipe GrowzApp) n'est plus une condition pour
+  // soumettre un projet : un KYC validé suffit. Elle reste en revanche
+  // requise pour qu'un projet soit publié au catalogue public — cf.
+  // ProjetService.changerStatut, qui bloque le passage à VALIDE tant que la
+  // fiche n'est pas elle-même VALIDEE.
 
   return (
     <div className={styles.pageWrapper}>

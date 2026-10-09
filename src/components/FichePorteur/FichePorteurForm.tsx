@@ -69,7 +69,7 @@ export default function FichePorteurForm() {
           <FiClock />{" "}
           {t(
             "fiche_porteur.badge_non_soumise",
-            "Aucune fiche n'a encore été créée pour vous. Contactez l'équipe GrowzApp pour engager la vérification de votre profil — c'est une étape nécessaire avant de pouvoir soumettre un projet."
+            "Aucune fiche n'a encore été créée pour vous. Vous pouvez déjà soumettre un projet, mais il ne pourra être publié au catalogue public qu'une fois cette fiche validée par notre équipe. Contactez-nous pour engager cette vérification."
           )}{" "}
           <Link to="/mon-espace/contact" className={styles.contactLink}>
             <FiMail size={13} /> {t("fiche_porteur.contact_link", "Contacter l'équipe")}
@@ -79,7 +79,7 @@ export default function FichePorteurForm() {
 
       {statut === StatutFichePorteur.VALIDEE && (
         <div className={styles.badgeValidee}>
-          <FiCheckCircle /> {t("fiche_porteur.badge_validee", "Votre fiche est validée. Vous pouvez soumettre vos projets.")}
+          <FiCheckCircle /> {t("fiche_porteur.badge_validee", "Votre fiche est validée. Vos projets peuvent être publiés au catalogue public.")}
         </div>
       )}
 
