@@ -25,6 +25,7 @@ export interface PorteurProjetLigneDTO {
   vitesseLevee: VelocitePointDTO[];
   premiumActif: boolean;
   premiumFin?: string;
+  joursAvantEcheance?: number;
 }
 
 export interface PorteurDashboardDTO {
