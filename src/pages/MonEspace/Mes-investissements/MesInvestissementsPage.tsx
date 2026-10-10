@@ -35,6 +35,7 @@ export default function MesInvestissementsPage() {
   const [downloading, setDownloading] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statutFilter, setStatutFilter] = useState("TOUS");
+  const [viewMode, setViewMode] = useState<"actifs" | "archives">("actifs");
   const [mapModalInv, setMapModalInv] = useState<InvestissementDTO | null>(
     null,
   );
@@ -177,9 +178,21 @@ export default function MesInvestissementsPage() {
     }
   };
 
+  const ARCHIVE_STATUTS = ["REJETE", "ANNULE", "REMBOURSE"];
+
+  const investissementsActifs = useMemo(
+    () => investissements.filter((inv) => !ARCHIVE_STATUTS.includes(inv.statutPartInvestissement)),
+    [investissements],
+  );
+  const investissementsArchives = useMemo(
+    () => investissements.filter((inv) => ARCHIVE_STATUTS.includes(inv.statutPartInvestissement)),
+    [investissements],
+  );
+
   const visibleInvestissements = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    return investissements
+    const base = viewMode === "actifs" ? investissementsActifs : investissementsArchives;
+    return base
       .filter((inv) => {
         const matchesStatut =
           statutFilter === "TOUS" ||
@@ -195,7 +208,7 @@ export default function MesInvestissementsPage() {
       .sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
       );
-  }, [investissements, searchTerm, statutFilter]);
+  }, [investissementsActifs, investissementsArchives, viewMode, searchTerm, statutFilter]);
 
   if (loading)
     return <div className={styles.loading}>{t("dashboard.loading")}</div>;
@@ -220,6 +233,31 @@ export default function MesInvestissementsPage() {
         </div>
       ) : (
         <>
+          <div className={styles.viewModeTabs}>
+            <button
+              type="button"
+              className={`${styles.viewModeTab} ${viewMode === "actifs" ? styles.viewModeTabActive : ""}`}
+              onClick={() => {
+                setViewMode("actifs");
+                setStatutFilter("TOUS");
+              }}
+            >
+              {t("user_investments.view_actifs", "Actifs")}
+              <span className={styles.viewModeCount}>{investissementsActifs.length}</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.viewModeTab} ${viewMode === "archives" ? styles.viewModeTabActive : ""}`}
+              onClick={() => {
+                setViewMode("archives");
+                setStatutFilter("TOUS");
+              }}
+            >
+              {t("user_investments.view_archives", "Archives")}
+              <span className={styles.viewModeCount}>{investissementsArchives.length}</span>
+            </button>
+          </div>
+
           <div className={styles.toolbar}>
             <div className={styles.searchBox}>
               <FiSearch size={18} />
@@ -238,18 +276,25 @@ export default function MesInvestissementsPage() {
               <option value="TOUS">
                 {t("user_investments.filter_all_status")}
               </option>
-              <option value="EN_ATTENTE">
-                {t("user_investments.status.pending")}
-              </option>
-              <option value="VALIDE">
-                {t("user_investments.status.validated")}
-              </option>
-              <option value="REJETE">
-                {t("user_investments.status.rejected")}
-              </option>
-              <option value="REMBOURSE">
-                {t("user_investments.status.refunded")}
-              </option>
+              {viewMode === "actifs" ? (
+                <>
+                  <option value="EN_ATTENTE">
+                    {t("user_investments.status.pending")}
+                  </option>
+                  <option value="VALIDE">
+                    {t("user_investments.status.validated")}
+                  </option>
+                </>
+              ) : (
+                <>
+                  <option value="REJETE">
+                    {t("user_investments.status.rejected")}
+                  </option>
+                  <option value="REMBOURSE">
+                    {t("user_investments.status.refunded")}
+                  </option>
+                </>
+              )}
             </select>
           </div>
 

@@ -482,6 +482,8 @@
     },
     "search_placeholder": "Search a project...",
     "filter_all_status": "All statuses",
+    "view_actifs": "Active",
+    "view_archives": "Archive",
     "no_results": "No investment matches your search",
     "card": {
       "parts": "shares",

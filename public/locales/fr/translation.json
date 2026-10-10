@@ -480,6 +480,8 @@
     },
     "search_placeholder": "Rechercher un projet...",
     "filter_all_status": "Tous les statuts",
+    "view_actifs": "Actifs",
+    "view_archives": "Archives",
     "no_results": "Aucun investissement ne correspond à votre recherche",
     "card": {
       "parts": "parts",

@@ -482,6 +482,8 @@
     },
     "search_placeholder": "Buscar un proyecto...",
     "filter_all_status": "Todos los estados",
+    "view_actifs": "Activos",
+    "view_archives": "Archivo",
     "no_results": "Ninguna inversión coincide con su búsqueda",
     "card": {
       "parts": "acciones",
