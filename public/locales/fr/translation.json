@@ -254,6 +254,8 @@
     "owner_anonymous": "Porteur anonyme",
     "no_description": "Aucune description fournie.",
     "status_completed": "Terminé",
+    "financing_failed": "Objectif non atteint à la date limite — ce projet a été clôturé et les investisseurs remboursés.",
+    "financing_failed_badge": "Échec de financement",
     "financing_completed": "Financement terminé",
     "kyc_warning": "Votre KYC doit être validé pour investir",
     "duration_undetermined": "Durée indéterminée",

@@ -194,6 +194,8 @@ export default function ProjetDetailsPage() {
 
   const financementTermine =
     progress >= 100 || projet.statutProjet === "TERMINE";
+  const echecFinancement = projet.statutProjet === "ECHEC_FINANCEMENT";
+  const financementFerme = financementTermine || echecFinancement;
 
   return (
     <div className={styles.container}>
@@ -234,18 +236,22 @@ export default function ProjetDetailsPage() {
             </span>
             <span
               className={`${styles.statutTag} ${
-                financementTermine
-                  ? styles.tagTermine
-                  : projet.statutProjet === "VALIDE"
-                    ? styles.tagEnCours
-                    : styles.tagDefault
+                echecFinancement
+                  ? styles.tagDefault
+                  : financementTermine
+                    ? styles.tagTermine
+                    : projet.statutProjet === "VALIDE"
+                      ? styles.tagEnCours
+                      : styles.tagDefault
               }`}
             >
-              {financementTermine
-                ? t("project_details.status_completed")
-                : projet.statutProjet === "VALIDE"
-                  ? t("project_details.in_progress")
-                  : projet.statutProjet}
+              {echecFinancement
+                ? t("project_details.financing_failed_badge", "Échec de financement")
+                : financementTermine
+                  ? t("project_details.status_completed")
+                  : projet.statutProjet === "VALIDE"
+                    ? t("project_details.in_progress")
+                    : projet.statutProjet}
             </span>
           </div>
           <h1 className={styles.heroTitle}>{libelleAffiche}</h1>
@@ -376,7 +382,24 @@ export default function ProjetDetailsPage() {
             </div>
           )}
 
-          {/* Progression financement */}
+          {/* Progression financement — remplacée par un message clair sur un
+              projet clôturé en échec : les montants collectés/parts prises
+              affichés sur la fiche restent ceux d'avant remboursement
+              (historique figé), les montrer comme des chiffres "actifs"
+              serait trompeur. */}
+          {echecFinancement ? (
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>
+                📊 {t("project_details.financing")}
+              </h2>
+              <div className={styles.echecFinancementNotice}>
+                ⚠️ {t(
+                  "project_details.financing_failed",
+                  "Objectif non atteint à la date limite — ce projet a été clôturé et les investisseurs remboursés.",
+                )}
+              </div>
+            </div>
+          ) : (
           <div className={styles.card}>
             <h2 className={styles.cardTitle}>
               📊 {t("project_details.financing")}
@@ -429,6 +452,7 @@ export default function ProjetDetailsPage() {
               </span>
             </div>
           </div>
+          )}
 
           {/* Description */}
           <div className={styles.card}>
@@ -579,8 +603,10 @@ export default function ProjetDetailsPage() {
             )}
           </div>
 
-          {/* Bouton investir */}
-          {!financementTermine ? (
+          {/* Bouton investir — jamais affiché sur un projet clôturé en échec
+              de financement, même si le statut VALIDE semblait l'autoriser
+              par ailleurs (lien de notification, mise en cache, etc.) */}
+          {!financementFerme ? (
             <button
               className={styles.btnInvest}
               onClick={() => setShowInvestModal(true)}
@@ -588,6 +614,10 @@ export default function ProjetDetailsPage() {
             >
               <FiDollarSign /> {t("project_details.invest_button")}
             </button>
+          ) : echecFinancement ? (
+            <div className={styles.btnFinished} style={{ background: "#fef2f2", color: "#b91c1c" }}>
+              ⚠️ {t("project_details.financing_failed", "Objectif non atteint à la date limite — ce projet a été clôturé et les investisseurs remboursés.")}
+            </div>
           ) : (
             <div className={styles.btnFinished}>
               ✅ {t("project_details.financing_completed")}

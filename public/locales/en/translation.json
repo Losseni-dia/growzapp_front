@@ -255,6 +255,8 @@
     "owner_anonymous": "Anonymous backer",
     "no_description": "No description provided.",
     "status_completed": "Completed",
+    "financing_failed": "Goal not reached by the deadline — this project was closed and investors were refunded.",
+    "financing_failed_badge": "Funding failed",
     "financing_completed": "Financing completed",
     "kyc_warning": "Your KYC must be validated to invest",
     "duration_undetermined": "Undetermined duration",
