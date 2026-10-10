@@ -6,4 +6,5 @@ export interface DocumentDTO {
   type: string;
   uploadedAt: string;
   statut?: string;
+  archive?: boolean;
 }

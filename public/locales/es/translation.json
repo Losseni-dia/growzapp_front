@@ -837,9 +837,16 @@
       "download": "Descargar",
       "approve": "Aprobar",
       "reject": "Rechazar",
+      "archive": "Archivar",
+      "unarchive": "Desarchivar",
+      "delete": "Eliminar",
+      "show_archived": "Mostrar mis documentos archivados",
+      "empty_archived": "Ningún documento archivado",
+      "confirm_delete": "¿Eliminar este documento de forma permanente?",
       "toast": {
         "approved": "Documento aprobado",
         "rejected": "Documento rechazado",
+        "deleted": "Documento eliminado",
         "error": "Ocurrió un error"
       }
     },

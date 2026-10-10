@@ -22,6 +22,8 @@ import {
   FiX,
   FiAlertTriangle,
   FiCalendar,
+  FiArchive,
+  FiRotateCcw,
 } from "react-icons/fi";
 import { ApiResponse } from "../../../../types/common";
 import { ProjetDTO } from "../../../../types/projet";
@@ -35,6 +37,7 @@ interface DocumentDTO {
   type: string;
   uploadedAt: string;
   statut?: string;
+  archive?: boolean;
 }
 
 export default function ProjetAdminDetail() {
@@ -52,6 +55,7 @@ export default function ProjetAdminDetail() {
   const [submitting, setSubmitting] = useState(false);
 
   const [activeTab, setActiveTab] = useState<"documents" | "messages">("documents");
+  const [showArchivedDocs, setShowArchivedDocs] = useState(false);
 
   const [showProlonger, setShowProlonger] = useState(false);
   const [nouvelleDateFin, setNouvelleDateFin] = useState("");
@@ -143,6 +147,28 @@ export default function ProjetAdminDetail() {
       loadProjetAndDocuments();
     } catch {
       toast.error(t("admin.documents.toast.error") as string);
+    }
+  };
+
+  // Suppression définitive — réservée à l'admin, retire le document pour
+  // tout le monde (contrairement à l'archivage qui est personnel).
+  const handleSupprimerDocument = async (docId: number) => {
+    if (!window.confirm(t("admin.documents.confirm_delete", "Supprimer définitivement ce document ?") as string)) return;
+    try {
+      await api.delete(`api/documents/${docId}`);
+      toast.success(t("admin.documents.toast.deleted", "Document supprimé") as string);
+      loadProjetAndDocuments();
+    } catch (err: any) {
+      toast.error(err.message || (t("admin.documents.toast.error") as string));
+    }
+  };
+
+  const handleArchiverDocument = async (doc: DocumentDTO) => {
+    try {
+      await api.post(`api/documents/${doc.id}/${doc.archive ? "desarchiver" : "archiver"}`, {});
+      loadProjetAndDocuments();
+    } catch (err: any) {
+      toast.error(err.message || (t("admin.documents.toast.error") as string));
     }
   };
 
@@ -469,11 +495,26 @@ export default function ProjetAdminDetail() {
           )}
 
           <div className={styles.documentsSection}>
-            {documents.length === 0 ? (
-              <p className={styles.noDocs}>{t("admin.documents.empty")}</p>
+            <label className={styles.archiveToggle}>
+              <input
+                type="checkbox"
+                checked={showArchivedDocs}
+                onChange={(e) => setShowArchivedDocs(e.target.checked)}
+              />
+              {t("admin.documents.show_archived", "Afficher mes documents archivés")}
+              {" "}({documents.filter((d) => d.archive).length})
+            </label>
+            {documents.filter((d) => !!d.archive === showArchivedDocs).length === 0 ? (
+              <p className={styles.noDocs}>
+                {showArchivedDocs
+                  ? t("admin.documents.empty_archived", "Aucun document archivé")
+                  : t("admin.documents.empty")}
+              </p>
             ) : (
               <div className={styles.grid}>
-                {documents.map((doc) => (
+                {documents
+                  .filter((d) => !!d.archive === showArchivedDocs)
+                  .map((doc) => (
                   <div key={doc.id} className={styles.docCard}>
                     <div className={styles.docTop}>
                       <div className={styles.docIcon}>{getIcon(doc.type)}</div>
@@ -500,6 +541,26 @@ export default function ProjetAdminDetail() {
                       >
                         <FiDownload />
                       </button>
+                      <button
+                        onClick={() => handleArchiverDocument(doc)}
+                        className={styles.iconBtn}
+                        title={
+                          doc.archive
+                            ? (t("admin.documents.unarchive", "Désarchiver") as string)
+                            : (t("admin.documents.archive", "Archiver") as string)
+                        }
+                      >
+                        {doc.archive ? <FiRotateCcw /> : <FiArchive />}
+                      </button>
+                      {user?.roles?.includes("ADMIN") && (
+                        <button
+                          onClick={() => handleSupprimerDocument(doc.id)}
+                          className={styles.iconBtn}
+                          title={t("admin.documents.delete", "Supprimer") as string}
+                        >
+                          <FiTrash2 />
+                        </button>
+                      )}
                       {doc.statut === "EN_ATTENTE" && (
                         <>
                           <button

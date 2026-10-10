@@ -862,9 +862,16 @@
       "download": "Télécharger",
       "approve": "Approuver",
       "reject": "Rejeter",
+      "archive": "Archiver",
+      "unarchive": "Désarchiver",
+      "delete": "Supprimer",
+      "show_archived": "Afficher mes documents archivés",
+      "empty_archived": "Aucun document archivé",
+      "confirm_delete": "Supprimer définitivement ce document ?",
       "toast": {
         "approved": "Document approuvé",
         "rejected": "Document rejeté",
+        "deleted": "Document supprimé",
         "error": "Une erreur est survenue"
       }
     },

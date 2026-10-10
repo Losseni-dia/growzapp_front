@@ -837,9 +837,16 @@
       "download": "Download",
       "approve": "Approve",
       "reject": "Reject",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
+      "delete": "Delete",
+      "show_archived": "Show my archived documents",
+      "empty_archived": "No archived document",
+      "confirm_delete": "Permanently delete this document?",
       "toast": {
         "approved": "Document approved",
         "rejected": "Document rejected",
+        "deleted": "Document deleted",
         "error": "An error occurred"
       }
     },
