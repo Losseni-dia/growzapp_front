@@ -1707,7 +1707,9 @@
       "transactions_fournisseur": "Supplier",
       "transactions_growzmarket": "GrowzMarket",
       "transactions_empty": "No transaction.",
-      "not_found": "Project not found."
+      "not_found": "Project not found.",
+      "echeance_proche": "{{count}} day left to reach your funding goal.",
+      "echeance_proche_plural": "{{count}} days left to reach your funding goal."
     },
     "wallet": {
       "withdraw_btn": "Withdraw",

@@ -129,6 +129,15 @@ function ProjetPorteurCard({
         </div>
       </div>
 
+      {ligne.joursAvantEcheance != null &&
+        ligne.joursAvantEcheance >= 0 &&
+        ligne.joursAvantEcheance <= 30 &&
+        ligne.montantCollecte < ligne.objectifFinancement && (
+          <div className={styles.echeanceProcheNotice}>
+            {t("porteur.card.echeance_proche", { count: ligne.joursAvantEcheance })}
+          </div>
+        )}
+
       {/* ── STATS AGRÉGÉES (anonymisées) ── */}
       <div className={styles.statsRow}>
         <div className={styles.statItem}>

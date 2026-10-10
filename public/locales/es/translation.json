@@ -1691,7 +1691,9 @@
       "transactions_fournisseur": "Proveedor",
       "transactions_growzmarket": "GrowzMarket",
       "transactions_empty": "Ninguna transacción.",
-      "not_found": "Proyecto no encontrado."
+      "not_found": "Proyecto no encontrado.",
+      "echeance_proche": "Queda {{count}} día para alcanzar su objetivo de financiación.",
+      "echeance_proche_plural": "Quedan {{count}} días para alcanzar su objetivo de financiación."
     },
     "wallet": {
       "withdraw_btn": "Retirar",

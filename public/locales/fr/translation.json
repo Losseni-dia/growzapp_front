@@ -1732,7 +1732,9 @@
       "transactions_fournisseur": "Fournisseur",
       "transactions_growzmarket": "GrowzMarket",
       "transactions_empty": "Aucune transaction.",
-      "not_found": "Projet introuvable."
+      "not_found": "Projet introuvable.",
+      "echeance_proche": "Il reste {{count}} jour pour atteindre votre objectif de financement.",
+      "echeance_proche_plural": "Il reste {{count}} jours pour atteindre votre objectif de financement."
     },
     "wallet": {
       "withdraw_btn": "Retirer",
