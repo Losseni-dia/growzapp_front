@@ -77,6 +77,17 @@ export default function ProjetAdminDetail() {
     if (id) loadProjetAndDocuments();
   }, [id]);
 
+  // Un clic sur une notification de message investisseur arrive avec
+  // #messages-investisseurs dans l'URL — on scrolle directement vers le
+  // fil de discussion plutôt que de laisser l'admin chercher sur la page.
+  useEffect(() => {
+    if (window.location.hash === "#messages-investisseurs") {
+      document
+        .getElementById("messages-investisseurs")
+        ?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [loading]);
+
   const handleDownload = async (docId: number, nom: string, type: string) => {
     try {
       const response = await fetch(
@@ -431,7 +442,7 @@ export default function ProjetAdminDetail() {
         </div>
       )}
 
-      <div className={styles.documentsSection}>
+      <div className={styles.documentsSection} id="messages-investisseurs">
         <h2>{t("projet_messages.title", "Messages investisseurs")}</h2>
         <ProjetMessageThread projetId={Number(id)} isAdmin />
       </div>

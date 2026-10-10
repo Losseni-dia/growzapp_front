@@ -13,7 +13,7 @@ export interface ProjetMessageDTO {
   auteurNom: string;
   role: "ADMIN" | "INVESTISSEUR";
   contenu: string;
-  destinataireIds: number[];
+  destinataireIds: number[] | null;
   dateEnvoi: string;
 }
 
@@ -120,10 +120,10 @@ export default function ProjetMessageThread({
                   {m.role === "ADMIN"
                     ? t("projet_messages.role_admin", "GrowzApp")
                     : t("projet_messages.role_investisseur", "Investisseur")}
-                  {isAdmin && m.role === "ADMIN" && m.destinataireIds.length > 0 && (
+                  {isAdmin && m.role === "ADMIN" && (m.destinataireIds?.length ?? 0) > 0 && (
                     <span className={styles.destinataireTag}>
                       {" → "}
-                      {t("projet_messages.cible_count", { count: m.destinataireIds.length })}
+                      {t("projet_messages.cible_count", { count: m.destinataireIds?.length ?? 0 })}
                     </span>
                   )}
                 </span>
