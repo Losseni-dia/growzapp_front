@@ -18,6 +18,12 @@ export default function MesContratsPage() {
   const [contrats, setContrats] = useState<InvestissementDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"actifs" | "archives">("actifs");
+
+  const ARCHIVE_STATUTS = ["REJETE", "ANNULE", "REMBOURSE"];
+  const contratsActifs = contrats.filter((c) => !ARCHIVE_STATUTS.includes(c.statutPartInvestissement));
+  const contratsArchives = contrats.filter((c) => ARCHIVE_STATUTS.includes(c.statutPartInvestissement));
+  const contratsVisibles = viewMode === "actifs" ? contratsActifs : contratsArchives;
 
   const locales: any = { fr, en: enUS, es };
   const currentLocale = locales[i18n.language] || fr;
@@ -108,6 +114,32 @@ export default function MesContratsPage() {
           <p>{t("my_contracts.empty")}</p>
         </div>
       ) : (
+        <>
+          <div className={styles.viewModeTabs}>
+            <button
+              type="button"
+              className={`${styles.viewModeTab} ${viewMode === "actifs" ? styles.viewModeTabActive : ""}`}
+              onClick={() => setViewMode("actifs")}
+            >
+              {t("user_investments.view_actifs", "Actifs")}
+              <span className={styles.viewModeCount}>{contratsActifs.length}</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.viewModeTab} ${viewMode === "archives" ? styles.viewModeTabActive : ""}`}
+              onClick={() => setViewMode("archives")}
+            >
+              {t("user_investments.view_archives", "Archives")}
+              <span className={styles.viewModeCount}>{contratsArchives.length}</span>
+            </button>
+          </div>
+
+          {contratsVisibles.length === 0 ? (
+            <div className={styles.emptyState}>
+              <FiFileText size={64} />
+              <p>{t("my_contracts.empty")}</p>
+            </div>
+          ) : (
         <div className={styles.tableWrapper}>
           <table className={styles.table}>
             <thead>
@@ -121,7 +153,7 @@ export default function MesContratsPage() {
               </tr>
             </thead>
             <tbody>
-              {contrats.map((c) => (
+              {contratsVisibles.map((c) => (
                 <tr key={c.id}>
                   <td className={styles.mono}>{c.numeroContrat}</td>
                   <td>{c.projetLibelleTradu || c.projetLibelle}</td>
@@ -139,7 +171,9 @@ export default function MesContratsPage() {
                             ? "validated"
                             : c.statutPartInvestissement === "EN_ATTENTE"
                               ? "pending"
-                              : "rejected"
+                              : c.statutPartInvestissement === "REMBOURSE"
+                                ? "refunded"
+                                : "rejected"
                         }`,
                       )}
                     </span>
@@ -173,6 +207,8 @@ export default function MesContratsPage() {
             </tbody>
           </table>
         </div>
+          )}
+        </>
       )}
     </div>
   );
