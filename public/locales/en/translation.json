@@ -833,6 +833,7 @@
       "col_status": "Status",
       "col_date": "Date",
       "col_actions": "Actions",
+      "view": "View",
       "download": "Download",
       "approve": "Approve",
       "reject": "Reject",

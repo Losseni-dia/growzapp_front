@@ -833,6 +833,7 @@
       "col_status": "Estado",
       "col_date": "Fecha",
       "col_actions": "Acciones",
+      "view": "Ver",
       "download": "Descargar",
       "approve": "Aprobar",
       "reject": "Rechazar",

@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import styles from "./ProjetAdminDetail.module.css";
 import {
   FiDownload,
+  FiEye,
   FiFileText,
   FiImage,
   FiFile,
@@ -88,10 +89,23 @@ export default function ProjetAdminDetail() {
     }
   }, [loading]);
 
-  const handleDownload = async (docId: number, nom: string, type: string) => {
+  // L'extension réelle du fichier stocké (visible dans doc.url, ex.
+  // "/files/documents/uuid_photo.jpg") fait foi — deviner l'extension à
+  // partir de doc.type ("IMAGE" n'a pas d'extension fixe : jpg/png/webp)
+  // produisait un fichier sans extension que l'OS ne savait plus ouvrir.
+  const getRealExtension = (url: string) => {
+    const match = url.match(/\.([a-zA-Z0-9]+)$/);
+    return match ? `.${match[1]}` : "";
+  };
+
+  const handleVoir = (doc: DocumentDTO) => {
+    window.open(`${API_BASE_URL}${doc.url}`, "_blank");
+  };
+
+  const handleDownload = async (doc: DocumentDTO) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/documents/${docId}/download`,
+        `${API_BASE_URL}/api/documents/${doc.id}/download`,
         { method: "GET", credentials: "include" },
       );
       if (!response.ok) {
@@ -102,14 +116,7 @@ export default function ProjetAdminDetail() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download =
-        type === "PDF"
-          ? `${nom}.pdf`
-          : type === "EXCEL"
-            ? `${nom}.xlsx`
-            : type === "CSV"
-              ? `${nom}.csv`
-              : nom;
+      a.download = `${doc.nom}${getRealExtension(doc.url)}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -480,7 +487,14 @@ export default function ProjetAdminDetail() {
                     {statutBadge(doc.statut)}
                     <div className={styles.docActions}>
                       <button
-                        onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
+                        onClick={() => handleVoir(doc)}
+                        className={styles.iconBtn}
+                        title={t("admin.documents.view", "Voir") as string}
+                      >
+                        <FiEye />
+                      </button>
+                      <button
+                        onClick={() => handleDownload(doc)}
                         className={styles.iconBtn}
                         title={t("admin.documents.download") as string}
                       >
