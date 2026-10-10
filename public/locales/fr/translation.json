@@ -2113,6 +2113,8 @@
       "verifying": "Vérification en cours...",
       "valid_title": "✅ Contrat VALIDE",
       "valid_desc": "Ce contrat est authentique et n'a pas été modifié.",
+      "refunded_title": "🔄 Investissement remboursé — contrat archivé",
+      "refunded_desc": "Ce contrat est authentique, mais l'investissement correspondant a été intégralement remboursé et ne représente plus une participation active.",
       "invalid_title": "❌ Contrat FALSIFIÉ",
       "invalid_desc": "ATTENTION — Ce contrat a été modifié. Il est invalide.",
       "scan_another": "Scanner un autre contrat",

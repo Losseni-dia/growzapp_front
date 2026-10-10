@@ -2109,6 +2109,8 @@
       "verifying": "Verifying...",
       "valid_title": "✅ Contract VALID",
       "valid_desc": "This contract is authentic and has not been altered.",
+      "refunded_title": "🔄 Investment refunded — contract archived",
+      "refunded_desc": "This contract is authentic, but the corresponding investment has been fully refunded and no longer represents an active holding.",
       "invalid_title": "❌ Contract FORGED",
       "invalid_desc": "WARNING — This contract has been altered. It is invalid.",
       "scan_another": "Scan another contract",

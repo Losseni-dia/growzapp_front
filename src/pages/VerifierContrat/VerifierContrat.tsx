@@ -9,6 +9,7 @@ import {
   FiCheckCircle,
   FiXCircle,
   FiRefreshCw,
+  FiRotateCcw,
 } from "react-icons/fi";
 import { api } from "../../service/Api";
 import styles from "./VerifierContrat.module.css";
@@ -20,6 +21,8 @@ interface ContratPublicDTO {
   investisseur: string;
   montant: number;
   date: string;
+  statutInvestissement?: string | null;
+  archiveLe?: string | null;
 }
 
 type Etat = "scan" | "loading" | "result" | "error";
@@ -169,7 +172,13 @@ export default function VerifierContrat() {
           {/* ÉTAT : RÉSULTAT */}
           {etat === "result" && resultat && (
             <div className={styles.result}>
-              {resultat.valide ? (
+              {resultat.valide && resultat.statutInvestissement === "REMBOURSE" ? (
+                <div className={styles.success} style={{ color: "#1976d2" }}>
+                  <FiRotateCcw size={64} />
+                  <h2>{t("verify_contract.scan.refunded_title")}</h2>
+                  <p>{t("verify_contract.scan.refunded_desc")}</p>
+                </div>
+              ) : resultat.valide ? (
                 <div className={styles.success}>
                   <FiCheckCircle size={64} />
                   <h2>{t("verify_contract.scan.valid_title")}</h2>

@@ -2107,6 +2107,8 @@
       "verifying": "Verificando...",
       "valid_title": "✅ Contrato VÁLIDO",
       "valid_desc": "Este contrato es auténtico y no ha sido modificado.",
+      "refunded_title": "🔄 Inversión reembolsada — contrato archivado",
+      "refunded_desc": "Este contrato es auténtico, pero la inversión correspondiente ha sido reembolsada íntegramente y ya no representa una participación activa.",
       "invalid_title": "❌ Contrato FALSIFICADO",
       "invalid_desc": "ATENCIÓN — Este contrato ha sido modificado. No es válido.",
       "scan_another": "Escanear otro contrato",
