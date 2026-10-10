@@ -968,6 +968,7 @@
       "project_treasury": "Trésorerie des projets",
       "projects_pending": "Projets soumis",
       "projects_echeance_depassee": "Échéance dépassée, objectif non atteint",
+      "projects_echeance_proche": "Échéance proche (30 jours), objectif non atteint",
       "validate_projects": "Valider les projets soumis",
       "messages_pending": "Messages en attente",
       "fournisseurs_pending": "Fournisseurs en attente",

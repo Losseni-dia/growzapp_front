@@ -943,6 +943,7 @@
       "project_treasury": "Project treasury",
       "projects_pending": "Submitted projects",
       "projects_echeance_depassee": "Deadline passed, goal not reached",
+      "projects_echeance_proche": "Deadline approaching (30 days), goal not reached",
       "validate_projects": "Validate submitted projects",
       "messages_pending": "Pending messages",
       "fournisseurs_pending": "Suppliers pending",

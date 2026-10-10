@@ -38,6 +38,7 @@ export default function DashboardAdmin() {
     commandesEnAttente: 0,
     articlesEnAttente: 0,
     projetsEcheanceDepassee: 0,
+    projetsEcheanceProche: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -54,7 +55,7 @@ export default function DashboardAdmin() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const [u, invCounts, s, a, k, p, c, fo, cmd, art, ech] = await Promise.all([
+      const [u, invCounts, s, a, k, p, c, fo, cmd, art, ech, echProche] = await Promise.all([
         api
           .get<any>("/api/admin/users?page=0&size=1")
           .catch(() => ({ data: { totalElements: 0 } })),
@@ -82,6 +83,9 @@ export default function DashboardAdmin() {
         api
           .get<any>("/api/admin/projets/echeance-depassee")
           .catch(() => ({ data: [] })),
+        api
+          .get<any>("/api/admin/projets/echeance-proche")
+          .catch(() => ({ data: [] })),
       ]);
 
       const projets = Array.isArray(p.data) ? p.data : [];
@@ -90,6 +94,7 @@ export default function DashboardAdmin() {
       const commandesEnAttente = Array.isArray(cmd.data) ? cmd.data : [];
       const articlesEnAttente = Array.isArray(art.data) ? art.data : [];
       const projetsEcheanceDepassee = Array.isArray(ech.data) ? ech.data : [];
+      const projetsEcheanceProche = Array.isArray(echProche.data) ? echProche.data : [];
 
       setStats({
         totalUsers: u.data?.totalElements || 0,
@@ -109,6 +114,7 @@ export default function DashboardAdmin() {
         commandesEnAttente: commandesEnAttente.length,
         articlesEnAttente: articlesEnAttente.length,
         projetsEcheanceDepassee: projetsEcheanceDepassee.length,
+        projetsEcheanceProche: projetsEcheanceProche.length,
       });
     } finally {
       setLoading(false);
@@ -254,6 +260,21 @@ export default function DashboardAdmin() {
             <span className={styles.statNumber}>{stats.projetsEcheanceDepassee}</span>
             <span className={styles.statLabel}>
               {t("admin.dashboard.projects_echeance_depassee", "Échéance dépassée, objectif non atteint")}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          to="/admin/projets"
+          className={`${styles.statCard} ${stats.projetsEcheanceProche > 0 ? styles.statCardAlert : ""}`}
+        >
+          <div className={styles.statIconWrap}>
+            <FiClock size={18} />
+          </div>
+          <div className={styles.statContent}>
+            <span className={styles.statNumber}>{stats.projetsEcheanceProche}</span>
+            <span className={styles.statLabel}>
+              {t("admin.dashboard.projects_echeance_proche", "Échéance proche (30 jours), objectif non atteint")}
             </span>
           </div>
         </Link>
