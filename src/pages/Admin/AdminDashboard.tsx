@@ -250,7 +250,7 @@ export default function DashboardAdmin() {
         </Link>
 
         <Link
-          to="/admin/projets"
+          to="/admin/projets?tab=ECHEANCE_DEPASSEE"
           className={`${styles.statCard} ${stats.projetsEcheanceDepassee > 0 ? styles.statCardAlert : ""}`}
         >
           <div className={styles.statIconWrap}>
@@ -265,7 +265,7 @@ export default function DashboardAdmin() {
         </Link>
 
         <Link
-          to="/admin/projets"
+          to="/admin/projets?tab=ECHEANCE_PROCHE"
           className={`${styles.statCard} ${stats.projetsEcheanceProche > 0 ? styles.statCardAlert : ""}`}
         >
           <div className={styles.statIconWrap}>

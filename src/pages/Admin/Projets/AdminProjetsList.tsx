@@ -30,7 +30,28 @@ interface ProjetAdmin {
   localiteNom?: string;
   createdAt?: string;
   documentsEnAttente?: number;
+  dateFin?: string;
 }
+
+// Échéance de financement dépassée / proche sans objectif atteint — même
+// logique que ProjetService.listeEcheanceDepassee()/listeEcheanceProche()
+// côté backend, recalculée ici pour permettre le filtrage par tab.
+const objectifNonAtteint = (p: ProjetAdmin) =>
+  p.objectifFinancement != null && p.montantCollecte < p.objectifFinancement;
+
+const isEcheanceDepassee = (p: ProjetAdmin) => {
+  if (!p.dateFin || !objectifNonAtteint(p)) return false;
+  return new Date(p.dateFin) < new Date(new Date().toDateString());
+};
+
+const isEcheanceProche = (p: ProjetAdmin) => {
+  if (!p.dateFin || !objectifNonAtteint(p)) return false;
+  const aujourdHui = new Date(new Date().toDateString());
+  const limite = new Date(aujourdHui);
+  limite.setDate(limite.getDate() + 30);
+  const fin = new Date(p.dateFin);
+  return fin >= aujourdHui && fin <= limite;
+};
 
 type SortKey = "recent" | "ancien" | "collecte" | "objectif";
 
@@ -43,7 +64,8 @@ export default function AdminProjetsList() {
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(
-    initialTab && ["TOUS", "SOUMIS", "VALIDE", "REJETE"].includes(initialTab)
+    initialTab &&
+      ["TOUS", "SOUMIS", "VALIDE", "REJETE", "ECHEANCE_DEPASSEE", "ECHEANCE_PROCHE"].includes(initialTab)
       ? initialTab
       : "TOUS",
   );
@@ -81,7 +103,14 @@ export default function AdminProjetsList() {
 
   const filteredProjets = useMemo(() => {
     let list = projets.filter((p) => {
-      const matchesTab = activeTab === "TOUS" || p.statutProjet === activeTab;
+      const matchesTab =
+        activeTab === "TOUS"
+          ? true
+          : activeTab === "ECHEANCE_DEPASSEE"
+            ? isEcheanceDepassee(p)
+            : activeTab === "ECHEANCE_PROCHE"
+              ? isEcheanceProche(p)
+              : p.statutProjet === activeTab;
       const matchesSecteur =
         secteurFilter === "TOUS" || p.secteurNom === secteurFilter;
       const search = searchTerm.toLowerCase();
@@ -300,6 +329,24 @@ export default function AdminProjetsList() {
               </span>
             </button>
           ))}
+          <button
+            className={`${styles.tabButton} ${activeTab === "ECHEANCE_PROCHE" ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab("ECHEANCE_PROCHE")}
+          >
+            {t("admin.dashboard.projects_echeance_proche", "Échéance proche")}
+            <span className={styles.countBadge}>
+              {projets.filter(isEcheanceProche).length}
+            </span>
+          </button>
+          <button
+            className={`${styles.tabButton} ${activeTab === "ECHEANCE_DEPASSEE" ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab("ECHEANCE_DEPASSEE")}
+          >
+            {t("admin.dashboard.projects_echeance_depassee", "Échéance dépassée")}
+            <span className={styles.countBadge}>
+              {projets.filter(isEcheanceDepassee).length}
+            </span>
+          </button>
         </div>
 
         <div className={styles.sortBar}>
