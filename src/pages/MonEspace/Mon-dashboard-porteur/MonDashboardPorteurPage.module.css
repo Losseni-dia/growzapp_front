@@ -138,6 +138,48 @@
   gap: 10px;
 }
 
+.viewModeTabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.viewModeTab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.viewModeTab:hover {
+  background: #f1f5f9;
+}
+
+.viewModeTabActive {
+  background: var(--growz-primary, #1b5e20);
+  border-color: var(--growz-primary, #1b5e20);
+  color: white;
+}
+
+.viewModeCount {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.viewModeTabActive .viewModeCount {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .searchWrapper {
   display: flex;
   align-items: center;

@@ -257,9 +257,18 @@ export default function MonDashboardPorteurPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("invested");
+  const [viewMode, setViewMode] = useState<"actifs" | "archives">("actifs");
+
+  const ARCHIVE_STATUTS = ["REJETE", "ECHEC_FINANCEMENT"];
+  const projetsActifs = (dashboard?.projets ?? []).filter(
+    (p) => !ARCHIVE_STATUTS.includes(p.statutProjet),
+  );
+  const projetsArchives = (dashboard?.projets ?? []).filter((p) =>
+    ARCHIVE_STATUTS.includes(p.statutProjet),
+  );
 
   const projetsAffiches = useMemo(() => {
-    const projets = dashboard?.projets ?? [];
+    const projets = viewMode === "actifs" ? projetsActifs : projetsArchives;
     const term = normalize(search);
     const filtres = term
       ? projets.filter(
@@ -282,7 +291,7 @@ export default function MonDashboardPorteurPage() {
           return b.montantCollecte - a.montantCollecte;
       }
     });
-  }, [dashboard, search, sortBy]);
+  }, [dashboard, search, sortBy, viewMode]);
 
   const fetchDashboard = () => {
     return api
@@ -397,6 +406,24 @@ export default function MonDashboardPorteurPage() {
       <section className={styles.projetsSection}>
         <div className={styles.projetsSectionHeader}>
           <h2 className={styles.sectionTitle}>{t("porteur.projects_title")}</h2>
+          <div className={styles.viewModeTabs}>
+            <button
+              type="button"
+              className={`${styles.viewModeTab} ${viewMode === "actifs" ? styles.viewModeTabActive : ""}`}
+              onClick={() => setViewMode("actifs")}
+            >
+              {t("user_investments.view_actifs", "Actifs")}
+              <span className={styles.viewModeCount}>{projetsActifs.length}</span>
+            </button>
+            <button
+              type="button"
+              className={`${styles.viewModeTab} ${viewMode === "archives" ? styles.viewModeTabActive : ""}`}
+              onClick={() => setViewMode("archives")}
+            >
+              {t("user_investments.view_archives", "Archives")}
+              <span className={styles.viewModeCount}>{projetsArchives.length}</span>
+            </button>
+          </div>
           <div className={styles.toolbar}>
             <div className={styles.searchWrapper}>
               <input
