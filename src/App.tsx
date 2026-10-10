@@ -70,6 +70,9 @@ const DepositSuccess = lazy(() => import("./pages/Depot/Success/SuccessPage"));
 const MesInvestissementsPage = lazy(
   () => import("./pages/MonEspace/Mes-investissements/MesInvestissementsPage"),
 );
+const MessagesProjetPage = lazy(
+  () => import("./pages/MonEspace/MessagesProjet/MessagesProjetPage"),
+);
 const MesDividendesPage = lazy(
   () => import("./pages/MonEspace/Mes-dividendes/MesDividendes"),
 );
@@ -317,6 +320,10 @@ function AppInner() {
                   <Route
                     path="/mes-investissements"
                     element={<MesInvestissementsPage />}
+                  />
+                  <Route
+                    path="/projets/:projetId/messages"
+                    element={<MessagesProjetPage />}
                   />
                   <Route
                     path="/mes-projets"

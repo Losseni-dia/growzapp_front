@@ -1,4 +1,21 @@
 {
+  "projet_messages": {
+    "title": "Mensajes de inversores",
+    "empty": "Ningún mensaje por el momento.",
+    "placeholder": "Su mensaje...",
+    "role_admin": "GrowzApp",
+    "role_investisseur": "Inversor",
+    "cible_tous": "Todos los inversores",
+    "cible_cibles": "Inversores seleccionados",
+    "cible_count": "{{count}} inversor seleccionado",
+    "cible_count_plural": "{{count}} inversores seleccionados",
+    "aucun_investisseur": "Ningún inversor en este proyecto.",
+    "toast_validation": "El mensaje no puede estar vacío",
+    "toast_cible_required": "Seleccione al menos un inversor",
+    "toast_error": "Error al enviar",
+    "toast_load_error": "Error al cargar los mensajes",
+    "link_label": "Chatear con el equipo de GrowzApp"
+  },
   "welcome": "Bienvenido a GrowzApp",
   "login": "Iniciar sesión",
   "logout": "Cerrar sesión",

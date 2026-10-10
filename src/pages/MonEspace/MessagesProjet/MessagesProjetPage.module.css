@@ -1,0 +1,28 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--growz-primary, #1b5e20);
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.title {
+  color: var(--growz-primary, #1b5e20);
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 1.25rem;
+}

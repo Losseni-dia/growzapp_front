@@ -13,6 +13,7 @@ import {
   FiDownload,
   FiEye,
   FiMapPin,
+  FiMessageCircle,
   FiNavigation,
   FiRotateCcw,
   FiSearch,
@@ -362,6 +363,14 @@ export default function MesInvestissementsPage() {
                       className={styles.btnVoirProjet}
                     >
                       {t("user_investments.card.btn_view_project")}
+                    </Link>
+
+                    <Link
+                      to={`/projets/${inv.projetId}/messages`}
+                      className={styles.btnAction}
+                      title={t("projet_messages.link_label", "Discuter avec l'équipe GrowzApp") as string}
+                    >
+                      <FiMessageCircle size={18} />
                     </Link>
 
                     {/* BOUTON GPS (JAUNE) — ouvre la carte intégrée ; à

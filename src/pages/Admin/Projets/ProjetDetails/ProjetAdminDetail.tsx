@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../service/Api";
 import DocumentUpload from "../../../../components/DocumentUpload/DocumentUpload";
+import ProjetMessageThread from "../../../../components/Projet/ProjetMessageThread";
 import { useAuth } from "../../../../components/Context/AuthContext";
 import toast from "react-hot-toast";
 import styles from "./ProjetAdminDetail.module.css";
@@ -429,6 +430,11 @@ export default function ProjetAdminDetail() {
           />
         </div>
       )}
+
+      <div className={styles.documentsSection}>
+        <h2>{t("projet_messages.title", "Messages investisseurs")}</h2>
+        <ProjetMessageThread projetId={Number(id)} isAdmin />
+      </div>
 
       <div className={styles.documentsSection}>
         <h2>
