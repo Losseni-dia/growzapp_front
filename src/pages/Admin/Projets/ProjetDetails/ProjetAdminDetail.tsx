@@ -50,6 +50,8 @@ export default function ProjetAdminDetail() {
   const [motifRevalorisation, setMotifRevalorisation] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const [activeTab, setActiveTab] = useState<"documents" | "messages">("documents");
+
   const [showProlonger, setShowProlonger] = useState(false);
   const [nouvelleDateFin, setNouvelleDateFin] = useState("");
   const [showCloturer, setShowCloturer] = useState(false);
@@ -78,13 +80,11 @@ export default function ProjetAdminDetail() {
   }, [id]);
 
   // Un clic sur une notification de message investisseur arrive avec
-  // #messages-investisseurs dans l'URL — on scrolle directement vers le
-  // fil de discussion plutôt que de laisser l'admin chercher sur la page.
+  // #messages-investisseurs dans l'URL — on bascule directement sur cet
+  // onglet plutôt que de laisser l'admin chercher sur la page.
   useEffect(() => {
     if (window.location.hash === "#messages-investisseurs") {
-      document
-        .getElementById("messages-investisseurs")
-        ?.scrollIntoView({ behavior: "smooth" });
+      setActiveTab("messages");
     }
   }, [loading]);
 
@@ -433,70 +433,89 @@ export default function ProjetAdminDetail() {
         </div>
       )}
 
-      {user?.roles?.includes("ADMIN") && (
-        <div className={styles.uploadCard}>
-          <DocumentUpload
-            projetId={Number(id)}
-            onUploadSuccess={loadProjetAndDocuments}
-          />
-        </div>
+      <div className={styles.detailTabs}>
+        <button
+          type="button"
+          className={`${styles.detailTab} ${activeTab === "documents" ? styles.detailTabActive : ""}`}
+          onClick={() => setActiveTab("documents")}
+        >
+          {t("admin.documents.title")} ({documents.length})
+        </button>
+        <button
+          type="button"
+          className={`${styles.detailTab} ${activeTab === "messages" ? styles.detailTabActive : ""}`}
+          onClick={() => setActiveTab("messages")}
+        >
+          {t("projet_messages.title", "Messages investisseurs")}
+        </button>
+      </div>
+
+      {activeTab === "documents" && (
+        <>
+          {user?.roles?.includes("ADMIN") && (
+            <div className={styles.uploadCard}>
+              <DocumentUpload
+                projetId={Number(id)}
+                onUploadSuccess={loadProjetAndDocuments}
+              />
+            </div>
+          )}
+
+          <div className={styles.documentsSection}>
+            {documents.length === 0 ? (
+              <p className={styles.noDocs}>{t("admin.documents.empty")}</p>
+            ) : (
+              <div className={styles.grid}>
+                {documents.map((doc) => (
+                  <div key={doc.id} className={styles.docCard}>
+                    <div className={styles.docTop}>
+                      <div className={styles.docIcon}>{getIcon(doc.type)}</div>
+                      <div className={styles.docInfo}>
+                        <strong>{doc.nom}</strong>
+                        <small>
+                          {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
+                        </small>
+                      </div>
+                    </div>
+                    {statutBadge(doc.statut)}
+                    <div className={styles.docActions}>
+                      <button
+                        onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
+                        className={styles.iconBtn}
+                        title={t("admin.documents.download") as string}
+                      >
+                        <FiDownload />
+                      </button>
+                      {doc.statut === "EN_ATTENTE" && (
+                        <>
+                          <button
+                            onClick={() => handleApprouver(doc.id)}
+                            className={styles.approveBtn}
+                          >
+                            <FiCheck /> {t("admin.documents.approve")}
+                          </button>
+                          <button
+                            onClick={() => handleRejeter(doc.id)}
+                            className={styles.rejectBtn}
+                          >
+                            <FiX /> {t("admin.documents.reject")}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
       )}
 
-      <div className={styles.documentsSection} id="messages-investisseurs">
-        <h2>{t("projet_messages.title", "Messages investisseurs")}</h2>
-        <ProjetMessageThread projetId={Number(id)} isAdmin />
-      </div>
-
-      <div className={styles.documentsSection}>
-        <h2>
-          {t("admin.documents.title")} ({documents.length})
-        </h2>
-        {documents.length === 0 ? (
-          <p className={styles.noDocs}>{t("admin.documents.empty")}</p>
-        ) : (
-          <div className={styles.grid}>
-            {documents.map((doc) => (
-              <div key={doc.id} className={styles.docCard}>
-                <div className={styles.docTop}>
-                  <div className={styles.docIcon}>{getIcon(doc.type)}</div>
-                  <div className={styles.docInfo}>
-                    <strong>{doc.nom}</strong>
-                    <small>
-                      {new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}
-                    </small>
-                  </div>
-                </div>
-                {statutBadge(doc.statut)}
-                <div className={styles.docActions}>
-                  <button
-                    onClick={() => handleDownload(doc.id, doc.nom, doc.type)}
-                    className={styles.iconBtn}
-                    title={t("admin.documents.download") as string}
-                  >
-                    <FiDownload />
-                  </button>
-                  {doc.statut === "EN_ATTENTE" && (
-                    <>
-                      <button
-                        onClick={() => handleApprouver(doc.id)}
-                        className={styles.approveBtn}
-                      >
-                        <FiCheck /> {t("admin.documents.approve")}
-                      </button>
-                      <button
-                        onClick={() => handleRejeter(doc.id)}
-                        className={styles.rejectBtn}
-                      >
-                        <FiX /> {t("admin.documents.reject")}
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {activeTab === "messages" && (
+        <div className={styles.documentsSection} id="messages-investisseurs">
+          <ProjetMessageThread projetId={Number(id)} isAdmin />
+        </div>
+      )}
     </div>
   );
 }

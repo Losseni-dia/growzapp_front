@@ -202,6 +202,35 @@
   color: white;
 }
 
+/* ── ONGLETS DOCUMENTS / MESSAGES ─────────────────────────────────────── */
+.detailTabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.detailTab {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.detailTab:hover {
+  background: #f1f5f9;
+}
+
+.detailTabActive {
+  background: var(--growz-primary, #1b5e20);
+  border-color: var(--growz-primary, #1b5e20);
+  color: white;
+}
+
 /* ── UPLOAD ───────────────────────────────────────────────────────────── */
 .uploadCard {
   background: white;
