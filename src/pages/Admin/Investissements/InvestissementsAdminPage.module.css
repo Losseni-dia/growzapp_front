@@ -133,6 +133,19 @@
   color: white !important;
 }
 
+.filtresArchivesLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.filtreArchive {
+  border-style: dashed;
+}
+
 /* ── EMPTY ───────────────────────────────────────────────── */
 .empty {
   display: flex;

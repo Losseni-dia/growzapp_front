@@ -328,10 +328,16 @@ const handleDownload = async (numero: string) => {
                         className={
                           c.statutInvestissement === "VALIDE"
                             ? styles.badgeGreen
-                            : styles.badgeOrange
+                            : c.statutInvestissement === "REMBOURSE"
+                              ? styles.badgeBlue
+                              : c.statutInvestissement === "ANNULE"
+                                ? styles.badgeRed
+                                : styles.badgeOrange
                         }
                       >
-                        {c.statutInvestissement}
+                        {c.statutInvestissement === "REMBOURSE"
+                          ? "REMBOURSÉ"
+                          : c.statutInvestissement}
                       </span>
                     </td>
                     <td className={`${styles.td} ${styles.textCenter}`}>
@@ -356,8 +362,8 @@ const handleDownload = async (numero: string) => {
                         </button>
                         <button
                           onClick={() => toggleArchiver(c)}
-                          className={styles.actionBtn}
-                          title={viewArchive ? "Désarchiver" : "Archiver"}
+                          className={`${styles.actionBtn} ${styles.actionBtnArchive}`}
+                          title={viewArchive ? "Désarchiver (manuel)" : "Archiver manuellement"}
                         >
                           {viewArchive ? <FiRotateCcw /> : <FiArchive />}
                         </button>

@@ -1420,6 +1420,7 @@
       "search_placeholder": "Nom, porteur, ville, secteur...",
       "empty": "Aucun projet ne correspond à vos critères.",
       "all_sectors": "Tous les secteurs",
+      "tab_archives": "Archives (rejetés / clôturés)",
       "sort": {
         "recent": "⬇ Plus récent",
         "ancien": "⬆ Plus ancien",

@@ -1039,6 +1039,7 @@
       "search_placeholder": "Nombre, promotor, ciudad, sector...",
       "empty": "Ningún proyecto coincide con sus criterios.",
       "all_sectors": "Todos los sectores",
+      "tab_archives": "Archivo (rechazados / cerrados)",
       "sort": {
         "recent": "⬇ Más reciente",
         "ancien": "⬆ Más antiguo",

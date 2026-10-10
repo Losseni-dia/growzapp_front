@@ -1118,6 +1118,7 @@
       "search_placeholder": "Name, owner, city, sector...",
       "empty": "No project matches your criteria.",
       "all_sectors": "All sectors",
+      "tab_archives": "Archive (rejected / closed)",
       "sort": {
         "recent": "⬇ Most recent",
         "ancien": "⬆ Oldest",

@@ -31,12 +31,12 @@ interface InvestissementAdmin {
   nombrePartsPris: number;
   prixUnePart: number;
   montantInvesti?: number;
-  statutPartInvestissement: "EN_ATTENTE" | "VALIDE" | "ANNULE";
+  statutPartInvestissement: "EN_ATTENTE" | "VALIDE" | "ANNULE" | "REMBOURSE";
   numeroContrat?: string;
   pourcentage?: number;
 }
 
-type Filtre = "TOUS" | "EN_ATTENTE" | "VALIDE" | "ANNULE";
+type Filtre = "TOUS" | "EN_ATTENTE" | "VALIDE" | "ANNULE" | "REMBOURSE";
 
 interface InvestissementsPage {
   content: InvestissementAdmin[];
@@ -48,6 +48,7 @@ interface StatutCounts {
   EN_ATTENTE?: number;
   VALIDE?: number;
   ANNULE?: number;
+  REMBOURSE?: number;
   TOUS?: number;
 }
 
@@ -114,6 +115,7 @@ export default function InvestissementsAdminPage() {
   const enAttenteCount = counts?.EN_ATTENTE ?? 0;
   const validesCount = counts?.VALIDE ?? 0;
   const annulesCount = counts?.ANNULE ?? 0;
+  const remboursesCount = counts?.REMBOURSE ?? 0;
   const tousCount = counts?.TOUS ?? 0;
 
   // ── Valider ────────────────────────────────────────────────────────────────
@@ -214,7 +216,7 @@ export default function InvestissementsAdminPage() {
       {/* ── FILTRES ───────────────────────────────────────────────── */}
       <div className={styles.filtres}>
         <FiFilter size={16} />
-        {(["EN_ATTENTE", "TOUS", "VALIDE", "ANNULE"] as Filtre[]).map((f) => (
+        {(["EN_ATTENTE", "TOUS", "VALIDE"] as Filtre[]).map((f) => (
           <button
             key={f}
             onClick={() => changeFiltre(f)}
@@ -224,9 +226,19 @@ export default function InvestissementsAdminPage() {
               ? `⏳ En attente (${enAttenteCount})`
               : f === "VALIDE"
                 ? `✅ Validés (${validesCount})`
-                : f === "ANNULE"
-                  ? `❌ Annulés (${annulesCount})`
-                  : `Tous (${tousCount})`}
+                : `Tous (${tousCount})`}
+          </button>
+        ))}
+        <span className={styles.filtresArchivesLabel}>Archives :</span>
+        {(["ANNULE", "REMBOURSE"] as Filtre[]).map((f) => (
+          <button
+            key={f}
+            onClick={() => changeFiltre(f)}
+            className={`${styles.filtreBtn} ${styles.filtreArchive} ${filtre === f ? styles.filtreActif : ""}`}
+          >
+            {f === "ANNULE"
+              ? `❌ Annulés (${annulesCount})`
+              : `🔄 Remboursés (${remboursesCount})`}
           </button>
         ))}
       </div>
@@ -271,6 +283,11 @@ export default function InvestissementsAdminPage() {
                   {inv.statutPartInvestissement === "ANNULE" && (
                     <span className={styles.badgeCancelled}>
                       <FiX /> Annulé
+                    </span>
+                  )}
+                  {inv.statutPartInvestissement === "REMBOURSE" && (
+                    <span className={styles.badgeCancelled}>
+                      🔄 Remboursé
                     </span>
                   )}
                   <span className={styles.invId}>#{inv.id}</span>

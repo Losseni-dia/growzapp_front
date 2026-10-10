@@ -40,18 +40,23 @@ const objectifNonAtteint = (p: ProjetAdmin) =>
   p.objectifFinancement != null && p.montantCollecte < p.objectifFinancement;
 
 const isEcheanceDepassee = (p: ProjetAdmin) => {
-  if (!p.dateFin || !objectifNonAtteint(p)) return false;
+  if (!p.dateFin || !objectifNonAtteint(p) || p.statutProjet === "ECHEC_FINANCEMENT") return false;
   return new Date(p.dateFin) < new Date(new Date().toDateString());
 };
 
 const isEcheanceProche = (p: ProjetAdmin) => {
-  if (!p.dateFin || !objectifNonAtteint(p)) return false;
+  if (!p.dateFin || !objectifNonAtteint(p) || p.statutProjet === "ECHEC_FINANCEMENT") return false;
   const aujourdHui = new Date(new Date().toDateString());
   const limite = new Date(aujourdHui);
   limite.setDate(limite.getDate() + 30);
   const fin = new Date(p.dateFin);
   return fin >= aujourdHui && fin <= limite;
 };
+
+// Projets rejetés ou clôturés en échec de financement — regroupés dans un
+// onglet "Archives" distinct pour ne pas polluer la vue par défaut.
+const isArchive = (p: ProjetAdmin) =>
+  p.statutProjet === "REJETE" || p.statutProjet === "ECHEC_FINANCEMENT";
 
 type SortKey = "recent" | "ancien" | "collecte" | "objectif";
 
@@ -65,7 +70,7 @@ export default function AdminProjetsList() {
   const initialTab = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(
     initialTab &&
-      ["TOUS", "SOUMIS", "VALIDE", "REJETE", "ECHEANCE_DEPASSEE", "ECHEANCE_PROCHE"].includes(initialTab)
+      ["TOUS", "SOUMIS", "VALIDE", "ARCHIVES", "ECHEANCE_DEPASSEE", "ECHEANCE_PROCHE"].includes(initialTab)
       ? initialTab
       : "TOUS",
   );
@@ -105,12 +110,14 @@ export default function AdminProjetsList() {
     let list = projets.filter((p) => {
       const matchesTab =
         activeTab === "TOUS"
-          ? true
-          : activeTab === "ECHEANCE_DEPASSEE"
-            ? isEcheanceDepassee(p)
-            : activeTab === "ECHEANCE_PROCHE"
-              ? isEcheanceProche(p)
-              : p.statutProjet === activeTab;
+          ? !isArchive(p)
+          : activeTab === "ARCHIVES"
+            ? isArchive(p)
+            : activeTab === "ECHEANCE_DEPASSEE"
+              ? isEcheanceDepassee(p)
+              : activeTab === "ECHEANCE_PROCHE"
+                ? isEcheanceProche(p)
+                : p.statutProjet === activeTab;
       const matchesSecteur =
         secteurFilter === "TOUS" || p.secteurNom === secteurFilter;
       const search = searchTerm.toLowerCase();
@@ -313,7 +320,7 @@ export default function AdminProjetsList() {
       {viewMode === "active" && (
       <div className={styles.filtersBar}>
         <div className={styles.tabsWrapper}>
-          {["TOUS", "SOUMIS", "VALIDE", "REJETE"].map((tab) => (
+          {["TOUS", "SOUMIS", "VALIDE"].map((tab) => (
             <button
               key={tab}
               className={`${styles.tabButton} ${activeTab === tab ? styles.activeTab : ""}`}
@@ -323,12 +330,21 @@ export default function AdminProjetsList() {
               <span className={styles.countBadge}>
                 {
                   projets.filter(
-                    (p) => tab === "TOUS" || p.statutProjet === tab,
+                    (p) => (tab === "TOUS" ? !isArchive(p) : p.statutProjet === tab),
                   ).length
                 }
               </span>
             </button>
           ))}
+          <button
+            className={`${styles.tabButton} ${activeTab === "ARCHIVES" ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab("ARCHIVES")}
+          >
+            {t("admin.projects_list.tab_archives", "Archives (rejetés / clôturés)")}
+            <span className={styles.countBadge}>
+              {projets.filter(isArchive).length}
+            </span>
+          </button>
           <button
             className={`${styles.tabButton} ${activeTab === "ECHEANCE_PROCHE" ? styles.activeTab : ""}`}
             onClick={() => setActiveTab("ECHEANCE_PROCHE")}
