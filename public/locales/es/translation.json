@@ -1046,7 +1046,8 @@
         "VALIDE": "Validado",
         "REJETE": "Rechazado",
         "EN_COURS": "En curso",
-        "TERMINE": "Terminado"
+        "TERMINE": "Terminado",
+        "ECHEC_FINANCEMENT": "Financiación fallida"
       }
     },
     "kyc": {

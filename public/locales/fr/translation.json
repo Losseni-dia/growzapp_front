@@ -1427,7 +1427,8 @@
         "VALIDE": "Validé",
         "REJETE": "Rejeté",
         "EN_COURS": "En cours",
-        "TERMINE": "Terminé"
+        "TERMINE": "Terminé",
+        "ECHEC_FINANCEMENT": "Échec de financement"
       }
     },
     "commandes": {

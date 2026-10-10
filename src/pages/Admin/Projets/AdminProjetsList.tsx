@@ -198,6 +198,7 @@ export default function AdminProjetsList() {
       case "EN_ATTENTE":
         return styles.badgeSoumis;
       case "REJETE":
+      case "ECHEC_FINANCEMENT":
         return styles.badgeRejete;
       case "TERMINE":
         return styles.badgeTermine;

@@ -1125,7 +1125,8 @@
         "VALIDE": "Validated",
         "REJETE": "Rejected",
         "EN_COURS": "In progress",
-        "TERMINE": "Completed"
+        "TERMINE": "Completed",
+        "ECHEC_FINANCEMENT": "Funding failed"
       }
     },
     "wallets": {
