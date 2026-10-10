@@ -1729,6 +1729,8 @@
     "card": {
       "treasury": "Treasury",
       "goal_progress": "Goal reached",
+      "tab_overview": "Overview",
+      "tab_stats": "Statistics",
       "investors": "investors",
       "avg_investment": "avg. investment",
       "dividends_paid": "dividends paid",

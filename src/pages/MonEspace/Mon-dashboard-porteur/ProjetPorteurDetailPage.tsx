@@ -85,6 +85,7 @@ export default function ProjetPorteurDetailPage() {
   const [docDescription, setDocDescription] = useState("");
   const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [showArchivedDocs, setShowArchivedDocs] = useState(false);
+  const [activeTab, setActiveTab] = useState<"overview" | "documents" | "stats">("overview");
   const [premiumLoading, setPremiumLoading] = useState<string | null>(null);
   const [soldePersonnel, setSoldePersonnel] = useState(0);
 
@@ -371,7 +372,33 @@ export default function ProjetPorteurDetailPage() {
         </div>
       </div>
 
+      <div className={styles.detailTabs}>
+        <button
+          type="button"
+          className={`${styles.detailTab} ${activeTab === "overview" ? styles.detailTabActive : ""}`}
+          onClick={() => setActiveTab("overview")}
+        >
+          {t("porteur.card.tab_overview", "Vue d'ensemble")}
+        </button>
+        <button
+          type="button"
+          className={`${styles.detailTab} ${activeTab === "documents" ? styles.detailTabActive : ""}`}
+          onClick={() => setActiveTab("documents")}
+        >
+          {t("porteur.documents.list_title", "Documents du projet")} ({documents.length})
+        </button>
+        <button
+          type="button"
+          className={`${styles.detailTab} ${activeTab === "stats" ? styles.detailTabActive : ""}`}
+          onClick={() => setActiveTab("stats")}
+        >
+          {t("porteur.card.tab_stats", "Statistiques")}
+        </button>
+      </div>
+
       <div className={styles.body}>
+        {activeTab === "overview" && (
+        <>
         {/* ── JAUGE OBJECTIF ── */}
         <div className={styles.gaugeBlock}>
           <div className={styles.gaugeTop}>
@@ -618,9 +645,11 @@ export default function ProjetPorteurDetailPage() {
             </div>
           </div>
         )}
+        </>
+        )}
 
         {/* ── DOCUMENTS DU PROJET ── */}
-        {documents.length > 0 && (
+        {activeTab === "documents" && (
           <div className={styles.documentsBlock}>
             <h3>{t("porteur.documents.list_title", "Documents du projet")}</h3>
             {documents.some((d) => d.archive) && (
@@ -676,6 +705,8 @@ export default function ProjetPorteurDetailPage() {
           </div>
         )}
 
+        {activeTab === "stats" && (
+        <>
         {/* ── GRAPHIQUE COLLECTE AGRANDI ── */}
         <div className={styles.chartBlock}>
           <h3>{t("porteur.card.collection_evolution")}</h3>
@@ -723,6 +754,8 @@ export default function ProjetPorteurDetailPage() {
             <p className={styles.noData}>{t("porteur.card.no_data")}</p>
           )}
         </div>
+        </>
+        )}
       </div>
     </div>
   );

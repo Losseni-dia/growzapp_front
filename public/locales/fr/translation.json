@@ -1754,6 +1754,8 @@
     "card": {
       "treasury": "Trésorerie",
       "goal_progress": "Objectif atteint",
+      "tab_overview": "Vue d'ensemble",
+      "tab_stats": "Statistiques",
       "investors": "investisseurs",
       "avg_investment": "investissement moyen",
       "dividends_paid": "dividendes versés",
