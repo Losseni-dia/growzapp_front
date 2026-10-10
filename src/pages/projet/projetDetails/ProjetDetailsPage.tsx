@@ -509,26 +509,28 @@ export default function ProjetDetailsPage() {
                               {new Date(doc.uploadedAt).toLocaleDateString()}
                             </small>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => handleArchiverDocument(doc)}
-                            className={styles.downloadBtn}
-                            title={
-                              doc.archive
-                                ? (t("project_details.documents_unarchive", "Désarchiver") as string)
-                                : (t("project_details.documents_archive", "Archiver") as string)
-                            }
-                          >
-                            {doc.archive ? <FiRotateCcw /> : <FiArchive />}
-                          </button>
-                          <a
-                            href={buildFileUrl(`/api/documents/${doc.id}/download`)}
-                            className={styles.downloadBtn}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <FiDownload />
-                          </a>
+                          <div className={styles.docActionsGroup}>
+                            <button
+                              type="button"
+                              onClick={() => handleArchiverDocument(doc)}
+                              className={styles.downloadBtn}
+                              title={
+                                doc.archive
+                                  ? (t("project_details.documents_unarchive", "Désarchiver") as string)
+                                  : (t("project_details.documents_archive", "Archiver") as string)
+                              }
+                            >
+                              {doc.archive ? <FiRotateCcw /> : <FiArchive />}
+                            </button>
+                            <a
+                              href={buildFileUrl(`/api/documents/${doc.id}/download`)}
+                              className={styles.downloadBtn}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <FiDownload />
+                            </a>
+                          </div>
                         </div>
                       ))}
                   </div>

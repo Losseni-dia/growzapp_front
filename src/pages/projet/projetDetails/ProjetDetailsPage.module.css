@@ -254,8 +254,15 @@
 .docInfo strong { display: block; color: var(--growz-primary); font-size: 0.9rem; }
 .docInfo small { color: #888; font-size: 0.8rem; }
 
-.downloadBtn {
+.docActionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin-left: auto;
+  flex-shrink: 0;
+}
+
+.downloadBtn {
   background: var(--growz-primary);
   color: white;
   width: 36px;
