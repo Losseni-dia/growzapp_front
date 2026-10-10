@@ -460,7 +460,8 @@
     "status": {
       "pending": "En espera",
       "validated": "Validado",
-      "rejected": "Rechazado"
+      "rejected": "Rechazado",
+      "refunded": "Reembolsado"
     },
     "search_placeholder": "Buscar un proyecto...",
     "filter_all_status": "Todos los estados",
@@ -475,6 +476,21 @@
       "validation_delay": "Validación en menos de 48h",
       "view_on_map": "Ver en el mapa",
       "get_directions": "Cómo llegar al sitio"
+    },
+    "echeance": {
+      "banner_title": "Este proyecto no alcanzó su objetivo en su fecha límite",
+      "btn_continuer": "Continuar",
+      "btn_recuperer": "Recuperar mi inversión",
+      "btn_cancel": "Cancelar",
+      "choix_fait": "Su elección ha sido registrada para este ciclo de vencimiento.",
+      "checkbox_label": "He leído y acepto las condiciones anteriores.",
+      "modal_title_continuer": "Confirmar: mantener mi inversión",
+      "modal_title_recuperer": "Confirmar: recuperar mi inversión",
+      "toast_continuer_success": "Elección registrada — sigue invertido en este proyecto.",
+      "toast_recuperer_success": "Reembolso realizado — los fondos están disponibles en su monedero.",
+      "toast_error": "Ocurrió un error. Inténtelo de nuevo.",
+      "consentement_continuer": "Al elegir continuar, confirmo que deseo mantener mi inversión en este proyecto a pesar de que su fecha límite de financiación haya pasado, en caso de que GrowzApp decida prorrogarla. Esta elección es definitiva para el periodo en curso: no podré solicitar el reembolso de esta inversión hasta que una nueva fecha límite también haya pasado sin alcanzar el objetivo. Si GrowzApp decide, a pesar de todo, cerrar este proyecto como fallido, mi inversión me será reembolsada íntegramente sin ninguna acción de mi parte. No se garantiza que el proyecto alcance su objetivo incluso después de una prórroga.",
+      "consentement_recuperer": "Al elegir recuperar mi inversión, confirmo que deseo ser reembolsado íntegramente del monto invertido en este proyecto, que no alcanzó su objetivo de financiación en su fecha límite. Este reembolso es inmediato e irrevocable. Mi contrato de inversión para este proyecto queda anulado y archivado a partir de esta decisión — permanece disponible como comprobante histórico, pero ya no representa una participación activa. Renuncio a cualquier parte del capital, dividendo futuro u otro derecho relacionado con esta inversión en este proyecto. Cualquier uso fraudulento de este contrato anulado tras el reembolso constituye una infracción que puede ser perseguida conforme a los Términos y Condiciones de GrowzApp."
     }
   },
   "dividends": {

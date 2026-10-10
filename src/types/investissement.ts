@@ -37,6 +37,9 @@ export interface InvestissementDTO {
   adresse?: string;
 
   projetLibelleTradu?: string;
+
+  echeanceDepasseeSansObjectif?: boolean;
+  choixEcheanceActuel?: "CONTINUER" | "RECUPERER" | null;
 }
 
 export interface InvestissementSummary {

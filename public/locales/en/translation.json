@@ -460,7 +460,8 @@
     "status": {
       "pending": "Pending",
       "validated": "Validated",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "refunded": "Refunded"
     },
     "search_placeholder": "Search a project...",
     "filter_all_status": "All statuses",
@@ -475,6 +476,21 @@
       "validation_delay": "Validation within 48h",
       "view_on_map": "View on map",
       "get_directions": "Directions to the site"
+    },
+    "echeance": {
+      "banner_title": "This project did not reach its goal by its deadline",
+      "btn_continuer": "Continue",
+      "btn_recuperer": "Get my investment back",
+      "btn_cancel": "Cancel",
+      "choix_fait": "Your choice has been recorded for this deadline cycle.",
+      "checkbox_label": "I have read and accept the conditions above.",
+      "modal_title_continuer": "Confirm: keep my investment",
+      "modal_title_recuperer": "Confirm: get my investment back",
+      "toast_continuer_success": "Choice recorded — you remain invested in this project.",
+      "toast_recuperer_success": "Refund completed — the funds are available in your wallet.",
+      "toast_error": "Something went wrong. Please try again.",
+      "consentement_continuer": "By choosing to continue, I confirm that I want to keep my investment in this project despite its funding deadline having passed, in case GrowzApp decides to extend it. This choice is final for the current period: I will not be able to request a refund of this investment until a new deadline itself passes without the goal being reached. If GrowzApp nevertheless decides to close this project as unsuccessful, my investment will be fully refunded with no action on my part. No guarantee is given that the project will reach its goal even after an extension.",
+      "consentement_recuperer": "By choosing to get my investment back, I confirm that I want to be fully refunded the amount invested in this project, which did not reach its funding goal by its deadline. This refund is immediate and irrevocable. My investment contract for this project is cancelled and archived as of this decision — it remains available for viewing as a historical record but no longer represents an active holding. I waive any claim to equity, future dividends, or any other right related to this investment in this project. Any fraudulent use of this cancelled contract after refund constitutes an offense that may be prosecuted under GrowzApp's terms of use and sale."
     }
   },
   "dividends": {

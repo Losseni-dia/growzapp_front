@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
+  FiAlertTriangle,
   FiCalendar,
   FiCheckCircle,
   FiClock,
@@ -13,6 +14,7 @@ import {
   FiEye,
   FiMapPin,
   FiNavigation,
+  FiRotateCcw,
   FiSearch,
   FiX,
   FiXCircle,
@@ -35,6 +37,12 @@ export default function MesInvestissementsPage() {
   const [mapModalInv, setMapModalInv] = useState<InvestissementDTO | null>(
     null,
   );
+  const [choixModal, setChoixModal] = useState<{
+    inv: InvestissementDTO;
+    choix: "CONTINUER" | "RECUPERER";
+  } | null>(null);
+  const [choixConsentement, setChoixConsentement] = useState(false);
+  const [choixSubmitting, setChoixSubmitting] = useState(false);
   const { t, i18n } = useTranslation();
   const { currency, format: formatCurrency } = useCurrency(); // <--- HOOK MONNAIE
 
@@ -43,15 +51,46 @@ export default function MesInvestissementsPage() {
 
   const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
-  useEffect(() => {
-    api
+  const chargerInvestissements = () => {
+    return api
       .get<{ data: InvestissementDTO[] }>(
         buildProjetUrl("/api/investissements/mes-investissements"),
       )
       .then((res) => setInvestissements(res.data || []))
-      .catch(() => toast.error(t("user_investments.toast_error")))
-      .finally(() => setLoading(false));
+      .catch(() => toast.error(t("user_investments.toast_error")));
+  };
+
+  useEffect(() => {
+    chargerInvestissements().finally(() => setLoading(false));
   }, [t]);
+
+  const ouvrirChoixModal = (inv: InvestissementDTO, choix: "CONTINUER" | "RECUPERER") => {
+    setChoixConsentement(false);
+    setChoixModal({ inv, choix });
+  };
+
+  const confirmerChoixEcheance = async () => {
+    if (!choixModal || !choixConsentement) return;
+    setChoixSubmitting(true);
+    try {
+      const endpoint = choixModal.choix === "CONTINUER" ? "continuer" : "recuperer";
+      await api.post(
+        buildProjetUrl(`/api/investissements/${choixModal.inv.id}/echeance/${endpoint}`),
+        { consentement: true },
+      );
+      toast.success(
+        choixModal.choix === "CONTINUER"
+          ? t("user_investments.echeance.toast_continuer_success")
+          : t("user_investments.echeance.toast_recuperer_success"),
+      );
+      setChoixModal(null);
+      await chargerInvestissements();
+    } catch (err) {
+      toast.error(t("user_investments.echeance.toast_error"));
+    } finally {
+      setChoixSubmitting(false);
+    }
+  };
 
   const handleVoir = async (numeroContrat: string) => {
     try {
@@ -124,6 +163,13 @@ export default function MesInvestissementsPage() {
           color: "#c62828",
           bg: "#ffebee",
           label: t("user_investments.status.rejected"),
+        };
+      case "REMBOURSE":
+        return {
+          icon: FiRotateCcw,
+          color: "#1976d2",
+          bg: "#e3f2fd",
+          label: t("user_investments.status.refunded"),
         };
       default:
         return { icon: FiClock, color: "#666", bg: "#f5f5f5", label: statut };
@@ -200,6 +246,9 @@ export default function MesInvestissementsPage() {
               <option value="REJETE">
                 {t("user_investments.status.rejected")}
               </option>
+              <option value="REMBOURSE">
+                {t("user_investments.status.refunded")}
+              </option>
             </select>
           </div>
 
@@ -248,8 +297,40 @@ export default function MesInvestissementsPage() {
                     </strong>{" "}
                     {t("user_investments.card.invested")}
                   </div>
+                  {inv.statutPartInvestissement === "VALIDE" &&
+                    inv.echeanceDepasseeSansObjectif && (
+                      <div className={styles.echeanceBanner}>
+                        <strong>
+                          <FiAlertTriangle size={14} style={{ verticalAlign: "-2px" }} />{" "}
+                          {t("user_investments.echeance.banner_title")}
+                        </strong>
+                        {!inv.choixEcheanceActuel ? (
+                          <div className={styles.echeanceBannerActions}>
+                            <button
+                              type="button"
+                              className={styles.btnContinuer}
+                              onClick={() => ouvrirChoixModal(inv, "CONTINUER")}
+                            >
+                              {t("user_investments.echeance.btn_continuer")}
+                            </button>
+                            <button
+                              type="button"
+                              className={styles.btnRecuperer}
+                              onClick={() => ouvrirChoixModal(inv, "RECUPERER")}
+                            >
+                              {t("user_investments.echeance.btn_recuperer")}
+                            </button>
+                          </div>
+                        ) : (
+                          <p className={styles.echeanceChoixFait}>
+                            {t("user_investments.echeance.choix_fait")}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   <div className={styles.actions}>
-                    {inv.statutPartInvestissement === "VALIDE" &&
+                    {(inv.statutPartInvestissement === "VALIDE" ||
+                      inv.statutPartInvestissement === "REMBOURSE") &&
                     inv.numeroContrat ? (
                       <div className={styles.btnGroup}>
                         <button
@@ -315,6 +396,51 @@ export default function MesInvestissementsPage() {
         </div>
           )}
         </>
+      )}
+
+      {choixModal && (
+        <div className={styles.choixModalOverlay} onClick={() => setChoixModal(null)}>
+          <div className={styles.choixModalContent} onClick={(e) => e.stopPropagation()}>
+            <h3>
+              {choixModal.choix === "CONTINUER"
+                ? t("user_investments.echeance.modal_title_continuer")
+                : t("user_investments.echeance.modal_title_recuperer")}
+            </h3>
+            <div className={styles.choixModalText}>
+              {choixModal.choix === "CONTINUER"
+                ? t("user_investments.echeance.consentement_continuer")
+                : t("user_investments.echeance.consentement_recuperer")}
+            </div>
+            <label className={styles.choixModalCheckbox}>
+              <input
+                type="checkbox"
+                checked={choixConsentement}
+                onChange={(e) => setChoixConsentement(e.target.checked)}
+              />
+              <span>{t("user_investments.echeance.checkbox_label")}</span>
+            </label>
+            <div className={styles.choixModalActions}>
+              <button type="button" onClick={() => setChoixModal(null)}>
+                {t("user_investments.echeance.btn_cancel")}
+              </button>
+              <button
+                type="button"
+                disabled={!choixConsentement || choixSubmitting}
+                style={{
+                  background: choixModal.choix === "CONTINUER" ? "#1976d2" : "#dc2626",
+                  color: "white",
+                }}
+                onClick={confirmerChoixEcheance}
+              >
+                {choixSubmitting
+                  ? "..."
+                  : choixModal.choix === "CONTINUER"
+                    ? t("user_investments.echeance.btn_continuer")
+                    : t("user_investments.echeance.btn_recuperer")}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {mapModalInv && (

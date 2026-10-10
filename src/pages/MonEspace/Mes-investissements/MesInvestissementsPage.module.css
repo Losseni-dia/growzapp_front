@@ -232,6 +232,127 @@
   transform: scale(1.05);
 }
 
+/* ── ÉCHÉANCE DE FINANCEMENT DÉPASSÉE ────────────────────────────────── */
+.echeanceBanner {
+  background: #fff7ed;
+  border: 1.5px solid #f59e0b;
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  margin: 0.5rem 0;
+  font-size: 0.82rem;
+  color: #78350f;
+}
+
+.echeanceBannerActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.btnContinuer,
+.btnRecuperer {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+}
+
+.btnContinuer {
+  background: #1976d2;
+}
+
+.btnRecuperer {
+  background: #dc2626;
+}
+
+.echeanceChoixFait {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1b5e20;
+  margin-top: 0.4rem;
+}
+
+/* ── MODAL CHOIX ÉCHÉANCE ────────────────────────────────────────────── */
+.choixModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 1rem;
+}
+
+.choixModalContent {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 540px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.choixModalContent h3 {
+  margin: 0 0 0.75rem;
+  color: var(--growz-primary);
+}
+
+.choixModalText {
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.5;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 0.9rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.choixModalCheckbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 1rem 0;
+  font-size: 0.82rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.choixModalCheckbox input {
+  margin-top: 3px;
+}
+
+.choixModalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.choixModalActions button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.2rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.choixModalActions button:first-child {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.choixModalActions button:last-child:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── MODAL CARTE ─────────────────────────────────────────────────────── */
 .mapModalOverlay {
   position: fixed;

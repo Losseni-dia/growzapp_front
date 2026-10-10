@@ -458,7 +458,8 @@
     "status": {
       "pending": "En attente",
       "validated": "Validé",
-      "rejected": "Refusé"
+      "rejected": "Refusé",
+      "refunded": "Remboursé"
     },
     "search_placeholder": "Rechercher un projet...",
     "filter_all_status": "Tous les statuts",
@@ -473,6 +474,21 @@
       "validation_delay": "Validation sous 48h",
       "view_on_map": "Voir sur la carte",
       "get_directions": "Itinéraire jusqu'au site"
+    },
+    "echeance": {
+      "banner_title": "Ce projet n'a pas atteint son objectif à sa date limite",
+      "btn_continuer": "Continuer",
+      "btn_recuperer": "Récupérer mon investissement",
+      "btn_cancel": "Annuler",
+      "choix_fait": "Votre choix a été enregistré pour cette échéance.",
+      "checkbox_label": "J'ai lu et j'accepte les conditions ci-dessus.",
+      "modal_title_continuer": "Confirmer : continuer mon investissement",
+      "modal_title_recuperer": "Confirmer : récupérer mon investissement",
+      "toast_continuer_success": "Choix enregistré — vous restez investi dans ce projet.",
+      "toast_recuperer_success": "Remboursement effectué — les fonds sont disponibles dans votre portefeuille.",
+      "toast_error": "Une erreur est survenue. Veuillez réessayer.",
+      "consentement_continuer": "En choisissant de continuer, je confirme vouloir maintenir mon investissement dans ce projet malgré le dépassement de sa date limite de financement, dans l'hypothèse où GrowzApp déciderait de la prolonger. Ce choix est définitif pour la période en cours : je ne pourrai plus demander le remboursement de cet investissement tant qu'une nouvelle date limite n'est pas elle-même dépassée sans objectif atteint. Si GrowzApp décide malgré tout de clôturer ce projet en échec, mon investissement me sera intégralement remboursé sans action de ma part. Aucune garantie n'est donnée que le projet atteindra son objectif même après prolongation.",
+      "consentement_recuperer": "En choisissant de récupérer mon investissement, je confirme vouloir être intégralement remboursé du montant investi dans ce projet, qui n'a pas atteint son objectif de financement à sa date limite. Ce remboursement est immédiat et irrévocable. Mon contrat d'investissement pour ce projet est annulé et archivé à compter de cette décision — il reste consultable comme justificatif historique mais ne représente plus une participation active. Je renonce à toute part de capital, tout dividende futur ou autre droit lié à cet investissement dans ce projet. Toute utilisation frauduleuse de ce contrat annulé après remboursement constitue une infraction pouvant faire l'objet de poursuites conformément aux CGU et CGV de GrowzApp."
     }
   },
   "dividends": {
