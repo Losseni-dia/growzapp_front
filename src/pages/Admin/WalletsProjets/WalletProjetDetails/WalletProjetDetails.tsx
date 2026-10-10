@@ -25,6 +25,10 @@ const OUTBOUND_TYPES = [
   "RETRAIT",
   "PAIEMENT_FOURNISSEUR",
   "TRANSFER_PROJET_VERS_PERSONNEL",
+  // Un remboursement débite toujours le soldeBloque du wallet PROJET (vers
+  // l'investisseur ou l'acheteur GrowzMarket) — jamais un crédit pour le
+  // projet, contrairement à REMBOURSEMENT côté wallet USER.
+  "REMBOURSEMENT",
 ];
 
 export default function ProjectWalletDetails() {
