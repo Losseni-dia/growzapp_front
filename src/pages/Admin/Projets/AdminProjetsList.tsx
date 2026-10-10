@@ -8,6 +8,7 @@ import {
   FiTrash2,
   FiRotateCcw,
   FiAlertTriangle,
+  FiMessageCircle,
 } from "react-icons/fi";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCurrency } from "../../../components/Context/CurrencyContext";
@@ -508,6 +509,13 @@ export default function AdminProjetsList() {
                     className={styles.btnAdminister}
                   >
                     {t("admin.projects.btn_administer")}
+                  </Link>
+                  <Link
+                    to={`/admin/projets/detail/${p.id}#messages-investisseurs`}
+                    className={styles.btnMessages}
+                    title={t("projet_messages.title", "Messages investisseurs") as string}
+                  >
+                    <FiMessageCircle size={16} />
                   </Link>
                 </div>
 

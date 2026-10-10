@@ -348,9 +348,31 @@
   margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid #f0f0f0;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
   gap: 8px;
+}
+
+.actions .btnAdminister {
+  flex: 1;
+}
+
+.btnMessages {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.btnMessages:hover {
+  background: var(--growz-mint-50, #e8f5e9);
+  border-color: var(--growz-primary);
+  color: var(--growz-primary);
 }
 .btnDetail, .btnEdit, .btnDelete, .btnValider, .btnRejeter, .btnAdminister {
   display: flex;
