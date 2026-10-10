@@ -13,7 +13,13 @@ import {
   FiUpload,
   FiCreditCard,
   FiSmartphone,
+  FiArchive,
+  FiRotateCcw,
+  FiEye,
+  FiDownload,
+  FiFileText,
 } from "react-icons/fi";
+import { DocumentDTO } from "../../../types/document";
 import { BsStarFill } from "react-icons/bs";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -55,9 +61,17 @@ export default function ProjetPorteurDetailPage() {
       .catch(() => toast.error(t("dashboard.loading")));
   };
 
+  const fetchDocuments = () => {
+    if (!projetId) return Promise.resolve();
+    return api
+      .get<ApiResponse<DocumentDTO[]>>(`/api/documents/projet/${projetId}`)
+      .then((res) => setDocuments(res.data || []))
+      .catch(() => {});
+  };
+
   useEffect(() => {
     setLoading(true);
-    fetchLigne().finally(() => setLoading(false));
+    Promise.all([fetchLigne(), fetchDocuments()]).finally(() => setLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projetId]);
 
@@ -69,6 +83,8 @@ export default function ProjetPorteurDetailPage() {
   const [docFile, setDocFile] = useState<File | null>(null);
   const [docNom, setDocNom] = useState("");
   const [docDescription, setDocDescription] = useState("");
+  const [documents, setDocuments] = useState<DocumentDTO[]>([]);
+  const [showArchivedDocs, setShowArchivedDocs] = useState(false);
   const [premiumLoading, setPremiumLoading] = useState<string | null>(null);
   const [soldePersonnel, setSoldePersonnel] = useState(0);
 
@@ -202,10 +218,51 @@ export default function ProjetPorteurDetailPage() {
       setDocDescription("");
       resetPanel();
       fetchLigne();
+      fetchDocuments();
     } catch (err: any) {
       toast.error(err.message || t("porteur.wallet.toast.error"));
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+  const handleVoirDocument = (doc: DocumentDTO) => {
+    window.open(`${BASE_URL}${doc.url}`, "_blank");
+  };
+
+  const handleDownloadDocument = async (doc: DocumentDTO) => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/documents/${doc.id}/download`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) throw new Error();
+      const blob = await response.blob();
+      const match = doc.url.match(/\.([a-zA-Z0-9]+)$/);
+      const ext = match ? `.${match[1]}` : "";
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${doc.nom}${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t("porteur.documents.toast.download_error", "Erreur lors du téléchargement"));
+    }
+  };
+
+  // Archivage personnel (comme Gmail) — n'affecte pas l'affichage pour les
+  // autres utilisateurs ayant accès aux mêmes documents.
+  const handleArchiverDocument = async (doc: DocumentDTO) => {
+    try {
+      await api.post(`/api/documents/${doc.id}/${doc.archive ? "desarchiver" : "archiver"}`, {});
+      fetchDocuments();
+    } catch {
+      toast.error(t("porteur.documents.toast.archive_error", "Erreur lors de l'archivage"));
     }
   };
 
@@ -559,6 +616,63 @@ export default function ProjetPorteurDetailPage() {
                 {submitting ? t("porteur.wallet.processing") : t("porteur.wallet.confirm_reapprovisionner")}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* ── DOCUMENTS DU PROJET ── */}
+        {documents.length > 0 && (
+          <div className={styles.documentsBlock}>
+            <h3>{t("porteur.documents.list_title", "Documents du projet")}</h3>
+            {documents.some((d) => d.archive) && (
+              <label className={styles.archiveToggle}>
+                <input
+                  type="checkbox"
+                  checked={showArchivedDocs}
+                  onChange={(e) => setShowArchivedDocs(e.target.checked)}
+                />
+                {t("porteur.documents.show_archived", "Afficher mes documents archivés")}
+                {" "}({documents.filter((d) => d.archive).length})
+              </label>
+            )}
+            {documents.filter((d) => !!d.archive === showArchivedDocs).length === 0 ? (
+              <p className={styles.noDocs}>
+                {showArchivedDocs
+                  ? t("porteur.documents.empty_archived", "Aucun document archivé")
+                  : t("porteur.documents.empty", "Aucun document")}
+              </p>
+            ) : (
+              <div className={styles.documentsList}>
+                {documents
+                  .filter((d) => !!d.archive === showArchivedDocs)
+                  .map((doc) => (
+                    <div key={doc.id} className={styles.documentRow}>
+                      <FiFileText size={18} />
+                      <div className={styles.documentInfo}>
+                        <strong>{doc.nom}</strong>
+                        <small>{new Date(doc.uploadedAt).toLocaleDateString("fr-FR")}</small>
+                      </div>
+                      <div className={styles.documentActions}>
+                        <button onClick={() => handleVoirDocument(doc)} title={t("porteur.documents.view", "Voir") as string}>
+                          <FiEye size={15} />
+                        </button>
+                        <button onClick={() => handleDownloadDocument(doc)} title={t("porteur.documents.download", "Télécharger") as string}>
+                          <FiDownload size={15} />
+                        </button>
+                        <button
+                          onClick={() => handleArchiverDocument(doc)}
+                          title={
+                            doc.archive
+                              ? (t("porteur.documents.unarchive", "Désarchiver") as string)
+                              : (t("porteur.documents.archive", "Archiver") as string)
+                          }
+                        >
+                          {doc.archive ? <FiRotateCcw size={15} /> : <FiArchive size={15} />}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
         )}
 

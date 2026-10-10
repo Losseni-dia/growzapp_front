@@ -4,12 +4,14 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { BsShieldCheck, BsStarFill } from "react-icons/bs";
 import {
+  FiArchive,
   FiClock,
   FiDollarSign,
   FiDownload,
   FiFileText,
   FiLock,
   FiMapPin,
+  FiRotateCcw,
   FiShield,
   FiTrendingUp,
   FiUsers,
@@ -40,6 +42,7 @@ export default function ProjetDetailsPage() {
   const [documents, setDocuments] = useState<DocumentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [canSeeDocs, setCanSeeDocs] = useState(true);
+  const [showArchivedDocs, setShowArchivedDocs] = useState(false);
   const [showInvestModal, setShowInvestModal] = useState(false);
   const [fichePorteur, setFichePorteur] = useState<any | null>(null);
   const [photos, setPhotos] = useState<{ id: number; url: string }[]>([]);
@@ -114,6 +117,17 @@ export default function ProjetDetailsPage() {
   useEffect(() => {
     loadProjet();
   }, [id, i18n.language]);
+
+  // Archivage personnel (comme Gmail) — n'affecte pas l'affichage pour les
+  // autres utilisateurs ayant accès aux mêmes documents.
+  const handleArchiverDocument = async (doc: DocumentDTO) => {
+    try {
+      await api.post(`api/documents/${doc.id}/${doc.archive ? "desarchiver" : "archiver"}`, {});
+      loadProjet();
+    } catch {
+      toast.error(t("project_details.documents_archive_error", "Erreur lors de l'archivage"));
+    }
+  };
 
   // Fiche de présentation du porteur — visible des investisseurs connectés
   // uniquement, jamais aux visiteurs anonymes (cf demande produit).
@@ -470,33 +484,62 @@ export default function ProjetDetailsPage() {
               <FiFileText /> {t("project_details.documents_title")}
             </h2>
             {canSeeDocs ? (
-              documents.length > 0 ? (
-                <div className={styles.docGrid}>
-                  {documents.map((doc) => (
-                    <div key={doc.id} className={styles.docCard}>
-                      <FiFileText size={22} color="var(--growz-primary)" />
-                      <div className={styles.docInfo}>
-                        <strong>{doc.nom}</strong>
-                        <small>
-                          {new Date(doc.uploadedAt).toLocaleDateString()}
-                        </small>
-                      </div>
-                      <a
-                        href={buildFileUrl(`/api/documents/${doc.id}/download`)}
-                        className={styles.downloadBtn}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <FiDownload />
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className={styles.noDocs}>
-                  {t("project_details.no_documents")}
-                </p>
-              )
+              <>
+                {documents.some((d) => d.archive) && (
+                  <label className={styles.archiveToggle}>
+                    <input
+                      type="checkbox"
+                      checked={showArchivedDocs}
+                      onChange={(e) => setShowArchivedDocs(e.target.checked)}
+                    />
+                    {t("project_details.documents_show_archived", "Afficher mes documents archivés")}
+                    {" "}({documents.filter((d) => d.archive).length})
+                  </label>
+                )}
+                {documents.filter((d) => !!d.archive === showArchivedDocs).length > 0 ? (
+                  <div className={styles.docGrid}>
+                    {documents
+                      .filter((d) => !!d.archive === showArchivedDocs)
+                      .map((doc) => (
+                        <div key={doc.id} className={styles.docCard}>
+                          <FiFileText size={22} color="var(--growz-primary)" />
+                          <div className={styles.docInfo}>
+                            <strong>{doc.nom}</strong>
+                            <small>
+                              {new Date(doc.uploadedAt).toLocaleDateString()}
+                            </small>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleArchiverDocument(doc)}
+                            className={styles.downloadBtn}
+                            title={
+                              doc.archive
+                                ? (t("project_details.documents_unarchive", "Désarchiver") as string)
+                                : (t("project_details.documents_archive", "Archiver") as string)
+                            }
+                          >
+                            {doc.archive ? <FiRotateCcw /> : <FiArchive />}
+                          </button>
+                          <a
+                            href={buildFileUrl(`/api/documents/${doc.id}/download`)}
+                            className={styles.downloadBtn}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <FiDownload />
+                          </a>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <p className={styles.noDocs}>
+                    {showArchivedDocs
+                      ? t("project_details.documents_empty_archived", "Aucun document archivé")
+                      : t("project_details.no_documents")}
+                  </p>
+                )}
+              </>
             ) : (
               <div className={styles.lockedDocs}>
                 <FiLock size={32} />

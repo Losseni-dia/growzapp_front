@@ -389,3 +389,87 @@
   color: #1b5e20;
   white-space: nowrap;
 }
+
+/* ── DOCUMENTS DU PROJET ─────────────────────────────────────────────── */
+.documentsBlock {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  margin-top: 1.25rem;
+}
+
+.documentsBlock h3 {
+  margin: 0 0 0.75rem;
+  color: var(--growz-primary, #1b5e20);
+  font-size: 1rem;
+}
+
+.archiveToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #64748b;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+.noDocs {
+  color: #9ca3af;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.documentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.documentRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  color: var(--growz-primary, #1b5e20);
+}
+
+.documentInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  color: #1f2937;
+}
+
+.documentInfo small {
+  color: #9ca3af;
+}
+
+.documentActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.documentActions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+}
+
+.documentActions button:hover {
+  background: var(--growz-mint-50, #e8f5e9);
+  color: var(--growz-primary, #1b5e20);
+}

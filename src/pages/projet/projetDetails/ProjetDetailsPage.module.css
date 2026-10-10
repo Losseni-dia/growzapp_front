@@ -222,6 +222,16 @@
 }
 
 /* ── DOCUMENTS ───────────────────────────────────────────── */
+.archiveToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #64748b;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
 .docGrid {
   display: flex;
   flex-direction: column;
@@ -257,6 +267,8 @@
   text-decoration: none;
   flex-shrink: 0;
   transition: 0.2s;
+  border: none;
+  cursor: pointer;
 }
 
 .downloadBtn:hover { background: var(--growz-gold); color: var(--growz-primary); }

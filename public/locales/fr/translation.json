@@ -224,6 +224,11 @@
     "description_title": "Description du projet",
     "documents_title": "Documents du projet",
     "no_documents": "Aucun document n'a été publié pour ce projet.",
+    "documents_show_archived": "Afficher mes documents archivés",
+    "documents_empty_archived": "Aucun document archivé",
+    "documents_archive": "Archiver",
+    "documents_unarchive": "Désarchiver",
+    "documents_archive_error": "Erreur lors de l'archivage",
     "docs_restricted_title": "Documents réservés aux investisseurs",
     "docs_restricted_hint": "Vous devez investir dans ce projet pour accéder aux documents techniques, financiers et juridiques.",
     "invest_title": "Investir dans ce projet",
@@ -1800,10 +1805,20 @@
       "description_placeholder": "Décrivez brièvement ce que contient ce document",
       "file_label": "Fichier (PDF, Excel, CSV)",
       "confirm_upload": "Envoyer",
+      "list_title": "Documents du projet",
+      "show_archived": "Afficher mes documents archivés",
+      "empty": "Aucun document",
+      "empty_archived": "Aucun document archivé",
+      "view": "Voir",
+      "download": "Télécharger",
+      "archive": "Archiver",
+      "unarchive": "Désarchiver",
       "toast": {
         "file_required": "Veuillez sélectionner un fichier",
         "name_required": "Le nom du document est requis",
-        "upload_success": "Document envoyé, en attente de validation par l'administrateur"
+        "upload_success": "Document envoyé, en attente de validation par l'administrateur",
+        "download_error": "Erreur lors du téléchargement",
+        "archive_error": "Erreur lors de l'archivage"
       }
     }
   },

@@ -225,6 +225,11 @@
     "description_title": "Project Description",
     "documents_title": "Project Documents",
     "no_documents": "No documents have been published for this project.",
+    "documents_show_archived": "Show my archived documents",
+    "documents_empty_archived": "No archived document",
+    "documents_archive": "Archive",
+    "documents_unarchive": "Unarchive",
+    "documents_archive_error": "Error while archiving",
     "docs_restricted_title": "Documents reserved for investors",
     "docs_restricted_hint": "You must invest in this project to access technical, financial, and legal documents.",
     "invest_title": "Invest in this project",
@@ -1775,10 +1780,20 @@
       "description_placeholder": "Briefly describe what this document contains",
       "file_label": "File (PDF, Excel, CSV)",
       "confirm_upload": "Send",
+      "list_title": "Project documents",
+      "show_archived": "Show my archived documents",
+      "empty": "No documents",
+      "empty_archived": "No archived document",
+      "view": "View",
+      "download": "Download",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
       "toast": {
         "file_required": "Please select a file",
         "name_required": "Document name is required",
-        "upload_success": "Document sent, pending admin approval"
+        "upload_success": "Document sent, pending admin approval",
+        "download_error": "Error while downloading",
+        "archive_error": "Error while archiving"
       }
     }
   },
