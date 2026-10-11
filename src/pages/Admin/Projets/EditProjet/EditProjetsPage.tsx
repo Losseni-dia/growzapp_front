@@ -241,6 +241,36 @@ export default function EditProjetPage() {
   const handleChangerStatut = async (nouveauStatut: string) => {
     if (!projet || nouveauStatut === projet.statutProjet) return;
 
+    if (nouveauStatut === "REJETE") {
+      const motif = window.prompt(
+        t(
+          "admin.projects_list.reject_motif_prompt",
+          "Motif du rejet (obligatoire) — sera visible par le porteur :",
+        ),
+      );
+      if (!motif || !motif.trim()) {
+        if (motif !== null) {
+          toast.error(
+            t("admin.projects_list.toast.reject_motif_required", "Le motif de rejet est obligatoire"),
+          );
+        }
+        return;
+      }
+      const ancienStatutRejet = projet.statutProjet;
+      try {
+        setChangingStatut(true);
+        await api.post(`/api/admin/projets/${projet.id}/rejeter`, { motif: motif.trim() });
+        setProjet({ ...projet, statutProjet: nouveauStatut });
+        toast.success(t("admin.edit_projet.toast_statut_updated", "Statut mis à jour"));
+      } catch (err: any) {
+        toast.error(t("admin.edit_projet.toast_error_prefix", "Erreur : {{message}}", { message: err.message }));
+        setProjet({ ...projet, statutProjet: ancienStatutRejet });
+      } finally {
+        setChangingStatut(false);
+      }
+      return;
+    }
+
     const estValidation = nouveauStatut === "VALIDE";
     const confirmMessage = estValidation
       ? t(
