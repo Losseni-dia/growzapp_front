@@ -1163,6 +1163,11 @@
         "EN_COURS": "In progress",
         "TERMINE": "Completed",
         "ECHEC_FINANCEMENT": "Funding failed"
+      },
+      "reject_motif_prompt": "Reason for rejection (required) — will be visible to the project owner:",
+      "toast": {
+        "reject_error": "Error rejecting project",
+        "reject_motif_required": "A rejection reason is required"
       }
     },
     "wallets": {
@@ -1746,7 +1751,13 @@
       "transactions_empty": "No transaction.",
       "not_found": "Project not found.",
       "echeance_proche": "{{count}} day left to reach your funding goal.",
-      "echeance_proche_plural": "{{count}} days left to reach your funding goal."
+      "echeance_proche_plural": "{{count}} days left to reach your funding goal.",
+      "rejet_notice": "This project was rejected by the GrowzApp team.",
+      "rejet_motif_label": "Reason:",
+      "rejet_resoumettre": "Edit and resubmit",
+      "toast": {
+        "rouvrir_error": "Unable to reopen this project for editing."
+      }
     },
     "wallet": {
       "withdraw_btn": "Withdraw",

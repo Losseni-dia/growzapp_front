@@ -26,6 +26,7 @@ export interface PorteurProjetLigneDTO {
   premiumActif: boolean;
   premiumFin?: string;
   joursAvantEcheance?: number;
+  motifRejet?: string;
 }
 
 export interface PorteurDashboardDTO {

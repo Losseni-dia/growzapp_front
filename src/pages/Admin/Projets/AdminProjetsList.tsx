@@ -166,13 +166,37 @@ export default function AdminProjetsList() {
   });
 
   const rejeterMutation = useMutation({
-    mutationFn: (id: number) => api.patch(`/api/admin/projets/${id}/rejeter`),
+    mutationFn: ({ id, motif }: { id: number; motif: string }) =>
+      api.post(`/api/admin/projets/${id}/rejeter`, { motif }),
     onSuccess: () => {
       toast.success(t("admin.withdrawals.toast.reject_success"));
       queryClient.invalidateQueries({ queryKey: ["admin-projets"] });
       queryClient.invalidateQueries({ queryKey: ["admin-projets-corbeille-count"] });
     },
+    onError: (err: any) =>
+      toast.error(
+        err.message ||
+          t("admin.projects_list.toast.reject_error", "Erreur lors du rejet"),
+      ),
   });
+
+  const handleRejeter = (p: ProjetAdmin) => {
+    const motif = window.prompt(
+      t(
+        "admin.projects_list.reject_motif_prompt",
+        "Motif du rejet (obligatoire) — sera visible par le porteur :",
+      ),
+    );
+    if (!motif || !motif.trim()) {
+      if (motif !== null) {
+        toast.error(
+          t("admin.projects_list.toast.reject_motif_required", "Le motif de rejet est obligatoire"),
+        );
+      }
+      return;
+    }
+    rejeterMutation.mutate({ id: p.id, motif: motif.trim() });
+  };
 
   const deleteMutation = useMutation({
     mutationFn: ({ id, motif }: { id: number; motif: string }) => {
@@ -530,7 +554,7 @@ export default function AdminProjetsList() {
                       <FiCheckCircle /> {t("admin.projects.btn_validate")}
                     </button>
                     <button
-                      onClick={() => rejeterMutation.mutate(p.id)}
+                      onClick={() => handleRejeter(p)}
                       className={styles.btnRejeter}
                     >
                       <FiXCircle /> {t("admin.projects.btn_reject")}

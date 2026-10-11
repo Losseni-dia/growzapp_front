@@ -50,6 +50,7 @@ function ProjetPorteurCard({
 }) {
   const { t } = useTranslation();
   const { format } = useCurrency();
+  const navigate = useNavigate();
 
   const collecteChart = ligne.historiqueCollecte.map((s) => ({
     dateLabel: new Date(s.date).toLocaleDateString("fr-FR", {
@@ -69,11 +70,27 @@ function ProjetPorteurCard({
   });
 
   const estBrouillon = ligne.statutProjet === "BROUILLON";
+  const estRejete = ligne.statutProjet === "REJETE";
+
+  const handleResoumettre = async (e: { stopPropagation: () => void }) => {
+    e.stopPropagation();
+    try {
+      await api.post(`/api/projets/${ligne.projetId}/rouvrir`);
+      navigate(`/projet/creer?brouillonId=${ligne.projetId}`);
+    } catch {
+      toast.error(
+        t(
+          "porteur.card.toast.rouvrir_error",
+          "Impossible de rouvrir ce projet pour modification.",
+        ),
+      );
+    }
+  };
 
   return (
     <div
       className={styles.projetCard}
-      onClick={onClick}
+      onClick={estRejete ? undefined : onClick}
       role="button"
       tabIndex={0}
     >
@@ -102,6 +119,32 @@ function ProjetPorteurCard({
           <span className={styles.brouillonCta}>
             {t("porteur.card.draft_cta", "Cliquer pour continuer et soumettre →")}
           </span>
+        </div>
+      )}
+
+      {estRejete && (
+        <div className={styles.rejetNotice}>
+          <p>
+            {t(
+              "porteur.card.rejet_notice",
+              "Ce projet a été rejeté par l'équipe GrowzApp.",
+            )}
+            {ligne.motifRejet && (
+              <>
+                {" "}
+                <span className={styles.rejetMotif}>
+                  {t("porteur.card.rejet_motif_label", "Motif :")} {ligne.motifRejet}
+                </span>
+              </>
+            )}
+          </p>
+          <button
+            type="button"
+            className={styles.rejetResoumettreBtn}
+            onClick={handleResoumettre}
+          >
+            {t("porteur.card.rejet_resoumettre", "Modifier et resoumettre")}
+          </button>
         </div>
       )}
 

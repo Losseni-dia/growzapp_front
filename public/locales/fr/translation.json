@@ -1465,6 +1465,11 @@
         "EN_COURS": "En cours",
         "TERMINE": "Terminé",
         "ECHEC_FINANCEMENT": "Échec de financement"
+      },
+      "reject_motif_prompt": "Motif du rejet (obligatoire) — sera visible par le porteur :",
+      "toast": {
+        "reject_error": "Erreur lors du rejet",
+        "reject_motif_required": "Le motif de rejet est obligatoire"
       }
     },
     "commandes": {
@@ -1771,7 +1776,13 @@
       "transactions_empty": "Aucune transaction.",
       "not_found": "Projet introuvable.",
       "echeance_proche": "Il reste {{count}} jour pour atteindre votre objectif de financement.",
-      "echeance_proche_plural": "Il reste {{count}} jours pour atteindre votre objectif de financement."
+      "echeance_proche_plural": "Il reste {{count}} jours pour atteindre votre objectif de financement.",
+      "rejet_notice": "Ce projet a été rejeté par l'équipe GrowzApp.",
+      "rejet_motif_label": "Motif :",
+      "rejet_resoumettre": "Modifier et resoumettre",
+      "toast": {
+        "rouvrir_error": "Impossible de rouvrir ce projet pour modification."
+      }
     },
     "wallet": {
       "withdraw_btn": "Retirer",
