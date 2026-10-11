@@ -59,6 +59,12 @@ const isEcheanceProche = (p: ProjetAdmin) => {
 const isArchive = (p: ProjetAdmin) =>
   p.statutProjet === "REJETE" || p.statutProjet === "ECHEC_FINANCEMENT";
 
+// Projets dont l'objectif de financement est atteint (FINANCE) ainsi que
+// ceux déjà démarrés (EN_COURS) ou suspendus (SUSPENDU) — onglet dédié pour
+// démarrer/suspendre/terminer via la dropdown de statut de la page détail.
+const isProjetFinance = (p: ProjetAdmin) =>
+  p.statutProjet === "FINANCE" || p.statutProjet === "EN_COURS" || p.statutProjet === "SUSPENDU";
+
 type SortKey = "recent" | "ancien" | "collecte" | "objectif";
 
 export default function AdminProjetsList() {
@@ -71,7 +77,9 @@ export default function AdminProjetsList() {
   const initialTab = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState(
     initialTab &&
-      ["TOUS", "SOUMIS", "VALIDE", "ARCHIVES", "ECHEANCE_DEPASSEE", "ECHEANCE_PROCHE"].includes(initialTab)
+      ["TOUS", "SOUMIS", "VALIDE", "ARCHIVES", "ECHEANCE_DEPASSEE", "ECHEANCE_PROCHE", "PROJETS_FINANCES"].includes(
+        initialTab,
+      )
       ? initialTab
       : "TOUS",
   );
@@ -118,7 +126,9 @@ export default function AdminProjetsList() {
               ? isEcheanceDepassee(p)
               : activeTab === "ECHEANCE_PROCHE"
                 ? isEcheanceProche(p)
-                : p.statutProjet === activeTab;
+                : activeTab === "PROJETS_FINANCES"
+                  ? isProjetFinance(p)
+                  : p.statutProjet === activeTab;
       const matchesSecteur =
         secteurFilter === "TOUS" || p.secteurNom === secteurFilter;
       const search = searchTerm.toLowerCase();
@@ -265,6 +275,10 @@ export default function AdminProjetsList() {
         return styles.badgeTermine;
       case "EN_COURS":
         return styles.badgeEnCours;
+      case "FINANCE":
+        return styles.badgeValide;
+      case "SUSPENDU":
+        return styles.badgeRejete;
       default:
         return styles.badgeDefault;
     }
@@ -368,6 +382,15 @@ export default function AdminProjetsList() {
             {t("admin.projects_list.tab_archives", "Archives (rejetés / clôturés)")}
             <span className={styles.countBadge}>
               {projets.filter(isArchive).length}
+            </span>
+          </button>
+          <button
+            className={`${styles.tabButton} ${activeTab === "PROJETS_FINANCES" ? styles.activeTab : ""}`}
+            onClick={() => setActiveTab("PROJETS_FINANCES")}
+          >
+            {t("admin.projects_list.tab_projets_finances", "Projets financés")}
+            <span className={styles.countBadge}>
+              {projets.filter(isProjetFinance).length}
             </span>
           </button>
           <button

@@ -993,6 +993,14 @@
       "toast_crop_error": "Error al recortar",
       "confirm_validate": "¿Validar este proyecto? Todos los usuarios de la plataforma serán notificados de que hay un nuevo proyecto disponible.",
       "confirm_change_statut": "¿Cambiar el estado del proyecto a \"{{statut}}\"?",
+      "confirm_reprendre": "¿Reanudar este proyecto? Volverá inmediatamente a En curso.",
+      "suspendre_motif_prompt": "Motivo de la suspensión (obligatorio) — los inversores serán notificados:",
+      "arreter_motif_prompt": "Motivo de la interrupción definitiva (obligatorio) — los inversores serán notificados:",
+      "statut_locked_investissements": "Este proyecto ya ha recibido al menos una inversión — su estado ya no se puede cambiar manualmente aquí. Evolucionará automáticamente una vez alcanzado el objetivo de financiación.",
+      "toast": {
+        "suspendre_motif_required": "El motivo de la suspensión es obligatorio",
+        "arreter_motif_required": "El motivo de la interrupción definitiva es obligatorio"
+      },
       "toast_statut_updated": "Estado actualizado",
       "toast_error_prefix": "Error: {{message}}",
       "toast_photo_deleted": "Foto eliminada",
@@ -1053,6 +1061,7 @@
       "empty": "Ningún proyecto coincide con sus criterios.",
       "all_sectors": "Todos los sectores",
       "tab_archives": "Archivo (rechazados / cerrados)",
+      "tab_projets_finances": "Proyectos financiados",
       "sort": {
         "recent": "⬇ Más reciente",
         "ancien": "⬆ Más antiguo",
@@ -1083,7 +1092,9 @@
         "REJETE": "Rechazado",
         "EN_COURS": "En curso",
         "TERMINE": "Terminado",
-        "ECHEC_FINANCEMENT": "Financiación fallida"
+        "ECHEC_FINANCEMENT": "Financiación fallida",
+        "FINANCE": "Financiado",
+        "SUSPENDU": "Suspendido"
       },
       "reject_motif_prompt": "Motivo del rechazo (obligatorio) — será visible para el promotor:",
       "toast": {

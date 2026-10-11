@@ -1072,6 +1072,14 @@
       "toast_crop_error": "Cropping error",
       "confirm_validate": "Validate this project? All platform users will be notified that a new project is available.",
       "confirm_change_statut": "Change the project status to \"{{statut}}\"?",
+      "confirm_reprendre": "Resume this project? It will immediately go back to In Progress.",
+      "suspendre_motif_prompt": "Reason for the suspension (required) — investors will be notified:",
+      "arreter_motif_prompt": "Reason for the permanent stop (required) — investors will be notified:",
+      "statut_locked_investissements": "This project has already received at least one investment — its status can no longer be changed manually here. It will evolve automatically once the funding goal is reached.",
+      "toast": {
+        "suspendre_motif_required": "A suspension reason is required",
+        "arreter_motif_required": "A permanent stop reason is required"
+      },
       "toast_statut_updated": "Status updated",
       "toast_error_prefix": "Error: {{message}}",
       "toast_photo_deleted": "Photo deleted",
@@ -1132,6 +1140,7 @@
       "empty": "No project matches your criteria.",
       "all_sectors": "All sectors",
       "tab_archives": "Archive (rejected / closed)",
+      "tab_projets_finances": "Funded projects",
       "sort": {
         "recent": "⬇ Most recent",
         "ancien": "⬆ Oldest",
@@ -1162,7 +1171,9 @@
         "REJETE": "Rejected",
         "EN_COURS": "In progress",
         "TERMINE": "Completed",
-        "ECHEC_FINANCEMENT": "Funding failed"
+        "ECHEC_FINANCEMENT": "Funding failed",
+        "FINANCE": "Funded",
+        "SUSPENDU": "Suspended"
       },
       "reject_motif_prompt": "Reason for rejection (required) — will be visible to the project owner:",
       "toast": {

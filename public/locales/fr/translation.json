@@ -1374,6 +1374,14 @@
       "toast_crop_error": "Erreur de recadrage",
       "confirm_validate": "Valider ce projet ? Tous les utilisateurs de la plateforme seront notifiés qu'un nouveau projet est disponible.",
       "confirm_change_statut": "Changer le statut du projet en \"{{statut}}\" ?",
+      "confirm_reprendre": "Faire reprendre ce projet ? Il repasse immédiatement en En cours.",
+      "suspendre_motif_prompt": "Motif de la suspension (obligatoire) — les investisseurs seront notifiés :",
+      "arreter_motif_prompt": "Motif de l'arrêt définitif (obligatoire) — les investisseurs seront notifiés :",
+      "statut_locked_investissements": "Ce projet a déjà reçu au moins un investissement — son statut ne peut plus être changé manuellement ici. Il évoluera automatiquement une fois l'objectif atteint.",
+      "toast": {
+        "suspendre_motif_required": "Le motif de suspension est obligatoire",
+        "arreter_motif_required": "Le motif de l'arrêt définitif est obligatoire"
+      },
       "toast_statut_updated": "Statut mis à jour",
       "toast_error_prefix": "Erreur : {{message}}",
       "toast_photo_deleted": "Photo supprimée",
@@ -1434,6 +1442,7 @@
       "empty": "Aucun projet ne correspond à vos critères.",
       "all_sectors": "Tous les secteurs",
       "tab_archives": "Archives (rejetés / clôturés)",
+      "tab_projets_finances": "Projets financés",
       "sort": {
         "recent": "⬇ Plus récent",
         "ancien": "⬆ Plus ancien",
@@ -1464,7 +1473,9 @@
         "REJETE": "Rejeté",
         "EN_COURS": "En cours",
         "TERMINE": "Terminé",
-        "ECHEC_FINANCEMENT": "Échec de financement"
+        "ECHEC_FINANCEMENT": "Échec de financement",
+        "FINANCE": "Financé",
+        "SUSPENDU": "Suspendu"
       },
       "reject_motif_prompt": "Motif du rejet (obligatoire) — sera visible par le porteur :",
       "toast": {

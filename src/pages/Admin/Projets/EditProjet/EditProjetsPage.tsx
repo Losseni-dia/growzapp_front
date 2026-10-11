@@ -43,6 +43,40 @@ function parseInt_(raw: string): number {
   return cleaned === "" ? 0 : parseInt(cleaned, 10);
 }
 
+// Statuts accessibles depuis chaque statut courant, dans l'ordre d'affichage
+// de la dropdown — la liste ne doit jamais inclure de statut inatteignable
+// depuis le statut actuel. Reflète exactement la matrice appliquée côté
+// backend (ProjetService.TRANSITIONS_SANS_MOTIF + rejeter/suspendre/reprendre/arreter).
+const TRANSITIONS_PAR_STATUT: Record<string, string[]> = {
+  SOUMIS: ["VALIDE", "REJETE"],
+  VALIDE: ["REJETE", "SOUMIS"],
+  FINANCE: ["EN_COURS"],
+  EN_COURS: ["TERMINE", "SUSPENDU"],
+  SUSPENDU: ["EN_COURS", "TERMINE"],
+  REJETE: ["SOUMIS", "VALIDE"],
+  TERMINE: [],
+};
+
+const STATUT_EMOJI: Record<string, string> = {
+  SOUMIS: "🟠",
+  VALIDE: "🟢",
+  FINANCE: "💰",
+  EN_COURS: "🔵",
+  SUSPENDU: "⏸️",
+  TERMINE: "🏁",
+  REJETE: "🔴",
+};
+
+function getStatutsDisponibles(statutActuel: string, aDesInvestissements: boolean): string[] {
+  const cibles = TRANSITIONS_PAR_STATUT[statutActuel] ?? [];
+  if (statutActuel === "VALIDE" && aDesInvestissements) {
+    // Un projet validé avec au moins un investissement ne peut plus
+    // redescendre en Soumis ni être rejeté — fonds déjà engagés.
+    return [];
+  }
+  return cibles;
+}
+
 export default function EditProjetPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
@@ -240,31 +274,81 @@ export default function EditProjetPage() {
   const [changingStatut, setChangingStatut] = useState(false);
   const handleChangerStatut = async (nouveauStatut: string) => {
     if (!projet || nouveauStatut === projet.statutProjet) return;
+    const ancienStatutCourant = projet.statutProjet;
 
-    if (nouveauStatut === "REJETE") {
-      const motif = window.prompt(
-        t(
-          "admin.projects_list.reject_motif_prompt",
-          "Motif du rejet (obligatoire) — sera visible par le porteur :",
-        ),
-      );
+    const appelAvecMotif = async (url: string, promptMessage: string, requiredMsg: string) => {
+      const motif = window.prompt(promptMessage);
       if (!motif || !motif.trim()) {
-        if (motif !== null) {
-          toast.error(
-            t("admin.projects_list.toast.reject_motif_required", "Le motif de rejet est obligatoire"),
-          );
-        }
+        if (motif !== null) toast.error(requiredMsg);
         return;
       }
-      const ancienStatutRejet = projet.statutProjet;
       try {
         setChangingStatut(true);
-        await api.post(`/api/admin/projets/${projet.id}/rejeter`, { motif: motif.trim() });
+        await api.post(url, { motif: motif.trim() });
         setProjet({ ...projet, statutProjet: nouveauStatut });
         toast.success(t("admin.edit_projet.toast_statut_updated", "Statut mis à jour"));
       } catch (err: any) {
         toast.error(t("admin.edit_projet.toast_error_prefix", "Erreur : {{message}}", { message: err.message }));
-        setProjet({ ...projet, statutProjet: ancienStatutRejet });
+        setProjet({ ...projet, statutProjet: ancienStatutCourant });
+      } finally {
+        setChangingStatut(false);
+      }
+    };
+
+    if (nouveauStatut === "REJETE") {
+      await appelAvecMotif(
+        `/api/admin/projets/${projet.id}/rejeter`,
+        t(
+          "admin.projects_list.reject_motif_prompt",
+          "Motif du rejet (obligatoire) — sera visible par le porteur :",
+        ),
+        t("admin.projects_list.toast.reject_motif_required", "Le motif de rejet est obligatoire"),
+      );
+      return;
+    }
+
+    if (ancienStatutCourant === "EN_COURS" && nouveauStatut === "SUSPENDU") {
+      await appelAvecMotif(
+        `/api/admin/projets/${projet.id}/suspendre`,
+        t(
+          "admin.edit_projet.suspendre_motif_prompt",
+          "Motif de la suspension (obligatoire) — les investisseurs seront notifiés :",
+        ),
+        t("admin.edit_projet.toast.suspendre_motif_required", "Le motif de suspension est obligatoire"),
+      );
+      return;
+    }
+
+    if (ancienStatutCourant === "SUSPENDU" && nouveauStatut === "TERMINE") {
+      await appelAvecMotif(
+        `/api/admin/projets/${projet.id}/arreter`,
+        t(
+          "admin.edit_projet.arreter_motif_prompt",
+          "Motif de l'arrêt définitif (obligatoire) — les investisseurs seront notifiés :",
+        ),
+        t("admin.edit_projet.toast.arreter_motif_required", "Le motif de l'arrêt définitif est obligatoire"),
+      );
+      return;
+    }
+
+    if (ancienStatutCourant === "SUSPENDU" && nouveauStatut === "EN_COURS") {
+      if (
+        !window.confirm(
+          t(
+            "admin.edit_projet.confirm_reprendre",
+            "Faire reprendre ce projet ? Il repasse immédiatement en En cours.",
+          ),
+        )
+      )
+        return;
+      try {
+        setChangingStatut(true);
+        await api.post(`/api/admin/projets/${projet.id}/reprendre`);
+        setProjet({ ...projet, statutProjet: nouveauStatut });
+        toast.success(t("admin.edit_projet.toast_statut_updated", "Statut mis à jour"));
+      } catch (err: any) {
+        toast.error(t("admin.edit_projet.toast_error_prefix", "Erreur : {{message}}", { message: err.message }));
+        setProjet({ ...projet, statutProjet: ancienStatutCourant });
       } finally {
         setChangingStatut(false);
       }
@@ -755,12 +839,31 @@ export default function EditProjetPage() {
                   disabled={changingStatut}
                   onChange={(e) => handleChangerStatut(e.target.value)}
                 >
-                  <option value="SOUMIS">🟠 {t("admin.projects_list.status.SOUMIS", "Soumis")}</option>
-                  <option value="VALIDE">🟢 {t("admin.projects_list.status.VALIDE", "Validé")}</option>
-                  <option value="EN_COURS">🔵 {t("admin.projects_list.status.EN_COURS", "En cours")}</option>
-                  <option value="TERMINE">🏁 {t("admin.projects_list.status.TERMINE", "Terminé")}</option>
-                  <option value="REJETE">🔴 {t("admin.projects_list.status.REJETE", "Rejeté")}</option>
+                  <option value={projet.statutProjet}>
+                    {STATUT_EMOJI[projet.statutProjet] ?? ""}{" "}
+                    {t(`admin.projects_list.status.${projet.statutProjet}`, {
+                      defaultValue: projet.statutProjet,
+                    })}
+                  </option>
+                  {getStatutsDisponibles(
+                    projet.statutProjet,
+                    (projet.investissements?.length ?? 0) > 0,
+                  ).map((statut) => (
+                    <option key={statut} value={statut}>
+                      {STATUT_EMOJI[statut] ?? ""}{" "}
+                      {t(`admin.projects_list.status.${statut}`, { defaultValue: statut })}
+                    </option>
+                  ))}
                 </select>
+                {projet.statutProjet === "VALIDE" && (projet.investissements?.length ?? 0) > 0 && (
+                  <p className={styles.statutHint}>
+                    🔒{" "}
+                    {t(
+                      "admin.edit_projet.statut_locked_investissements",
+                      "Ce projet a déjà reçu au moins un investissement — son statut ne peut plus être changé manuellement ici. Il évoluera automatiquement une fois l'objectif atteint.",
+                    )}
+                  </p>
+                )}
                 <p className={styles.statutHint}>
                   {t(
                     "admin.edit_projet.statut_hint",
