@@ -4,6 +4,7 @@ import { Crisp } from "crisp-sdk-web";
 // === COMPONENTS (chargés immédiatement, utilisés partout) ===
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
+import ScrollJump from "./components/ScrollJump/ScrollJump";
 import GrowzToaster from "./components/ui/Toaster";
 import CrispUserHandler from "./components/Crips-ChatBox/CrispUserHandler";
 import CookieConsentBanner from "./components/CookieConsent/CookieConsentBanner";
@@ -549,6 +550,7 @@ function AppInner() {
         </main>
 
         <Footer />
+        <ScrollJump />
       </CurrencyProvider>
     </HelmetProvider>
   );

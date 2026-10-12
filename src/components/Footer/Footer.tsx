@@ -44,7 +44,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className={styles.footer}>
+    <footer id="site-footer" className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.topSection}>
           <div className={styles.brand}>
