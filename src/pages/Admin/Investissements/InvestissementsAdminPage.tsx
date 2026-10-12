@@ -15,6 +15,7 @@ import {
   FiFilter,
 } from "react-icons/fi";
 import { api } from "../../../service/Api";
+import { useCurrency } from "../../../components/Context/CurrencyContext";
 import styles from "./InvestissementsAdminPage.module.css";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -54,6 +55,7 @@ interface StatutCounts {
 
 export default function InvestissementsAdminPage() {
   const { t, i18n } = useTranslation();
+  const { format: formatMontant } = useCurrency();
   const queryClient = useQueryClient();
   const [filtre, setFiltre] = useState<Filtre>("EN_ATTENTE");
   const [page, setPage] = useState(0);
@@ -326,7 +328,7 @@ export default function InvestissementsAdminPage() {
                       {inv.nombrePartsPris} part
                       {inv.nombrePartsPris > 1 ? "s" : ""}
                     </span>
-                    <strong>{montant.toLocaleString("fr-FR")} FCFA</strong>
+                    <strong>{formatMontant(montant, "XOF")}</strong>
                   </div>
                 </div>
 
@@ -419,11 +421,11 @@ export default function InvestissementsAdminPage() {
               <div>
                 💰{" "}
                 <strong>
-                  {(
+                  {formatMontant(
                     refusModal.inv.montantInvesti ??
-                    refusModal.inv.nombrePartsPris * refusModal.inv.prixUnePart
-                  ).toLocaleString("fr-FR")}{" "}
-                  FCFA
+                      refusModal.inv.nombrePartsPris * refusModal.inv.prixUnePart,
+                    "XOF",
+                  )}
                 </strong>
               </div>
             </div>
